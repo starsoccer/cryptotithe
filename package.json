@@ -1,0 +1,46 @@
+{
+  "name": "cryptotithe",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "tsc -p tsconfig.json && electron ."
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/faker": "^4.1.2",
+    "@types/jest": "^22.2.3",
+    "electron": "^2.0.2",
+    "faker": "^4.1.0",
+    "jest": "^23.0.0",
+    "ts-jest": "^22.4.6",
+    "typescript": "^2.8.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "dependencies": {
+    "@types/clone": "^0.1.30",
+    "@types/csv2json": "^1.4.0",
+    "@types/csvtojson": "^1.1.5",
+    "@types/got": "^8.3.1",
+    "clone": "^2.1.1",
+    "csv2json": "^1.4.2",
+    "csvtojson": "^1.1.12",
+    "got": "^8.3.1",
+    "yet-another-electron-pug": "^1.0.0"
+  }
+}
