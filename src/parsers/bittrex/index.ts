@@ -1,12 +1,12 @@
-import { getCSVData } from '../';
-import path = require('path'); // path.resolve(__dirname, 'settings.json'
-import { ITradeWithUSDRate, ITradeWithGains, IHoldings, ICurrencyHolding, METHOD } from '../../types';
-import { calculateGains } from '../../processing/CalculateGains';
-import { getUSDRate } from '../getUSDRate';
+import { getCSVData } from "../";
+import path = require("path"); // path.resolve(__dirname, "settings.json"
+import { ITradeWithUSDRate, ITradeWithGains, IHoldings, ICurrencyHolding, METHOD } from "../../types";
+import { calculateGains } from "../../processing/CalculateGains";
+import { getUSDRate } from "../getUSDRate";
 
 enum BittrexOrderType {
-    LIMIT_SELL = 'LIMIT_SELL',
-    LIMIT_BUY = 'LIMIT_BUY'
+    LIMIT_SELL = "LIMIT_SELL",
+    LIMIT_BUY = "LIMIT_BUY"
 }
 
 interface IBittrex {
@@ -21,11 +21,11 @@ interface IBittrex {
     Closed: string;
 }
 
-export async function processData (filePath: string) {
+export async function processData (filePath: string): Promise<ITradeWithUSDRate[]> {
     const data: IBittrex[] = await getCSVData(filePath) as IBittrex[];
     const internalFormat: ITradeWithUSDRate[] = [];
     for(const trade of data) {
-        const pair = trade.Exchange.split('-');
+        const pair: string[] = trade.Exchange.split("-");
         switch (trade.Type) {
             case BittrexOrderType.LIMIT_BUY:
                 internalFormat.push({
@@ -34,7 +34,7 @@ export async function processData (filePath: string) {
                     amountSold: parseFloat(trade.Price) + parseFloat(trade.CommissionPaid),
                     rate: parseFloat(trade.Price) / parseFloat(trade.Quantity),
                     date: new Date(trade.Closed),
-                    USDRate: (pair[0] === 'BTC' ? await getUSDRate(new Date(trade.Closed)) : 0),
+                    USDRate: (pair[0] === "BTC" ? await getUSDRate(new Date(trade.Closed)) : 0),
                 });
             break;
             case BittrexOrderType.LIMIT_SELL:
@@ -48,7 +48,7 @@ export async function processData (filePath: string) {
                 });
             break;
             default:
-                console.log('Unknown Order Type - ' + trade.OrderUuid);
+                console.log("Unknown Order Type - " + trade.OrderUuid);
         }
     }
     return internalFormat;

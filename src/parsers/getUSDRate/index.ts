@@ -1,23 +1,27 @@
-import * as got from 'got';
+import * as got from "got";
 
-export async function getUSDRate (date: Date) {
-    const data = [
+interface ICryptoCompareResponse {
+    USD: number;
+}
+
+export async function getUSDRate (date: Date): Promise<number> {
+    const data: string[] = [
         `fsym=BTC`,
-        'tsym=USD',
-        'sign=false', // change to true for security?
+        "tsym=USD",
+        "sign=false", // change to true for security?
         `toTs=${date.getTime() / 1000}`,
-        'extraParams=tApp',
+        "extraParams=tApp",
     ];
-    const response = await got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
-    if ('body' in response) {
+    const response: got.Response<any> = await got("https://min-api.cryptocompare.com/data/dayAvg?" + data.join("&"));
+    if ("body" in response) {
         try {
-            const result = JSON.parse(response.body);
+            const result: ICryptoCompareResponse = JSON.parse(response.body);
             return result.USD;
         } catch (ex) {
-            console.log('Error parsing JSON');
+            console.log("Error parsing JSON");
         }
     } else {
-        console.log('Invalid Response');
+        console.log("Invalid Response");
     }
     return undefined;
 }

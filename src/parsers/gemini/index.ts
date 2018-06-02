@@ -1,14 +1,14 @@
-import { getCSVData } from '../';
-import path = require('path'); // path.resolve(__dirname, 'settings.json'
-import { ITradeWithUSDRate, ITradeWithGains, IHoldings, ICurrencyHolding, METHOD } from '../../types';
-import { calculateGains } from '../../processing/CalculateGains';
-import { getUSDRate } from '../getUSDRate';
+import { getCSVData } from "../";
+import path = require("path"); // path.resolve(__dirname, "settings.json"
+import { ITradeWithUSDRate, ITradeWithGains, IHoldings, ICurrencyHolding, METHOD } from "../../types";
+import { calculateGains } from "../../processing/CalculateGains";
+import { getUSDRate } from "../getUSDRate";
 
 enum GeminiOrderType {
-    Sell = 'Sell',
-    Buy = 'Buy',
-    Credit = 'Credit',
-    Debit = 'Debit',
+    Sell = "Sell",
+    Buy = "Buy",
+    Credit = "Credit",
+    Debit = "Debit",
 }
 
 interface IGemini {
@@ -18,40 +18,44 @@ interface IGemini {
     Symbol: string;
     Specification: string;
     Liquidity: string;
-    'Trading Fee': string;
-    'USD Amount': string;
-    'Trading Fee (USD)': string;
-    'USD Balance': string;
-    'BTC Amount': string;
-    'Trading Fee (BTC)': string;
-    'BTC Balance': string;
-    'ETH Amount': string;
-    'Trading Fee (ETH)': string;
-    'ETH Balance': string;
-    'ZEC Amount': string;
-    'Trading Fee (ZEC)': string;
-    'ZEC Balance': string;
-    'Trade ID': string;
-    'Order ID': string;
-    'Order Date': string;
-    'Order Time': string;
-    'Client Order ID': string;
-    'API Session': string;
-    'Tx Hash': string;
-    'Deposit Tx Output': string;
-    'Withdrawal Destination': string;
-    'Withdrawal Tx Output': string;
+    "Trading Fee": string;
+    "USD Amount": string;
+    "Trading Fee (USD)": string;
+    "USD Balance": string;
+    "BTC Amount": string;
+    "Trading Fee (BTC)": string;
+    "BTC Balance": string;
+    "ETH Amount": string;
+    "Trading Fee (ETH)": string;
+    "ETH Balance": string;
+    "ZEC Amount": string;
+    "Trading Fee (ZEC)": string;
+    "ZEC Balance": string;
+    "Trade ID": string;
+    "Order ID": string;
+    "Order Date": string;
+    "Order Time": string;
+    "Client Order ID": string;
+    "API Session": string;
+    "Tx Hash": string;
+    "Deposit Tx Output": string;
+    "Withdrawal Destination": string;
+    "Withdrawal Tx Output": string;
+}
+interface ITraded {
+    bought: string;
+    sold: string;
 }
 
-function getCurrenciesTraded (trade: IGemini) {
-    const keys = Object.keys(trade);
-    const currencies = {
+function getCurrenciesTraded (trade: IGemini): ITraded {
+    const keys: string[] = Object.keys(trade);
+    const currencies: ITraded = {
         bought: undefined,
         sold: undefined,
-    }
+    };
     for(const key in keys) {
-        if (key.indexOf(' Amount') && trade[key] !== undefined && trade[key] !== '') {
-            if (trade[key].substring(0, 1) === '-') {
+        if (key.indexOf(" Amount") && trade[key] !== undefined && trade[key] !== "") {
+            if (trade[key].substring(0, 1) === "-") {
                 currencies.sold = key.substring(0, 3);
             } else {
                 currencies.bought = key.substring(0, 3);
@@ -61,12 +65,12 @@ function getCurrenciesTraded (trade: IGemini) {
     return currencies;
 }
 
-export async function processData () {
-    const data: IGemini[] = await getCSVData('./src/parsers/bittrex.csv') as IGemini[];
+export async function processData (): Promise<ITradeWithUSDRate[]> {
+    const data: IGemini[] = await getCSVData("./src/parsers/bittrex.csv") as IGemini[];
     const internalFormat: ITradeWithUSDRate[] = [];
     for(const trade of data) {
         if (trade.Symbol.length > 3) {
-            const pair = getCurrenciesTraded(trade);
+            const pair: ITraded = getCurrenciesTraded(trade);
             switch (trade.Type) {
                 case GeminiOrderType.Buy:
                 case GeminiOrderType.Sell:
@@ -75,20 +79,20 @@ export async function processData () {
                         soldCurrency: pair.sold,
                         amountSold: Math.abs(trade[`${pair.sold} Amount`]),
                         rate: Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`]),
-                        date: new Date(`${trade['Order Date']} ${trade['Order Time']}`),
-                        USDRate: (trade.Symbol.indexOf('USD') ? 
+                        date: new Date(`${trade["Order Date"]} ${trade["Order Time"]}`),
+                        USDRate: (trade.Symbol.indexOf("USD") ?
                         Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`])
-                        : await getUSDRate(new Date(`${trade['Order Date']} ${trade['Order Time']}`))),
+                        : await getUSDRate(new Date(`${trade["Order Date"]} ${trade["Order Time"]}`))),
                     });
                 break;
                 case GeminiOrderType.Credit:
                 case GeminiOrderType.Debit:
-                    console.log('Credit/Debit - Skipping');
+                    console.log("Credit/Debit - Skipping");
                 break;
                 default:
-                    console.log(`Unknown Order Type - ${trade['Order ID']} - ${trade['Trade ID']}`);
+                    console.log(`Unknown Order Type - ${trade["Order ID"]} - ${trade["Trade ID"]}`);
             }
         }
     }
-    return internalFormat;    
+    return internalFormat;
 }

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "tsc -p tsconfig.json && electron ."
+    "start": "tsc -p configs/tsconfig.client.json && tsc -p configs/tsconfig.node.json && electron ."
   },
   "author": "",
   "license": "MIT",
