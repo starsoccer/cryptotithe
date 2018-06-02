@@ -10,7 +10,7 @@ export interface IHoldings {
 
 export interface ICurrencyHolding {
     amount: number;
-    cost: number;
+    rateInUSD: number;
     date: Date;
 }
 

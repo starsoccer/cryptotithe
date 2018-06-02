@@ -15,11 +15,11 @@ export function calculateGains(holdings: IHoldings, trades: ITradeWithUSDRate[])
         }
         newHoldings[trade.boughtCurreny].push({
             amount: trade.amountSold / trade.rate,
-            cost: trade.USDRate * trade.rate,
+            rateInUSD: trade.USDRate * trade.rate,
             date: new Date(),
         });
         for (const holding of result.deductedHoldings) {
-            const gain = (trade.USDRate - holding.cost) * holding.amount
+            const gain = (trade.USDRate - holding.rateInUSD) * holding.amount;
 
             if (trade.date.getTime() - holding.date.getTime() > FULL_YEAR_IN_MILLISECONDS) {
                 longTermGain += gain;
@@ -53,7 +53,7 @@ export function getCurrenyHolding (holdings: IHoldings, currency: string, amount
                         lastIn.amount = lastIn.amount - amountUsed;
                         currencyHolding.push({
                             amount: amountUsed,
-                            cost: lastIn.cost,
+                            rateInUSD: lastIn.rateInUSD,
                             date: lastIn.date
                         });
                         amountUsed = 0;
@@ -71,7 +71,7 @@ export function getCurrenyHolding (holdings: IHoldings, currency: string, amount
                         firstIn.amount = firstIn.amount - amountUsed;
                         currencyHolding.push({
                             amount: amountUsed,
-                            cost: firstIn.cost,
+                            rateInUSD: firstIn.rateInUSD,
                             date: firstIn.date
                         });
                         amountUsed = 0;
@@ -89,7 +89,7 @@ export function getCurrenyHolding (holdings: IHoldings, currency: string, amount
             currencyHolding.push({
                 amount: amountUsed,
                 date: new Date(),
-                cost: 0,
+                rateInUSD: 0,
             });
             amountUsed = 0;
         }

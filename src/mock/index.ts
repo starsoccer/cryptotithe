@@ -9,7 +9,7 @@ export function mockHoldings(currencies: number, holdingsPerCurrency: number, st
             toBeHoldings.push({
                 amount: faker.random.number(),
                 date: faker.date.between(startingDate, endingDate),
-                cost: faker.random.number(),
+                rateInUSD: faker.random.number(),
             });
         }
         holdings[faker.random.word().toUpperCase()] = toBeHoldings;
@@ -18,7 +18,7 @@ export function mockHoldings(currencies: number, holdingsPerCurrency: number, st
 }
 
 export function mockTrades(amount: number, startingDate: Date, currentHoldings, allowOverflow: boolean) {
-    const trades: ITrade[] = [];
+    const trades: ITradeWithUSDRate[] = [];
     const currencies = Object.keys(currentHoldings);
     for(const currency of currencies) {
         let totalHoldings = 0;
@@ -33,6 +33,7 @@ export function mockTrades(amount: number, startingDate: Date, currentHoldings, 
                 amountSold: (allowOverflow ? totalHoldings + faker.random.number() : faker.random.number(totalHoldings / amount)),
                 rate: faker.random.number(),
                 date: faker.date.between(startingDate, new Date()),
+                USDRate: faker.random.number(),
             });
         }
     }
