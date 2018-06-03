@@ -8,28 +8,27 @@ interface IGetCSVData {
 
 export async function getCSVData(filePath: string): Promise<any> {
     return new Promise( function(resolve: Function, reject: Function): any {
-        const promises: Promise<IGetCSVData[]>[] = [];
+        const promises: Array<Promise<IGetCSVData[]>> = [];
         csv().fromFile(filePath)
-          .on("json", converted => promises.push(Promise.resolve(converted)))
-          .on("done", error => {
+          .on("json", (converted) => promises.push(Promise.resolve(converted)))
+          .on("done", (error) => {
             if (error) {
               reject(error);
             }
-          Promise.all(promises).then(convertedResults => resolve(convertedResults));
+            Promise.all(promises).then((convertedResults) => resolve(convertedResults));
         });
     });
 }
 
-
 export async function processData(exchange: keyof typeof EXCHANGES, filePath: string): Promise<string> {
-    let processData: Function = undefined;
+    let processData: Function;
     switch (exchange) {
         case "BITTREX":
             processData = require("./bittrex").processData;
-        break;
+            break;
         case "GEMINI":
             processData = require("./gemini").processData;
-        break;
+            break;
         default:
             console.log(`Unknown Exchange - ${exchange}`);
             return;

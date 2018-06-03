@@ -1,7 +1,7 @@
-import { getCSVData } from "../";
 import path = require("path"); // path.resolve(__dirname, "settings.json"
-import { ITradeWithUSDRate, ITradeWithGains, IHoldings, ICurrencyHolding, METHOD } from "../../types";
+import { getCSVData } from "../";
 import { calculateGains } from "../../processing/CalculateGains";
+import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from "../../types";
 import { getUSDRate } from "../getUSDRate";
 
 enum GeminiOrderType {
@@ -47,13 +47,13 @@ interface ITraded {
     sold: string;
 }
 
-function getCurrenciesTraded (trade: IGemini): ITraded {
+function getCurrenciesTraded(trade: IGemini): ITraded {
     const keys: string[] = Object.keys(trade);
     const currencies: ITraded = {
         bought: undefined,
         sold: undefined,
     };
-    for(const key in keys) {
+    for (const key in keys) {
         if (key.indexOf(" Amount") && trade[key] !== undefined && trade[key] !== "") {
             if (trade[key].substring(0, 1) === "-") {
                 currencies.sold = key.substring(0, 3);
@@ -65,10 +65,10 @@ function getCurrenciesTraded (trade: IGemini): ITraded {
     return currencies;
 }
 
-export async function processData (): Promise<ITradeWithUSDRate[]> {
+export async function processData(): Promise<ITradeWithUSDRate[]> {
     const data: IGemini[] = await getCSVData("./src/parsers/bittrex.csv") as IGemini[];
     const internalFormat: ITradeWithUSDRate[] = [];
-    for(const trade of data) {
+    for (const trade of data) {
         if (trade.Symbol.length > 3) {
             const pair: ITraded = getCurrenciesTraded(trade);
             switch (trade.Type) {
@@ -84,11 +84,11 @@ export async function processData (): Promise<ITradeWithUSDRate[]> {
                         Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`])
                         : await getUSDRate(new Date(`${trade["Order Date"]} ${trade["Order Time"]}`))),
                     });
-                break;
+                    break;
                 case GeminiOrderType.Credit:
                 case GeminiOrderType.Debit:
                     console.log("Credit/Debit - Skipping");
-                break;
+                    break;
                 default:
                     console.log(`Unknown Order Type - ${trade["Order ID"]} - ${trade["Trade ID"]}`);
             }

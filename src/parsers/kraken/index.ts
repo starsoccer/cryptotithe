@@ -1,17 +1,17 @@
-import { getCSVData } from "../";
 import path = require("path"); // path.resolve(__dirname, "settings.json"
-import { ITradeWithUSDRate, ITradeWithGains, IHoldings, ICurrencyHolding, METHOD } from "../../types";
+import { getCSVData } from "../";
 import { calculateGains } from "../../processing/CalculateGains";
+import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from "../../types";
 import { getUSDRate } from "../getUSDRate";
 
 enum KrakenType {
     BUY = "buy",
-    SELL = "sell"
+    SELL = "sell",
 }
 
 enum KrakenxOrderType {
     LIMIT = "limit",
-    MARKET = "market"
+    MARKET = "market",
 }
 
 interface IKraken {
@@ -30,10 +30,10 @@ interface IKraken {
     ledgers: string;
 }
 
-export async function processData (filePath: string): Promise<ITradeWithUSDRate[]> {
+export async function processData(filePath: string): Promise<ITradeWithUSDRate[]> {
     const data: IKraken[] = await getCSVData(filePath) as IKraken[];
     const internalFormat: ITradeWithUSDRate[] = [];
-    for(const trade of data) {
+    for (const trade of data) {
         const pairs: string[] = [
             trade.pair.substr(0, 3),
             trade.pair.substr(trade.pair.length - 3),
@@ -41,7 +41,7 @@ export async function processData (filePath: string): Promise<ITradeWithUSDRate[
         switch (trade.type) {
             case KrakenType.BUY:
                 let USDTrade: boolean = false;
-                for(const pair in pairs) {
+                for (const pair in pairs) {
                     if (pair === "USD") {
                         USDTrade = true;
                     }
@@ -55,7 +55,7 @@ export async function processData (filePath: string): Promise<ITradeWithUSDRate[
                     date: new Date(trade.time),
                     USDRate: await getUSDRate(new Date(trade.time)),
                 });
-            break;
+                break;
             case KrakenType.SELL:
                 internalFormat.push({
                     boughtCurreny: pairs[1],
@@ -65,7 +65,7 @@ export async function processData (filePath: string): Promise<ITradeWithUSDRate[
                     date: new Date(trade.time),
                     USDRate: await getUSDRate(new Date(trade.time)) * parseFloat(trade.price) / parseFloat(trade.vol),
                 });
-            break;
+                break;
             default:
                 console.log("Unknown Order Type - " + trade["Order Number"]);
         }

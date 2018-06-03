@@ -1,5 +1,5 @@
-import { ITradeWithUSDRate, IHoldings, ICurrencyHolding, METHOD, ITradeWithGains } from "../types";
 import * as clone from "clone";
+import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from "../types";
 
 const FULL_YEAR_IN_MILLISECONDS: number = 31536000000;
 
@@ -13,7 +13,7 @@ export function calculateGains(holdings: IHoldings, trades: ITradeWithUSDRate[])
     let shortTermGain: number = 0;
     let longTermGain: number = 0;
     let newHoldings: IHoldings = clone(holdings);
-    for(const trade of trades) {
+    for (const trade of trades) {
         const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
         newHoldings = result.newHoldings;
         if (trade.boughtCurreny in newHoldings === false) {
@@ -35,9 +35,9 @@ export function calculateGains(holdings: IHoldings, trades: ITradeWithUSDRate[])
         }
     }
     return {
-        newHoldings: newHoldings,
-        longTermGain: longTermGain,
-        shortTermGain: shortTermGain,
+        newHoldings,
+        longTermGain,
+        shortTermGain,
     };
 }
 
@@ -46,11 +46,11 @@ export interface IGetCurrencyHolding {
     newHoldings: IHoldings;
 }
 
-export function getCurrenyHolding (holdings: IHoldings, currency: string, amount: number, method: METHOD = undefined): IGetCurrencyHolding {
+export function getCurrenyHolding(holdings: IHoldings, currency: string, amount: number, method: METHOD = undefined): IGetCurrencyHolding {
     holdings = clone(holdings);
     const currencyHolding: ICurrencyHolding[] = [];
     let amountUsed: number = amount;
-    while(amountUsed !== 0) {
+    while (amountUsed !== 0) {
         if (currency in holdings) {
             switch (method) {
                 case METHOD.LIFO:
@@ -60,7 +60,7 @@ export function getCurrenyHolding (holdings: IHoldings, currency: string, amount
                         currencyHolding.push({
                             amount: amountUsed,
                             rateInUSD: lastIn.rateInUSD,
-                            date: lastIn.date
+                            date: lastIn.date,
                         });
                         amountUsed = 0;
                     } else {
@@ -78,7 +78,7 @@ export function getCurrenyHolding (holdings: IHoldings, currency: string, amount
                         currencyHolding.push({
                             amount: amountUsed,
                             rateInUSD: firstIn.rateInUSD,
-                            date: firstIn.date
+                            date: firstIn.date,
                         });
                         amountUsed = 0;
                     } else {
@@ -86,7 +86,7 @@ export function getCurrenyHolding (holdings: IHoldings, currency: string, amount
                         currencyHolding.push(holdings[currency][0]);
                         holdings[currency].splice(0, 1);
                     }
-                break;
+                    break;
             }
             if (!holdings[currency].length) {
                 delete holdings[currency];
@@ -106,11 +106,10 @@ export function getCurrenyHolding (holdings: IHoldings, currency: string, amount
     };
 }
 
-
-function calculateGainPerTrade (internalFormat: ITradeWithUSDRate[], holdings: IHoldings): ITradeWithGains[] {
+function calculateGainPerTrade(internalFormat: ITradeWithUSDRate[], holdings: IHoldings): ITradeWithGains[] {
     let tempHoldings: IHoldings = clone(holdings);
     const finalFormat: ITradeWithGains[] = [];
-    for(const trade of internalFormat) {
+    for (const trade of internalFormat) {
         console.log(tempHoldings);
         const result: ICalculateGains = calculateGains(tempHoldings, [trade]);
         tempHoldings = result.newHoldings;

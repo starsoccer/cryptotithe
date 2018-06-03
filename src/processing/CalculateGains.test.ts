@@ -1,6 +1,6 @@
-import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from "./CalculateGains";
 import { mockHoldings, mockTradesWithUSDRate } from "../mock";
-import {ITradeWithUSDRate, IHoldings, ICurrencyHolding, METHOD} from "../types";
+import {ICurrencyHolding, IHoldings, ITradeWithUSDRate, METHOD} from "../types";
+import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from "./CalculateGains";
 
 describe("getCurrencyHolding LIFO", () => {
     test("One Holdings", () => {
@@ -11,13 +11,12 @@ describe("getCurrencyHolding LIFO", () => {
         expect("deductedHoldings" in result).toBeTruthy();
         expect("newHoldings" in result).toBeTruthy();
         let totalReduced: number = 0;
-        for(const deductedHolding of result.deductedHoldings) {
+        for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
         expect(totalReduced).toBe(1);
         expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
     });
-
 
     test("More then one Holdings", () => {
         const holdings: IHoldings = mockHoldings(1, 5);
@@ -27,7 +26,7 @@ describe("getCurrencyHolding LIFO", () => {
         expect("deductedHoldings" in result).toBeTruthy();
         expect("newHoldings" in result).toBeTruthy();
         let totalReduced: number = 0;
-        for(const deductedHolding of result.deductedHoldings) {
+        for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
         expect(totalReduced).toBe(1);
@@ -45,7 +44,7 @@ describe("getCurrencyHolding FIFO", () => {
         expect("deductedHoldings" in result).toBeTruthy();
         expect("newHoldings" in result).toBeTruthy();
         let totalReduced: number = 0;
-        for(const deductedHolding of result.deductedHoldings) {
+        for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
         expect(totalReduced).toBe(1);
@@ -60,13 +59,12 @@ describe("getCurrencyHolding FIFO", () => {
         expect("deductedHoldings" in result).toBeTruthy();
         expect("newHoldings" in result).toBeTruthy();
         let totalReduced: number = 0;
-        for(const deductedHolding of result.deductedHoldings) {
+        for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
         expect(totalReduced).toBe(1);
         expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
     });
-
 
     test("More then one Holdings", () => {
         const holdings: IHoldings = mockHoldings(1, 5);
@@ -76,7 +74,7 @@ describe("getCurrencyHolding FIFO", () => {
         expect("deductedHoldings" in result).toBeTruthy();
         expect("newHoldings" in result).toBeTruthy();
         let totalReduced: number = 0;
-        for(const deductedHolding of result.deductedHoldings) {
+        for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
         expect(totalReduced).toBe(1);
@@ -93,7 +91,7 @@ describe("getCurrencyHolding Overflow", () => {
         expect("deductedHoldings" in result).toBeTruthy();
         expect("newHoldings" in result).toBeTruthy();
         let totalReduced: number = 0;
-        for(const deductedHolding of result.deductedHoldings) {
+        for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
         expect(totalReduced).toBe(holdings[currency][0].amount + 1);
@@ -104,19 +102,18 @@ describe("getCurrencyHolding Overflow", () => {
         expect(Object.keys(result.newHoldings).length).toBe(0);
     });
 
-
     test("with multiple holdings", () => {
         const holdings: IHoldings = mockHoldings(1, 3);
         const currency: string = Object.keys(holdings)[0];
         let totalAmount: number = 1;
-        for(const holding of holdings[currency]) {
+        for (const holding of holdings[currency]) {
             totalAmount += holding.amount;
         }
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, totalAmount);
         expect("deductedHoldings" in result).toBeTruthy();
         expect("newHoldings" in result).toBeTruthy();
         let totalReduced: number = 0;
-        for(const deductedHolding of result.deductedHoldings) {
+        for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
         expect(totalReduced).toBe(totalAmount);
@@ -269,17 +266,5 @@ describe("calculateGains", () => {
         expect(result.shortTermGain).toBe((trades[0].rate - holdings[currency][0].cost) * trades[0].amountSold);
     });
     */
-
-
-
-
-
-
-
-
-
-
-
-
 
 });

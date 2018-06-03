@@ -4,7 +4,7 @@ interface ICryptoCompareResponse {
     USD: number;
 }
 
-export async function getUSDRate (date: Date): Promise<number> {
+export async function getUSDRate(date: Date): Promise<number> {
     const data: string[] = [
         `fsym=BTC`,
         "tsym=USD",

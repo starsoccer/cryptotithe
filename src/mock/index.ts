@@ -1,9 +1,9 @@
-import { ITrade, ITradeWithUSDRate, IHoldings, ICurrencyHolding, METHOD } from "../types";
 import * as faker from "faker";
+import { ICurrencyHolding, IHoldings, ITrade, ITradeWithUSDRate, METHOD } from "../types";
 
-export function mockHoldings (
-    currencies: number, holdingsPerCurrency: number, startingDate: Date = new Date(1/1/2010), endingDate: Date = new Date()
-):IHoldings {
+export function mockHoldings(
+    currencies: number, holdingsPerCurrency: number, startingDate: Date = new Date(1 / 1 / 2010), endingDate: Date = new Date(),
+): IHoldings {
     const holdings: IHoldings = {};
     for (let i: number = 0; i < currencies; i++) {
         const toBeHoldings: ICurrencyHolding[] = [];
@@ -22,9 +22,9 @@ export function mockHoldings (
 export function mockTrades(amount: number, startingDate: Date, currentHoldings: IHoldings, allowOverflow: boolean): ITradeWithUSDRate[] {
     const trades: ITradeWithUSDRate[] = [];
     const currencies: string[] = Object.keys(currentHoldings);
-    for(const currency of currencies) {
+    for (const currency of currencies) {
         let totalHoldings: number = 0;
-        for(const holding of currentHoldings[currency]) {
+        for (const holding of currentHoldings[currency]) {
             totalHoldings += holding.amount;
         }
 
@@ -43,10 +43,10 @@ export function mockTrades(amount: number, startingDate: Date, currentHoldings: 
     return trades;
 }
 
-export function mockTradesWithUSDRate (
+export function mockTradesWithUSDRate(
     amount: number, startingDate: Date, currentHoldings: IHoldings, allowOverflow: boolean): ITradeWithUSDRate[] {
     const trades: ITradeWithUSDRate[] = mockTrades(amount, startingDate, currentHoldings, allowOverflow) as ITradeWithUSDRate[];
-    for (let trade of trades) {
+    for (const trade of trades) {
         trade.USDRate = faker.random.number();
     }
     return trades;

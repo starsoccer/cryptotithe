@@ -1,12 +1,12 @@
-import { getCSVData } from "../";
 import path = require("path"); // path.resolve(__dirname, "settings.json"
-import { ITradeWithUSDRate, ITradeWithGains, IHoldings, ICurrencyHolding, METHOD } from "../../types";
+import { getCSVData } from "../";
 import { calculateGains } from "../../processing/CalculateGains";
+import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from "../../types";
 import { getUSDRate } from "../getUSDRate";
 
 enum PoloniexOrderType {
     BUY = "BUY",
-    SELL = "SELL"
+    SELL = "SELL",
 }
 
 interface IPoloniex {
@@ -23,10 +23,10 @@ interface IPoloniex {
     "Quote Total Less Fee": string;
 }
 
-export async function processData (filePath: string): Promise<ITradeWithUSDRate[]> {
+export async function processData(filePath: string): Promise<ITradeWithUSDRate[]> {
     const data: IPoloniex[] = await getCSVData(filePath) as IPoloniex[];
     const internalFormat: ITradeWithUSDRate[] = [];
-    for(const trade of data) {
+    for (const trade of data) {
         const pair: string[] = trade.Market.split("/");
         switch (trade.Type) {
             case PoloniexOrderType.BUY:
@@ -38,7 +38,7 @@ export async function processData (filePath: string): Promise<ITradeWithUSDRate[
                     date: new Date(trade.Date),
                     USDRate: await getUSDRate(new Date(trade.Date)),
                 });
-            break;
+                break;
             case PoloniexOrderType.SELL:
                 internalFormat.push({
                     boughtCurreny: pair[1],
@@ -48,7 +48,7 @@ export async function processData (filePath: string): Promise<ITradeWithUSDRate[
                     date: new Date(trade.Date),
                     USDRate: await getUSDRate(new Date(trade.Date)) * parseFloat(trade.Price) / parseFloat(trade.Amount),
                 });
-            break;
+                break;
             default:
                 console.log("Unknown Order Type - " + trade["Order Number"]);
         }

@@ -1,9 +1,9 @@
-import { ISavedData, ITradeWithUSDRate, IHoldings, EXCHANGES } from "../types";
+import { EXCHANGES, IHoldings, ISavedData, ITradeWithUSDRate } from "../types";
 
 let savedData: ISavedData = {
     trades: [],
     holdings: {},
-    savedDate: undefined
+    savedDate: undefined,
 };
 try {
     savedData = require("./data.json");
@@ -18,7 +18,7 @@ function onSubmit(): void {
     dialog.showOpenDialog({properties: ["openFile"]}, fileSelected);
 }
 
-function fileSelected (filePaths: string[]): void {
+function fileSelected(filePaths: string[]): void {
     const exchange: keyof typeof EXCHANGES = (document.getElementById("type") as HTMLSelectElement).value as keyof typeof EXCHANGES;
     const processData: Function = require("./src/parsers").processData;
     const processedData: any = processData(exchange, filePaths[0]);
@@ -27,7 +27,7 @@ function fileSelected (filePaths: string[]): void {
     }
 }
 
-async function save (): Promise<void> {
+async function save(): Promise<void> {
     const save: Function = require("./src/save").save;
     try {
         await save(holdings, trades);
