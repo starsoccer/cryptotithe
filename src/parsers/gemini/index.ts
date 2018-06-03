@@ -87,10 +87,9 @@ export async function processData(): Promise<ITradeWithUSDRate[]> {
                     break;
                 case GeminiOrderType.Credit:
                 case GeminiOrderType.Debit:
-                    console.log("Credit/Debit - Skipping");
-                    break;
+                    throw new Error("Credit/Debit - Skipping");
                 default:
-                    console.log(`Unknown Order Type - ${trade["Order ID"]} - ${trade["Trade ID"]}`);
+                    throw new Error(`Unknown Order Type - ${trade["Order ID"]} - ${trade["Trade ID"]}`);
             }
         }
     }

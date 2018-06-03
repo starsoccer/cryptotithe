@@ -44,11 +44,12 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     amountSold: parseFloat(trade.Quantity),
                     rate: parseFloat(trade.Quantity) / parseFloat(trade.Price),
                     date: new Date(trade.Closed),
-                    USDRate: await getUSDRate(new Date(trade.Closed)) * parseFloat(trade.Price) / parseFloat(trade.Quantity),
+                    USDRate: await getUSDRate(new Date(trade.Closed)) *
+                        parseFloat(trade.Price) / parseFloat(trade.Quantity),
                 });
                 break;
             default:
-                console.log("Unknown Order Type - " + trade.OrderUuid);
+                throw new Error("Unknown Order Type - " + trade.OrderUuid);
         }
     }
     return internalFormat;

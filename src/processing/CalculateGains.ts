@@ -46,7 +46,9 @@ export interface IGetCurrencyHolding {
     newHoldings: IHoldings;
 }
 
-export function getCurrenyHolding(holdings: IHoldings, currency: string, amount: number, method: METHOD = undefined): IGetCurrencyHolding {
+export function getCurrenyHolding(
+    holdings: IHoldings, currency: string, amount: number, method?: METHOD,
+): IGetCurrencyHolding {
     holdings = clone(holdings);
     const currencyHolding: ICurrencyHolding[] = [];
     let amountUsed: number = amount;
@@ -110,7 +112,6 @@ function calculateGainPerTrade(internalFormat: ITradeWithUSDRate[], holdings: IH
     let tempHoldings: IHoldings = clone(holdings);
     const finalFormat: ITradeWithGains[] = [];
     for (const trade of internalFormat) {
-        console.log(tempHoldings);
         const result: ICalculateGains = calculateGains(tempHoldings, [trade]);
         tempHoldings = result.newHoldings;
         finalFormat.push({

@@ -1,49 +1,55 @@
 {
-  "name": "cryptotithe",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest",
-    "start": "npm run build && electron .",
-    "build": "tsc -p configs/tsconfig.client.json && tsc -p configs/tsconfig.node.json",
-    "tslint": "tslint 'src/**/*.ts' -c ./configs/tslint.json --fix",
-    "prod-test": "npm run tslint && npm run test && npm run start"
-  },
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/faker": "^4.1.2",
-    "@types/jest": "^22.2.3",
-    "electron": "^2.0.2",
-    "faker": "^4.1.0",
-    "jest": "^23.0.0",
-    "ts-jest": "^22.4.6",
-    "typescript": "^2.8.3"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+    "name": "cryptotithe",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest",
+        "start": "npm run build && electron .",
+        "build": "tsc -p configs/tsconfig.json",
+        "tslint": "tslint 'src/**/*.ts' -c ./configs/tslint.json --fix",
+        "prod-test": "npm run tslint && npm run test && npm run start"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
-  },
-  "dependencies": {
-    "@types/clone": "^0.1.30",
-    "@types/csv2json": "^1.4.0",
-    "@types/csvtojson": "^1.1.5",
-    "@types/got": "^8.3.1",
-    "clone": "^2.1.1",
-    "csv2json": "^1.4.2",
-    "csvtojson": "^1.1.12",
-    "got": "^8.3.1",
-    "yet-another-electron-pug": "^1.0.0"
-  }
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/faker": "^4.1.2",
+        "@types/jest": "^22.2.3",
+        "@types/node": "^10.3.0",
+        "electron": "^2.0.2",
+        "faker": "^4.1.0",
+        "jest": "^23.0.0",
+        "ts-jest": "^22.4.6",
+        "typescript": "^2.9"
+    },
+    "jest": {
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json",
+            "node"
+        ],
+        "globals": {
+            "ts-jest": {
+                "tsConfigFile": "./configs/tsconfig.json"
+            }
+        }
+    },
+    "dependencies": {
+        "@types/clone": "^0.1.30",
+        "@types/csv2json": "^1.4.0",
+        "@types/csvtojson": "^1.1.5",
+        "@types/got": "^8.3.1",
+        "clone": "^2.1.1",
+        "csv2json": "^1.4.2",
+        "csvtojson": "^1.1.12",
+        "got": "^8.3.1",
+        "yet-another-electron-pug": "^1.0.0"
+    }
 }

@@ -7,7 +7,7 @@ interface IGetCSVData {
 }
 
 export async function getCSVData(filePath: string): Promise<any> {
-    return new Promise( function(resolve: Function, reject: Function): any {
+    return new Promise((resolve: (data: IGetCSVData[][]) => void, reject: (Error) => void): any => {
         const promises: Array<Promise<IGetCSVData[]>> = [];
         csv().fromFile(filePath)
           .on("json", (converted) => promises.push(Promise.resolve(converted)))
@@ -20,17 +20,16 @@ export async function getCSVData(filePath: string): Promise<any> {
     });
 }
 
-export async function processData(exchange: keyof typeof EXCHANGES, filePath: string): Promise<string> {
-    let processData: Function;
+export async function processData(exchange: keyof typeof EXCHANGES, filePath: string): Promise<any> {
+    let processExchangeData: any;
     switch (exchange) {
         case "BITTREX":
-            processData = require("./bittrex").processData;
+            processExchangeData = require("./bittrex").processData;
             break;
         case "GEMINI":
-            processData = require("./gemini").processData;
+            processExchangeData = require("./gemini").processData;
             break;
         default:
-            console.log(`Unknown Exchange - ${exchange}`);
-            return;
+            throw new Error(`Unknown Exchange - ${exchange}`);
     }
 }

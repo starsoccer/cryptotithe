@@ -67,7 +67,7 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                 });
                 break;
             default:
-                console.log("Unknown Order Type - " + trade["Order Number"]);
+                throw new Error("Unknown Order Type - " + trade["Order Number"]);
         }
     }
     return internalFormat;

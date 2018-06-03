@@ -46,11 +46,12 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     amountSold: Math.abs(parseFloat(trade["Quote Total Less Fee"])),
                     rate: parseFloat(trade.Amount) * parseFloat(trade.Price),
                     date: new Date(trade.Date),
-                    USDRate: await getUSDRate(new Date(trade.Date)) * parseFloat(trade.Price) / parseFloat(trade.Amount),
+                    USDRate: await getUSDRate(new Date(trade.Date))
+                         * parseFloat(trade.Price) / parseFloat(trade.Amount),
                 });
                 break;
             default:
-                console.log("Unknown Order Type - " + trade["Order Number"]);
+                throw new Error("Unknown Order Type - " + trade["Order Number"]);
         }
     }
     return internalFormat;

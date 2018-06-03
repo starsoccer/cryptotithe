@@ -18,10 +18,10 @@ export async function getUSDRate(date: Date): Promise<number> {
             const result: ICryptoCompareResponse = JSON.parse(response.body);
             return result.USD;
         } catch (ex) {
-            console.log("Error parsing JSON");
+            throw new Error("Error parsing JSON");
         }
     } else {
-        console.log("Invalid Response");
+        throw new Error("Invalid Response");
     }
     return undefined;
 }

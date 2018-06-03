@@ -1,9 +1,11 @@
-import { EXCHANGES, IHoldings, ISavedData, ITradeWithUSDRate } from "../types";
+import path = require("path");
+import { save } from "./src/save";
+import { EXCHANGES, IHoldings, ISavedData, ITradeWithUSDRate } from "./src/types";
 
 let savedData: ISavedData = {
-    trades: [],
     holdings: {},
     savedDate: undefined,
+    trades: [],
 };
 try {
     savedData = require("./data.json");
@@ -19,16 +21,17 @@ function onSubmit(): void {
 }
 
 function fileSelected(filePaths: string[]): void {
-    const exchange: keyof typeof EXCHANGES = (document.getElementById("type") as HTMLSelectElement).value as keyof typeof EXCHANGES;
-    const processData: Function = require("./src/parsers").processData;
+    const exchange: keyof typeof EXCHANGES = (document.getElementById("type") as HTMLSelectElement)
+        .value as keyof typeof EXCHANGES;
+    const processData: (exchange: keyof typeof EXCHANGES, path: string) => any = require("./src/parsers").processData;
     const processedData: any = processData(exchange, filePaths[0]);
     if (processedData) {
         // do something
     }
 }
 
-async function save(): Promise<void> {
-    const save: Function = require("./src/save").save;
+async function saver(): Promise<void> {
+    // const save = require('/src/save').save;
     try {
         await save(holdings, trades);
     } catch (err) {
