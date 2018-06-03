@@ -147,7 +147,6 @@ describe("calculateGains", () => {
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) * trades[0].amountSold);
     });
-    /*
 
     test("1 holding, 1 trade, short term, overflow", () => {
         const holdings = mockHoldings(1, 1, new Date("1/1/2018"));
@@ -157,8 +156,8 @@ describe("calculateGains", () => {
         const result = calculateGains(holdings, trades);
 
         expect(result.longTermGain).toBe(0);
-        expect(result.shortTermGain).toBe((trades[0].rate - holdings[currency][0].cost)
-            * holdings[currency][0].amount + trades[0].rate * (trades[0].amountSold - holdings[currency][0].amount)
+        expect(result.shortTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD)
+            * holdings[currency][0].amount + trades[0].USDRate * (trades[0].amountSold - holdings[currency][0].amount),
         );
     });
 
@@ -170,7 +169,7 @@ describe("calculateGains", () => {
         const result = calculateGains(holdings, trades);
 
         expect(result.shortTermGain).toBe(0);
-        expect(result.longTermGain).toBe((trades[0].rate - holdings[currency][0].cost) * trades[0].amountSold);
+        expect(result.longTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) * trades[0].amountSold);
     });
 
     test("1 holding, 1 trade, long term, overflow", () => {
@@ -180,8 +179,9 @@ describe("calculateGains", () => {
 
         const result = calculateGains(holdings, trades);
 
-        expect(result.shortTermGain).toBe(trades[0].rate * (trades[0].amountSold - holdings[currency][0].amount));
-        expect(result.longTermGain).toBe((trades[0].rate - holdings[currency][0].cost) * holdings[currency][0].amount);
+        expect(result.shortTermGain).toBe(trades[0].USDRate * (trades[0].amountSold - holdings[currency][0].amount));
+        expect(result.longTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) *
+            holdings[currency][0].amount);
     });
 
     test("1 holding, multiple trades, short term, no overflow", () => {
@@ -194,8 +194,8 @@ describe("calculateGains", () => {
         expect(result.longTermGain).toBe(0);
 
         let estimatedGain = 0;
-        for(const trade of trades) {
-            estimatedGain += (trade.rate - holdings[currency][0].cost) * trade.amountSold;
+        for (const trade of trades) {
+            estimatedGain += (trade.USDRate - holdings[currency][0].rateInUSD) * trade.amountSold;
         }
 
         expect(result.shortTermGain).toBe(estimatedGain);
@@ -211,9 +211,9 @@ describe("calculateGains", () => {
         expect(result.longTermGain).toBe(0);
 
         let estimatedGain = 0;
-        for(const trade of trades) {
-            estimatedGain += (trade.rate - holdings[currency][0].cost)
-            * holdings[currency][0].amount + trade.rate * (trade.amountSold - holdings[currency][0].amount)
+        for (const trade of trades) {
+            estimatedGain += (trade.USDRate - holdings[currency][0].rateInUSD)
+            * holdings[currency][0].amount + trade.USDRate * (trade.amountSold - holdings[currency][0].amount);
         }
 
         expect(result.shortTermGain).toBe(estimatedGain);
@@ -229,8 +229,8 @@ describe("calculateGains", () => {
         expect(result.shortTermGain).toBe(0);
 
         let estimatedGain = 0;
-        for(const trade of trades) {
-            estimatedGain += (trade.rate - holdings[currency][0].cost) * trade.amountSold;
+        for (const trade of trades) {
+            estimatedGain += (trade.USDRate - holdings[currency][0].rateInUSD) * trade.amountSold;
         }
 
         expect(result.longTermGain).toBe(estimatedGain);
@@ -244,9 +244,9 @@ describe("calculateGains", () => {
         const result = calculateGains(holdings, trades);
 
         let estimatedGain = 0;
-        for(const trade of trades) {
-            estimatedGain += (trade.rate - holdings[currency][0].cost) *
-                holdings[currency][0].amount + trade.rate * (trade.amountSold - holdings[currency][0].amount)
+        for (const trade of trades) {
+            estimatedGain += (trade.USDRate - holdings[currency][0].rateInUSD) *
+                holdings[currency][0].amount + trade.USDRate * (trade.amountSold - holdings[currency][0].amount);
         }
 
         expect(result.longTermGain + result.shortTermGain).toBe(estimatedGain);
@@ -257,14 +257,83 @@ describe("calculateGains", () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, false);
 
-        console.log(holdings);
-        console.log(trades);
+        const result = calculateGains(holdings, trades);
+
+        let estimatedGain = 0;
+        let amountLeft = trades[0].amountSold;
+        for (const holding of holdings[currency]) {
+            if (amountLeft > 0) {
+                const amountToDeduct = amountLeft > holding.amount ? holding.amount : amountLeft;
+                amountLeft -= amountToDeduct;
+                estimatedGain += (trades[0].USDRate - holding.rateInUSD) * amountToDeduct;
+            }
+        }
+
+        expect(result.longTermGain).toBe(0);
+        expect(result.shortTermGain).toBe(estimatedGain);
+    });
+
+    test("multiple holdings, 1 trade, short term, overflow", () => {
+        const holdings = mockHoldings(1, 5, new Date("1/1/2018"));
+        const currency = Object.keys(holdings)[0];
+        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
+        let estimatedGain = 0;
+        let amountLeft = trades[0].amountSold;
+        for (const holding of holdings[currency]) {
+            if (amountLeft > 0) {
+                const amountToDeduct = amountLeft > holding.amount ? holding.amount : amountLeft;
+                amountLeft -= amountToDeduct;
+                estimatedGain += (trades[0].USDRate - holding.rateInUSD) * amountToDeduct;
+            }
+        }
+
         expect(result.longTermGain).toBe(0);
-        expect(result.shortTermGain).toBe((trades[0].rate - holdings[currency][0].cost) * trades[0].amountSold);
+        expect(result.shortTermGain).toBe(estimatedGain + amountLeft * trades[0].USDRate);
     });
-    */
+
+    test("multiple holdings, 1 trade, long term, no overflow", () => {
+        const holdings = mockHoldings(1, 5, new Date("1/1/2015"), new Date("1/1/2016"));
+        const currency = Object.keys(holdings)[0];
+        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, false);
+
+        const result = calculateGains(holdings, trades);
+
+        let estimatedGain = 0;
+        let amountLeft = trades[0].amountSold;
+        for (const holding of holdings[currency]) {
+            if (amountLeft > 0) {
+                const amountToDeduct = amountLeft > holding.amount ? holding.amount : amountLeft;
+                amountLeft -= amountToDeduct;
+                estimatedGain += (trades[0].USDRate - holding.rateInUSD) * amountToDeduct;
+            }
+        }
+
+        expect(result.longTermGain).toBe(estimatedGain);
+        expect(result.shortTermGain).toBe(0);
+    });
+
+    test("multiple holdings, 1 trade, long term, overflow", () => {
+        const holdings = mockHoldings(1, 5, new Date("1/1/2015"), new Date("1/1/2016"));
+        const currency = Object.keys(holdings)[0];
+        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, true);
+
+        const result = calculateGains(holdings, trades);
+
+        let estimatedGain = 0;
+        let amountLeft = trades[0].amountSold;
+        for (const holding of holdings[currency]) {
+            if (amountLeft > 0) {
+                const amountToDeduct = amountLeft > holding.amount ? holding.amount : amountLeft;
+                amountLeft -= amountToDeduct;
+                estimatedGain += (trades[0].USDRate - holding.rateInUSD) * amountToDeduct;
+            }
+        }
+
+        expect(result.longTermGain).toBe(estimatedGain);
+        expect(result.shortTermGain).toBe(amountLeft * trades[0].USDRate);
+    });
 
 });
