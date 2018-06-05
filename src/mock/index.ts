@@ -38,7 +38,7 @@ export function mockTrades(
                 boughtCurreny: faker.random.word().toUpperCase(),
                 soldCurrency: faker.random.arrayElement(currencies),
                 amountSold: (allowOverflow ?
-                    totalHoldings + faker.random.number() : faker.random.number(totalHoldings / amount)),
+                    totalHoldings + faker.random.number() : (totalHoldings - faker.random.number()) / amount),
                 rate: faker.random.number(),
                 date: faker.date.between(startingDate, new Date()),
                 USDRate: faker.random.number(),
