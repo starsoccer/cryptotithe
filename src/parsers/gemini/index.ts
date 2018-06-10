@@ -1,7 +1,5 @@
-import path = require('path'); // path.resolve(__dirname, "settings.json"
 import { getCSVData } from '../';
-import { calculateGains } from '../../processing/CalculateGains';
-import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import { EXCHANGES, ITradeWithUSDRate } from '../../types';
 import { getUSDRate } from '../getUSDRate';
 
 enum GeminiOrderType {
@@ -50,8 +48,8 @@ interface ITraded {
 function getCurrenciesTraded(trade: IGemini): ITraded {
     const keys: string[] = Object.keys(trade);
     const currencies: ITraded = {
-        bought: undefined,
-        sold: undefined,
+        bought: '',
+        sold: '',
     };
     for (const key in keys) {
         if (key.indexOf(' Amount') && trade[key] !== undefined && trade[key] !== '') {

@@ -1,5 +1,5 @@
 import { mockHoldings, mockTradesWithUSDRate } from '../mock';
-import {ICurrencyHolding, IHoldings, ITradeWithUSDRate, METHOD} from '../types';
+import { IHoldings, ITradeWithUSDRate, METHOD} from '../types';
 import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from './CalculateGains';
 
 describe('getCurrencyHolding LIFO', () => {
@@ -146,7 +146,6 @@ describe('calculateGains 1 currency manual', () => {
 
     test('structured unchanged', () => {
         const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
-        const currency: string = Object.keys(holdings)[0];
         const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
         const result: ICalculateGains = calculateGains(holdings, trades);
 
@@ -355,7 +354,6 @@ describe('calculateGains 1 currency manual', () => {
 
     test('multiple holdings, multiple trade, short term, no overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
-        const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
@@ -368,7 +366,6 @@ describe('calculateGains 1 currency manual', () => {
 
     test('multiple holdings, multiple trade, short term, overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
-        const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
@@ -381,7 +378,6 @@ describe('calculateGains 1 currency manual', () => {
 
     test('multiple holdings, multiple trade, long term, no overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
-        const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
@@ -394,7 +390,6 @@ describe('calculateGains 1 currency manual', () => {
 
     test('multiple holdings, multiple trade, long term, overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
-        const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
@@ -429,7 +424,6 @@ describe('calculateGains 1/multiple currencies automated', () => {
                                 (shortTerm ? new Date('1/1/2018') : new Date('1/1/2015')),
                                 (shortTerm ? new Date('1/31/2018') : new Date('1/1/2016')),
                             );
-                            const currency = Object.keys(holdings)[0];
                             const trades = mockTradesWithUSDRate(
                                 tradeCount, new Date('2/2/2018'), holdings, overflowType,
                             );

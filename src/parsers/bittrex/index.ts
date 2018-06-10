@@ -1,7 +1,5 @@
-import path = require('path'); // path.resolve(__dirname, "settings.json"
 import { getCSVData } from '../';
-import { calculateGains } from '../../processing/CalculateGains';
-import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import { EXCHANGES, ITradeWithUSDRate } from '../../types';
 import { getUSDRate } from '../getUSDRate';
 
 enum BittrexOrderType {

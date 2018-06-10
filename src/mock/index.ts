@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import { ICurrencyHolding, IHoldings, ITrade, ITradeWithUSDRate, METHOD } from '../types';
+import { ICurrencyHolding, IHoldings, ITradeWithUSDRate, EXCHANGES } from '../types';
 
 export function mockHoldings(
     currencies: number,
@@ -42,6 +42,8 @@ export function mockTrades(
                 rate: faker.random.number(),
                 date: faker.date.between(startingDate, new Date()),
                 USDRate: faker.random.number(),
+                id: faker.random.words(5),
+                exchange: faker.random.objectElement(EXCHANGES) as EXCHANGES,
             });
         }
     }

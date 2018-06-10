@@ -67,7 +67,10 @@ export function getCurrenyHolding(
                         amountUsed = 0;
                     } else {
                         amountUsed = amountUsed - lastIn.amount;
-                        currencyHolding.push(holdings[currency].pop());
+                        const popped = holdings[currency].pop();
+                        if (popped !== undefined) {
+                            currencyHolding.push(popped);
+                        }
                     }
                     break;
                 case METHOD.HCFO:
@@ -108,7 +111,7 @@ export function getCurrenyHolding(
     };
 }
 
-function calculateGainPerTrade(internalFormat: ITradeWithUSDRate[], holdings: IHoldings): ITradeWithGains[] {
+export function calculateGainPerTrade(internalFormat: ITradeWithUSDRate[], holdings: IHoldings): ITradeWithGains[] {
     let tempHoldings: IHoldings = clone(holdings);
     const finalFormat: ITradeWithGains[] = [];
     for (const trade of internalFormat) {

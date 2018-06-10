@@ -1,7 +1,5 @@
-import path = require('path'); // path.resolve(__dirname, "settings.json"
 import { getCSVData } from '../';
-import { calculateGains } from '../../processing/CalculateGains';
-import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import { EXCHANGES, ITradeWithUSDRate } from '../../types';
 import { getUSDRate } from '../getUSDRate';
 
 enum KrakenType {
@@ -9,7 +7,7 @@ enum KrakenType {
     SELL = 'sell',
 }
 
-enum KrakenxOrderType {
+enum KrakenOrderType {
     LIMIT = 'limit',
     MARKET = 'market',
 }
@@ -20,7 +18,7 @@ interface IKraken {
     pair: string;
     time: string;
     type: string;
-    ordertype: string;
+    ordertype: KrakenOrderType;
     price: string;
     cost: string;
     fee: string;
@@ -45,6 +43,9 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     if (pair === 'USD') {
                         USDTrade = true;
                     }
+                }
+                if (USDTrade) {
+                    // do something
                 }
 
                 internalFormat.push({

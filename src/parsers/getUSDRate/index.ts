@@ -23,5 +23,4 @@ export async function getUSDRate(date: Date): Promise<number> {
     } else {
         throw new Error('Invalid Response');
     }
-    return undefined;
 }
