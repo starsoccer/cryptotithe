@@ -9,7 +9,7 @@
         "object-literal-sort-keys": false,
         "quotemark": [true, "single"],
         "object-literal-key-quotes": [true, "as-needed"],
-        "class-name": true
+        "class-name": false
     },
     "rulesDirectory": []
 }
