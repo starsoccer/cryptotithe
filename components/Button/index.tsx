@@ -1,6 +1,5 @@
 // const React = require('react');
 import * as React from 'react';
-import { r } from '../../src/react';
 export interface IButtonProps {
     className?: string;
     label: string;

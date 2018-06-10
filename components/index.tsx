@@ -1,6 +1,5 @@
 // const React = require('react');
 import * as React from 'react';
-import { r } from '../src/react';
 import { save } from '../src/save';
 import { EXCHANGES, IHoldings, ITradeWithUSDRate } from '../src/types';
 import { Button } from './Button';
