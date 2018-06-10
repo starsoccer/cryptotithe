@@ -30,13 +30,13 @@ function createWindow(): void {
     mainWindow.loadFile('index.pug');
     if (process.env.NODE_ENV !== 'production') {
         pugOptions.injectJS = 'require(\'electron-react-devtools\').install();';
-        setTimeout(() => {
+        mainWindow.once('ready-to-show', () => {
             mainWindow.reload();
             mainWindow.once('ready-to-show', () => {
                 mainWindow.show();
                 mainWindow.webContents.openDevTools();
             });
-        }, 550);
+        });
     } else {
         mainWindow.once('ready-to-show', () => {
             mainWindow.show();
