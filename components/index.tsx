@@ -3,6 +3,7 @@ import * as React from 'react';
 import { r } from '../src/react';
 import { save } from '../src/save';
 import { EXCHANGES, IHoldings, ISavedData, ITradeWithUSDRate } from '../src/types';
+import { Button } from './Button';
 export interface IrootElementProps {
     trades: ITradeWithUSDRate[];
     holdings: IHoldings;
@@ -11,22 +12,22 @@ export interface IrootElementProps {
 export class rootElement extends React.Component<IrootElementProps> {
     public render() {
         return (
-            r('div', {},
-                r('h1', { className: 'tc' }, 'Crypto Tithe'),
-                r('hr', {}),
-                r('div', { className: 'center tc' },
-                    r('label', { htmlFor: 'type', className: 'pr2' }, 'Import Type'),
-                    r('select', { name: 'type', id: 'type' },
-                        Object.keys(EXCHANGES).map((key) => r(
-                            'option', { key, value: key }, EXCHANGES[key],
-                        )),
-                    ),
-                ),
-                r('div', { className: 'flex justify-around pt2' },
-                    r('button', { onClick: onSubmit }, 'Process Data'),
-                    r('button', { onClick: saveData }, 'Save'),
-                ),
-            )
+            <div>
+                <h1 className='tc'>Crypto Tithe</h1>
+                <hr />
+                <div className='center tc'>
+                    <label htmlFor='type' className='pr2'>Import Type</label>
+                    <select name='type' id='type'>
+                        {Object.keys(EXCHANGES).map((key) =>
+                            <option key={key} value={key}>{EXCHANGES[key]}</option>,
+                        )}
+                    </select>
+                </div>
+                <div className='flex justify-around pt2'>
+                    <Button onClick={onSubmit} label='Process Data'/>
+                    <Button onClick={saveData} label='Save'/>
+                </div>
+            </div>
         );
     }
 }
