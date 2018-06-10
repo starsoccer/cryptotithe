@@ -4,6 +4,7 @@ import { processData } from '../src/parsers';
 import { save } from '../src/save';
 import { EXCHANGES, IHoldings, ITradeWithUSDRate } from '../src/types';
 import { Button } from './Button';
+import { Loader } from './Loader';
 import { TradesTable } from './TradesTable';
 export interface IAppProps {
     trades: ITradeWithUSDRate[];
@@ -12,6 +13,7 @@ export interface IAppProps {
 
 interface IAppState {
     trades: ITradeWithUSDRate[];
+    processing: boolean;
     holdings: IHoldings;
 }
 
@@ -21,10 +23,12 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         this.state = {
             trades: this.props.trades,
             holdings: this.props.holdings,
+            processing: false,
         };
     }
 
     public onSubmit = async (): Promise<void> => {
+        this.setState({processing: true});
         const { dialog } = require('electron').remote;
         const filePaths = await dialog.showOpenDialog({properties: ['openFile']});
         const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
@@ -33,6 +37,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         if (processedData) {
             this.setState({
                 trades: processedData,
+                processing: false,
             });
         }
     }
@@ -62,7 +67,10 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                     <Button onClick={this.onSubmit} label='Process Data'/>
                     <Button onClick={this.saveData} label='Save'/>
                 </div>
-                <TradesTable trades={this.state.trades}/>
+                {this.state.trades.length > 0 && <TradesTable trades={this.state.trades}/>}
+                {this.state.trades.length === 0 && this.state.processing &&
+                    <Loader />
+                }
             </div>
         );
     }
