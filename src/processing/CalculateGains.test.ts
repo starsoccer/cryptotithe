@@ -125,7 +125,24 @@ describe("getCurrencyHolding Overflow", () => {
     });
 });
 
-describe("calculateGains", () => {
+function calculateGainsOneAtATime(holdings: IHoldings, trades: ITradeWithUSDRate[]) {
+    let shortTermGain = 0;
+    let longTermGain = 0;
+    for (const trade of trades) {
+        // Since we know 1 trade at a time returns the right result this checks that doing
+        // each one manually equals the same thing as putting them all in at once.
+        const output = calculateGains(holdings, [trade]);
+        holdings = output.newHoldings;
+        shortTermGain += output.shortTermGain;
+        longTermGain += output.longTermGain;
+    }
+    return {
+        shortTerm: shortTermGain,
+        longTerm: longTermGain,
+    };
+}
+
+describe("calculateGains 1 currency manual", () => {
 
     test("structured unchanged", () => {
         const holdings: IHoldings = mockHoldings(1, 1, new Date("1/1/2018"));
@@ -336,23 +353,6 @@ describe("calculateGains", () => {
         expect(result.shortTermGain).toBe(amountLeft * trades[0].USDRate);
     });
 
-    function calculateGainsOneAtATime(holdings: IHoldings, trades: ITradeWithUSDRate[]) {
-        let shortTermGain = 0;
-        let longTermGain = 0;
-        for (const trade of trades) {
-            // Since we know 1 trade at a time returns the right result this checks that doing
-            // each one manually equals the same thing as putting them all in at once.
-            const output = calculateGains(holdings, [trade]);
-            holdings = output.newHoldings;
-            shortTermGain += output.shortTermGain;
-            longTermGain += output.longTermGain;
-        }
-        return {
-            shortTerm: shortTermGain,
-            longTerm: longTermGain,
-        };
-    }
-
     test("multiple holdings, multiple trade, short term, no overflow", () => {
         const holdings = mockHoldings(1, 5, new Date("1/1/2018"));
         const currency = Object.keys(holdings)[0];
@@ -404,5 +404,46 @@ describe("calculateGains", () => {
         expect(Math.round(result.longTermGain)).toBe(Math.round(oneAtATimeGains.longTerm));
         expect(Math.round(result.shortTermGain)).toBe(Math.round(oneAtATimeGains.shortTerm));
     });
+});
 
+describe("calculateGains 1/multiple currencies automated", () => {
+    const testTypes = {
+        currenciesCount: [1, 5],
+        holdingsCount: [1, 5],
+        tradesCount: [1, 5],
+        shortTermTypes: [true, false],
+        overflowTypes: [true, false],
+    };
+
+    for (const currencyCount of testTypes.currenciesCount) {
+        for (const holdingCount of testTypes.holdingsCount) {
+            for (const tradeCount of testTypes.tradesCount) {
+                for (const shortTerm of testTypes.shortTermTypes) {
+                    for (const overflowType of testTypes.overflowTypes) {
+                        const testName = `${currencyCount} currencies, ${holdingCount} holding, ${tradeCount} trade, ` +
+                            `${shortTerm ? "Short" : "Long"} term, ${overflowType ? "" : "no"} overflow`;
+                        test(testName, () => {
+                            const holdings = mockHoldings(
+                                currencyCount,
+                                holdingCount,
+                                (shortTerm ? new Date("1/1/2018") : new Date("1/1/2015")),
+                                (shortTerm ? new Date("1/31/2018") : new Date("1/1/2016")),
+                            );
+                            const currency = Object.keys(holdings)[0];
+                            const trades = mockTradesWithUSDRate(
+                                tradeCount, new Date("2/2/2018"), holdings, overflowType,
+                            );
+
+                            const result = calculateGains(holdings, trades);
+                            const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
+
+                            // rounding needed to avoid weird float issues
+                            expect(Math.round(result.longTermGain)).toBe(Math.round(oneAtATimeGains.longTerm));
+                            expect(Math.round(result.shortTermGain)).toBe(Math.round(oneAtATimeGains.shortTerm));
+                        });
+                    }
+                }
+            }
+        }
+    }
 });
