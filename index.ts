@@ -21,8 +21,8 @@ let mainWindow: any;
 
 function createWindow(): void {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 720,
         show: false,
     }); // https://electronjs.org/docs/api/frameless-window
     // notifications https://electronjs.org/docs/tutorial/notifications

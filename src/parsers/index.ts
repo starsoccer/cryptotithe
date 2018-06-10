@@ -1,5 +1,4 @@
 import * as csv from 'csvtojson';
-import fs = require('fs');
 import { EXCHANGES } from '../types';
 
 interface IGetCSVData {
@@ -7,11 +6,11 @@ interface IGetCSVData {
 }
 
 export async function getCSVData(filePath: string): Promise<any> {
-    return new Promise((resolve: (data: IGetCSVData[][]) => void, reject: (Error) => void): any => {
+    return new Promise((resolve: (data: IGetCSVData[][]) => void, reject: (Error: Error) => void): any => {
         const promises: Array<Promise<IGetCSVData[]>> = [];
         csv().fromFile(filePath)
-          .on('json', (converted) => promises.push(Promise.resolve(converted)))
-          .on('done', (error) => {
+          .on('json', (converted: IGetCSVData[]) => promises.push(Promise.resolve(converted)))
+          .on('done', (error: Error) => {
             if (error) {
               reject(error);
             }
@@ -32,4 +31,8 @@ export async function processData(exchange: keyof typeof EXCHANGES, filePath: st
         default:
             throw new Error(`Unknown Exchange - ${exchange}`);
     }
+    if (typeof processExchangeData === 'function') {
+        return processExchangeData(filePath);
+    }
+    return undefined;
 }
