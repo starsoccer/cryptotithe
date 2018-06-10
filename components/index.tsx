@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { r } from '../src/react';
 import { save } from '../src/save';
-import { EXCHANGES, IHoldings, ISavedData, ITradeWithUSDRate } from '../src/types';
+import { EXCHANGES, IHoldings, ITradeWithUSDRate } from '../src/types';
 import { Button } from './Button';
 export interface IrootElementProps {
     trades: ITradeWithUSDRate[];
@@ -19,7 +19,7 @@ export class rootElement extends React.Component<IrootElementProps> {
                     <label htmlFor='type' className='pr2'>Import Type</label>
                     <select name='type' id='type'>
                         {Object.keys(EXCHANGES).map((key) =>
-                            <option key={key} value={key}>{EXCHANGES[key]}</option>,
+                            <option key={key} value={key}>{EXCHANGES[key as keyof typeof EXCHANGES]}</option>,
                         )}
                     </select>
                 </div>
@@ -50,7 +50,7 @@ function fileSelected(filePaths: string[]): void {
 async function saveData(): Promise<void> {
     // const save = require('/src/save').save;
     try {
-        // await save(holdings, trades);
+        await save({}, []);
     } catch (err) {
         alert(err);
     }

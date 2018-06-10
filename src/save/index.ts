@@ -7,7 +7,7 @@ export async function save(holdings: IHoldings, trades: ITrade[]): Promise<any> 
         holdings,
         trades,
     });
-    return new Promise((resolve: () => void, reject: (Error) => void): void => {
+    return new Promise((resolve: () => void, reject: (Error: Error) => void): void => {
         fs.writeFile('./data.json', data, (err: Error): void => {
             if (err) {
                 // console.log(err);

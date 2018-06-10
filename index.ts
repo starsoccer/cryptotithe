@@ -10,7 +10,10 @@ interface IPugOptions {
 const pugOptions: IPugOptions = {};
 
 function onFileLoad(file: string, cb: (pugData: any) => void): any {
-    return cb(pugOptions);
+    switch (file) {
+        default:
+            return cb(pugOptions);
+    }
 }
 
 electronPug({}, onFileLoad);

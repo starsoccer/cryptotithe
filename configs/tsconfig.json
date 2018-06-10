@@ -4,7 +4,15 @@
         "moduleResolution": "node",
         "target": "es6",
         "module": "commonjs",
-        "jsx": "react"
+        "jsx": "react",
+        "strict": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "suppressExcessPropertyErrors": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noFallthroughCasesInSwitch": true
     },
     "include": [
         "../*"
