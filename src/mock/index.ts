@@ -1,5 +1,5 @@
-import * as faker from "faker";
-import { ICurrencyHolding, IHoldings, ITrade, ITradeWithUSDRate, METHOD } from "../types";
+import * as faker from 'faker';
+import { ICurrencyHolding, IHoldings, ITrade, ITradeWithUSDRate, METHOD } from '../types';
 
 export function mockHoldings(
     currencies: number,

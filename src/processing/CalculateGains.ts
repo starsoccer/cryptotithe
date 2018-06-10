@@ -1,5 +1,5 @@
-import * as clone from "clone";
-import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from "../types";
+import * as clone from 'clone';
+import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../types';
 
 const FULL_YEAR_IN_MILLISECONDS: number = 31536000000;
 

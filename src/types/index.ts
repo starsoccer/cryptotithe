@@ -32,13 +32,13 @@ export interface ITradeWithGains extends ITradeWithUSDRate {
 }
 
 export enum METHOD {
-    LIFO = "LIFO",
-    FIFO = "FIFO",
-    HCFO = "HCFO",
+    LIFO = 'LIFO',
+    FIFO = 'FIFO',
+    HCFO = 'HCFO',
 }
 
 export enum EXCHANGES {
-    BITTREX = "Bittrex",
-    GEMINI = "Gemini",
-    POLONIEX = "Poloniex",
+    BITTREX = 'Bittrex',
+    GEMINI = 'Gemini',
+    POLONIEX = 'Poloniex',
 }

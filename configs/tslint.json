@@ -6,7 +6,10 @@
     "jsRules": {},
     "rules": {
         "no-var-requires": false,
-        "object-literal-sort-keys": false
+        "object-literal-sort-keys": false,
+        "quotemark": [true, "single"],
+        "object-literal-key-quotes": [true, "as-needed"],
+        "class-name": true
     },
     "rulesDirectory": []
 }

@@ -1,17 +1,17 @@
-import path = require("path"); // path.resolve(__dirname, "settings.json"
-import { getCSVData } from "../";
-import { calculateGains } from "../../processing/CalculateGains";
-import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from "../../types";
-import { getUSDRate } from "../getUSDRate";
+import path = require('path'); // path.resolve(__dirname, "settings.json"
+import { getCSVData } from '../';
+import { calculateGains } from '../../processing/CalculateGains';
+import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import { getUSDRate } from '../getUSDRate';
 
 enum KrakenType {
-    BUY = "buy",
-    SELL = "sell",
+    BUY = 'buy',
+    SELL = 'sell',
 }
 
 enum KrakenxOrderType {
-    LIMIT = "limit",
-    MARKET = "market",
+    LIMIT = 'limit',
+    MARKET = 'market',
 }
 
 interface IKraken {
@@ -42,7 +42,7 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
             case KrakenType.BUY:
                 let USDTrade: boolean = false;
                 for (const pair in pairs) {
-                    if (pair === "USD") {
+                    if (pair === 'USD') {
                         USDTrade = true;
                     }
                 }
@@ -67,7 +67,7 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                 });
                 break;
             default:
-                throw new Error("Unknown Order Type - " + trade["Order Number"]);
+                throw new Error('Unknown Order Type - ' + trade['Order Number']);
         }
     }
     return internalFormat;

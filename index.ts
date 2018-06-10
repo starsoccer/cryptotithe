@@ -7,11 +7,11 @@ const EXCHANGES: any = require("./src/types").EXCHANGES;
 // be closed automatically when the JavaScript object is garbage collected.
 
 const pugOptions: any = {
-    pretty: true
+    pretty: true,
 };
 
-function onFileLoad(file: string, cb: Function): any {
-    var locals: any = {
+function onFileLoad(file: string, cb: (pugData: any) => void): any {
+    const locals: any = {
         exchanges: EXCHANGES,
     };
     return cb(locals);
@@ -28,7 +28,7 @@ function createWindow(): void {
     mainWindow.webContents.openDevTools();
 
     // emitted when the window is closed.
-    mainWindow.on("closed", function (): void {
+    mainWindow.on("closed", () => {
         // dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
@@ -42,7 +42,7 @@ function createWindow(): void {
 app.on("ready", createWindow);
 
 // quit when all windows are closed.
-app.on("window-all-closed", function (): void {
+app.on("window-all-closed", () => {
     // on OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {
@@ -50,7 +50,7 @@ app.on("window-all-closed", function (): void {
     }
 });
 
-app.on("activate", function (): void {
+app.on("activate", () => {
     // on OS X it"s common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {

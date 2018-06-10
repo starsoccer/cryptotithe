@@ -1,15 +1,15 @@
-import { mockHoldings, mockTradesWithUSDRate } from "../mock";
-import {ICurrencyHolding, IHoldings, ITradeWithUSDRate, METHOD} from "../types";
-import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from "./CalculateGains";
+import { mockHoldings, mockTradesWithUSDRate } from '../mock';
+import {ICurrencyHolding, IHoldings, ITradeWithUSDRate, METHOD} from '../types';
+import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from './CalculateGains';
 
-describe("getCurrencyHolding LIFO", () => {
-    test("One Holdings", () => {
+describe('getCurrencyHolding LIFO', () => {
+    test('One Holdings', () => {
         const holdings: IHoldings  = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1, METHOD.LIFO);
 
-        expect("deductedHoldings" in result).toBeTruthy();
-        expect("newHoldings" in result).toBeTruthy();
+        expect('deductedHoldings' in result).toBeTruthy();
+        expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
@@ -18,13 +18,13 @@ describe("getCurrencyHolding LIFO", () => {
         expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
     });
 
-    test("More then one Holdings", () => {
+    test('More then one Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 5);
         const currency: string = Object.keys(holdings)[0];
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1, METHOD.LIFO);
 
-        expect("deductedHoldings" in result).toBeTruthy();
-        expect("newHoldings" in result).toBeTruthy();
+        expect('deductedHoldings' in result).toBeTruthy();
+        expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
@@ -34,15 +34,15 @@ describe("getCurrencyHolding LIFO", () => {
     });
 });
 
-describe("getCurrencyHolding FIFO", () => {
+describe('getCurrencyHolding FIFO', () => {
 
-    test("default to FIFO", () => {
+    test('default to FIFO', () => {
         const holdings: IHoldings = mockHoldings(1, 3);
         const currency: string = Object.keys(holdings)[0];
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1);
 
-        expect("deductedHoldings" in result).toBeTruthy();
-        expect("newHoldings" in result).toBeTruthy();
+        expect('deductedHoldings' in result).toBeTruthy();
+        expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
@@ -51,13 +51,13 @@ describe("getCurrencyHolding FIFO", () => {
         expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
     });
 
-    test("One Holdings", () => {
+    test('One Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1, METHOD.FIFO);
 
-        expect("deductedHoldings" in result).toBeTruthy();
-        expect("newHoldings" in result).toBeTruthy();
+        expect('deductedHoldings' in result).toBeTruthy();
+        expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
@@ -66,13 +66,13 @@ describe("getCurrencyHolding FIFO", () => {
         expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
     });
 
-    test("More then one Holdings", () => {
+    test('More then one Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 5);
         const currency: string = Object.keys(holdings)[0];
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1, METHOD.FIFO);
 
-        expect("deductedHoldings" in result).toBeTruthy();
-        expect("newHoldings" in result).toBeTruthy();
+        expect('deductedHoldings' in result).toBeTruthy();
+        expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
@@ -82,14 +82,14 @@ describe("getCurrencyHolding FIFO", () => {
     });
 });
 
-describe("getCurrencyHolding Overflow", () => {
+describe('getCurrencyHolding Overflow', () => {
 
-    test("with one holding", () => {
+    test('with one holding', () => {
         const holdings: IHoldings = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, holdings[currency][0].amount + 1);
-        expect("deductedHoldings" in result).toBeTruthy();
-        expect("newHoldings" in result).toBeTruthy();
+        expect('deductedHoldings' in result).toBeTruthy();
+        expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
@@ -102,7 +102,7 @@ describe("getCurrencyHolding Overflow", () => {
         expect(Object.keys(result.newHoldings).length).toBe(0);
     });
 
-    test("with multiple holdings", () => {
+    test('with multiple holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 3);
         const currency: string = Object.keys(holdings)[0];
         let totalAmount: number = 1;
@@ -110,8 +110,8 @@ describe("getCurrencyHolding Overflow", () => {
             totalAmount += holding.amount;
         }
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, totalAmount);
-        expect("deductedHoldings" in result).toBeTruthy();
-        expect("newHoldings" in result).toBeTruthy();
+        expect('deductedHoldings' in result).toBeTruthy();
+        expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
@@ -142,33 +142,33 @@ function calculateGainsOneAtATime(holdings: IHoldings, trades: ITradeWithUSDRate
     };
 }
 
-describe("calculateGains 1 currency manual", () => {
+describe('calculateGains 1 currency manual', () => {
 
-    test("structured unchanged", () => {
-        const holdings: IHoldings = mockHoldings(1, 1, new Date("1/1/2018"));
+    test('structured unchanged', () => {
+        const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, false);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
         const result: ICalculateGains = calculateGains(holdings, trades);
 
-        expect("newHoldings" in result).toBeTruthy();
-        expect("shortTermGain" in result).toBeTruthy();
-        expect("longTermGain" in result).toBeTruthy();
+        expect('newHoldings' in result).toBeTruthy();
+        expect('shortTermGain' in result).toBeTruthy();
+        expect('longTermGain' in result).toBeTruthy();
 
     });
 
-    test("1 holding, 1 trade, short term, no overflow", () => {
-        const holdings: IHoldings = mockHoldings(1, 1, new Date("1/1/2018"));
+    test('1 holding, 1 trade, short term, no overflow', () => {
+        const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, false);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
         const result: ICalculateGains = calculateGains(holdings, trades);
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) * trades[0].amountSold);
     });
 
-    test("1 holding, 1 trade, short term, overflow", () => {
-        const holdings = mockHoldings(1, 1, new Date("1/1/2018"));
+    test('1 holding, 1 trade, short term, overflow', () => {
+        const holdings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, true);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -178,10 +178,10 @@ describe("calculateGains 1 currency manual", () => {
         );
     });
 
-    test("1 holding, 1 trade, long term, no overflow", () => {
-        const holdings = mockHoldings(1, 1, new Date("1/1/2010"), new Date("1/1/2012"));
+    test('1 holding, 1 trade, long term, no overflow', () => {
+        const holdings = mockHoldings(1, 1, new Date('1/1/2010'), new Date('1/1/2012'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, false);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -189,10 +189,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.longTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) * trades[0].amountSold);
     });
 
-    test("1 holding, 1 trade, long term, overflow", () => {
-        const holdings = mockHoldings(1, 1, new Date("1/1/2010"), new Date("1/1/2012"));
+    test('1 holding, 1 trade, long term, overflow', () => {
+        const holdings = mockHoldings(1, 1, new Date('1/1/2010'), new Date('1/1/2012'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, true);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -201,10 +201,10 @@ describe("calculateGains 1 currency manual", () => {
             holdings[currency][0].amount);
     });
 
-    test("1 holding, multiple trades, short term, no overflow", () => {
-        const holdings = mockHoldings(1, 1, new Date("1/1/2018"));
+    test('1 holding, multiple trades, short term, no overflow', () => {
+        const holdings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(5, new Date("2/2/2018"), holdings, false);
+        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -218,10 +218,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.shortTermGain).toBe(estimatedGain);
     });
 
-    test("1 holding, multiple trades, short term, overflow", () => {
-        const holdings = mockHoldings(1, 1, new Date("1/1/2018"));
+    test('1 holding, multiple trades, short term, overflow', () => {
+        const holdings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, true);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -236,10 +236,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.shortTermGain).toBe(estimatedGain);
     });
 
-    test("1 holding, multiple trades, long term, no overflow", () => {
-        const holdings = mockHoldings(1, 1, new Date("1/1/2010"), new Date("1/1/2012"));
+    test('1 holding, multiple trades, long term, no overflow', () => {
+        const holdings = mockHoldings(1, 1, new Date('1/1/2010'), new Date('1/1/2012'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, false);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -253,10 +253,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.longTermGain).toBe(estimatedGain);
     });
 
-    test("1 holding, multiple trades, long term, overflow", () => {
-        const holdings = mockHoldings(1, 1, new Date("1/1/2010"), new Date("1/1/2012"));
+    test('1 holding, multiple trades, long term, overflow', () => {
+        const holdings = mockHoldings(1, 1, new Date('1/1/2010'), new Date('1/1/2012'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, true);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -269,10 +269,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.longTermGain + result.shortTermGain).toBe(estimatedGain);
     });
 
-    test("multiple holdings, 1 trade, short term, no overflow", () => {
-        const holdings = mockHoldings(1, 5, new Date("1/1/2018"));
+    test('multiple holdings, 1 trade, short term, no overflow', () => {
+        const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, false);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -290,10 +290,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.shortTermGain).toBe(estimatedGain);
     });
 
-    test("multiple holdings, 1 trade, short term, overflow", () => {
-        const holdings = mockHoldings(1, 5, new Date("1/1/2018"));
+    test('multiple holdings, 1 trade, short term, overflow', () => {
+        const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, true);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -311,10 +311,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.shortTermGain).toBe(estimatedGain + amountLeft * trades[0].USDRate);
     });
 
-    test("multiple holdings, 1 trade, long term, no overflow", () => {
-        const holdings = mockHoldings(1, 5, new Date("1/1/2015"), new Date("1/1/2016"));
+    test('multiple holdings, 1 trade, long term, no overflow', () => {
+        const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, false);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -332,10 +332,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.shortTermGain).toBe(0);
     });
 
-    test("multiple holdings, 1 trade, long term, overflow", () => {
-        const holdings = mockHoldings(1, 5, new Date("1/1/2015"), new Date("1/1/2016"));
+    test('multiple holdings, 1 trade, long term, overflow', () => {
+        const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date("2/2/2018"), holdings, true);
+        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -353,10 +353,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.shortTermGain).toBe(amountLeft * trades[0].USDRate);
     });
 
-    test("multiple holdings, multiple trade, short term, no overflow", () => {
-        const holdings = mockHoldings(1, 5, new Date("1/1/2018"));
+    test('multiple holdings, multiple trade, short term, no overflow', () => {
+        const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(5, new Date("2/2/2018"), holdings, false);
+        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
@@ -366,10 +366,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(Math.round(result.shortTermGain)).toBe(Math.round(oneAtATimeGains.shortTerm));
     });
 
-    test("multiple holdings, multiple trade, short term, overflow", () => {
-        const holdings = mockHoldings(1, 5, new Date("1/1/2018"));
+    test('multiple holdings, multiple trade, short term, overflow', () => {
+        const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(5, new Date("2/2/2018"), holdings, true);
+        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
@@ -379,10 +379,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(Math.round(result.shortTermGain)).toBe(Math.round(oneAtATimeGains.shortTerm));
     });
 
-    test("multiple holdings, multiple trade, long term, no overflow", () => {
-        const holdings = mockHoldings(1, 5, new Date("1/1/2015"), new Date("1/1/2016"));
+    test('multiple holdings, multiple trade, long term, no overflow', () => {
+        const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(5, new Date("2/2/2018"), holdings, false);
+        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
@@ -392,10 +392,10 @@ describe("calculateGains 1 currency manual", () => {
         expect(result.shortTermGain).toBe(0);
     });
 
-    test("multiple holdings, multiple trade, long term, overflow", () => {
-        const holdings = mockHoldings(1, 5, new Date("1/1/2015"), new Date("1/1/2016"));
+    test('multiple holdings, multiple trade, long term, overflow', () => {
+        const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(5, new Date("2/2/2018"), holdings, true);
+        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
@@ -406,7 +406,7 @@ describe("calculateGains 1 currency manual", () => {
     });
 });
 
-describe("calculateGains 1/multiple currencies automated", () => {
+describe('calculateGains 1/multiple currencies automated', () => {
     const testTypes = {
         currenciesCount: [1, 5],
         holdingsCount: [1, 5],
@@ -421,17 +421,17 @@ describe("calculateGains 1/multiple currencies automated", () => {
                 for (const shortTerm of testTypes.shortTermTypes) {
                     for (const overflowType of testTypes.overflowTypes) {
                         const testName = `${currencyCount} currencies, ${holdingCount} holding, ${tradeCount} trade, ` +
-                            `${shortTerm ? "Short" : "Long"} term, ${overflowType ? "" : "no"} overflow`;
+                            `${shortTerm ? 'Short' : 'Long'} term, ${overflowType ? '' : 'no'} overflow`;
                         test(testName, () => {
                             const holdings = mockHoldings(
                                 currencyCount,
                                 holdingCount,
-                                (shortTerm ? new Date("1/1/2018") : new Date("1/1/2015")),
-                                (shortTerm ? new Date("1/31/2018") : new Date("1/1/2016")),
+                                (shortTerm ? new Date('1/1/2018') : new Date('1/1/2015')),
+                                (shortTerm ? new Date('1/31/2018') : new Date('1/1/2016')),
                             );
                             const currency = Object.keys(holdings)[0];
                             const trades = mockTradesWithUSDRate(
-                                tradeCount, new Date("2/2/2018"), holdings, overflowType,
+                                tradeCount, new Date('2/2/2018'), holdings, overflowType,
                             );
 
                             const result = calculateGains(holdings, trades);
