@@ -54,6 +54,7 @@
         "got": "^8.3.1",
         "react": "^16.3.17",
         "react-dom": "^16.0.6",
+        "tachyons": "^4.10.0",
         "yet-another-electron-pug": "^1.0.0"
     }
 }
