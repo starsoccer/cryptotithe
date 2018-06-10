@@ -8,7 +8,8 @@
         "start": "npm run build && electron .",
         "build": "tsc -p configs/tsconfig.json",
         "tslint": "tslint 'src/**/*.ts' -c ./configs/tslint.json --fix",
-        "prod-test": "npm run tslint && npm run test && npm run start"
+        "full-build-test": "npm run tslint && npm run test && npm run prod-build",
+        "prod-start": "set NODE_ENV=production&& npm run start"
     },
     "author": "",
     "license": "MIT",
@@ -17,6 +18,7 @@
         "@types/jest": "^22.2.3",
         "@types/node": "^10.3.0",
         "electron": "^2.0.2",
+        "electron-react-devtools": "^0.5.3",
         "faker": "^4.1.0",
         "jest": "^23.0.0",
         "ts-jest": "^22.4.6",

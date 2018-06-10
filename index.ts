@@ -4,27 +4,41 @@ const electronPug: any = require('yet-another-electron-pug');
 const EXCHANGES: any = require('./src/types').EXCHANGES;
 // keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-
-const pugOptions: any = {
-    pretty: true,
-};
+interface IPugOptions {
+    [key: string]: string;
+}
+const pugOptions: IPugOptions = {};
 
 function onFileLoad(file: string, cb: (pugData: any) => void): any {
-    const locals: any = {
-        exchanges: EXCHANGES,
-    };
-    return cb(locals);
+    return cb(pugOptions);
 }
 
-electronPug({ pugOptions }, onFileLoad);
+electronPug({}, onFileLoad);
 let mainWindow: any;
 
 function createWindow(): void {
-    mainWindow = new BrowserWindow({ width: 800, height: 600 }); // https://electronjs.org/docs/api/frameless-window
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        show: false,
+    }); // https://electronjs.org/docs/api/frameless-window
     // notifications https://electronjs.org/docs/tutorial/notifications
     // progressbar https://electronjs.org/docs/tutorial/progress-bar
     mainWindow.loadFile('index.pug');
-    mainWindow.webContents.openDevTools();
+    if (process.env.NODE_ENV !== 'production') {
+        pugOptions.injectJS = 'require(\'electron-react-devtools\').install();';
+        setTimeout(() => {
+            mainWindow.reload();
+            mainWindow.once('ready-to-show', () => {
+                mainWindow.show();
+                mainWindow.webContents.openDevTools();
+            });
+        }, 550);
+    } else {
+        mainWindow.once('ready-to-show', () => {
+            mainWindow.show();
+        });
+    }
 
     // emitted when the window is closed.
     mainWindow.on('closed', () => {
