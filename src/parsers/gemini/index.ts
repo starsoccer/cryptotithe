@@ -1,7 +1,7 @@
 import path = require('path'); // path.resolve(__dirname, "settings.json"
 import { getCSVData } from '../';
 import { calculateGains } from '../../processing/CalculateGains';
-import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
 import { getUSDRate } from '../getUSDRate';
 
 enum GeminiOrderType {
@@ -83,6 +83,8 @@ export async function processData(): Promise<ITradeWithUSDRate[]> {
                         USDRate: (trade.Symbol.indexOf('USD') ?
                         Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`])
                         : await getUSDRate(new Date(`${trade['Order Date']} ${trade['Order Time']}`))),
+                        id: trade['Trade ID'],
+                        exchange: EXCHANGES.GEMINI,
                     });
                     break;
                 case GeminiOrderType.Credit:

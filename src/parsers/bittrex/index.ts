@@ -1,7 +1,7 @@
 import path = require('path'); // path.resolve(__dirname, "settings.json"
 import { getCSVData } from '../';
 import { calculateGains } from '../../processing/CalculateGains';
-import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
 import { getUSDRate } from '../getUSDRate';
 
 enum BittrexOrderType {
@@ -35,6 +35,8 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     rate: parseFloat(trade.Price) / parseFloat(trade.Quantity),
                     date: new Date(trade.Closed),
                     USDRate: (pair[0] === 'BTC' ? await getUSDRate(new Date(trade.Closed)) : 0),
+                    id: trade.OrderUuid,
+                    exchange: EXCHANGES.BITTREX,
                 });
                 break;
             case BittrexOrderType.LIMIT_SELL:
@@ -46,6 +48,8 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     date: new Date(trade.Closed),
                     USDRate: await getUSDRate(new Date(trade.Closed)) *
                         parseFloat(trade.Price) / parseFloat(trade.Quantity),
+                    id: trade.OrderUuid,
+                    exchange: EXCHANGES.BITTREX,
                 });
                 break;
             default:

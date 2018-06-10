@@ -20,6 +20,8 @@ export interface ITrade {
     amountSold: number;
     rate: number;
     date: Date;
+    id: string;
+    exchange: EXCHANGES;
 }
 
 export interface ITradeWithUSDRate extends ITrade {
@@ -41,4 +43,5 @@ export enum EXCHANGES {
     BITTREX = 'Bittrex',
     GEMINI = 'Gemini',
     POLONIEX = 'Poloniex',
+    KRAKEN = 'Kraken',
 }

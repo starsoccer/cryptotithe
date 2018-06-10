@@ -1,7 +1,7 @@
 import path = require('path'); // path.resolve(__dirname, "settings.json"
 import { getCSVData } from '../';
 import { calculateGains } from '../../processing/CalculateGains';
-import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
 import { getUSDRate } from '../getUSDRate';
 
 enum KrakenType {
@@ -54,6 +54,8 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     rate: parseFloat(trade.price),
                     date: new Date(trade.time),
                     USDRate: await getUSDRate(new Date(trade.time)),
+                    id: trade.txid,
+                    exchange: EXCHANGES.KRAKEN,
                 });
                 break;
             case KrakenType.SELL:
@@ -64,6 +66,8 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     rate: parseFloat(trade.price),
                     date: new Date(trade.time),
                     USDRate: await getUSDRate(new Date(trade.time)) * parseFloat(trade.price) / parseFloat(trade.vol),
+                    id: trade.txid,
+                    exchange: EXCHANGES.KRAKEN,
                 });
                 break;
             default:

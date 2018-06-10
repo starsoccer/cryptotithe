@@ -1,7 +1,7 @@
 import path = require('path'); // path.resolve(__dirname, "settings.json"
 import { getCSVData } from '../';
 import { calculateGains } from '../../processing/CalculateGains';
-import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
 import { getUSDRate } from '../getUSDRate';
 
 enum PoloniexOrderType {
@@ -37,6 +37,8 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     rate: parseFloat(trade.Price),
                     date: new Date(trade.Date),
                     USDRate: await getUSDRate(new Date(trade.Date)),
+                    id: trade['Order Number'],
+                    exchange: EXCHANGES.POLONIEX,
                 });
                 break;
             case PoloniexOrderType.SELL:
@@ -48,6 +50,8 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     date: new Date(trade.Date),
                     USDRate: await getUSDRate(new Date(trade.Date))
                          * parseFloat(trade.Price) / parseFloat(trade.Amount),
+                    id: trade['Order Number'],
+                    exchange: EXCHANGES.POLONIEX,
                 });
                 break;
             default:
