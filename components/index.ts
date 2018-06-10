@@ -1,8 +1,8 @@
 // const React = require('react');
 import * as React from 'react';
+import { r } from '../src/react';
 import { save } from '../src/save';
 import { EXCHANGES, IHoldings, ISavedData, ITradeWithUSDRate } from '../src/types';
-const r = React.createElement;
 export interface IrootElementProps {
     trades: ITradeWithUSDRate[];
     holdings: IHoldings;
