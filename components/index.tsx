@@ -12,6 +12,7 @@ export interface IAppProps {
 
 interface IAppState {
     trades: ITradeWithUSDRate[];
+    holdings: IHoldings;
 }
 
 export class rootElement extends React.Component<IAppProps, IAppState> {
@@ -19,15 +20,13 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         super(props);
         this.state = {
             trades: this.props.trades,
+            holdings: this.props.holdings,
         };
     }
 
-    public onSubmit = (): void => {
+    public onSubmit = async (): Promise<void> => {
         const { dialog } = require('electron').remote;
-        dialog.showOpenDialog({properties: ['openFile']}, this.fileSelected);
-    }
-
-    public fileSelected = async (filePaths: string[]): Promise<void> => {
+        const filePaths = await dialog.showOpenDialog({properties: ['openFile']});
         const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
             .value as keyof typeof EXCHANGES;
         const processedData: ITradeWithUSDRate[] = await processData(exchange, filePaths[0]);
@@ -35,6 +34,14 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             this.setState({
                 trades: processedData,
             });
+        }
+    }
+
+    public saveData = async (): Promise<void> => {
+        try {
+            await save(this.state.holdings, this.state.trades);
+        } catch (err) {
+            alert(err);
         }
     }
 
@@ -53,19 +60,10 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                 </div>
                 <div className='flex justify-around pt2'>
                     <Button onClick={this.onSubmit} label='Process Data'/>
-                    <Button onClick={saveData} label='Save'/>
+                    <Button onClick={this.saveData} label='Save'/>
                 </div>
                 <TradesTable trades={this.state.trades}/>
             </div>
         );
-    }
-}
-
-async function saveData(): Promise<void> {
-    // const save = require('/src/save').save;
-    try {
-        await save({}, []);
-    } catch (err) {
-        alert(err);
     }
 }
