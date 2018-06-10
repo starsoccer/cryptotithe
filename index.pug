@@ -2,17 +2,7 @@ html
   head
     meta(charset="UTF-8")
     link(rel="stylesheet" type="text/css" href="./tachyons.min.css")
-    title Hello World!
   body(class="bg-light-gray")
-    h1(class="tc") Crypto Tax
-    hr
-    div(class="center tc")
-        label(for="type" class="pr2") Import Type
-        select(name="type" id="type")
-            each exchange, key in exchanges
-                option(value=key)=exchange
-    div(class="flex justify-around pt2")
-        button(onclick="onSubmit()") Process Data
-        button(onclick="saver()") Save
+    div(id='cryptotithe')
     script var exports = {};
-    script(src='./renderer.js')
+    script(src='./react.js')
