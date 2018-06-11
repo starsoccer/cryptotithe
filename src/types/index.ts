@@ -33,6 +33,10 @@ export interface ITradeWithGains extends ITradeWithUSDRate {
     longTerm: number;
 }
 
+export interface ITradeWithDuplicateProbability extends ITrade {
+    probability: number;
+}
+
 export enum METHOD {
     LIFO = 'LIFO',
     FIFO = 'FIFO',

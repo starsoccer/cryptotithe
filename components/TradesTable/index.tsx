@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ITrade } from '../../src/types';
+import { ITrade, ITradeWithDuplicateProbability } from '../../src/types';
 
 export interface ITradeTableProps {
     className?: string;
-    trades: ITrade[];
+    trades: Array<ITradeWithDuplicateProbability|ITrade>;
 }
 
 export class TradesTable extends React.Component<ITradeTableProps> {
@@ -19,6 +19,9 @@ export class TradesTable extends React.Component<ITradeTableProps> {
                                 <th className='fw6 tl pa3 bg-white'>Sold Currency</th>
                                 <th className='fw6 tl pa3 bg-white'>Rate</th>
                                 <th className='fw6 tl pa3 bg-white'>Bought Currency</th>
+                                {'probability' in this.props.trades[0] &&
+                                    <th className='fw6 tl pa3 bg-white'>Duplicate Probability</th>
+                                }
                             </tr>
                         </thead>
                         <tbody className='lh-copy'>{
@@ -29,6 +32,9 @@ export class TradesTable extends React.Component<ITradeTableProps> {
                                     <td className='pa3'>{trade.soldCurrency}</td>
                                     <td className='pa3'>{trade.rate}</td>
                                     <td className='pa3'>{trade.boughtCurreny}</td>
+                                    {'probability' in trade &&
+                                        <td className='pa3'>{trade.probability}</td>
+                                    }
                                 </tr>,
                         )}</tbody>
                     </table>

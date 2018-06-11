@@ -1,8 +1,9 @@
 // const React = require('react');
 import * as React from 'react';
 import { processData } from '../src/parsers';
+import duplicateCheck from '../src/processing/DuplicateCheck';
 import { save } from '../src/save';
-import { EXCHANGES, IHoldings, ITrade } from '../src/types';
+import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../src/types';
 import { Button } from './Button';
 import { Loader } from './Loader';
 import { TradesTable } from './TradesTable';
@@ -15,6 +16,7 @@ interface IAppState {
     trades: ITrade[];
     processing: boolean;
     holdings: IHoldings;
+    duplicateTrades: ITradeWithDuplicateProbability[];
 }
 
 export class rootElement extends React.Component<IAppProps, IAppState> {
@@ -24,6 +26,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             trades: this.props.trades,
             holdings: this.props.holdings,
             processing: false,
+            duplicateTrades: [],
         };
     }
 
@@ -35,10 +38,15 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             .value as keyof typeof EXCHANGES;
         const processedData: ITrade[] = await processData(exchange, filePaths[0]);
         if (processedData && processedData.length) {
-            this.setState({
-                trades: processedData,
-                processing: false,
-            });
+            const duplicateTrades = duplicateCheck(this.state.trades, processedData);
+            if (duplicateTrades.length) {
+                this.setState({duplicateTrades});
+            } else {
+                this.setState({
+                    trades: processedData,
+                    processing: false,
+                });
+            }
         } else {
             alert('Error processing data');
         }
@@ -69,6 +77,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                     <Button onClick={this.onSubmit} label='Process Data'/>
                     <Button onClick={this.saveData} label='Save'/>
                 </div>
+                {this.state.duplicateTrades.length > 0 && <TradesTable trades={this.state.duplicateTrades}/>}
                 {this.state.trades.length > 0 && <TradesTable trades={this.state.trades}/>}
                 {this.state.trades.length === 0 && this.state.processing &&
                     <Loader />
