@@ -77,7 +77,7 @@ export async function processData(): Promise<ITradeWithUSDRate[]> {
                         soldCurrency: pair.sold,
                         amountSold: Math.abs(trade[`${pair.sold} Amount`]),
                         rate: Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`]),
-                        date: new Date(`${trade['Order Date']} ${trade['Order Time']}`),
+                        date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
                         USDRate: (trade.Symbol.indexOf('USD') ?
                         Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`])
                         : await getUSDRate(new Date(`${trade['Order Date']} ${trade['Order Time']}`))),

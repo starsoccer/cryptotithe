@@ -98,7 +98,7 @@ describe('getCurrencyHolding Overflow', () => {
         expect(result.deductedHoldings.length).toBe(2);
         expect(result.deductedHoldings[1].amount).toBe(1);
         expect(result.deductedHoldings[1].rateInUSD).toBe(0);
-        expect(result.deductedHoldings[1].date.getDate() - new Date().getTime()).toBeLessThan(60000);
+        expect(result.deductedHoldings[1].date - new Date().getTime()).toBeLessThan(60000);
         expect(Object.keys(result.newHoldings).length).toBe(0);
     });
 
@@ -120,7 +120,7 @@ describe('getCurrencyHolding Overflow', () => {
         expect(result.deductedHoldings.length).toBe(4);
         expect(result.deductedHoldings[3].amount).toBe(1);
         expect(result.deductedHoldings[3].rateInUSD).toBe(0);
-        expect(result.deductedHoldings[3].date.getDate() - new Date().getTime()).toBeLessThan(60000);
+        expect(result.deductedHoldings[3].date - new Date().getTime()).toBeLessThan(60000);
         expect(Object.keys(result.newHoldings).length).toBe(0);
     });
 });

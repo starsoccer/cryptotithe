@@ -31,7 +31,7 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     soldCurrency: pair[0],
                     amountSold: parseFloat(trade.Price) + parseFloat(trade.CommissionPaid),
                     rate: parseFloat(trade.Price) / parseFloat(trade.Quantity),
-                    date: new Date(trade.Closed),
+                    date: new Date(trade.Closed).getTime(),
                     USDRate: (pair[0] === 'BTC' ? await getUSDRate(new Date(trade.Closed)) : 0),
                     id: trade.OrderUuid,
                     exchange: EXCHANGES.BITTREX,
@@ -43,7 +43,7 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     soldCurrency: pair[1],
                     amountSold: parseFloat(trade.Quantity),
                     rate: parseFloat(trade.Quantity) / parseFloat(trade.Price),
-                    date: new Date(trade.Closed),
+                    date: new Date(trade.Closed).getTime(),
                     USDRate: await getUSDRate(new Date(trade.Closed)) *
                         parseFloat(trade.Price) / parseFloat(trade.Quantity),
                     id: trade.OrderUuid,

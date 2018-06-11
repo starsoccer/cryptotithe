@@ -33,7 +33,7 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     soldCurrency: pair[1],
                     amountSold: Math.abs(parseFloat(trade['Base Total Less Fee'])),
                     rate: parseFloat(trade.Price),
-                    date: new Date(trade.Date),
+                    date: new Date(trade.Date).getTime(),
                     USDRate: await getUSDRate(new Date(trade.Date)),
                     id: trade['Order Number'],
                     exchange: EXCHANGES.POLONIEX,
@@ -45,7 +45,7 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     soldCurrency: pair[0],
                     amountSold: Math.abs(parseFloat(trade['Quote Total Less Fee'])),
                     rate: parseFloat(trade.Amount) * parseFloat(trade.Price),
-                    date: new Date(trade.Date),
+                    date: new Date(trade.Date).getTime(),
                     USDRate: await getUSDRate(new Date(trade.Date))
                          * parseFloat(trade.Price) / parseFloat(trade.Amount),
                     id: trade['Order Number'],

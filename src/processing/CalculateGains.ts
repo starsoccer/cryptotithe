@@ -22,12 +22,12 @@ export function calculateGains(holdings: IHoldings, trades: ITradeWithUSDRate[])
         newHoldings[trade.boughtCurreny].push({
             amount: trade.amountSold / trade.rate,
             rateInUSD: trade.USDRate * trade.rate,
-            date: new Date(),
+            date: new Date().getTime(),
         });
         for (const holding of result.deductedHoldings) {
             const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
 
-            if (trade.date.getTime() - holding.date.getTime() > FULL_YEAR_IN_MILLISECONDS) {
+            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                 longTermGain += gain;
             } else {
                 shortTermGain += gain;
@@ -99,7 +99,7 @@ export function getCurrenyHolding(
         } else {
             currencyHolding.push({
                 amount: amountUsed,
-                date: new Date(),
+                date: new Date().getTime(),
                 rateInUSD: 0,
             });
             amountUsed = 0;

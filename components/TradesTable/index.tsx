@@ -25,7 +25,7 @@ export class TradesTable extends React.Component<ITradeTableProps> {
                         <tbody className='lh-copy'>{
                             this.props.trades.map((trade) =>
                                 <tr className='stripe-dark' key={`${trade.exchange}-${trade.id}`}>
-                                    <td className='pa3'>{trade.date.toUTCString()}</td>
+                                    <td className='pa3'>{new Date(trade.date).toUTCString()}</td>
                                     <td className='pa3'>{trade.amountSold}</td>
                                     <td className='pa3'>{trade.soldCurrency}</td>
                                     <td className='pa3'>{trade.rate}</td>

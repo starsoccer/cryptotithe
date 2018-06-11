@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import { ICurrencyHolding, IHoldings, ITradeWithUSDRate, EXCHANGES } from '../types';
+import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithUSDRate } from '../types';
 
 export function mockHoldings(
     currencies: number,
@@ -13,7 +13,7 @@ export function mockHoldings(
         for (let hpc: number = 0; hpc < holdingsPerCurrency; hpc++) {
             toBeHoldings.push({
                 amount: faker.random.number(),
-                date: faker.date.between(startingDate, endingDate),
+                date: faker.date.between(startingDate, endingDate).getTime(),
                 rateInUSD: faker.random.number(),
             });
         }
@@ -40,7 +40,7 @@ export function mockTrades(
                 amountSold: (allowOverflow ?
                     totalHoldings + faker.random.number() : (totalHoldings - faker.random.number()) / amount),
                 rate: faker.random.number(),
-                date: faker.date.between(startingDate, new Date()),
+                date: faker.date.between(startingDate, new Date()).getTime(),
                 USDRate: faker.random.number(),
                 id: faker.random.words(5),
                 exchange: faker.random.objectElement(EXCHANGES) as EXCHANGES,

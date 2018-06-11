@@ -11,7 +11,7 @@ export interface IHoldings {
 export interface ICurrencyHolding {
     amount: number;
     rateInUSD: number;
-    date: Date;
+    date: number;
 }
 
 export interface ITrade {
@@ -19,7 +19,7 @@ export interface ITrade {
     soldCurrency: string;
     amountSold: number;
     rate: number;
-    date: Date;
+    date: number;
     id: string;
     exchange: EXCHANGES;
 }
