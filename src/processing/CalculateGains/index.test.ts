@@ -1,6 +1,6 @@
-import { mockHoldings, mockTradesWithUSDRate } from '../mock';
-import { IHoldings, ITradeWithUSDRate, METHOD} from '../types';
-import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from './CalculateGains';
+import { mockHoldings, mockTradesWithUSDRate } from '../../mock';
+import { IHoldings, ITradeWithUSDRate, METHOD} from '../../types';
+import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from './';
 
 describe('getCurrencyHolding LIFO', () => {
     test('One Holdings', () => {
