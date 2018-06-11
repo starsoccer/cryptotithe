@@ -1,5 +1,5 @@
 import * as csv from 'csvtojson';
-import { EXCHANGES } from '../types';
+import { EXCHANGES, ITrade } from '../types';
 
 interface IGetCSVData {
     [key: string]: string;
@@ -19,7 +19,7 @@ export async function getCSVData(filePath: string): Promise<any> {
     });
 }
 
-export async function processData(exchange: keyof typeof EXCHANGES, filePath: string): Promise<any> {
+export async function processData(exchange: keyof typeof EXCHANGES, filePath: string): Promise<ITrade[]> {
     let processExchangeData: any;
     switch (exchange) {
         case 'BITTREX':
@@ -34,5 +34,5 @@ export async function processData(exchange: keyof typeof EXCHANGES, filePath: st
     if (typeof processExchangeData === 'function') {
         return processExchangeData(filePath);
     }
-    return undefined;
+    return [];
 }

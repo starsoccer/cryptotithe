@@ -1,6 +1,5 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITradeWithUSDRate } from '../../types';
-import { getUSDRate } from '../getUSDRate';
+import { EXCHANGES, ITrade } from '../../types';
 
 enum GeminiOrderType {
     Sell = 'Sell',
@@ -63,9 +62,9 @@ function getCurrenciesTraded(trade: IGemini): ITraded {
     return currencies;
 }
 
-export async function processData(): Promise<ITradeWithUSDRate[]> {
+export async function processData(): Promise<ITrade[]> {
     const data: IGemini[] = await getCSVData('./src/parsers/bittrex.csv') as IGemini[];
-    const internalFormat: ITradeWithUSDRate[] = [];
+    const internalFormat: ITrade[] = [];
     for (const trade of data) {
         if (trade.Symbol.length > 3) {
             const pair: ITraded = getCurrenciesTraded(trade);
@@ -78,9 +77,6 @@ export async function processData(): Promise<ITradeWithUSDRate[]> {
                         amountSold: Math.abs(trade[`${pair.sold} Amount`]),
                         rate: Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`]),
                         date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
-                        USDRate: (trade.Symbol.indexOf('USD') ?
-                        Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`])
-                        : await getUSDRate(new Date(`${trade['Order Date']} ${trade['Order Time']}`))),
                         id: trade['Trade ID'],
                         exchange: EXCHANGES.GEMINI,
                     });

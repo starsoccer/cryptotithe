@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ITradeWithUSDRate } from '../../src/types';
+import { ITrade } from '../../src/types';
 
 export interface ITradeTableProps {
     className?: string;
-    trades: ITradeWithUSDRate[];
+    trades: ITrade[];
 }
 
 export class TradesTable extends React.Component<ITradeTableProps> {
@@ -19,7 +19,6 @@ export class TradesTable extends React.Component<ITradeTableProps> {
                                 <th className='fw6 tl pa3 bg-white'>Sold Currency</th>
                                 <th className='fw6 tl pa3 bg-white'>Rate</th>
                                 <th className='fw6 tl pa3 bg-white'>Bought Currency</th>
-                                <th className='fw6 tl pa3 bg-white'>USD Rate</th>
                             </tr>
                         </thead>
                         <tbody className='lh-copy'>{
@@ -30,7 +29,6 @@ export class TradesTable extends React.Component<ITradeTableProps> {
                                     <td className='pa3'>{trade.soldCurrency}</td>
                                     <td className='pa3'>{trade.rate}</td>
                                     <td className='pa3'>{trade.boughtCurreny}</td>
-                                    <td className='pa3'>{trade.USDRate}</td>
                                 </tr>,
                         )}</tbody>
                     </table>

@@ -1,6 +1,5 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITradeWithUSDRate } from '../../types';
-import { getUSDRate } from '../getUSDRate';
+import { EXCHANGES, ITrade } from '../../types';
 
 enum PoloniexOrderType {
     BUY = 'BUY',
@@ -21,9 +20,9 @@ interface IPoloniex {
     'Quote Total Less Fee': string;
 }
 
-export async function processData(filePath: string): Promise<ITradeWithUSDRate[]> {
+export async function processData(filePath: string): Promise<ITrade[]> {
     const data: IPoloniex[] = await getCSVData(filePath) as IPoloniex[];
-    const internalFormat: ITradeWithUSDRate[] = [];
+    const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pair: string[] = trade.Market.split('/');
         switch (trade.Type) {
@@ -34,7 +33,6 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     amountSold: Math.abs(parseFloat(trade['Base Total Less Fee'])),
                     rate: parseFloat(trade.Price),
                     date: new Date(trade.Date).getTime(),
-                    USDRate: await getUSDRate(new Date(trade.Date)),
                     id: trade['Order Number'],
                     exchange: EXCHANGES.POLONIEX,
                 });
@@ -46,8 +44,6 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     amountSold: Math.abs(parseFloat(trade['Quote Total Less Fee'])),
                     rate: parseFloat(trade.Amount) * parseFloat(trade.Price),
                     date: new Date(trade.Date).getTime(),
-                    USDRate: await getUSDRate(new Date(trade.Date))
-                         * parseFloat(trade.Price) / parseFloat(trade.Amount),
                     id: trade['Order Number'],
                     exchange: EXCHANGES.POLONIEX,
                 });

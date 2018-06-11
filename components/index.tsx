@@ -2,17 +2,17 @@
 import * as React from 'react';
 import { processData } from '../src/parsers';
 import { save } from '../src/save';
-import { EXCHANGES, IHoldings, ITradeWithUSDRate } from '../src/types';
+import { EXCHANGES, IHoldings, ITrade } from '../src/types';
 import { Button } from './Button';
 import { Loader } from './Loader';
 import { TradesTable } from './TradesTable';
 export interface IAppProps {
-    trades: ITradeWithUSDRate[];
+    trades: ITrade[];
     holdings: IHoldings;
 }
 
 interface IAppState {
-    trades: ITradeWithUSDRate[];
+    trades: ITrade[];
     processing: boolean;
     holdings: IHoldings;
 }
@@ -33,12 +33,14 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         const filePaths = await dialog.showOpenDialog({properties: ['openFile']});
         const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
             .value as keyof typeof EXCHANGES;
-        const processedData: ITradeWithUSDRate[] = await processData(exchange, filePaths[0]);
-        if (processedData) {
+        const processedData: ITrade[] = await processData(exchange, filePaths[0]);
+        if (processedData && processedData.length) {
             this.setState({
                 trades: processedData,
                 processing: false,
             });
+        } else {
+            alert('Error processing data');
         }
     }
 

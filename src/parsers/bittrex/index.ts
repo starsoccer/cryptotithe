@@ -1,6 +1,5 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITradeWithUSDRate } from '../../types';
-import { getUSDRate } from '../getUSDRate';
+import { EXCHANGES, ITrade } from '../../types';
 
 enum BittrexOrderType {
     LIMIT_SELL = 'LIMIT_SELL',
@@ -19,9 +18,9 @@ interface IBittrex {
     Closed: string;
 }
 
-export async function processData(filePath: string): Promise<ITradeWithUSDRate[]> {
+export async function processData(filePath: string): Promise<ITrade[]> {
     const data: IBittrex[] = await getCSVData(filePath) as IBittrex[];
-    const internalFormat: ITradeWithUSDRate[] = [];
+    const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pair: string[] = trade.Exchange.split('-');
         switch (trade.Type) {
@@ -32,7 +31,6 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     amountSold: parseFloat(trade.Price) + parseFloat(trade.CommissionPaid),
                     rate: parseFloat(trade.Price) / parseFloat(trade.Quantity),
                     date: new Date(trade.Closed).getTime(),
-                    USDRate: (pair[0] === 'BTC' ? await getUSDRate(new Date(trade.Closed)) : 0),
                     id: trade.OrderUuid,
                     exchange: EXCHANGES.BITTREX,
                 });
@@ -44,8 +42,6 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     amountSold: parseFloat(trade.Quantity),
                     rate: parseFloat(trade.Quantity) / parseFloat(trade.Price),
                     date: new Date(trade.Closed).getTime(),
-                    USDRate: await getUSDRate(new Date(trade.Closed)) *
-                        parseFloat(trade.Price) / parseFloat(trade.Quantity),
                     id: trade.OrderUuid,
                     exchange: EXCHANGES.BITTREX,
                 });

@@ -1,6 +1,5 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITradeWithUSDRate } from '../../types';
-import { getUSDRate } from '../getUSDRate';
+import { EXCHANGES, ITrade } from '../../types';
 
 enum KrakenType {
     BUY = 'buy',
@@ -28,9 +27,9 @@ interface IKraken {
     ledgers: string;
 }
 
-export async function processData(filePath: string): Promise<ITradeWithUSDRate[]> {
+export async function processData(filePath: string): Promise<ITrade[]> {
     const data: IKraken[] = await getCSVData(filePath) as IKraken[];
-    const internalFormat: ITradeWithUSDRate[] = [];
+    const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pairs: string[] = [
             trade.pair.substr(0, 3),
@@ -54,7 +53,6 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     amountSold: parseFloat(trade.cost),
                     rate: parseFloat(trade.price),
                     date: new Date(trade.time).getTime(),
-                    USDRate: await getUSDRate(new Date(trade.time)),
                     id: trade.txid,
                     exchange: EXCHANGES.KRAKEN,
                 });
@@ -66,7 +64,6 @@ export async function processData(filePath: string): Promise<ITradeWithUSDRate[]
                     amountSold: parseFloat(trade.vol),
                     rate: parseFloat(trade.price),
                     date: new Date(trade.time).getTime(),
-                    USDRate: await getUSDRate(new Date(trade.time)) * parseFloat(trade.price) / parseFloat(trade.vol),
                     id: trade.txid,
                     exchange: EXCHANGES.KRAKEN,
                 });
