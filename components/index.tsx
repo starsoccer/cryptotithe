@@ -1,15 +1,20 @@
-// const React = require('react');
+import * as classnames from 'classnames';
 import * as React from 'react';
 import { processData } from '../src/parsers';
 import duplicateCheck from '../src/processing/DuplicateCheck';
 import { save } from '../src/save';
 import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../src/types';
-import { Button } from './Button';
-import { Loader } from './Loader';
-import { TradesTable } from './TradesTable';
+import { AddTrades } from './AddTrades';
+
 export interface IAppProps {
     trades: ITrade[];
     holdings: IHoldings;
+}
+
+enum TABS {
+    HOME = 'Home',
+    VIEW_TRADES = 'View Trades',
+    ADD_TRADES = 'Add Trades',
 }
 
 interface IAppState {
@@ -17,6 +22,7 @@ interface IAppState {
     processing: boolean;
     holdings: IHoldings;
     duplicateTrades: ITradeWithDuplicateProbability[];
+    currentTab: TABS;
 }
 
 export class rootElement extends React.Component<IAppProps, IAppState> {
@@ -27,6 +33,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             holdings: this.props.holdings,
             processing: false,
             duplicateTrades: [],
+            currentTab: TABS.ADD_TRADES,
         };
     }
 
@@ -60,28 +67,39 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         }
     }
 
+    public showCurrentTab = (currentTab: TABS) => {
+        switch (currentTab) {
+            case TABS.ADD_TRADES:
+                return <AddTrades holdings={this.state.holdings}/>;
+            case TABS.VIEW_TRADES:
+                return ;
+            case TABS.HOME:
+                return ;
+            default:
+                return ;
+        }
+    }
+
+    public updateTab = (newTab: TABS) => () => {
+        this.setState({currentTab: newTab});
+    }
+
     public render() {
         return (
-            <div>
-                <h1 className='tc'>Crypto Tithe</h1>
-                <hr />
-                <div className='center tc'>
-                    <label htmlFor='type' className='pr2'>Import Type</label>
-                    <select name='type' id='type'>
-                        {Object.keys(EXCHANGES).map((key) =>
-                            <option key={key} value={key}>{EXCHANGES[key as keyof typeof EXCHANGES]}</option>,
-                        )}
-                    </select>
+            <div className='app'>
+                <div className='flex bg-dark-gray h2 mb2'>
+                    {Object.keys(TABS).map((key: string) => <h3
+                        key={key}
+                        className={classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {
+                            'bg-dark-gray': TABS[key] !== this.state.currentTab,
+                            'bg-navy': TABS[key] === this.state.currentTab,
+                        })}
+                        onClick={this.updateTab(TABS[key])}
+                    >{TABS[key]}</h3>)}
                 </div>
-                <div className='flex justify-around pt2'>
-                    <Button onClick={this.onSubmit} label='Process Data'/>
-                    <Button onClick={this.saveData} label='Save'/>
+                <div className='openTab'>
+                    {this.showCurrentTab(this.state.currentTab)}
                 </div>
-                {this.state.duplicateTrades.length > 0 && <TradesTable trades={this.state.duplicateTrades}/>}
-                {this.state.trades.length > 0 && <TradesTable trades={this.state.trades}/>}
-                {this.state.trades.length === 0 && this.state.processing &&
-                    <Loader />
-                }
             </div>
         );
     }
