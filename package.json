@@ -55,6 +55,7 @@
         "clone": "^2.1.1",
         "csv2json": "^1.4.2",
         "csvtojson": "^1.1.12",
+        "font-awesome": "^4.7.0",
         "got": "^8.3.1",
         "react": "^16.3.17",
         "react-dom": "^16.0.6",
