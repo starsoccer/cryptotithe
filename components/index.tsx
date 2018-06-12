@@ -70,7 +70,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
     public showCurrentTab = (currentTab: TABS) => {
         switch (currentTab) {
             case TABS.ADD_TRADES:
-                return <AddTrades holdings={this.state.holdings}/>;
+                return <AddTrades holdings={this.state.holdings} trades={this.state.trades}/>;
             case TABS.VIEW_TRADES:
                 return ;
             case TABS.HOME:
@@ -87,7 +87,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
     public render() {
         return (
             <div className='app'>
-                <div className='flex bg-dark-gray h2 mb2'>
+                <div className='flex bg-dark-gray h2'>
                     {Object.keys(TABS).map((key: string) => <h3
                         key={key}
                         className={classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {

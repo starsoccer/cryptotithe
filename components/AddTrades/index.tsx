@@ -4,11 +4,13 @@ import { processData } from '../../src/parsers';
 import duplicateCheck from '../../src/processing/DuplicateCheck';
 import { save } from '../../src/save';
 import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
+import { AlertBar } from '../AlertBar';
 import { Button } from '../Button';
 import { Loader } from '../Loader';
 import { TradesTable } from '../TradesTable';
 export interface IAddTradesProp {
     holdings: IHoldings;
+    trades: ITrade[];
 }
 
 interface IAddTradesState {
@@ -16,16 +18,18 @@ interface IAddTradesState {
     processing: boolean;
     holdings: IHoldings;
     duplicateTrades: ITradeWithDuplicateProbability[];
+    duplicateWarning: boolean;
 }
 
 export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> {
     constructor(props: IAddTradesProp) {
         super(props);
         this.state = {
-            trades: [],
+            trades: this.props.trades,
             holdings: this.props.holdings,
             processing: false,
             duplicateTrades: [],
+            duplicateWarning: false,
         };
     }
 
@@ -39,7 +43,10 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         if (processedData && processedData.length) {
             const duplicateTrades = duplicateCheck(this.state.trades, processedData);
             if (duplicateTrades.length) {
-                this.setState({duplicateTrades});
+                this.setState({
+                    duplicateTrades,
+                    duplicateWarning: true,
+                });
             } else {
                 this.setState({
                     trades: processedData,
@@ -59,10 +66,17 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         }
     }
 
+    public dismissDuplicateWarning = () => {
+        this.setState({duplicateWarning: false});
+    }
+
     public render() {
         return (
             <div className='addTrades'>
-                <div className='center tc'>
+                {this.state.duplicateWarning &&
+                    <AlertBar message='Duplicate Trades Detected' onClick={this.dismissDuplicateWarning}/>
+                }
+                <div className='center tc mt2'>
                     <label htmlFor='type' className='pr2'>Import Type</label>
                     <select name='type' id='type'>
                         {Object.keys(EXCHANGES).map((key) =>
