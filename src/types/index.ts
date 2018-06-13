@@ -35,6 +35,7 @@ export interface ITradeWithGains extends ITradeWithUSDRate {
 
 export interface ITradeWithDuplicateProbability extends ITrade {
     probability: number;
+    duplicate: boolean;
 }
 
 export enum METHOD {
