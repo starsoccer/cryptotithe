@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { processData } from '../../src/parsers';
 import duplicateCheck from '../../src/processing/DuplicateCheck';
+import sortTrades from '../../src/processing/SortTrades';
 import { save } from '../../src/save';
 import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
 import { AlertBar } from '../AlertBar';
@@ -63,8 +64,13 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
     }
 
     public saveData = async (): Promise<void> => {
+        const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
+        const newTrades = sortTrades(
+            this.state.currentTrades.concat(duplicateToSave).concat(this.state.processedTrades)
+        );
         try {
-            await save(this.state.holdings, this.state.currentTrades);
+            await save(this.state.holdings, newTrades);
+            this.setState({currentTrades: newTrades});
         } catch (err) {
             alert(err);
         }
@@ -72,6 +78,13 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
 
     public dismissDuplicateWarning = () => {
         this.setState({duplicateWarning: false});
+    }
+
+    public duplicateStatusChange = (tradeID: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const id = this.state.duplicateTrades.findIndex((trade) => trade.id === tradeID);
+        const newDuplicateTrades = this.state.duplicateTrades;
+        newDuplicateTrades[id].duplicate = e.currentTarget.checked;
+        this.setState({duplicateTrades: newDuplicateTrades});
     }
 
     public render() {
@@ -89,10 +102,15 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                     </select>
                 </div>
                 <div className='flex justify-around pt2'>
-                    <Button onClick={this.onSubmit} label='Process Data'/>
+                    <Button onClick={this.onSubmit} label='Load Trades'/>
                     <Button onClick={this.saveData} label='Save'/>
                 </div>
-                {this.state.duplicateTrades.length > 0 && <DuplicateTradesTable trades={this.state.duplicateTrades}/>}
+                {this.state.duplicateTrades.length > 0 &&
+                    <DuplicateTradesTable
+                        trades={this.state.duplicateTrades}
+                        duplicateChange={this.duplicateStatusChange}
+                    />
+                }
                 {this.state.processedTrades.length > 0 && <TradesTable trades={this.state.processedTrades}/>}
                 {this.state.processedTrades.length === 0 && this.state.processing &&
                     <Loader />
