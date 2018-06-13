@@ -6,6 +6,7 @@ import { save } from '../../src/save';
 import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
 import { AlertBar } from '../AlertBar';
 import { Button } from '../Button';
+import { DuplicateTradesTable } from '../DuplicateTradesTable';
 import { Loader } from '../Loader';
 import { TradesTable } from '../TradesTable';
 export interface IAddTradesProp {
@@ -14,7 +15,8 @@ export interface IAddTradesProp {
 }
 
 interface IAddTradesState {
-    trades: ITrade[];
+    currentTrades: ITrade[];
+    processedTrades: ITrade[];
     processing: boolean;
     holdings: IHoldings;
     duplicateTrades: ITradeWithDuplicateProbability[];
@@ -25,7 +27,8 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
     constructor(props: IAddTradesProp) {
         super(props);
         this.state = {
-            trades: this.props.trades,
+            processedTrades: [],
+            currentTrades: this.props.trades,
             holdings: this.props.holdings,
             processing: false,
             duplicateTrades: [],
@@ -41,15 +44,16 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
             .value as keyof typeof EXCHANGES;
         const processedData: ITrade[] = await processData(exchange, filePaths[0]);
         if (processedData && processedData.length) {
-            const duplicateTrades = duplicateCheck(this.state.trades, processedData);
+            const duplicateTrades = duplicateCheck(this.state.currentTrades, processedData);
             if (duplicateTrades.length) {
                 this.setState({
                     duplicateTrades,
                     duplicateWarning: true,
+                    processing: false,
                 });
             } else {
                 this.setState({
-                    trades: processedData,
+                    processedTrades: processedData,
                     processing: false,
                 });
             }
@@ -60,7 +64,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
 
     public saveData = async (): Promise<void> => {
         try {
-            await save(this.state.holdings, this.state.trades);
+            await save(this.state.holdings, this.state.currentTrades);
         } catch (err) {
             alert(err);
         }
@@ -88,9 +92,9 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                     <Button onClick={this.onSubmit} label='Process Data'/>
                     <Button onClick={this.saveData} label='Save'/>
                 </div>
-                {this.state.duplicateTrades.length > 0 && <TradesTable trades={this.state.duplicateTrades}/>}
-                {this.state.trades.length > 0 && <TradesTable trades={this.state.trades}/>}
-                {this.state.trades.length === 0 && this.state.processing &&
+                {this.state.duplicateTrades.length > 0 && <DuplicateTradesTable trades={this.state.duplicateTrades}/>}
+                {this.state.processedTrades.length > 0 && <TradesTable trades={this.state.processedTrades}/>}
+                {this.state.processedTrades.length === 0 && this.state.processing &&
                     <Loader />
                 }
             </div>
