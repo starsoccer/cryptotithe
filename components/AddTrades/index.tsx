@@ -103,17 +103,27 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                 </div>
                 <div className='flex justify-around pt2'>
                     <Button onClick={this.onSubmit} label='Load Trades'/>
-                    <Button onClick={this.saveData} label='Save'/>
+                    <Button onClick={this.saveData} label='Save/Process Trades'/>
                 </div>
-                {this.state.duplicateTrades.length > 0 &&
-                    <DuplicateTradesTable
-                        trades={this.state.duplicateTrades}
-                        duplicateChange={this.duplicateStatusChange}
-                    />
-                }
-                {this.state.processedTrades.length > 0 && <TradesTable trades={this.state.processedTrades}/>}
-                {this.state.processedTrades.length === 0 && this.state.processing &&
+                {this.state.processing &&
                     <Loader />
+                }
+                {this.state.duplicateTrades.length > 0 &&
+                    <div>
+                        <h3 className='tc'>Duplicate Trades</h3>
+                        <hr className='center w-50' />
+                        <DuplicateTradesTable
+                            trades={this.state.duplicateTrades}
+                            duplicateChange={this.duplicateStatusChange}
+                        />
+                    </div>
+                }
+                {this.state.processedTrades.length > 0 &&
+                    <div>
+                        <h3 className='tc'>Trades to Add</h3>
+                        <hr className='center w-50' />
+                        <TradesTable trades={this.state.processedTrades}/>
+                    </div>
                 }
             </div>
         );
