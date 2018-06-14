@@ -28,7 +28,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                 internalFormat.push({
                     boughtCurreny: pair[1],
                     soldCurrency: pair[0],
-                    amountSold: parseFloat(trade.Price) + parseFloat(trade.CommissionPaid),
+                    amountSold: parseFloat(trade.Quantity) * parseFloat(trade.Limit),
                     rate: parseFloat((parseFloat(trade.Price) / parseFloat(trade.Quantity)).toFixed(8)),
                     date: new Date(trade.Closed).getTime(),
                     id: trade.OrderUuid,
