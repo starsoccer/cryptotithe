@@ -5,7 +5,7 @@ import duplicateCheck from '../../src/processing/DuplicateCheck';
 import sortTrades from '../../src/processing/SortTrades';
 import { save } from '../../src/save';
 import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
-import { AlertBar } from '../AlertBar';
+import { AlertBar, AlertType } from '../AlertBar';
 import { Button } from '../Button';
 import { DuplicateTradesTable } from '../DuplicateTradesTable';
 import { Loader } from '../Loader';
@@ -15,13 +15,18 @@ export interface IAddTradesProp {
     trades: ITrade[];
 }
 
+interface IAlertData {
+    message: string;
+    type: AlertType;
+}
+
 interface IAddTradesState {
     currentTrades: ITrade[];
     processedTrades: ITrade[];
     processing: boolean;
     holdings: IHoldings;
     duplicateTrades: ITradeWithDuplicateProbability[];
-    duplicateWarning: boolean;
+    alertData: IAlertData;
 }
 
 export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> {
@@ -33,7 +38,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
             holdings: this.props.holdings,
             processing: false,
             duplicateTrades: [],
-            duplicateWarning: false,
+            alertData: {} as IAlertData,
         };
     }
 
@@ -49,7 +54,10 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
             if (duplicateTrades.length) {
                 this.setState({
                     duplicateTrades,
-                    duplicateWarning: true,
+                    alertData: {
+                        message: 'Duplicate Trades Detected',
+                        type: AlertType.WARNING,
+                    },
                     processing: false,
                 });
             } else {
@@ -70,14 +78,26 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         );
         try {
             await save(this.state.holdings, newTrades);
-            this.setState({currentTrades: newTrades});
+            this.setState({
+                currentTrades: newTrades,
+                alertData: {
+                    message: 'Trades Saved',
+                    type: AlertType.SUCCESS,
+                },
+                processedTrades: [],
+            });
         } catch (err) {
-            alert(err);
+            this.setState({
+                alertData: {
+                    message: err,
+                    type: AlertType.ERROR,
+                },
+            });
         }
     }
 
-    public dismissDuplicateWarning = () => {
-        this.setState({duplicateWarning: false});
+    public dismissAlert = () => {
+        this.setState({alertData: {} as IAlertData});
     }
 
     public duplicateStatusChange = (tradeID: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,8 +110,11 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
     public render() {
         return (
             <div className='addTrades'>
-                {this.state.duplicateWarning &&
-                    <AlertBar message='Duplicate Trades Detected' onClick={this.dismissDuplicateWarning}/>
+                {Object.keys(this.state.alertData).length > 0 &&
+                    <AlertBar
+                        onClick={this.dismissAlert}
+                        {...this.state.alertData}
+                    />
                 }
                 <div className='center tc mt2'>
                     <label htmlFor='type' className='pr2'>Import Type</label>
