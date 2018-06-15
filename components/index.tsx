@@ -59,18 +59,27 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         }
     }
 
-    public saveData = async (): Promise<void> => {
+    public saveData = async (holdings: IHoldings, trades: ITrade[]): Promise<boolean> => {
         try {
-            await save(this.state.holdings, this.state.trades);
+            await save(holdings, trades);
+            this.setState({
+                trades,
+            });
+            return true;
         } catch (err) {
             alert(err);
+            return false;
         }
     }
 
     public showCurrentTab = (currentTab: TABS) => {
         switch (currentTab) {
             case TABS.ADD_TRADES:
-                return <AddTrades holdings={this.state.holdings} trades={this.state.trades}/>;
+                return <AddTrades
+                    holdings={this.state.holdings}
+                    trades={this.state.trades}
+                    save={this.saveData}
+                />;
             case TABS.VIEW_TRADES:
                 return ;
             case TABS.HOME:

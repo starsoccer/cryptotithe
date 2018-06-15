@@ -3,7 +3,6 @@ import * as React from 'react';
 import { processData } from '../../src/parsers';
 import duplicateCheck from '../../src/processing/DuplicateCheck';
 import sortTrades from '../../src/processing/SortTrades';
-import { save } from '../../src/save';
 import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
 import { AlertBar, AlertType } from '../AlertBar';
 import { Button } from '../Button';
@@ -13,6 +12,7 @@ import { TradesTable } from '../TradesTable';
 export interface IAddTradesProp {
     holdings: IHoldings;
     trades: ITrade[];
+    save: (holdings: IHoldings, trades: ITrade[]) => Promise<boolean>;
 }
 
 interface IAlertData {
@@ -74,10 +74,10 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
     public saveData = async (): Promise<void> => {
         const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
         const newTrades = sortTrades(
-            this.state.currentTrades.concat(duplicateToSave).concat(this.state.processedTrades)
+            this.state.currentTrades.concat(duplicateToSave).concat(this.state.processedTrades),
         );
-        try {
-            await save(this.state.holdings, newTrades);
+        const result = await this.props.save(this.state.holdings, newTrades);
+        if (result) {
             this.setState({
                 currentTrades: newTrades,
                 alertData: {
@@ -86,10 +86,10 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                 },
                 processedTrades: [],
             });
-        } catch (err) {
+        } else {
             this.setState({
                 alertData: {
-                    message: err,
+                    message: 'Unable to Save Trades',
                     type: AlertType.ERROR,
                 },
             });
