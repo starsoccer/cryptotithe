@@ -5,6 +5,7 @@ import duplicateCheck from '../src/processing/DuplicateCheck';
 import { save } from '../src/save';
 import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../src/types';
 import { AddTrades } from './AddTrades';
+import { ViewTrades } from './ViewTrades';
 
 export interface IAppProps {
     trades: ITrade[];
@@ -81,7 +82,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                     save={this.saveData}
                 />;
             case TABS.VIEW_TRADES:
-                return ;
+                return <ViewTrades holdings={this.state.holdings} trades={this.state.trades}/>;
             case TABS.HOME:
                 return ;
             default:
