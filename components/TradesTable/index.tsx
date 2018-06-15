@@ -11,13 +11,15 @@ export class TradesTable extends React.Component<ITradeTableProps> {
     public render() {
         return (
             <Table
-                headers={['Date', 'Amount Sold', 'Sold Currency', 'Rate', 'Bought Currency']}
+                headers={['Date', 'ID', 'Amount Sold', 'Sold Currency', 'Rate', 'Bought Currency', 'Amount Bought']}
                 rows={this.props.trades.map((trade) => [
                     <span>{new Date(trade.date).toUTCString()}</span>,
-                    <span>{trade.amountSold}</span>,
+                    <span>{trade.id}</span>,
+                    <span>{trade.amountSold.toFixed(8)}</span>,
                     <span>{trade.soldCurrency}</span>,
                     <span>{trade.rate.toFixed(8)}</span>,
                     <span>{trade.boughtCurreny}</span>,
+                    <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
                 ])}
             />
         );
