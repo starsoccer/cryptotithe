@@ -1,13 +1,13 @@
-// const React = require('react');
 import * as React from 'react';
 import { processData } from '../../src/parsers';
 import duplicateCheck from '../../src/processing/DuplicateCheck';
 import sortTrades from '../../src/processing/SortTrades';
 import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
 import { AlertBar, AlertType } from '../AlertBar';
-import { Button } from '../Button';
+import Button from '../Button';
 import { DuplicateTradesTable } from '../DuplicateTradesTable';
 import { Loader } from '../Loader';
+import TradeDetails from '../TradeDetails';
 import { TradesTable } from '../TradesTable';
 export interface IAddTradesProp {
     holdings: IHoldings;
@@ -27,6 +27,7 @@ interface IAddTradesState {
     holdings: IHoldings;
     duplicateTrades: ITradeWithDuplicateProbability[];
     alertData: IAlertData;
+    addTrade: boolean;
 }
 
 export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> {
@@ -39,6 +40,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
             processing: false,
             duplicateTrades: [],
             alertData: {} as IAlertData,
+            addTrade: false,
         };
     }
 
@@ -71,21 +73,18 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         }
     }
 
-    public saveData = async (): Promise<void> => {
-        const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
-        const newTrades = sortTrades(
-            this.state.currentTrades.concat(duplicateToSave).concat(this.state.processedTrades),
-        );
-        const result = await this.props.save(this.state.holdings, newTrades);
+    public saveData = async (holdings: IHoldings, trades: ITrade[]): Promise<boolean>  => {
+        const result = await this.props.save(holdings, trades);
         if (result) {
             this.setState({
-                currentTrades: newTrades,
+                currentTrades: trades,
                 alertData: {
                     message: 'Trades Saved',
                     type: AlertType.SUCCESS,
                 },
                 processedTrades: [],
             });
+            return true;
         } else {
             this.setState({
                 alertData: {
@@ -93,11 +92,20 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                     type: AlertType.ERROR,
                 },
             });
+            return false;
         }
     }
 
-    public dismissAlert = () => {
-        this.setState({alertData: {} as IAlertData});
+    public processTrades = async (): Promise<void> => {
+        const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
+        const newTrades = sortTrades(
+            this.state.currentTrades.concat(duplicateToSave).concat(this.state.processedTrades),
+        );
+        this.saveData(this.state.holdings, newTrades);
+    }
+
+    public setAlertData = (type?: AlertType, message?: string) => {
+        this.setState({alertData: {type, message} as IAlertData});
     }
 
     public duplicateStatusChange = (tradeID: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,12 +115,22 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         this.setState({duplicateTrades: newDuplicateTrades});
     }
 
+    public addTrade = async (trade: ITrade) => {
+        const newTrades = this.state.processedTrades;
+        newTrades.push(trade);
+        this.setState({processedTrades: newTrades, addTrade: false});
+    }
+
+    public setAddTradeDisplay = () => {
+        this.setState({addTrade: !this.state.addTrade});
+    }
+
     public render() {
         return (
             <div className='addTrades'>
                 {Object.keys(this.state.alertData).length > 0 &&
                     <AlertBar
-                        onClick={this.dismissAlert}
+                        onClick={this.setAlertData}
                         {...this.state.alertData}
                     />
                 }
@@ -124,9 +142,16 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                         )}
                     </select>
                 </div>
+                { this.state.addTrade &&
+                    <TradeDetails
+                        showAlert={this.setAlertData}
+                        addTrade={this.addTrade}
+                    />
+                }
                 <div className='flex justify-around pt2'>
                     <Button onClick={this.onSubmit} label='Load Trades'/>
-                    <Button onClick={this.saveData} label='Save/Process Trades'/>
+                    <Button onClick={this.setAddTradeDisplay} label='Add Trade'/>
+                    <Button onClick={this.processTrades} label='Save/Process Trades'/>
                 </div>
                 {this.state.processing &&
                     <Loader />
