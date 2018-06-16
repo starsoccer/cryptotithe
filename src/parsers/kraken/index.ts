@@ -48,7 +48,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                 }
 
                 internalFormat.push({
-                    boughtCurreny: pairs[0],
+                    boughtCurrency: pairs[0],
                     soldCurrency: pairs[1],
                     amountSold: parseFloat(trade.cost),
                     rate: parseFloat(trade.price),
@@ -59,7 +59,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                 break;
             case KrakenType.SELL:
                 internalFormat.push({
-                    boughtCurreny: pairs[1],
+                    boughtCurrency: pairs[1],
                     soldCurrency: pairs[0],
                     amountSold: parseFloat(trade.vol),
                     rate: parseFloat(trade.price),

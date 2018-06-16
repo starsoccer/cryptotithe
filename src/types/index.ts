@@ -14,8 +14,18 @@ export interface ICurrencyHolding {
     date: number;
 }
 
-export interface ITrade {
-    boughtCurreny: string;
+export interface IPartialTrade {
+    boughtCurrency?: string;
+    soldCurrency?: string;
+    amountSold?: number;
+    rate?: number;
+    date?: number;
+    id?: string;
+    exchange?: EXCHANGES;
+}
+
+export interface ITrade extends IPartialTrade {
+    boughtCurrency: string;
     soldCurrency: string;
     amountSold: number;
     rate: number;

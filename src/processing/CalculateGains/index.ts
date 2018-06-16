@@ -16,10 +16,10 @@ export function calculateGains(holdings: IHoldings, trades: ITradeWithUSDRate[])
     for (const trade of trades) {
         const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
         newHoldings = result.newHoldings;
-        if (trade.boughtCurreny in newHoldings === false) {
-            newHoldings[trade.boughtCurreny] = [];
+        if (trade.boughtCurrency in newHoldings === false) {
+            newHoldings[trade.boughtCurrency] = [];
         }
-        newHoldings[trade.boughtCurreny].push({
+        newHoldings[trade.boughtCurrency].push({
             amount: trade.amountSold / trade.rate,
             rateInUSD: trade.USDRate * trade.rate,
             date: new Date().getTime(),

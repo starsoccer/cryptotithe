@@ -30,7 +30,7 @@ export class DuplicateTradesTable extends React.Component<IDuplicateTradesTableP
                     <span>{trade.amountSold.toFixed(8)}</span>,
                     <span>{trade.soldCurrency}</span>,
                     <span>{trade.rate.toFixed(8)}</span>,
-                    <span>{trade.boughtCurreny}</span>,
+                    <span>{trade.boughtCurrency}</span>,
                     <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
                     <span>{trade.probability}</span>,
                     <Toggle

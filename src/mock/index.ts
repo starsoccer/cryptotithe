@@ -35,7 +35,7 @@ export function mockTrades(
 
         for (let i: number = 0; i < amount; i++) {
             trades.push({
-                boughtCurreny: faker.random.word().toUpperCase(),
+                boughtCurrency: faker.random.word().toUpperCase(),
                 soldCurrency: faker.random.arrayElement(currencies),
                 amountSold: (allowOverflow ?
                     totalHoldings + faker.random.number() : (totalHoldings - faker.random.number()) / amount),

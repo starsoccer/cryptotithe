@@ -30,7 +30,7 @@ export class ViewTrades extends React.Component<IViewTradesProp, IViewTradesStat
                         <TradesTable trades={this.state.currentTrades}/>
                     </div>
                 :
-                    <h3 className='tc'>No Trades <i className='fa fa-frown'></i></h3>
+                    <h3 className='tc'>No Trades <i className='fa fa-frown-o'></i></h3>
                 }
             </div>
         );

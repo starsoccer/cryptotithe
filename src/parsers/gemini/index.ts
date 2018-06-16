@@ -72,7 +72,7 @@ export async function processData(): Promise<ITrade[]> {
                 case GeminiOrderType.Buy:
                 case GeminiOrderType.Sell:
                     internalFormat.push({
-                        boughtCurreny: pair.bought,
+                        boughtCurrency: pair.bought,
                         soldCurrency: pair.sold,
                         amountSold: Math.abs(trade[`${pair.sold} Amount`]),
                         rate: Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`]),

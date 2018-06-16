@@ -28,7 +28,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
         switch (trade.Type) {
             case PoloniexOrderType.BUY:
                 internalFormat.push({
-                    boughtCurreny: pair[0],
+                    boughtCurrency: pair[0],
                     soldCurrency: pair[1],
                     amountSold: Math.abs(parseFloat(trade['Base Total Less Fee'])),
                     rate: parseFloat(trade.Price),
@@ -39,7 +39,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                 break;
             case PoloniexOrderType.SELL:
                 internalFormat.push({
-                    boughtCurreny: pair[1],
+                    boughtCurrency: pair[1],
                     soldCurrency: pair[0],
                     amountSold: Math.abs(parseFloat(trade['Quote Total Less Fee'])),
                     rate: parseFloat(trade.Amount) * parseFloat(trade.Price),

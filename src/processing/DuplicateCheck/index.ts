@@ -18,7 +18,7 @@ export default function duplicateCheck(currentTrades: ITrade[], newTrades: ITrad
                 let probability = 0;
                 if (newTrade.date === currentTrade.date) {
                     if (
-                        newTrade.boughtCurreny === currentTrade.boughtCurreny ||
+                        newTrade.boughtCurrency === currentTrade.boughtCurrency ||
                         newTrade.soldCurrency === currentTrade.soldCurrency
                     ) {
                         probability += 20;
