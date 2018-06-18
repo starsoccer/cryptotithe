@@ -2,7 +2,7 @@ import * as React from 'react';
 import { processData } from '../../src/parsers';
 import duplicateCheck from '../../src/processing/DuplicateCheck';
 import sortTrades from '../../src/processing/SortTrades';
-import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
+import { EXCHANGES, IHoldings, IPartialSavedData, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
 import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
 import { DuplicateTradesTable } from '../DuplicateTradesTable';
@@ -12,7 +12,7 @@ import { TradesTable } from '../TradesTable';
 export interface IAddTradesProp {
     holdings: IHoldings;
     trades: ITrade[];
-    save: (holdings: IHoldings, trades: ITrade[]) => Promise<boolean>;
+    save: (data: IPartialSavedData) => Promise<boolean>;
 }
 
 interface IAlertData {
@@ -73,18 +73,20 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         }
     }
 
-    public saveData = async (holdings: IHoldings, trades: ITrade[]): Promise<boolean>  => {
-        const result = await this.props.save(holdings, trades);
-        if (result) {
+    public processTrades = async (): Promise<void> => {
+        const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
+        const newTrades = sortTrades(
+            this.state.currentTrades.concat(duplicateToSave).concat(this.state.processedTrades),
+        );
+        if (await this.props.save({trades: newTrades})) {
             this.setState({
-                currentTrades: trades,
+                currentTrades: newTrades,
                 alertData: {
                     message: 'Trades Saved',
                     type: AlertType.SUCCESS,
                 },
                 processedTrades: [],
             });
-            return true;
         } else {
             this.setState({
                 alertData: {
@@ -92,16 +94,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                     type: AlertType.ERROR,
                 },
             });
-            return false;
         }
-    }
-
-    public processTrades = async (): Promise<void> => {
-        const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
-        const newTrades = sortTrades(
-            this.state.currentTrades.concat(duplicateToSave).concat(this.state.processedTrades),
-        );
-        this.saveData(this.state.holdings, newTrades);
     }
 
     public setAlertData = (type?: AlertType, message?: string) => {
@@ -125,6 +118,14 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         this.setState({addTrade: !this.state.addTrade});
     }
 
+    public editedTrade = (data: IPartialSavedData) => {
+        if ('trades' in data && data.trades !== undefined) {
+            this.setState({processedTrades: data.trades});
+            return true;
+        }
+        return false;
+    }
+
     public render() {
         return (
             <div className='addTrades'>
@@ -144,8 +145,8 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                 </div>
                 { this.state.addTrade &&
                     <TradeDetails
-                        showAlert={this.setAlertData}
-                        addTrade={this.addTrade}
+                        onSubmit={this.addTrade}
+                        className='cf'
                     />
                 }
                 <div className='flex justify-around pt2'>
@@ -170,7 +171,10 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                     <div>
                         <h3 className='tc'>Trades to Add</h3>
                         <hr className='center w-50' />
-                        <TradesTable trades={this.state.processedTrades}/>
+                        <TradesTable
+                            trades={this.state.processedTrades}
+                            save={this.editedTrade}
+                        />
                     </div>
                 }
             </div>

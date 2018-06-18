@@ -2,12 +2,11 @@ import * as crypto from 'crypto';
 import * as React from 'react';
 import * as validator from 'validator';
 import { EXCHANGES, IPartialTrade, ITrade } from '../../src/types';
-import { AlertType } from '../AlertBar';
 import Button from '../Button';
 export interface ITradeDetailsProps {
+    className?: string;
     trade?: ITrade;
-    showAlert: (type: AlertType, message: string) => void;
-    addTrade: (trades: ITrade) => void;
+    onSubmit: (trade: ITrade) => void;
 }
 
 export interface ITradeDetailsState {
@@ -101,7 +100,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
             }
         }
         if (errors.length) {
-            this.props.showAlert(AlertType.ERROR, errors.join('\n'));
+            alert(errors.join('\n'));
         } else {
             const trade: IPartialTrade = {
                 date: this.state.date.getTime(),
@@ -116,14 +115,13 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 id = crypto.createHash('sha256').update(JSON.stringify(trade)).digest('hex');
             }
             trade.id = id;
-            this.props.addTrade(trade as ITrade);
-            this.props.showAlert(AlertType.SUCCESS, 'Trade Added');
+            this.props.onSubmit(trade as ITrade);
         }
     }
 
     public render() {
         return (
-            <div className='TradeDetails w-70 center tc'>
+            <div className={`TradeDetails w-70 center tc ${this.props.className}`}>
                 <div className='fl w-100 pa1'>
                     <h4 className='pb0 mb0 pt0 mt0 tc'>Exchange</h4>
                     <input
@@ -189,7 +187,9 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                         onChange={this.onChange('amountSold')}
                     />
                 </div>
-                <Button className='center' label='Add Trade' onClick={this.onSubmit}/>
+                <div className='fl w-100'>
+                    <Button className='center' label='Add Trade' onClick={this.onSubmit}/>
+                </div>
             </div>
         );
     }

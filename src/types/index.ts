@@ -1,7 +1,13 @@
-export interface ISavedData {
+export interface ISavedData extends IPartialSavedData {
     savedDate: Date;
     trades: ITradeWithUSDRate[];
     holdings: IHoldings;
+}
+
+export interface IPartialSavedData {
+    savedDate?: Date;
+    trades?: ITrade[];
+    holdings?: IHoldings;
 }
 
 export interface IHoldings {

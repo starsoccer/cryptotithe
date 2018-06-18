@@ -3,7 +3,7 @@ import * as React from 'react';
 import { processData } from '../src/parsers';
 import duplicateCheck from '../src/processing/DuplicateCheck';
 import { save } from '../src/save';
-import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability } from '../src/types';
+import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability, IPartialSavedData } from '../src/types';
 import { AddTrades } from './AddTrades';
 import { ViewTrades } from './ViewTrades';
 
@@ -60,11 +60,15 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         }
     }
 
-    public saveData = async (holdings: IHoldings, trades: ITrade[]): Promise<boolean> => {
+    public saveData = async (data: IPartialSavedData): Promise<boolean> => {
+        const newHoldings = data.holdings || this.state.holdings;
+        const newTrades = data.trades || this.state.trades;
+
         try {
-            await save(holdings, trades);
+            await save(newHoldings, newTrades);
             this.setState({
-                trades,
+                trades: newTrades,
+                holdings: newHoldings,
             });
             return true;
         } catch (err) {
@@ -82,7 +86,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                     save={this.saveData}
                 />;
             case TABS.VIEW_TRADES:
-                return <ViewTrades holdings={this.state.holdings} trades={this.state.trades}/>;
+                return <ViewTrades holdings={this.state.holdings} trades={this.state.trades} save={this.saveData}/>;
             case TABS.HOME:
                 return ;
             default:
