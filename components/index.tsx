@@ -1,14 +1,18 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
-import { processData } from '../src/parsers';
-import duplicateCheck from '../src/processing/DuplicateCheck';
 import { save } from '../src/save';
-import { EXCHANGES, IHoldings, ITrade, ITradeWithDuplicateProbability, IPartialSavedData } from '../src/types';
+import {
+    IHoldings,
+    IPartialSavedData,
+    ITradeWithUSDRate,
+    ITradeWithDuplicateProbability
+} from '../src/types';
 import { AddTrades } from './AddTrades';
+import { CalculateGains } from './CalculateGains';
 import { ViewTrades } from './ViewTrades';
 
 export interface IAppProps {
-    trades: ITrade[];
+    trades: ITradeWithUSDRate[];
     holdings: IHoldings;
 }
 
@@ -16,10 +20,11 @@ enum TABS {
     HOME = 'Home',
     VIEW_TRADES = 'View Trades',
     ADD_TRADES = 'Add Trades',
+    CALCULATE_GAINS = 'Calculate Gains',
 }
 
 interface IAppState {
-    trades: ITrade[];
+    trades: ITradeWithUSDRate[];
     processing: boolean;
     holdings: IHoldings;
     duplicateTrades: ITradeWithDuplicateProbability[];
@@ -36,28 +41,6 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             duplicateTrades: [],
             currentTab: TABS.ADD_TRADES,
         };
-    }
-
-    public onSubmit = async (): Promise<void> => {
-        this.setState({processing: true});
-        const { dialog } = require('electron').remote;
-        const filePaths = await dialog.showOpenDialog({properties: ['openFile']});
-        const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
-            .value as keyof typeof EXCHANGES;
-        const processedData: ITrade[] = await processData(exchange, filePaths[0]);
-        if (processedData && processedData.length) {
-            const duplicateTrades = duplicateCheck(this.state.trades, processedData);
-            if (duplicateTrades.length) {
-                this.setState({duplicateTrades});
-            } else {
-                this.setState({
-                    trades: processedData,
-                    processing: false,
-                });
-            }
-        } else {
-            alert('Error processing data');
-        }
     }
 
     public saveData = async (data: IPartialSavedData): Promise<boolean> => {
@@ -87,6 +70,8 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                 />;
             case TABS.VIEW_TRADES:
                 return <ViewTrades holdings={this.state.holdings} trades={this.state.trades} save={this.saveData}/>;
+            case TABS.CALCULATE_GAINS:
+                return <CalculateGains trades={this.state.trades} holdings={this.state.holdings}/>
             case TABS.HOME:
                 return ;
             default:
@@ -101,6 +86,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
     public render() {
         return (
             <div className='app'>
+                <link rel='stylesheet' type='text/css' href='./components/index.css' />
                 <div className='flex bg-dark-gray h2'>
                     {Object.keys(TABS).map((key: string) => <h3
                         key={key}

@@ -1,8 +1,16 @@
 import * as React from 'react';
 import { processData } from '../../src/parsers';
 import duplicateCheck from '../../src/processing/DuplicateCheck';
+import { addUSDRateToTrades } from '../../src/processing/getUSDRate';
 import sortTrades from '../../src/processing/SortTrades';
-import { EXCHANGES, IHoldings, IPartialSavedData, ITrade, ITradeWithDuplicateProbability } from '../../src/types';
+import {
+    EXCHANGES,
+    IHoldings,
+    IPartialSavedData,
+    ITrade,
+    ITradeWithDuplicateProbability,
+    ITradeWithUSDRate,
+} from '../../src/types';
 import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
 import { DuplicateTradesTable } from '../DuplicateTradesTable';
@@ -74,10 +82,14 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
     }
 
     public processTrades = async (): Promise<void> => {
+        this.setState({processing: true});
         const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
-        const newTrades = sortTrades(
-            this.state.currentTrades.concat(duplicateToSave).concat(this.state.processedTrades),
-        );
+        const tradesToSave = this.state.processedTrades.concat(duplicateToSave);
+        const tradesWithUSDRate: ITradeWithUSDRate[] = await addUSDRateToTrades(tradesToSave);
+
+        const newTrades: ITradeWithUSDRate[] = sortTrades(
+            this.state.currentTrades.concat(tradesWithUSDRate),
+        ) as ITradeWithUSDRate[];
         if (await this.props.save({trades: newTrades})) {
             this.setState({
                 currentTrades: newTrades,
@@ -86,6 +98,8 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                     type: AlertType.SUCCESS,
                 },
                 processedTrades: [],
+                duplicateTrades: [],
+                processing: false,
             });
         } else {
             this.setState({
@@ -93,6 +107,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                     message: 'Unable to Save Trades',
                     type: AlertType.ERROR,
                 },
+                processing: false,
             });
         }
     }
@@ -118,12 +133,9 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         this.setState({addTrade: !this.state.addTrade});
     }
 
-    public editedTrade = (data: IPartialSavedData) => {
-        if ('trades' in data && data.trades !== undefined) {
-            this.setState({processedTrades: data.trades});
-            return true;
-        }
-        return false;
+    public editedTrade = (trades: ITrade[] | ITradeWithUSDRate[]) => {
+        this.setState({processedTrades: trades});
+        return true;
     }
 
     public render() {

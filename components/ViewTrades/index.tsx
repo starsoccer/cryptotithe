@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IHoldings, IPartialSavedData, ITrade } from '../../src/types';
+import { IHoldings, IPartialSavedData, ITrade, ITradeWithUSDRate } from '../../src/types';
 import { TradesTable } from '../TradesTable';
 export interface IViewTradesProp {
     holdings: IHoldings;
@@ -8,6 +8,11 @@ export interface IViewTradesProp {
 }
 
 export class ViewTrades extends React.Component<IViewTradesProp> {
+
+    public save = (trades: ITrade[] | ITradeWithUSDRate[]) => {
+        return this.props.save({trades: trades as ITradeWithUSDRate[]});
+    }
+
     public render() {
         return (
             <div className='viewTrades'>
@@ -17,7 +22,7 @@ export class ViewTrades extends React.Component<IViewTradesProp> {
                         <hr className='center w-50' />
                         <TradesTable
                             trades={this.props.trades}
-                            save={this.props.save}
+                            save={this.save}
                         />
                     </div>
                 :

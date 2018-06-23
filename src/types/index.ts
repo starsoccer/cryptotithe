@@ -6,7 +6,7 @@ export interface ISavedData extends IPartialSavedData {
 
 export interface IPartialSavedData {
     savedDate?: Date;
-    trades?: ITrade[];
+    trades?: ITradeWithUSDRate[];
     holdings?: IHoldings;
 }
 

@@ -23,7 +23,7 @@ export class Table extends React.Component<ITableProps> {
                             this.props.rows.map((row, index) =>
                                 <tr className='stripe-dark' key={index}>
                                     {row.map((col, colindex) =>
-                                        <td key={`${index}-${colindex}`} className='pa3'>{col}</td>)}
+                                        <td key={`${index}-${colindex}`} className='pa2 mw4 break-word'>{col}</td>)}
                                 </tr>,
                         )}</tbody>
                     </table>

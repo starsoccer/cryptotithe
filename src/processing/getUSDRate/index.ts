@@ -1,4 +1,5 @@
 import * as got from 'got';
+import { ITrade, ITradeWithUSDRate } from '../../types';
 
 interface ICryptoCompareResponse {
     USD: number;
@@ -23,4 +24,20 @@ export async function getUSDRate(date: Date): Promise<number> {
     } else {
         throw new Error('Invalid Response');
     }
+}
+
+export async function addUSDRateToTrade(trade: ITrade): Promise<ITradeWithUSDRate> {
+    const USDRate = await getUSDRate(new Date(trade.date));
+    return {
+        ...trade,
+        USDRate,
+    };
+}
+
+export async function addUSDRateToTrades(trades: ITrade[]): Promise<ITradeWithUSDRate[]> {
+    const newTrades: Array<Promise<ITradeWithUSDRate>>  = [];
+    for (const trade of trades) {
+        newTrades.push(addUSDRateToTrade(trade));
+    }
+    return Promise.all(newTrades);
 }
