@@ -5,19 +5,15 @@ interface ICryptoCompareResponse {
     USD: number;
 }
 
-export async function getUSDRate(date: Date): Promise<number> {
-    const data: string[] = [
-        `fsym=BTC`,
-        'tsym=USD',
-        'sign=false', // change to true for security?
-        `toTs=${date.getTime() / 1000}`,
-        'extraParams=tApp',
-    ];
-    const response: got.Response<any> = await got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+function cryptocompareResponse(response: got.Response<any>) {
     if ('body' in response) {
         try {
             const result: ICryptoCompareResponse = JSON.parse(response.body);
-            return result.USD;
+            if (result.USD !== 0) {
+                return result.USD;
+            } else {
+                return false;
+            }
         } catch (ex) {
             throw new Error('Error parsing JSON');
         }
@@ -26,8 +22,32 @@ export async function getUSDRate(date: Date): Promise<number> {
     }
 }
 
+export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
+    const data: string[] = [
+        `fsym=${trade.soldCurrency}`,
+        'tsym=USD',
+        'sign=false', // change to true for security?
+        `toTs=${date.getTime() / 1000}`,
+        'extraParams=tApp',
+    ];
+    const response: got.Response<any> = await got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+    const rate = cryptocompareResponse(response);
+    if (rate) {
+        return rate;
+    } else {
+        data[0] = `fsym=${trade.boughtCurrency}`;
+        const backupResponse = await got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+        const backupRate = cryptocompareResponse(backupResponse);
+        if (backupRate) {
+            return backupRate / trade.rate;
+        } else {
+            throw new Error('Cant get any USD Rate for trade ' + trade.id);
+        }
+    }
+}
+
 export async function addUSDRateToTrade(trade: ITrade): Promise<ITradeWithUSDRate> {
-    const USDRate = await getUSDRate(new Date(trade.date));
+    const USDRate = await getUSDRate(new Date(trade.date), trade);
     return {
         ...trade,
         USDRate,
@@ -35,9 +55,10 @@ export async function addUSDRateToTrade(trade: ITrade): Promise<ITradeWithUSDRat
 }
 
 export async function addUSDRateToTrades(trades: ITrade[]): Promise<ITradeWithUSDRate[]> {
-    const newTrades: Array<Promise<ITradeWithUSDRate>>  = [];
+    const newTrades: ITradeWithUSDRate[]  = [];
     for (const trade of trades) {
-        newTrades.push(addUSDRateToTrade(trade));
+        // cant get some rates without await maybe cryptocompare rate limiting
+        newTrades.push(await addUSDRateToTrade(trade));
     }
     return Promise.all(newTrades);
 }
