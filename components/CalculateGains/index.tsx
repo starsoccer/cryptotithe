@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { calculateGains } from '../../src/processing/CalculateGains';
+import { calculateGainPerTrade, calculateGains } from '../../src/processing/CalculateGains';
 import { IHoldings, ITradeWithGains, ITradeWithUSDRate } from '../../src/types';
 // import { AlertBar, AlertType } from '../AlertBar';
 // import Button from '../Button';
@@ -17,7 +17,9 @@ export interface ICalculateTradesState {
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
     constructor(props: ICalculateTradesProp) {
         super(props);
-        this.state = {};
+        this.state = {
+            tradeGains: calculateGainPerTrade(props.holdings, props.trades),
+        };
     }
 
     public calculateGains = () => {

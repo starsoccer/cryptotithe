@@ -19,6 +19,7 @@ export class GainsPerTradeTable extends React.Component<IGainsPerTradeTableProps
                     'Rate',
                     'Bought Currency',
                     'Amount Bought',
+                    'USD Value',
                     'Short Term Gain',
                     'Long Term Gain',
                 ]}
@@ -30,8 +31,9 @@ export class GainsPerTradeTable extends React.Component<IGainsPerTradeTableProps
                     <span>{trade.rate.toFixed(8)}</span>,
                     <span>{trade.boughtCurrency}</span>,
                     <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
-                    <span>{trade.shortTerm}</span>,
-                    <span>{trade.longTerm}</span>,
+                    <span>{(trade.amountSold * trade.USDRate).toFixed(8)}</span>,
+                    <span>{trade.shortTerm.toFixed(2)}</span>,
+                    <span>{trade.longTerm.toFixed(2)}</span>,
                 ])}
             />
         );

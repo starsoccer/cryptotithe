@@ -111,7 +111,7 @@ export function getCurrenyHolding(
     };
 }
 
-export function calculateGainPerTrade(internalFormat: ITradeWithUSDRate[], holdings: IHoldings): ITradeWithGains[] {
+export function calculateGainPerTrade(holdings: IHoldings, internalFormat: ITradeWithUSDRate[]): ITradeWithGains[] {
     let tempHoldings: IHoldings = clone(holdings);
     const finalFormat: ITradeWithGains[] = [];
     for (const trade of internalFormat) {
