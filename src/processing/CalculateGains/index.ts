@@ -19,18 +19,27 @@ export function calculateGains(holdings: IHoldings, trades: ITradeWithUSDRate[])
         if (trade.boughtCurrency in newHoldings === false) {
             newHoldings[trade.boughtCurrency] = [];
         }
-        newHoldings[trade.boughtCurrency].push({
-            amount: trade.amountSold / trade.rate,
-            rateInUSD: trade.USDRate * trade.rate,
-            date: new Date().getTime(),
-        });
-        for (const holding of result.deductedHoldings) {
-            const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
+        if (trade.soldCurrency === 'USD') {
+            newHoldings[trade.boughtCurrency].push({
+                amount: trade.amountSold / trade.rate,
+                rateInUSD: trade.USDRate,
+                date: new Date().getTime(),
+            });
+            continue;
+        } else {
+            newHoldings[trade.boughtCurrency].push({
+                amount: trade.amountSold / trade.rate,
+                rateInUSD: trade.USDRate * trade.rate,
+                date: new Date().getTime(),
+            });
+            for (const holding of result.deductedHoldings) {
+                const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
 
-            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
-                longTermGain += gain;
-            } else {
-                shortTermGain += gain;
+                if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
+                    longTermGain += gain;
+                } else {
+                    shortTermGain += gain;
+                }
             }
         }
     }
@@ -97,11 +106,19 @@ export function getCurrenyHolding(
                 delete holdings[currency];
             }
         } else {
-            currencyHolding.push({
-                amount: amountUsed,
-                date: new Date().getTime(),
-                rateInUSD: 0,
-            });
+            if (currency === 'USD') {
+                currencyHolding.push({
+                    amount: amountUsed,
+                    date: new Date().getTime(),
+                    rateInUSD: 1,
+                });
+            } else {
+                currencyHolding.push({
+                    amount: amountUsed,
+                    date: new Date().getTime(),
+                    rateInUSD: 0,
+                });
+            }
             amountUsed = 0;
         }
     }

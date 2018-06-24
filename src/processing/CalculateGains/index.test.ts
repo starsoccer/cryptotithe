@@ -1,5 +1,5 @@
 import { mockHoldings, mockTradesWithUSDRate } from '../../mock';
-import { IHoldings, ITradeWithUSDRate, METHOD} from '../../types';
+import { IHoldings, ITradeWithUSDRate, METHOD, EXCHANGES} from '../../types';
 import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from './';
 
 describe('getCurrencyHolding LIFO', () => {
@@ -440,4 +440,82 @@ describe('calculateGains 1/multiple currencies automated', () => {
             }
         }
     }
+});
+
+describe('calculateGains fiat', () => {
+
+    test('usd holdings', () => {
+        const tempHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
+        const holdings: IHoldings = {USD: tempHoldings[Object.keys(tempHoldings)[0]]};
+
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const result: ICalculateGains = calculateGains(holdings, trades);
+
+
+        expect(result.longTermGain).toBe(0);
+        expect(result.shortTermGain).toBe(0);
+    });
+
+    test('usd trades', () => {
+        const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
+
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        trades[0].boughtCurrency = 'USD';
+        const result: ICalculateGains = calculateGains(holdings, trades);
+        const currency = Object.keys(holdings)[0];
+        expect(result.longTermGain).toBe(0);
+        expect(result.shortTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) * trades[0].amountSold);
+    });
+
+    test('basic usd buy', () => {
+        const holdings: IHoldings = {};
+
+        const trades: ITradeWithUSDRate[] = [{
+            boughtCurrency: 'BTC',
+            soldCurrency: 'USD',
+            amountSold: 1000,
+            rate: 200,
+            USDRate: 200,
+            date: new Date().getTime(),
+            id: '1',
+            exchange: EXCHANGES.GEMINI,
+        }];
+        const result: ICalculateGains = calculateGains(holdings, trades);
+
+        expect(result.longTermGain).toBe(0);
+        expect(result.shortTermGain).toBe(0);
+
+    });
+
+    test('basic usd buy/sell', () => {
+        const holdings: IHoldings = {};
+
+        const trades: ITradeWithUSDRate[] = [
+            {
+                boughtCurrency: 'BTC',
+                soldCurrency: 'USD',
+                amountSold: 1000,
+                rate: 200,
+                USDRate: 200,
+                date: new Date().getTime(),
+                id: '1',
+                exchange: EXCHANGES.GEMINI,
+            },
+            {
+                boughtCurrency: 'USD',
+                soldCurrency: 'BTC',
+                amountSold: 1,
+                rate: 0.001,
+                USDRate: 1000,
+                date: new Date().getTime(),
+                id: '1',
+                exchange: EXCHANGES.GEMINI,
+            },
+        ];
+        const result: ICalculateGains = calculateGains(holdings, trades);
+
+        expect(result.longTermGain).toBe(0);
+        expect(result.shortTermGain).toBe(800);
+
+    });
 });

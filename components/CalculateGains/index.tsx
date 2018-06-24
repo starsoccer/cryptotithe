@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { calculateGainPerTrade, calculateGains } from '../../src/processing/CalculateGains';
+import { calculateGainPerTrade } from '../../src/processing/CalculateGains';
 import { IHoldings, ITradeWithGains, ITradeWithUSDRate } from '../../src/types';
 // import { AlertBar, AlertType } from '../AlertBar';
 // import Button from '../Button';
@@ -11,26 +11,78 @@ export interface ICalculateTradesProp {
 }
 
 export interface ICalculateTradesState {
-    tradeGains?: ITradeWithGains[];
+    tradeGains: ITradeWithGains[];
+    filteredTradesWithGains?: ITradeWithGains[];
+    longTermGains: number;
+    shortTermGains: number;
+    years: string[];
 }
 
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
     constructor(props: ICalculateTradesProp) {
         super(props);
+        const trades = calculateGainPerTrade(props.holdings, props.trades);
+        let shortTermGains = 0;
+        let longTermGains = 0;
+        const years: string[] = ['----'];
+        trades.forEach((trade) => {
+            shortTermGains += trade.shortTerm;
+            longTermGains += trade.longTerm;
+            const year = new Date(trade.date).getFullYear();
+            if (years.indexOf(year.toString()) === -1) {
+                years.push(year.toString());
+            }
+        });
         this.state = {
-            tradeGains: calculateGainPerTrade(props.holdings, props.trades),
+            tradeGains: trades,
+            longTermGains,
+            shortTermGains,
+            years,
         };
     }
 
-    public calculateGains = () => {
-        const newTrades = calculateGains(this.props.holdings, this.props.trades);
-        return newTrades;
+    public onChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
+        switch (key) {
+            case 'year':
+                const newTrades = (e.currentTarget.value === '----' ?
+                    this.state.tradeGains :
+                    this.state.tradeGains.filter(
+                        (trade) => new Date(trade.date).getFullYear().toString() === e.currentTarget.value,
+                    )
+                );
+                let shortTermGains = 0;
+                let longTermGains = 0;
+                newTrades.forEach((trade) => {
+                    shortTermGains += trade.shortTerm;
+                    longTermGains += trade.longTerm;
+                });
+                this.setState({
+                    filteredTradesWithGains: newTrades,
+                    longTermGains,
+                    shortTermGains,
+                });
+                break;
+        }
     }
 
     public render() {
         return (
             <div className='calculategains'>
-                { this.state.tradeGains !== undefined &&
+                <div className='flex justify-center'>
+                    <h3 className='pa2'>Short Term Gains: {this.state.shortTermGains}</h3>
+                    <h3 className='pa2'>Long Term Gains: {this.state.longTermGains}</h3>
+                </div>
+                <div>
+                    <select onChange={this.onChange('year')}>
+                        {this.state.years.map((year) => <option key={year} value={year}>{year}</option>)}
+                    </select>
+                </div>
+                { this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
+                    <GainsPerTradeTable
+                        trades={this.state.filteredTradesWithGains}
+                    />
+                :
+                this.state.tradeGains !== undefined &&
                     <GainsPerTradeTable
                         trades={this.state.tradeGains}
                     />
