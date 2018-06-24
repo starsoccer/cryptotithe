@@ -22,7 +22,54 @@ function cryptocompareResponse(response: got.Response<any>) {
     }
 }
 
+function isCurrencyTrade(trade: ITrade, currency: string): boolean {
+    if (trade.boughtCurrency === currency || trade.soldCurrency === currency) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function getUSDTradeRate(trade: ITrade) {
+    if (trade.boughtCurrency === 'USD') {
+        return trade.amountSold / trade.rate / trade.amountSold;
+    } else if (trade.soldCurrency === 'USD') {
+        return trade.rate;
+    } else {
+        throw new Error('Not USD Trade');
+    }
+}
+
+async function getBTCUSDRate(date: Date) {
+    const data: string[] = [
+        `fsym=BTC`,
+        'tsym=USD',
+        'sign=false', // change to true for security?
+        `toTs=${date.getTime() / 1000}`,
+        'extraParams=tApp',
+    ];
+    const response: got.Response<any> = await got(
+        'https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'),
+    );
+    return cryptocompareResponse(response);
+}
+
 export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
+    if (isCurrencyTrade(trade, 'USD')) {
+        return getUSDTradeRate(trade);
+    }
+    if (isCurrencyTrade(trade, 'BTC') || isCurrencyTrade(trade, 'XBT')) {
+        // get BTC rate and convert back
+        const BTCUSDRate = await getBTCUSDRate(date);
+        if (BTCUSDRate) {
+            if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
+                return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
+            } else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
+                return BTCUSDRate;
+            }
+        }
+    }
+    // fallback to get whatever we can
     const data: string[] = [
         `fsym=${trade.soldCurrency}`,
         'tsym=USD',
@@ -30,7 +77,9 @@ export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
         `toTs=${date.getTime() / 1000}`,
         'extraParams=tApp',
     ];
-    const response: got.Response<any> = await got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+    const response: got.Response<any> = await got(
+        'https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'),
+    );
     const rate = cryptocompareResponse(response);
     if (rate) {
         return rate;
