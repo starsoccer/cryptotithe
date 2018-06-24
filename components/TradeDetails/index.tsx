@@ -103,7 +103,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
             alert(errors.join('\n'));
         } else {
             const trade: IPartialTrade = {
-                date: this.state.date.getTime(),
+                date: new Date(this.state.date).getTime(),
                 amountSold: parseFloat(this.state.amountSold),
                 boughtCurrency: this.state.boughtCurrency,
                 soldCurrency: this.state.soldCurrency,
