@@ -49,6 +49,11 @@ export interface ITradeWithGains extends ITradeWithUSDRate {
     longTerm: number;
 }
 
+export interface ITradeWithCostBasis extends ITradeWithGains {
+    dateAcquired: number;
+    costBasis: number;
+}
+
 export interface ITradeWithDuplicateProbability extends ITrade {
     probability: number;
     duplicate: boolean;

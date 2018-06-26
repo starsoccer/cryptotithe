@@ -1,5 +1,12 @@
 import * as clone from 'clone';
-import { ICurrencyHolding, IHoldings, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../types';
+import {
+    ICurrencyHolding,
+    IHoldings,
+    ITradeWithCostBasis,
+    ITradeWithGains,
+    ITradeWithUSDRate,
+    METHOD,
+} from '../../types';
 
 const FULL_YEAR_IN_MILLISECONDS: number = 31536000000;
 
@@ -141,4 +148,39 @@ export function calculateGainPerTrade(holdings: IHoldings, internalFormat: ITrad
         });
     }
     return finalFormat;
+}
+
+export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWithUSDRate[]): ITradeWithCostBasis[] {
+    let newHoldings: IHoldings = clone(holdings);
+    const newTrades: ITradeWithCostBasis[] = [];
+    for (const trade of trades) {
+        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
+        newHoldings = result.newHoldings;
+        if (trade.boughtCurrency in newHoldings === false) {
+            newHoldings[trade.boughtCurrency] = [];
+        }
+        newHoldings[trade.boughtCurrency].push({
+            amount: trade.amountSold / trade.rate,
+            rateInUSD: trade.USDRate * trade.rate,
+            date: new Date().getTime(),
+        });
+        for (const holding of result.deductedHoldings) {
+            const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            let shortTerm: number = 0;
+            let longTerm: number = 0;
+            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
+                longTerm += gain;
+            } else {
+                shortTerm += gain;
+            }
+            newTrades.push({
+                ...trade,
+                shortTerm,
+                longTerm,
+                dateAcquired: holding.date,
+                costBasis: holding.rateInUSD * holding.amount,
+            });
+        }
+    }
+    return newTrades;
 }

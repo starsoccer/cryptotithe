@@ -1,8 +1,9 @@
 import * as React from 'react';
+import generateForm8949 from '../../src/output/Form8949';
 import { calculateGainPerTrade } from '../../src/processing/CalculateGains';
 import { IHoldings, ITradeWithGains, ITradeWithUSDRate } from '../../src/types';
 // import { AlertBar, AlertType } from '../AlertBar';
-// import Button from '../Button';
+import Button from '../Button';
 import { GainsPerTradeTable } from '../GainsPerTradeTable';
 // import { Loader } from '../Loader';
 export interface ICalculateTradesProp {
@@ -65,6 +66,12 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
         }
     }
 
+    public generateForm8949 = async () => {
+        const { dialog } = require('electron').remote;
+        const filePaths = await dialog.showSaveDialog();
+        generateForm8949(this.props.holdings, this.state.tradeGains, filePaths);
+    }
+
     public render() {
         return (
             <div className='calculategains'>
@@ -72,10 +79,12 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
                     <h3 className='pa2'>Short Term Gains: {this.state.shortTermGains}</h3>
                     <h3 className='pa2'>Long Term Gains: {this.state.longTermGains}</h3>
                 </div>
-                <div>
-                    <select onChange={this.onChange('year')}>
+                <div className='tc'>
+                    <label>Year</label>
+                    <select className='pl2' onChange={this.onChange('year')}>
                         {this.state.years.map((year) => <option key={year} value={year}>{year}</option>)}
                     </select>
+                    <Button label='Form 8949' onClick={this.generateForm8949}/>
                 </div>
                 { this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
                     <GainsPerTradeTable
