@@ -4,6 +4,7 @@ import { calculateGainPerTrade } from '../../src/processing/CalculateGains';
 import { IHoldings, ITradeWithGains, ITradeWithUSDRate } from '../../src/types';
 // import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
+import {FileDownload, IFileDownloadProps } from '../FileDownload';
 import { GainsPerTradeTable } from '../GainsPerTradeTable';
 // import { Loader } from '../Loader';
 export interface ICalculateTradesProp {
@@ -17,6 +18,7 @@ export interface ICalculateTradesState {
     longTermGains: number;
     shortTermGains: number;
     years: string[];
+    downloadProps: IFileDownloadProps;
 }
 
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
@@ -39,6 +41,11 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
             longTermGains,
             shortTermGains,
             years,
+            downloadProps: {
+                fileName: '',
+                data: '',
+                download: false,
+            },
         };
     }
 
@@ -66,10 +73,13 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
         }
     }
 
-    public generateForm8949 = async () => {
-        const { dialog } = require('electron').remote;
-        const filePaths = await dialog.showSaveDialog();
-        generateForm8949(this.props.holdings, this.state.tradeGains, filePaths);
+    public generateForm8949 = () => {
+        const data = generateForm8949(this.props.holdings, this.state.tradeGains);
+        this.setState({downloadProps: {
+            data,
+            fileName: 'Form8949.csv',
+            download: true,
+        }});
     }
 
     public render() {
@@ -96,6 +106,11 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
                         trades={this.state.tradeGains}
                     />
                 }
+                <FileDownload
+                    data={this.state.downloadProps.data}
+                    fileName={this.state.downloadProps.fileName}
+                    download={this.state.downloadProps.download}
+                />
             </div>
         );
     }

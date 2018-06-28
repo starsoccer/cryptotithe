@@ -60,29 +60,32 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
     }
 
     public readFile = async (fileData: string) => {
-        this.setState({processing: true, fileBrowseOpen: false});
-        const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
-            .value as keyof typeof EXCHANGES;
-        const processedData: ITrade[] = await processData(exchange, fileData);
-        if (processedData && processedData.length) {
-            const duplicateTrades = duplicateCheck(this.state.currentTrades, processedData);
-            if (duplicateTrades.length) {
-                this.setState({
-                    duplicateTrades,
-                    alertData: {
-                        message: 'Duplicate Trades Detected',
-                        type: AlertType.WARNING,
-                    },
-                    processing: false,
-                });
+        this.setState({fileBrowseOpen: false});
+        if (fileData !== '') {
+            this.setState({processing: true});
+            const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
+                .value as keyof typeof EXCHANGES;
+            const processedData: ITrade[] = await processData(exchange, fileData);
+            if (processedData && processedData.length) {
+                const duplicateTrades = duplicateCheck(this.state.currentTrades, processedData);
+                if (duplicateTrades.length) {
+                    this.setState({
+                        duplicateTrades,
+                        alertData: {
+                            message: 'Duplicate Trades Detected',
+                            type: AlertType.WARNING,
+                        },
+                        processing: false,
+                    });
+                } else {
+                    this.setState({
+                        processedTrades: processedData,
+                        processing: false,
+                    });
+                }
             } else {
-                this.setState({
-                    processedTrades: processedData,
-                    processing: false,
-                });
+                alert('Error processing data');
             }
-        } else {
-            alert('Error processing data');
         }
     }
 

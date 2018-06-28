@@ -97,14 +97,17 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
 
     public loadData = (data: string) => {
         this.setState({fileBrowseOpen: false});
-        try {
-            const parsedData: ISavedData = JSON.parse(data);
-            this.setState({
-                trades: parsedData.trades,
-                holdings: parsedData.holdings,
-            });
-        } catch (ex) {
-            alert('Unable to parse saved data');
+        if (data !== '') {
+            try {
+                const parsedData: ISavedData = JSON.parse(data);
+                this.setState({
+                    trades: parsedData.trades,
+                    holdings: parsedData.holdings,
+                    loadDataPopup: false,
+                });
+            } catch (ex) {
+                alert('Unable to parse saved data');
+            }
         }
     }
 

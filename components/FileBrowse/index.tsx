@@ -6,28 +6,34 @@ export interface IFileBrowseProps {
 
 export class FileBrowse extends React.Component<IFileBrowseProps> {
     private fileInput: React.RefObject<HTMLInputElement>;
-
+    private onetime: boolean = true;
     constructor(props: IFileBrowseProps) {
         super(props);
         this.fileInput = React.createRef();
     }
 
-    public componentDidUpdate() {
+    public componentDidUpdate(prevProps: IFileBrowseProps) {
+        // complicated 3 boolean logic to stop some browsers(firefox/edge) from causing 2 popup windows
         if (this.props.browse) {
-            this.selectFile();
-        }
-    }
-
-    public selectFile = () => {
-        if (this.fileInput.current !== null) {
-            this.fileInput.current.click();
-        } else {
-            alert('error clickng file input');
-        }
+            if (!prevProps.browse || this.onetime) {
+                if (!this.onetime && prevProps.browse) {
+                    this.onetime = !this.onetime;
+                }
+                if (this.fileInput.current !== null) {
+                    this.fileInput.current.click();
+                } else {
+                    alert('error clickng file input');
+                }
+            } else {
+                if (this.onetime && !prevProps.browse) {
+                    this.props.onLoaded('');
+                }
+                this.onetime = !this.onetime;
+            }
+        } // this set state valid once
     }
 
     public onSubmit = async (): Promise<void> => {
-        this.setState({processing: true});
         const reader = new FileReader();
         reader.onload = () => this.props.onLoaded(reader.result);
         if (this.fileInput.current !== null) {
