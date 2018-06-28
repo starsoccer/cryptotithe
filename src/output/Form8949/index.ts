@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import { calculateGainsPerHoldings } from '../../processing/CalculateGains';
 import { IHoldings, ITradeWithCostBasis, ITradeWithGains } from '../../types';
 
@@ -13,7 +12,7 @@ const headers = [
     'Gain or Loss',
 ].join(',');
 
-export default function outputForm8949(holdings: IHoldings, trades: ITradeWithGains[], filepath: string) {
+export default function outputForm8949(holdings: IHoldings, trades: ITradeWithGains[]) {
     const holdingsTrades: ITradeWithCostBasis[] = calculateGainsPerHoldings(holdings, trades);
     const shortTermTrades = holdingsTrades.filter((trade) => trade.shortTerm !== 0);
     const longTermTrades = holdingsTrades.filter((trade) => trade.longTerm !== 0);
@@ -44,14 +43,5 @@ export default function outputForm8949(holdings: IHoldings, trades: ITradeWithGa
         null,
         trade.longTerm,
     ]));
-    try {
-        let path = filepath;
-        if (path.includes('.')) {
-            path = path.substr(0, path.indexOf('.'));
-        }
-        fs.writeFileSync(path + '.csv', csvData.join('\n'));
-        return true;
-    } catch (e) {
-        return false;
-    }
+    return csvData.join('\n');
 }
