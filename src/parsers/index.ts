@@ -5,10 +5,10 @@ interface IGetCSVData {
     [key: string]: string;
 }
 
-export async function getCSVData(filePath: string): Promise<any> {
+export async function getCSVData(fileData: string): Promise<any> {
     return new Promise((resolve: (data: IGetCSVData[][]) => void, reject: (Error: Error) => void): any => {
         const promises: Array<Promise<IGetCSVData[]>> = [];
-        csv().fromFile(filePath)
+        csv().fromString(fileData)
           .on('json', (converted: IGetCSVData[]) => promises.push(Promise.resolve(converted)))
           .on('done', (error: Error) => {
             if (error) {

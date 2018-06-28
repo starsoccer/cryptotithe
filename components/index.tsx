@@ -4,16 +4,21 @@ import { save } from '../src/save';
 import {
     IHoldings,
     IPartialSavedData,
+    ITradeWithDuplicateProbability,
     ITradeWithUSDRate,
-    ITradeWithDuplicateProbability
+    ISavedData,
 } from '../src/types';
 import { AddTrades } from './AddTrades';
+import Button from './Button';
 import { CalculateGains } from './CalculateGains';
+import { FileBrowse } from './FileBrowse';
+import Popup from './Popup';
 import { ViewTrades } from './ViewTrades';
 
 export interface IAppProps {
     trades: ITradeWithUSDRate[];
     holdings: IHoldings;
+    browser: boolean;
 }
 
 enum TABS {
@@ -29,6 +34,8 @@ interface IAppState {
     holdings: IHoldings;
     duplicateTrades: ITradeWithDuplicateProbability[];
     currentTab: TABS;
+    loadDataPopup: boolean;
+    fileBrowseOpen: boolean;
 }
 
 export class rootElement extends React.Component<IAppProps, IAppState> {
@@ -39,14 +46,15 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             holdings: this.props.holdings,
             processing: false,
             duplicateTrades: [],
-            currentTab: TABS.ADD_TRADES,
+            currentTab: TABS.HOME,
+            fileBrowseOpen: false,
+            loadDataPopup: props.browser && props.trades.length + Object.keys(props.holdings).length === 0,
         };
     }
 
     public saveData = async (data: IPartialSavedData): Promise<boolean> => {
         const newHoldings = data.holdings || this.state.holdings;
         const newTrades = data.trades || this.state.trades;
-
         try {
             await save(newHoldings, newTrades);
             this.setState({
@@ -83,9 +91,43 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         this.setState({currentTab: newTab});
     }
 
+    public changePopupState = () => {
+        this.setState({loadDataPopup: !this.state.loadDataPopup});
+    }
+
+    public loadData = (data: string) => {
+        this.setState({fileBrowseOpen: false});
+        try {
+            const parsedData: ISavedData = JSON.parse(data);
+            this.setState({
+                trades: parsedData.trades,
+                holdings: parsedData.holdings,
+            });
+        } catch (ex) {
+            alert('Unable to parse saved data');
+        }
+    }
+
+    public openFileBrowse = () => {
+        this.setState({fileBrowseOpen: true});
+    }
+
     public render() {
         return (
             <div className='app'>
+                {this.state.loadDataPopup &&
+                    <Popup onClose={this.changePopupState}>
+                        <div>
+                            <h1>Welcome to CryptoTithe</h1>
+                            <h5>Great Description to be put here</h5>
+                            <Button label='Load Existing Data' onClick={this.openFileBrowse}/>
+                            <FileBrowse
+                                onLoaded={this.loadData}
+                                browse={this.state.fileBrowseOpen}
+                            />
+                        </div>
+                    </Popup>
+                }
                 <link rel='stylesheet' type='text/css' href='./components/index.css' />
                 <div className='flex bg-dark-gray h2'>
                     {Object.keys(TABS).map((key: string) => <h3

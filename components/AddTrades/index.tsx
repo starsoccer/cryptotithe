@@ -14,6 +14,7 @@ import {
 import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
 import { DuplicateTradesTable } from '../DuplicateTradesTable';
+import { FileBrowse } from '../FileBrowse';
 import { Loader } from '../Loader';
 import TradeDetails from '../TradeDetails';
 import { TradesTable } from '../TradesTable';
@@ -36,6 +37,7 @@ interface IAddTradesState {
     duplicateTrades: ITradeWithDuplicateProbability[];
     alertData: IAlertData;
     addTrade: boolean;
+    fileBrowseOpen: boolean;
 }
 
 export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> {
@@ -49,16 +51,19 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
             duplicateTrades: [],
             alertData: {} as IAlertData,
             addTrade: false,
+            fileBrowseOpen: false,
         };
     }
 
-    public onSubmit = async (): Promise<void> => {
-        this.setState({processing: true});
-        const { dialog } = require('electron').remote;
-        const filePaths = await dialog.showOpenDialog({properties: ['openFile']});
+    public openFileBrowser = async (): Promise<void> => {
+        this.setState({fileBrowseOpen: true});
+    }
+
+    public readFile = async (fileData: string) => {
+        this.setState({processing: true, fileBrowseOpen: false});
         const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
             .value as keyof typeof EXCHANGES;
-        const processedData: ITrade[] = await processData(exchange, filePaths[0]);
+        const processedData: ITrade[] = await processData(exchange, fileData);
         if (processedData && processedData.length) {
             const duplicateTrades = duplicateCheck(this.state.currentTrades, processedData);
             if (duplicateTrades.length) {
@@ -162,7 +167,11 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                     />
                 }
                 <div className='flex justify-around pt2'>
-                    <Button onClick={this.onSubmit} label='Load Trades'/>
+                    <Button onClick={this.openFileBrowser} label='Load Trades'/>
+                    <FileBrowse
+                        onLoaded={this.readFile}
+                        browse={this.state.fileBrowseOpen}
+                    />
                     <Button onClick={this.setAddTradeDisplay} label='Add Trade'/>
                     <Button onClick={this.processTrades} label='Save/Process Trades'/>
                 </div>

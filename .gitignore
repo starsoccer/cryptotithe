@@ -34,3 +34,5 @@ data\.json
 *.map
 
 *.js
+
+!bundle.js
