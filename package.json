@@ -10,7 +10,7 @@
         "tslint": "tslint 'src/**/*.ts' -c ./configs/tslint.json --fix",
         "full-build-test": "npm run tslint && npm run test && npm run prod-build",
         "prod-start": "set NODE_ENV=production&& npm run start",
-        "web": "tsc -p configs/tsconfig-web.json && browserify react.js -o bundle.js"
+        "web": "tsc -p configs/tsconfig-web.json && browserify ./react.js -o ./dist/bundle.js"
     },
     "author": "",
     "license": "MIT",
@@ -53,6 +53,7 @@
         "@types/react": "^16.3.17",
         "@types/react-dom": "^16.0.6",
         "@types/validator": "^9.4.1",
+        "browserify": "^16.2.2",
         "classnames": "^2.2.6",
         "clone": "^2.1.1",
         "csv2json": "^1.4.2",
