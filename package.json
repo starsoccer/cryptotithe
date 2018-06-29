@@ -10,7 +10,7 @@
         "tslint": "tslint 'src/**/*.ts' -c ./configs/tslint.json --fix",
         "full-build-test": "npm run tslint && npm run test && npm run prod-build",
         "prod-start": "set NODE_ENV=production&& npm run start",
-        "web": "tsc -p configs/tsconfig-web.json && browserify ./react.js -o ./dist/bundle.js"
+        "web": "tsc -p configs/tsconfig-web.json && browserify ./react.js -o ./bundle.js"
     },
     "author": "",
     "license": "MIT",
