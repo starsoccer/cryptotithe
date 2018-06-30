@@ -692,9 +692,7 @@ const TradesTable_1 = require("../TradesTable");
 class ViewTrades extends React.Component {
     constructor() {
         super(...arguments);
-        this.save = (trades) => {
-            return this.props.save({ trades: trades });
-        };
+        this.save = (trades) => this.props.save({ trades: trades });
     }
     render() {
         return (React.createElement("div", { className: 'viewTrades' }, this.props.trades.length > 0 ?
@@ -73504,7 +73502,7 @@ function getCSVData(fileData) {
                 if (error) {
                     reject(error);
                 }
-                Promise.all(promises).then((convertedResults) => resolve(convertedResults));
+                Promise.all(promises).then(resolve);
             });
         });
     });
@@ -73544,7 +73542,7 @@ function calculateGains(holdings, trades) {
     for (const trade of trades) {
         const result = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
         newHoldings = result.newHoldings;
-        if (trade.boughtCurrency in newHoldings === false) {
+        if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
         }
         if (trade.soldCurrency === 'USD') {
@@ -73671,7 +73669,7 @@ function calculateGainsPerHoldings(holdings, trades) {
     for (const trade of trades) {
         const result = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
         newHoldings = result.newHoldings;
-        if (trade.boughtCurrency in newHoldings === false) {
+        if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
         }
         newHoldings[trade.boughtCurrency].push({
@@ -73800,13 +73798,25 @@ function getBTCUSDRate(date) {
             `fsym=BTC`,
             'tsym=USD',
             'sign=false',
-            `toTs=${date.getTime() / 1000}`,
+            `toTs=${date.getTime()}`,
             'extraParams=tApp',
         ];
         const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
         return cryptocompareResponse(response);
     });
 }
+function BTCBasedRate(trade, BTCUSDRate) {
+    if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
+        return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
+    }
+    else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
+        return BTCUSDRate;
+    }
+    else {
+        throw new Error('Not a BTC Trade' + trade.id);
+    }
+}
+exports.BTCBasedRate = BTCBasedRate;
 function getUSDRate(date, trade) {
     return __awaiter(this, void 0, void 0, function* () {
         if (isCurrencyTrade(trade, 'USD')) {
@@ -73816,12 +73826,7 @@ function getUSDRate(date, trade) {
             // get BTC rate and convert back
             const BTCUSDRate = yield getBTCUSDRate(date);
             if (BTCUSDRate) {
-                if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
-                    return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
-                }
-                else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
-                    return BTCUSDRate;
-                }
+                return BTCBasedRate(trade, BTCUSDRate);
             }
         }
         // fallback to get whatever we can
@@ -73829,7 +73834,7 @@ function getUSDRate(date, trade) {
             `fsym=${trade.soldCurrency}`,
             'tsym=USD',
             'sign=false',
-            `toTs=${date.getTime() / 1000}`,
+            `toTs=${date.getTime()}`,
             'extraParams=tApp',
         ];
         const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));

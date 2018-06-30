@@ -59,6 +59,8 @@ export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
         return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
     } else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
         return BTCUSDRate;
+    } else {
+        throw new Error('Not a BTC Trade' + trade.id);
     }
 }
 
