@@ -2,7 +2,7 @@
     "compilerOptions": {
         "sourceMap": true,
         "moduleResolution": "node",
-        "target": "es2017",
+        "target": "es2015",
         "module": "commonjs",
         "jsx": "react",
         "strict": true,
@@ -12,7 +12,11 @@
         "noUnusedParameters": true,
         "suppressExcessPropertyErrors": true,
         "suppressImplicitAnyIndexErrors": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "lib": [ 
+            "es2015", 
+            "dom" 
+        ]
     },
     "include": [
         "../**/*"

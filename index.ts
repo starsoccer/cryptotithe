@@ -1,22 +1,8 @@
 // modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron');
-const electronPug: any = require('yet-another-electron-pug');
 const EXCHANGES: any = require('./src/types').EXCHANGES;
 // keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-interface IPugOptions {
-    [key: string]: string;
-}
-const pugOptions: IPugOptions = {};
-
-function onFileLoad(file: string, cb: (pugData: any) => void): any {
-    switch (file) {
-        default:
-            return cb(pugOptions);
-    }
-}
-
-electronPug({}, onFileLoad);
 let mainWindow: any;
 
 function createWindow(): void {
@@ -27,9 +13,9 @@ function createWindow(): void {
     }); // https://electronjs.org/docs/api/frameless-window
     // notifications https://electronjs.org/docs/tutorial/notifications
     // progressbar https://electronjs.org/docs/tutorial/progress-bar
-    mainWindow.loadFile('index.pug');
+    mainWindow.loadFile('index.html');
     if (process.env.NODE_ENV !== 'production') {
-        pugOptions.injectJS = 'require(\'electron-react-devtools\').install();';
+        mainWindow.webContents.executeJavaScript('require(\'electron-react-devtools\').install();');
         mainWindow.once('ready-to-show', () => {
             mainWindow.reload();
             mainWindow.once('ready-to-show', () => {

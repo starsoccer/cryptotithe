@@ -1,23 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -26,182 +8,124 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var parsers_1 = require("../../src/parsers");
-var DuplicateCheck_1 = require("../../src/processing/DuplicateCheck");
-var getUSDRate_1 = require("../../src/processing/getUSDRate");
-var SortTrades_1 = require("../../src/processing/SortTrades");
-var types_1 = require("../../src/types");
-var AlertBar_1 = require("../AlertBar");
-var Button_1 = require("../Button");
-var DuplicateTradesTable_1 = require("../DuplicateTradesTable");
-var FileBrowse_1 = require("../FileBrowse");
-var Loader_1 = require("../Loader");
-var TradeDetails_1 = require("../TradeDetails");
-var TradesTable_1 = require("../TradesTable");
-var AddTrades = /** @class */ (function (_super) {
-    __extends(AddTrades, _super);
-    function AddTrades(props) {
-        var _this = _super.call(this, props) || this;
-        _this.openFileBrowser = function () { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                this.setState({ fileBrowseOpen: true });
-                return [2 /*return*/];
-            });
-        }); };
-        _this.readFile = function (fileData) { return __awaiter(_this, void 0, void 0, function () {
-            var exchange, processedData, duplicateTrades;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        this.setState({ fileBrowseOpen: false });
-                        if (!(fileData !== '')) return [3 /*break*/, 2];
-                        this.setState({ processing: true });
-                        exchange = document.getElementById('type')
-                            .value;
-                        return [4 /*yield*/, parsers_1.processData(exchange, fileData)];
-                    case 1:
-                        processedData = _a.sent();
-                        if (processedData && processedData.length) {
-                            duplicateTrades = DuplicateCheck_1.default(this.state.currentTrades, processedData);
-                            if (duplicateTrades.length) {
-                                this.setState({
-                                    duplicateTrades: duplicateTrades,
-                                    alertData: {
-                                        message: 'Duplicate Trades Detected',
-                                        type: AlertBar_1.AlertType.WARNING,
-                                    },
-                                    processing: false,
-                                });
-                            }
-                            else {
-                                this.setState({
-                                    processedTrades: processedData,
-                                    processing: false,
-                                });
-                            }
-                        }
-                        else {
-                            alert('Error processing data');
-                        }
-                        _a.label = 2;
-                    case 2: return [2 /*return*/];
+const React = require("react");
+const parsers_1 = require("../../src/parsers");
+const DuplicateCheck_1 = require("../../src/processing/DuplicateCheck");
+const getUSDRate_1 = require("../../src/processing/getUSDRate");
+const SortTrades_1 = require("../../src/processing/SortTrades");
+const types_1 = require("../../src/types");
+const AlertBar_1 = require("../AlertBar");
+const Button_1 = require("../Button");
+const DuplicateTradesTable_1 = require("../DuplicateTradesTable");
+const FileBrowse_1 = require("../FileBrowse");
+const Loader_1 = require("../Loader");
+const TradeDetails_1 = require("../TradeDetails");
+const TradesTable_1 = require("../TradesTable");
+class AddTrades extends React.Component {
+    constructor(props) {
+        super(props);
+        this.openFileBrowser = () => __awaiter(this, void 0, void 0, function* () {
+            this.setState({ fileBrowseOpen: true });
+        });
+        this.readFile = (fileData) => __awaiter(this, void 0, void 0, function* () {
+            this.setState({ fileBrowseOpen: false });
+            if (fileData !== '') {
+                this.setState({ processing: true });
+                const exchange = document.getElementById('type')
+                    .value;
+                const processedData = yield parsers_1.processData(exchange, fileData);
+                if (processedData && processedData.length) {
+                    const duplicateTrades = DuplicateCheck_1.default(this.state.currentTrades, processedData);
+                    if (duplicateTrades.length) {
+                        this.setState({
+                            duplicateTrades,
+                            alertData: {
+                                message: 'Duplicate Trades Detected',
+                                type: AlertBar_1.AlertType.WARNING,
+                            },
+                            processing: false,
+                        });
+                    }
+                    else {
+                        this.setState({
+                            processedTrades: processedData,
+                            processing: false,
+                        });
+                    }
                 }
-            });
-        }); };
-        _this.processTrades = function () { return __awaiter(_this, void 0, void 0, function () {
-            var duplicateToSave, tradesToSave, tradesWithUSDRate, newTrades;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        this.setState({ processing: true });
-                        duplicateToSave = this.state.duplicateTrades.filter(function (trade) { return trade.duplicate; });
-                        tradesToSave = this.state.processedTrades.concat(duplicateToSave);
-                        return [4 /*yield*/, getUSDRate_1.addUSDRateToTrades(tradesToSave)];
-                    case 1:
-                        tradesWithUSDRate = _a.sent();
-                        newTrades = SortTrades_1.default(this.state.currentTrades.concat(tradesWithUSDRate));
-                        return [4 /*yield*/, this.props.save({ trades: newTrades })];
-                    case 2:
-                        if (_a.sent()) {
-                            this.setState({
-                                currentTrades: newTrades,
-                                alertData: {
-                                    message: 'Trades Saved',
-                                    type: AlertBar_1.AlertType.SUCCESS,
-                                },
-                                processedTrades: [],
-                                duplicateTrades: [],
-                                processing: false,
-                            });
-                        }
-                        else {
-                            this.setState({
-                                alertData: {
-                                    message: 'Unable to Save Trades',
-                                    type: AlertBar_1.AlertType.ERROR,
-                                },
-                                processing: false,
-                            });
-                        }
-                        return [2 /*return*/];
+                else {
+                    alert('Error processing data');
                 }
-            });
-        }); };
-        _this.setAlertData = function (type, message) {
-            _this.setState({ alertData: { type: type, message: message } });
+            }
+        });
+        this.processTrades = () => __awaiter(this, void 0, void 0, function* () {
+            this.setState({ processing: true });
+            const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
+            const tradesToSave = this.state.processedTrades.concat(duplicateToSave);
+            const tradesWithUSDRate = yield getUSDRate_1.addUSDRateToTrades(tradesToSave);
+            const newTrades = SortTrades_1.default(this.state.currentTrades.concat(tradesWithUSDRate));
+            if (yield this.props.save({ trades: newTrades })) {
+                this.setState({
+                    currentTrades: newTrades,
+                    alertData: {
+                        message: 'Trades Saved',
+                        type: AlertBar_1.AlertType.SUCCESS,
+                    },
+                    processedTrades: [],
+                    duplicateTrades: [],
+                    processing: false,
+                });
+            }
+            else {
+                this.setState({
+                    alertData: {
+                        message: 'Unable to Save Trades',
+                        type: AlertBar_1.AlertType.ERROR,
+                    },
+                    processing: false,
+                });
+            }
+        });
+        this.setAlertData = (type, message) => {
+            this.setState({ alertData: { type, message } });
         };
-        _this.duplicateStatusChange = function (tradeID) { return function (e) {
-            var id = _this.state.duplicateTrades.findIndex(function (trade) { return trade.id === tradeID; });
-            var newDuplicateTrades = _this.state.duplicateTrades;
+        this.duplicateStatusChange = (tradeID) => (e) => {
+            const id = this.state.duplicateTrades.findIndex((trade) => trade.id === tradeID);
+            const newDuplicateTrades = this.state.duplicateTrades;
             newDuplicateTrades[id].duplicate = e.currentTarget.checked;
-            _this.setState({ duplicateTrades: newDuplicateTrades });
-        }; };
-        _this.addTrade = function (trade) { return __awaiter(_this, void 0, void 0, function () {
-            var newTrades;
-            return __generator(this, function (_a) {
-                newTrades = this.state.processedTrades;
-                newTrades.push(trade);
-                this.setState({ processedTrades: newTrades, addTrade: false });
-                return [2 /*return*/];
-            });
-        }); };
-        _this.setAddTradeDisplay = function () {
-            _this.setState({ addTrade: !_this.state.addTrade });
+            this.setState({ duplicateTrades: newDuplicateTrades });
         };
-        _this.editedTrade = function (trades) {
-            _this.setState({ processedTrades: trades });
+        this.addTrade = (trade) => __awaiter(this, void 0, void 0, function* () {
+            const newTrades = this.state.processedTrades;
+            newTrades.push(trade);
+            this.setState({ processedTrades: newTrades, addTrade: false });
+        });
+        this.setAddTradeDisplay = () => {
+            this.setState({ addTrade: !this.state.addTrade });
+        };
+        this.editedTrade = (trades) => {
+            this.setState({ processedTrades: trades });
             return true;
         };
-        _this.state = {
+        this.state = {
             processedTrades: [],
-            currentTrades: _this.props.trades,
-            holdings: _this.props.holdings,
+            currentTrades: this.props.trades,
+            holdings: this.props.holdings,
             processing: false,
             duplicateTrades: [],
             alertData: {},
             addTrade: false,
             fileBrowseOpen: false,
         };
-        return _this;
     }
-    AddTrades.prototype.render = function () {
+    render() {
         return (React.createElement("div", { className: 'addTrades' },
             Object.keys(this.state.alertData).length > 0 &&
-                React.createElement(AlertBar_1.AlertBar, __assign({ onClick: this.setAlertData }, this.state.alertData)),
+                React.createElement(AlertBar_1.AlertBar, Object.assign({ onClick: this.setAlertData }, this.state.alertData)),
             React.createElement("div", { className: 'center tc mt2' },
                 React.createElement("label", { htmlFor: 'type', className: 'pr2' }, "Import Type"),
-                React.createElement("select", { name: 'type', id: 'type' }, Object.keys(types_1.EXCHANGES).map(function (key) {
-                    return React.createElement("option", { key: key, value: key }, types_1.EXCHANGES[key]);
-                }))),
+                React.createElement("select", { name: 'type', id: 'type' }, Object.keys(types_1.EXCHANGES).map((key) => React.createElement("option", { key: key, value: key }, types_1.EXCHANGES[key])))),
             this.state.addTrade &&
                 React.createElement(TradeDetails_1.default, { onSubmit: this.addTrade, className: 'cf' }),
             React.createElement("div", { className: 'flex justify-around pt2' },
@@ -223,26 +147,15 @@ var AddTrades = /** @class */ (function (_super) {
                                 React.createElement("h3", { className: 'tc' }, "Trades to Add"),
                                 React.createElement("hr", { className: 'center w-50' }),
                                 React.createElement(TradesTable_1.TradesTable, { trades: this.state.processedTrades, save: this.editedTrade })))));
-    };
-    return AddTrades;
-}(React.Component));
+    }
+}
 exports.AddTrades = AddTrades;
 
 },{"../../src/parsers":418,"../../src/processing/DuplicateCheck":420,"../../src/processing/SortTrades":421,"../../src/processing/getUSDRate":422,"../../src/types":424,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":13,"../TradesTable":14,"react":295}],2:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var classNames = require("classNames");
-var React = require("react");
+const classNames = require("classNames");
+const React = require("react");
 var AlertType;
 (function (AlertType) {
     AlertType[AlertType["WARNING"] = 0] = "WARNING";
@@ -250,12 +163,8 @@ var AlertType;
     AlertType[AlertType["INFO"] = 2] = "INFO";
     AlertType[AlertType["SUCCESS"] = 3] = "SUCCESS";
 })(AlertType = exports.AlertType || (exports.AlertType = {}));
-var AlertBar = /** @class */ (function (_super) {
-    __extends(AlertBar, _super);
-    function AlertBar() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    AlertBar.prototype.render = function () {
+class AlertBar extends React.Component {
+    render() {
         return (React.createElement("div", { className: classNames('alertbar lh-solid', {
                 'bg-red': this.props.type === AlertType.ERROR,
                 'bg-orange': this.props.type === AlertType.WARNING,
@@ -264,115 +173,87 @@ var AlertBar = /** @class */ (function (_super) {
             }) },
             React.createElement("h2", { className: 'dib pl2 mb1 mt1 pb1 pt1 pre overflow-hidden' }, this.props.message),
             React.createElement("i", { className: 'fr pt1 pl2 pr2 fa fa-times-circle fa-2x grow', onClick: this.props.onClick })));
-    };
-    return AlertBar;
-}(React.Component));
+    }
+}
 exports.AlertBar = AlertBar;
 
 },{"classNames":72,"react":295}],3:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var Button = /** @class */ (function (_super) {
-    __extends(Button, _super);
-    function Button() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Button.prototype.render = function () {
+const React = require("react");
+class Button extends React.Component {
+    render() {
         return (React.createElement("button", { className: 'bg-blue white bg-animate hover-bg-dark-blue', onClick: this.props.onClick }, this.props.label));
-    };
-    return Button;
-}(React.Component));
+    }
+}
 exports.default = Button;
 
 },{"react":295}],4:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var Form8949_1 = require("../../src/output/Form8949");
-var CalculateGains_1 = require("../../src/processing/CalculateGains");
+const React = require("react");
+const Form8949_1 = require("../../src/output/Form8949");
+const CalculateGains_1 = require("../../src/processing/CalculateGains");
 // import { AlertBar, AlertType } from '../AlertBar';
-var Button_1 = require("../Button");
-var FileDownload_1 = require("../FileDownload");
-var GainsPerTradeTable_1 = require("../GainsPerTradeTable");
-var CalculateGains = /** @class */ (function (_super) {
-    __extends(CalculateGains, _super);
-    function CalculateGains(props) {
-        var _this = _super.call(this, props) || this;
-        _this.onChange = function (key) { return function (e) {
+const Button_1 = require("../Button");
+const FileDownload_1 = require("../FileDownload");
+const GainsPerTradeTable_1 = require("../GainsPerTradeTable");
+class CalculateGains extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onChange = (key) => (e) => {
             switch (key) {
                 case 'year':
-                    var newTrades = (e.currentTarget.value === '----' ?
-                        _this.state.tradeGains :
-                        _this.state.tradeGains.filter(function (trade) { return new Date(trade.date).getFullYear().toString() === e.currentTarget.value; }));
-                    var shortTermGains_1 = 0;
-                    var longTermGains_1 = 0;
-                    newTrades.forEach(function (trade) {
-                        shortTermGains_1 += trade.shortTerm;
-                        longTermGains_1 += trade.longTerm;
+                    const newTrades = (e.currentTarget.value === '----' ?
+                        this.state.tradeGains :
+                        this.state.tradeGains.filter((trade) => new Date(trade.date).getFullYear().toString() === e.currentTarget.value));
+                    let shortTermGains = 0;
+                    let longTermGains = 0;
+                    newTrades.forEach((trade) => {
+                        shortTermGains += trade.shortTerm;
+                        longTermGains += trade.longTerm;
                     });
-                    _this.setState({
+                    this.setState({
                         filteredTradesWithGains: newTrades,
-                        longTermGains: longTermGains_1,
-                        shortTermGains: shortTermGains_1,
+                        longTermGains,
+                        shortTermGains,
                     });
                     break;
             }
-        }; };
-        _this.generateForm8949 = function () {
-            var data = Form8949_1.default(_this.props.holdings, _this.state.tradeGains);
-            _this.setState({ downloadProps: {
-                    data: data,
+        };
+        this.generateForm8949 = () => {
+            const data = Form8949_1.default(this.props.holdings, this.state.tradeGains);
+            this.setState({ downloadProps: {
+                    data,
                     fileName: 'Form8949.csv',
                     download: true,
                 } });
         };
-        var trades = CalculateGains_1.calculateGainPerTrade(props.holdings, props.trades);
-        var shortTermGains = 0;
-        var longTermGains = 0;
-        var years = ['----'];
-        trades.forEach(function (trade) {
+        const trades = CalculateGains_1.calculateGainPerTrade(props.holdings, props.trades);
+        let shortTermGains = 0;
+        let longTermGains = 0;
+        const years = ['----'];
+        trades.forEach((trade) => {
             shortTermGains += trade.shortTerm;
             longTermGains += trade.longTerm;
-            var year = new Date(trade.date).getFullYear();
+            const year = new Date(trade.date).getFullYear();
             if (years.indexOf(year.toString()) === -1) {
                 years.push(year.toString());
             }
         });
-        _this.state = {
+        this.state = {
             tradeGains: trades,
-            longTermGains: longTermGains,
-            shortTermGains: shortTermGains,
-            years: years,
+            longTermGains,
+            shortTermGains,
+            years,
             downloadProps: {
                 fileName: '',
                 data: '',
                 download: false,
             },
         };
-        return _this;
     }
-    CalculateGains.prototype.render = function () {
+    render() {
         return (React.createElement("div", { className: 'calculategains' },
             React.createElement("div", { className: 'flex justify-center' },
                 React.createElement("h3", { className: 'pa2' },
@@ -383,7 +264,7 @@ var CalculateGains = /** @class */ (function (_super) {
                     this.state.longTermGains)),
             React.createElement("div", { className: 'tc' },
                 React.createElement("label", null, "Year"),
-                React.createElement("select", { className: 'pl2', onChange: this.onChange('year') }, this.state.years.map(function (year) { return React.createElement("option", { key: year, value: year }, year); })),
+                React.createElement("select", { className: 'pl2', onChange: this.onChange('year') }, this.state.years.map((year) => React.createElement("option", { key: year, value: year }, year))),
                 React.createElement(Button_1.default, { label: 'Form 8949', onClick: this.generateForm8949 })),
             this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
                 React.createElement(GainsPerTradeTable_1.GainsPerTradeTable, { trades: this.state.filteredTradesWithGains })
@@ -391,34 +272,18 @@ var CalculateGains = /** @class */ (function (_super) {
                     this.state.tradeGains !== undefined &&
                         React.createElement(GainsPerTradeTable_1.GainsPerTradeTable, { trades: this.state.tradeGains }),
             React.createElement(FileDownload_1.FileDownload, { data: this.state.downloadProps.data, fileName: this.state.downloadProps.fileName, download: this.state.downloadProps.download })));
-    };
-    return CalculateGains;
-}(React.Component));
+    }
+}
 exports.CalculateGains = CalculateGains;
 
 },{"../../src/output/Form8949":415,"../../src/processing/CalculateGains":419,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":295}],5:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var Table_1 = require("../Table");
-var Toggle_1 = require("../Toggle");
-var DuplicateTradesTable = /** @class */ (function (_super) {
-    __extends(DuplicateTradesTable, _super);
-    function DuplicateTradesTable() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    DuplicateTradesTable.prototype.render = function () {
-        var _this = this;
+const React = require("react");
+const Table_1 = require("../Table");
+const Toggle_1 = require("../Toggle");
+class DuplicateTradesTable extends React.Component {
+    render() {
         return (React.createElement(Table_1.Table, { headers: [
                 'Date',
                 'ID',
@@ -429,7 +294,7 @@ var DuplicateTradesTable = /** @class */ (function (_super) {
                 'Amount Bought',
                 'Duplicate Probability',
                 'Duplicate',
-            ], rows: this.props.trades.map(function (trade) { return [
+            ], rows: this.props.trades.map((trade) => [
                 React.createElement("span", null, new Date(trade.date).toUTCString()),
                 React.createElement("span", null, trade.id),
                 React.createElement("span", null, trade.amountSold.toFixed(8)),
@@ -438,25 +303,14 @@ var DuplicateTradesTable = /** @class */ (function (_super) {
                 React.createElement("span", null, trade.boughtCurrency),
                 React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
                 React.createElement("span", null, trade.probability),
-                React.createElement(Toggle_1.Toggle, { onChange: _this.props.duplicateChange(trade.id), defaultValue: trade.duplicate }),
-            ]; }) }));
-    };
-    return DuplicateTradesTable;
-}(React.Component));
+                React.createElement(Toggle_1.Toggle, { onChange: this.props.duplicateChange(trade.id), defaultValue: trade.duplicate }),
+            ]) }));
+    }
+}
 exports.DuplicateTradesTable = DuplicateTradesTable;
 
 },{"../Table":11,"../Toggle":12,"react":295}],6:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -465,62 +319,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var FileBrowse = /** @class */ (function (_super) {
-    __extends(FileBrowse, _super);
-    function FileBrowse(props) {
-        var _this = _super.call(this, props) || this;
-        _this.onetime = true;
-        _this.onSubmit = function () { return __awaiter(_this, void 0, void 0, function () {
-            var reader;
-            var _this = this;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        reader = new FileReader();
-                        reader.onload = function () { return _this.props.onLoaded(reader.result); };
-                        if (!(this.fileInput.current !== null)) return [3 /*break*/, 2];
-                        if (!(this.fileInput.current.files !== null)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, reader.readAsText(this.fileInput.current.files[0])];
-                    case 1:
-                        _a.sent();
-                        _a.label = 2;
-                    case 2: return [2 /*return*/];
+const React = require("react");
+class FileBrowse extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onetime = true;
+        this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
+            const reader = new FileReader();
+            reader.onload = () => this.props.onLoaded(reader.result);
+            if (this.fileInput.current !== null) {
+                if (this.fileInput.current.files !== null) {
+                    yield reader.readAsText(this.fileInput.current.files[0]);
                 }
-            });
-        }); };
-        _this.fileInput = React.createRef();
-        return _this;
+            }
+        });
+        this.fileInput = React.createRef();
     }
-    FileBrowse.prototype.componentDidUpdate = function (prevProps) {
+    componentDidUpdate(prevProps) {
         // complicated 3 boolean logic to stop some browsers(firefox/edge) from causing 2 popup windows
         if (this.props.browse) {
             if (!prevProps.browse || this.onetime) {
@@ -541,36 +357,23 @@ var FileBrowse = /** @class */ (function (_super) {
                 this.onetime = !this.onetime;
             }
         } // this set state valid once
-    };
-    FileBrowse.prototype.render = function () {
+    }
+    render() {
         return (React.createElement("input", { type: 'file', className: 'FileBrowse dn', ref: this.fileInput, onChange: this.onSubmit }));
-    };
-    return FileBrowse;
-}(React.Component));
+    }
+}
 exports.FileBrowse = FileBrowse;
 
 },{"react":295}],7:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var FileDownload = /** @class */ (function (_super) {
-    __extends(FileDownload, _super);
-    function FileDownload(props) {
-        var _this = _super.call(this, props) || this;
-        _this.downloadLink = React.createRef();
-        return _this;
+const React = require("react");
+class FileDownload extends React.Component {
+    constructor(props) {
+        super(props);
+        this.downloadLink = React.createRef();
     }
-    FileDownload.prototype.componentDidUpdate = function () {
+    componentDidUpdate() {
         if (this.props.download) {
             if (this.downloadLink.current !== null) {
                 this.downloadLink.current.click();
@@ -579,35 +382,20 @@ var FileDownload = /** @class */ (function (_super) {
                 alert('error clickng file input');
             }
         }
-    };
-    FileDownload.prototype.render = function () {
-        return (React.createElement("a", { download: this.props.fileName, href: "data:text/plain;charset=utf-8," + encodeURIComponent(this.props.data), ref: this.downloadLink, className: 'dn' }));
-    };
-    return FileDownload;
-}(React.Component));
+    }
+    render() {
+        return (React.createElement("a", { download: this.props.fileName, href: `data:text/plain;charset=utf-8,${encodeURIComponent(this.props.data)}`, ref: this.downloadLink, className: 'dn' }));
+    }
+}
 exports.FileDownload = FileDownload;
 
 },{"react":295}],8:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var Table_1 = require("../Table");
-var GainsPerTradeTable = /** @class */ (function (_super) {
-    __extends(GainsPerTradeTable, _super);
-    function GainsPerTradeTable() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    GainsPerTradeTable.prototype.render = function () {
+const React = require("react");
+const Table_1 = require("../Table");
+class GainsPerTradeTable extends React.Component {
+    render() {
         return (React.createElement(Table_1.Table, { headers: [
                 'Date',
                 'ID',
@@ -620,7 +408,7 @@ var GainsPerTradeTable = /** @class */ (function (_super) {
                 'USD Value',
                 'Short Term Gain',
                 'Long Term Gain',
-            ], rows: this.props.trades.map(function (trade) { return [
+            ], rows: this.props.trades.map((trade) => [
                 React.createElement("span", null, new Date(trade.date).toUTCString()),
                 React.createElement("span", null, trade.id),
                 React.createElement("span", null, trade.amountSold.toFixed(8)),
@@ -634,204 +422,124 @@ var GainsPerTradeTable = /** @class */ (function (_super) {
                     (trade.amountSold * trade.USDRate).toFixed(8)),
                 React.createElement("span", null, trade.shortTerm.toFixed(2)),
                 React.createElement("span", null, trade.longTerm.toFixed(2)),
-            ]; }) }));
-    };
-    return GainsPerTradeTable;
-}(React.Component));
+            ]) }));
+    }
+}
 exports.GainsPerTradeTable = GainsPerTradeTable;
 
 },{"../Table":11,"react":295}],9:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 // const React = require('react');
-var React = require("react");
-var Loader = /** @class */ (function (_super) {
-    __extends(Loader, _super);
-    function Loader() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Loader.prototype.render = function () {
+const React = require("react");
+class Loader extends React.Component {
+    render() {
         return (React.createElement("div", { className: 'center mt5 loader' },
             React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/Loader/index.css' })));
-    };
-    return Loader;
-}(React.Component));
+    }
+}
 exports.Loader = Loader;
 
 },{"react":295}],10:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var Popup = /** @class */ (function (_super) {
-    __extends(Popup, _super);
-    function Popup() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Popup.prototype.render = function () {
+const React = require("react");
+class Popup extends React.Component {
+    render() {
         return (React.createElement("div", { className: 'popup' },
             React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/Popup/index.css' }),
             React.createElement("div", { className: 'fixed w-100 h-100 top-0 right-0 left-0 bottom-0 bg-black o-70' }),
-            React.createElement("div", { className: "dialog absolute w-50 ba b--black bw2 bg-white pa2 " + this.props.className },
+            React.createElement("div", { className: `dialog absolute w-50 ba b--black bw2 bg-white pa2 ${this.props.className}` },
                 React.createElement("i", { className: 'fr fa fa-times fa-2x', onClick: this.props.onClose }),
                 this.props.children)));
-    };
-    return Popup;
-}(React.Component));
+    }
+}
 exports.default = Popup;
 
 },{"react":295}],11:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var Table = /** @class */ (function (_super) {
-    __extends(Table, _super);
-    function Table() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Table.prototype.render = function () {
+const React = require("react");
+class Table extends React.Component {
+    render() {
         return (React.createElement("div", { className: 'tradesTable pa4' },
             React.createElement("div", { className: 'overflow-auto' },
                 React.createElement("table", { className: 'f6 w-100 mw8 center' },
                     React.createElement("thead", null,
-                        React.createElement("tr", { className: 'stripe-dark' }, this.props.headers.map(function (header) {
-                            return React.createElement("th", { key: header, className: 'fw6 tl pa3 bg-white' }, header);
-                        }))),
-                    React.createElement("tbody", { className: 'lh-copy' }, this.props.rows.map(function (row, index) {
-                        return React.createElement("tr", { className: 'stripe-dark', key: index }, row.map(function (col, colindex) {
-                            return React.createElement("td", { key: index + "-" + colindex, className: 'pa2 mw4 break-word' }, col);
-                        }));
-                    }))))));
-    };
-    return Table;
-}(React.Component));
+                        React.createElement("tr", { className: 'stripe-dark' }, this.props.headers.map((header) => React.createElement("th", { key: header, className: 'fw6 tl pa3 bg-white' }, header)))),
+                    React.createElement("tbody", { className: 'lh-copy' }, this.props.rows.map((row, index) => React.createElement("tr", { className: 'stripe-dark', key: index }, row.map((col, colindex) => React.createElement("td", { key: `${index}-${colindex}`, className: 'pa2 mw4 break-word' }, col)))))))));
+    }
+}
 exports.Table = Table;
 
 },{"react":295}],12:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var Toggle = /** @class */ (function (_super) {
-    __extends(Toggle, _super);
-    function Toggle() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Toggle.prototype.render = function () {
+const React = require("react");
+class Toggle extends React.Component {
+    render() {
         return (React.createElement("label", { className: 'toggle' },
             React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/Toggle/index.css' }),
             React.createElement("input", { type: 'checkbox', onChange: this.props.onChange, defaultChecked: this.props.defaultValue }),
             React.createElement("span", { className: 'slider' })));
-    };
-    return Toggle;
-}(React.Component));
+    }
+}
 exports.Toggle = Toggle;
 
 },{"react":295}],13:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var crypto = require("crypto");
-var React = require("react");
-var validator = require("validator");
-var Button_1 = require("../Button");
-var TradeDetails = /** @class */ (function (_super) {
-    __extends(TradeDetails, _super);
-    function TradeDetails(props) {
-        var _this = _super.call(this, props) || this;
-        _this.onChange = function (key) { return function (e) {
-            var _a;
-            var rate = _this.state.rate;
-            if (key === 'amountBought' && _this.state.amountSold !== '' && _this.state.amountSold !== '0') {
-                rate = (parseFloat(_this.state.amountSold) / parseFloat(e.currentTarget.value)).toString();
+const crypto = require("crypto");
+const React = require("react");
+const validator = require("validator");
+const Button_1 = require("../Button");
+class TradeDetails extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onChange = (key) => (e) => {
+            let rate = this.state.rate;
+            if (key === 'amountBought' && this.state.amountSold !== '' && this.state.amountSold !== '0') {
+                rate = (parseFloat(this.state.amountSold) / parseFloat(e.currentTarget.value)).toString();
             }
-            if (key === 'amountSold' && _this.state.amountBought !== '' && _this.state.amountBought !== '0') {
-                rate = (parseFloat(e.currentTarget.value) / parseFloat(_this.state.amountBought)).toString();
+            if (key === 'amountSold' && this.state.amountBought !== '' && this.state.amountBought !== '0') {
+                rate = (parseFloat(e.currentTarget.value) / parseFloat(this.state.amountBought)).toString();
             }
-            _this.setState((_a = {}, _a[key] = e.currentTarget.value, _a.rate = rate, _a));
-        }; };
-        _this.onSubmit = function () {
-            var errors = [];
-            var keys = Object.keys(_this.state);
-            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-                var key = keys_1[_i];
+            this.setState({ [key]: e.currentTarget.value, rate });
+        };
+        this.onSubmit = () => {
+            const errors = [];
+            const keys = Object.keys(this.state);
+            for (const key of keys) {
                 switch (key) {
                     case 'boughtCurrency':
                     case 'soldCurrency':
-                        if (!validator.isAlpha(_this.state[key])) {
-                            errors.push(key + " must consist of only english letters");
+                        if (!validator.isAlpha(this.state[key])) {
+                            errors.push(`${key} must consist of only english letters`);
                             break;
                         }
-                        if (!validator.isLength(_this.state[key], { min: 3, max: 5 })) {
-                            errors.push(key + " must be 3 to 5 characters long");
+                        if (!validator.isLength(this.state[key], { min: 3, max: 5 })) {
+                            errors.push(`${key} must be 3 to 5 characters long`);
                             break;
                         }
                         break;
                     case 'amountBought':
                     case 'amountSold':
-                        if (!validator.isNumeric(_this.state[key].toString())) {
-                            errors.push(key + " must be numerical");
+                        if (!validator.isNumeric(this.state[key].toString())) {
+                            errors.push(`${key} must be numerical`);
                             break;
                         }
-                        if (!validator.isFloat(_this.state[key].toString(), { min: 0.00000001 })) {
-                            errors.push(key + " must be greater then 0.00000001");
+                        if (!validator.isFloat(this.state[key].toString(), { min: 0.00000001 })) {
+                            errors.push(`${key} must be greater then 0.00000001`);
                             break;
                         }
                         break;
                     case 'date':
-                        if (!validator.isAfter(_this.state[key].toString(), '1/1/2010')) {
-                            errors.push(key + " must be a date after 2010");
+                        if (!validator.isAfter(this.state[key].toString(), '1/1/2010')) {
+                            errors.push(`${key} must be a date after 2010`);
                             break;
                         }
-                        if (!validator.isBefore(_this.state[key].toString())) {
-                            errors.push(key + " must be a date in the present or past not future");
+                        if (!validator.isBefore(this.state[key].toString())) {
+                            errors.push(`${key} must be a date in the present or past not future`);
                             break;
                         }
                         break;
@@ -841,24 +549,24 @@ var TradeDetails = /** @class */ (function (_super) {
                 alert(errors.join('\n'));
             }
             else {
-                var trade = {
-                    date: new Date(_this.state.date).getTime(),
-                    amountSold: parseFloat(_this.state.amountSold),
-                    boughtCurrency: _this.state.boughtCurrency,
-                    soldCurrency: _this.state.soldCurrency,
-                    rate: parseFloat(_this.state.rate),
-                    exchange: _this.state.exchange,
+                const trade = {
+                    date: new Date(this.state.date).getTime(),
+                    amountSold: parseFloat(this.state.amountSold),
+                    boughtCurrency: this.state.boughtCurrency,
+                    soldCurrency: this.state.soldCurrency,
+                    rate: parseFloat(this.state.rate),
+                    exchange: this.state.exchange,
                 };
-                var id = _this.state.id;
+                let id = this.state.id;
                 if (id === '') {
                     id = crypto.createHash('sha256').update(JSON.stringify(trade)).digest('hex');
                 }
                 trade.id = id;
-                _this.props.onSubmit(trade);
+                this.props.onSubmit(trade);
             }
         };
         if ('trade' in props && props.trade !== undefined) {
-            _this.state = {
+            this.state = {
                 boughtCurrency: props.trade.boughtCurrency,
                 soldCurrency: props.trade.soldCurrency,
                 amountBought: (props.trade.amountSold / props.trade.rate).toString(),
@@ -870,7 +578,7 @@ var TradeDetails = /** @class */ (function (_super) {
             };
         }
         else {
-            _this.state = {
+            this.state = {
                 boughtCurrency: '',
                 soldCurrency: '',
                 amountSold: '',
@@ -881,10 +589,9 @@ var TradeDetails = /** @class */ (function (_super) {
                 id: '',
             };
         }
-        return _this;
     }
-    TradeDetails.prototype.render = function () {
-        return (React.createElement("div", { className: "TradeDetails w-70 center tc " + this.props.className },
+    render() {
+        return (React.createElement("div", { className: `TradeDetails w-70 center tc ${this.props.className}` },
             React.createElement("div", { className: 'fl w-100 pa1' },
                 React.createElement("h4", { className: 'pb0 mb0 pt0 mt0 tc' }, "Exchange"),
                 React.createElement("input", { className: 'w-100 tc', value: this.state.exchange, onChange: this.onChange('exchange') })),
@@ -912,23 +619,12 @@ var TradeDetails = /** @class */ (function (_super) {
                 React.createElement("input", { className: 'w-100 tc', value: this.state.amountSold, onChange: this.onChange('amountSold') })),
             React.createElement("div", { className: 'fl w-100' },
                 React.createElement(Button_1.default, { className: 'center', label: 'Add Trade', onClick: this.onSubmit }))));
-    };
-    return TradeDetails;
-}(React.Component));
+    }
+}
 exports.default = TradeDetails;
 
 },{"../Button":3,"crypto":82,"react":295,"validator":339}],14:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -937,70 +633,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var SortTrades_1 = require("../../src/processing/SortTrades");
-var Popup_1 = require("../Popup");
-var Table_1 = require("../Table");
-var TradeDetails_1 = require("../TradeDetails");
-var TradesTable = /** @class */ (function (_super) {
-    __extends(TradesTable, _super);
-    function TradesTable(props) {
-        var _this = _super.call(this, props) || this;
-        _this.changePopupStatus = function (tradeID) { return function () {
-            _this.setState({ popup: tradeID });
-        }; };
-        _this.editTrade = function (originalID) { return function (editedTrade) { return __awaiter(_this, void 0, void 0, function () {
-            var newTrades, sortedTrades;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        newTrades = this.props.trades.filter(function (trade) { return trade.id !== originalID; });
-                        newTrades.push(editedTrade);
-                        sortedTrades = SortTrades_1.default(newTrades);
-                        return [4 /*yield*/, this.props.save(sortedTrades)];
-                    case 1:
-                        if (_a.sent()) {
-                            this.setState({ popup: undefined });
-                        }
-                        return [2 /*return*/];
-                }
-            });
-        }); }; };
-        _this.state = {
+const React = require("react");
+const SortTrades_1 = require("../../src/processing/SortTrades");
+const Popup_1 = require("../Popup");
+const Table_1 = require("../Table");
+const TradeDetails_1 = require("../TradeDetails");
+class TradesTable extends React.Component {
+    constructor(props) {
+        super(props);
+        this.changePopupStatus = (tradeID) => () => {
+            this.setState({ popup: tradeID });
+        };
+        this.editTrade = (originalID) => (editedTrade) => __awaiter(this, void 0, void 0, function* () {
+            const newTrades = this.props.trades.filter((trade) => trade.id !== originalID);
+            newTrades.push(editedTrade);
+            const sortedTrades = SortTrades_1.default(newTrades);
+            if (yield this.props.save(sortedTrades)) {
+                this.setState({ popup: undefined });
+            }
+        });
+        this.state = {
             popup: undefined,
         };
-        return _this;
     }
-    TradesTable.prototype.render = function () {
-        var _this = this;
+    render() {
         return (React.createElement("div", null,
             React.createElement(Table_1.Table, { headers: [
                     'Date',
@@ -1011,7 +668,7 @@ var TradesTable = /** @class */ (function (_super) {
                     'Bought Currency',
                     'Amount Bought',
                     '',
-                ], rows: this.props.trades.map(function (trade) { return [
+                ], rows: this.props.trades.map((trade) => [
                     React.createElement("span", null, new Date(trade.date).toUTCString()),
                     React.createElement("span", null, trade.id),
                     React.createElement("span", null, trade.amountSold.toFixed(8)),
@@ -1019,40 +676,27 @@ var TradesTable = /** @class */ (function (_super) {
                     React.createElement("span", null, trade.rate.toFixed(8)),
                     React.createElement("span", null, trade.boughtCurrency),
                     React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
-                    React.createElement("i", { className: 'fa fa-pencil-square', onClick: _this.changePopupStatus(trade.id) }),
-                ]; }) }),
+                    React.createElement("i", { className: 'fa fa-pencil-square', onClick: this.changePopupStatus(trade.id) }),
+                ]) }),
             this.state.popup !== undefined &&
-                React.createElement(Popup_1.default, { children: React.createElement(TradeDetails_1.default, { onSubmit: this.editTrade(this.state.popup), trade: this.props.trades.filter(function (trade) { return trade.id === _this.state.popup; })[0], className: 'w-100' }), className: 'w-70', onClose: this.changePopupStatus(undefined) })));
-    };
-    return TradesTable;
-}(React.Component));
+                React.createElement(Popup_1.default, { children: React.createElement(TradeDetails_1.default, { onSubmit: this.editTrade(this.state.popup), trade: this.props.trades.filter((trade) => trade.id === this.state.popup)[0], className: 'w-100' }), className: 'w-70', onClose: this.changePopupStatus(undefined) })));
+    }
+}
 exports.TradesTable = TradesTable;
 
 },{"../../src/processing/SortTrades":421,"../Popup":10,"../Table":11,"../TradeDetails":13,"react":295}],15:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var TradesTable_1 = require("../TradesTable");
-var ViewTrades = /** @class */ (function (_super) {
-    __extends(ViewTrades, _super);
-    function ViewTrades() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.save = function (trades) {
-            return _this.props.save({ trades: trades });
+const React = require("react");
+const TradesTable_1 = require("../TradesTable");
+class ViewTrades extends React.Component {
+    constructor() {
+        super(...arguments);
+        this.save = (trades) => {
+            return this.props.save({ trades: trades });
         };
-        return _this;
     }
-    ViewTrades.prototype.render = function () {
+    render() {
         return (React.createElement("div", { className: 'viewTrades' }, this.props.trades.length > 0 ?
             React.createElement("div", null,
                 React.createElement("h3", { className: 'tc' }, "Trades"),
@@ -1062,23 +706,12 @@ var ViewTrades = /** @class */ (function (_super) {
                 React.createElement("h3", { className: 'tc' },
                     "No Trades ",
                     React.createElement("i", { className: 'fa fa-frown-o' }))));
-    };
-    return ViewTrades;
-}(React.Component));
+    }
+}
 exports.ViewTrades = ViewTrades;
 
 },{"../TradesTable":14,"react":295}],16:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -1087,43 +720,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var classnames = require("classnames");
-var React = require("react");
-var save_1 = require("../src/save");
-var AddTrades_1 = require("./AddTrades");
-var Button_1 = require("./Button");
-var CalculateGains_1 = require("./CalculateGains");
-var FileBrowse_1 = require("./FileBrowse");
-var Popup_1 = require("./Popup");
-var ViewTrades_1 = require("./ViewTrades");
+const classnames = require("classnames");
+const React = require("react");
+const save_1 = require("../src/save");
+const AddTrades_1 = require("./AddTrades");
+const Button_1 = require("./Button");
+const CalculateGains_1 = require("./CalculateGains");
+const FileBrowse_1 = require("./FileBrowse");
+const Popup_1 = require("./Popup");
+const ViewTrades_1 = require("./ViewTrades");
 var TABS;
 (function (TABS) {
     TABS["HOME"] = "Home";
@@ -1131,62 +737,51 @@ var TABS;
     TABS["ADD_TRADES"] = "Add Trades";
     TABS["CALCULATE_GAINS"] = "Calculate Gains";
 })(TABS || (TABS = {}));
-var rootElement = /** @class */ (function (_super) {
-    __extends(rootElement, _super);
-    function rootElement(props) {
-        var _this = _super.call(this, props) || this;
-        _this.saveData = function (data) { return __awaiter(_this, void 0, void 0, function () {
-            var newHoldings, newTrades, err_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        newHoldings = data.holdings || this.state.holdings;
-                        newTrades = data.trades || this.state.trades;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, save_1.save(newHoldings, newTrades)];
-                    case 2:
-                        _a.sent();
-                        this.setState({
-                            trades: newTrades,
-                            holdings: newHoldings,
-                        });
-                        return [2 /*return*/, true];
-                    case 3:
-                        err_1 = _a.sent();
-                        alert(err_1);
-                        return [2 /*return*/, false];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        }); };
-        _this.showCurrentTab = function (currentTab) {
+class rootElement extends React.Component {
+    constructor(props) {
+        super(props);
+        this.saveData = (data) => __awaiter(this, void 0, void 0, function* () {
+            const newHoldings = data.holdings || this.state.holdings;
+            const newTrades = data.trades || this.state.trades;
+            try {
+                yield save_1.save(newHoldings, newTrades);
+                this.setState({
+                    trades: newTrades,
+                    holdings: newHoldings,
+                });
+                return true;
+            }
+            catch (err) {
+                alert(err);
+                return false;
+            }
+        });
+        this.showCurrentTab = (currentTab) => {
             switch (currentTab) {
                 case TABS.ADD_TRADES:
-                    return React.createElement(AddTrades_1.AddTrades, { holdings: _this.state.holdings, trades: _this.state.trades, save: _this.saveData });
+                    return React.createElement(AddTrades_1.AddTrades, { holdings: this.state.holdings, trades: this.state.trades, save: this.saveData });
                 case TABS.VIEW_TRADES:
-                    return React.createElement(ViewTrades_1.ViewTrades, { holdings: _this.state.holdings, trades: _this.state.trades, save: _this.saveData });
+                    return React.createElement(ViewTrades_1.ViewTrades, { holdings: this.state.holdings, trades: this.state.trades, save: this.saveData });
                 case TABS.CALCULATE_GAINS:
-                    return React.createElement(CalculateGains_1.CalculateGains, { trades: _this.state.trades, holdings: _this.state.holdings });
+                    return React.createElement(CalculateGains_1.CalculateGains, { trades: this.state.trades, holdings: this.state.holdings });
                 case TABS.HOME:
                     return;
                 default:
                     return;
             }
         };
-        _this.updateTab = function (newTab) { return function () {
-            _this.setState({ currentTab: newTab });
-        }; };
-        _this.changePopupState = function () {
-            _this.setState({ loadDataPopup: !_this.state.loadDataPopup });
+        this.updateTab = (newTab) => () => {
+            this.setState({ currentTab: newTab });
         };
-        _this.loadData = function (data) {
-            _this.setState({ fileBrowseOpen: false });
+        this.changePopupState = () => {
+            this.setState({ loadDataPopup: !this.state.loadDataPopup });
+        };
+        this.loadData = (data) => {
+            this.setState({ fileBrowseOpen: false });
             if (data !== '') {
                 try {
-                    var parsedData = JSON.parse(data);
-                    _this.setState({
+                    const parsedData = JSON.parse(data);
+                    this.setState({
                         trades: parsedData.trades,
                         holdings: parsedData.holdings,
                         loadDataPopup: false,
@@ -1197,22 +792,20 @@ var rootElement = /** @class */ (function (_super) {
                 }
             }
         };
-        _this.openFileBrowse = function () {
-            _this.setState({ fileBrowseOpen: true });
+        this.openFileBrowse = () => {
+            this.setState({ fileBrowseOpen: true });
         };
-        _this.state = {
-            trades: _this.props.trades,
-            holdings: _this.props.holdings,
+        this.state = {
+            trades: this.props.trades,
+            holdings: this.props.holdings,
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
             loadDataPopup: props.browser && props.trades.length + Object.keys(props.holdings).length === 0,
         };
-        return _this;
     }
-    rootElement.prototype.render = function () {
-        var _this = this;
+    render() {
         return (React.createElement("div", { className: 'app' },
             this.state.loadDataPopup &&
                 React.createElement(Popup_1.default, { onClose: this.changePopupState },
@@ -1222,14 +815,13 @@ var rootElement = /** @class */ (function (_super) {
                         React.createElement(Button_1.default, { label: 'Load Existing Data', onClick: this.openFileBrowse }),
                         React.createElement(FileBrowse_1.FileBrowse, { onLoaded: this.loadData, browse: this.state.fileBrowseOpen }))),
             React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/index.css' }),
-            React.createElement("div", { className: 'flex bg-dark-gray h2' }, Object.keys(TABS).map(function (key) { return React.createElement("h3", { key: key, className: classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {
-                    'bg-dark-gray': TABS[key] !== _this.state.currentTab,
-                    'bg-navy': TABS[key] === _this.state.currentTab,
-                }), onClick: _this.updateTab(TABS[key]) }, TABS[key]); })),
+            React.createElement("div", { className: 'flex bg-dark-gray h2' }, Object.keys(TABS).map((key) => React.createElement("h3", { key: key, className: classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {
+                    'bg-dark-gray': TABS[key] !== this.state.currentTab,
+                    'bg-navy': TABS[key] === this.state.currentTab,
+                }), onClick: this.updateTab(TABS[key]) }, TABS[key]))),
             React.createElement("div", { className: 'openTab' }, this.showCurrentTab(this.state.currentTab))));
-    };
-    return rootElement;
-}(React.Component));
+    }
+}
 exports.rootElement = rootElement;
 
 },{"../src/save":423,"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./Popup":10,"./ViewTrades":15,"classnames":73,"react":295}],17:[function(require,module,exports){
@@ -73685,12 +73277,12 @@ function extend() {
 },{}],414:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var ReactDOM = require("react-dom");
-var components_1 = require("./components");
+const React = require("react");
+const ReactDOM = require("react-dom");
+const components_1 = require("./components");
 function bootstrap() {
-    var isElectron = require('is-electron');
-    var browser = isElectron();
+    const isElectron = require('is-electron');
+    const browser = isElectron();
     if (!browser) {
         return {
             browser: true,
@@ -73699,7 +73291,7 @@ function bootstrap() {
         };
     }
     else {
-        var savedData = require('./data.json');
+        const savedData = require('./data.json');
         return {
             browser: false,
             trades: savedData.trades || [],
@@ -73707,7 +73299,7 @@ function bootstrap() {
         };
     }
 }
-var data = bootstrap();
+const data = bootstrap();
 ReactDOM.render(React.createElement(components_1.rootElement, {
     trades: data.trades,
     holdings: data.holdings,
@@ -73717,8 +73309,8 @@ ReactDOM.render(React.createElement(components_1.rootElement, {
 },{"./components":16,"./data.json":17,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var CalculateGains_1 = require("../../processing/CalculateGains");
-var headers = [
+const CalculateGains_1 = require("../../processing/CalculateGains");
+const headers = [
     'Description',
     'Date Acquired',
     'Date Sold',
@@ -73729,17 +73321,17 @@ var headers = [
     'Gain or Loss',
 ].join(',');
 function outputForm8949(holdings, trades) {
-    var holdingsTrades = CalculateGains_1.calculateGainsPerHoldings(holdings, trades);
-    var shortTermTrades = holdingsTrades.filter(function (trade) { return trade.shortTerm !== 0; });
-    var longTermTrades = holdingsTrades.filter(function (trade) { return trade.longTerm !== 0; });
-    var csvData = [
+    const holdingsTrades = CalculateGains_1.calculateGainsPerHoldings(holdings, trades);
+    const shortTermTrades = holdingsTrades.filter((trade) => trade.shortTerm !== 0);
+    const longTermTrades = holdingsTrades.filter((trade) => trade.longTerm !== 0);
+    let csvData = [
         'Form 8949 Statement',
         '',
         'Part 1 (Short-Term)',
     ];
     csvData = csvData.concat(headers);
-    csvData = csvData.concat(shortTermTrades.map(function (trade) { return [
-        trade.amountSold / trade.rate + " " + trade.boughtCurrency,
+    csvData = csvData.concat(shortTermTrades.map((trade) => [
+        `${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
         trade.USDRate * trade.amountSold,
@@ -73747,10 +73339,10 @@ function outputForm8949(holdings, trades) {
         null,
         null,
         trade.shortTerm,
-    ]; }));
+    ]));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
-    csvData = csvData.concat(longTermTrades.map(function (trade) { return [
-        trade.amountSold / trade.rate + " " + trade.boughtCurrency,
+    csvData = csvData.concat(longTermTrades.map((trade) => [
+        `${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
         trade.USDRate * trade.amountSold,
@@ -73758,13 +73350,21 @@ function outputForm8949(holdings, trades) {
         null,
         null,
         trade.longTerm,
-    ]; }));
+    ]));
     return csvData.join('\n');
 }
 exports.default = outputForm8949;
 
 },{"../../processing/CalculateGains":419}],416:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
 const types_1 = require("../../types");
@@ -73773,44 +73373,54 @@ var BittrexOrderType;
     BittrexOrderType["LIMIT_SELL"] = "LIMIT_SELL";
     BittrexOrderType["LIMIT_BUY"] = "LIMIT_BUY";
 })(BittrexOrderType || (BittrexOrderType = {}));
-async function processData(filePath) {
-    const data = await __1.getCSVData(filePath);
-    const internalFormat = [];
-    for (const trade of data) {
-        const pair = trade.Exchange.split('-');
-        switch (trade.Type) {
-            case BittrexOrderType.LIMIT_BUY:
-                internalFormat.push({
-                    boughtCurrency: pair[1],
-                    soldCurrency: pair[0],
-                    amountSold: parseFloat(trade.Quantity) * parseFloat(trade.Limit),
-                    rate: parseFloat((parseFloat(trade.Price) / parseFloat(trade.Quantity)).toFixed(8)),
-                    date: new Date(trade.Closed).getTime(),
-                    id: trade.OrderUuid,
-                    exchange: types_1.EXCHANGES.BITTREX,
-                });
-                break;
-            case BittrexOrderType.LIMIT_SELL:
-                internalFormat.push({
-                    boughtCurrency: pair[0],
-                    soldCurrency: pair[1],
-                    amountSold: parseFloat(trade.Quantity),
-                    rate: parseFloat((parseFloat(trade.Quantity) / parseFloat(trade.Price)).toFixed(8)),
-                    date: new Date(trade.Closed).getTime(),
-                    id: trade.OrderUuid,
-                    exchange: types_1.EXCHANGES.BITTREX,
-                });
-                break;
-            default:
-                throw new Error('Unknown Order Type - ' + trade.OrderUuid);
+function processData(filePath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield __1.getCSVData(filePath);
+        const internalFormat = [];
+        for (const trade of data) {
+            const pair = trade.Exchange.split('-');
+            switch (trade.Type) {
+                case BittrexOrderType.LIMIT_BUY:
+                    internalFormat.push({
+                        boughtCurrency: pair[1],
+                        soldCurrency: pair[0],
+                        amountSold: parseFloat(trade.Quantity) * parseFloat(trade.Limit),
+                        rate: parseFloat((parseFloat(trade.Price) / parseFloat(trade.Quantity)).toFixed(8)),
+                        date: new Date(trade.Closed).getTime(),
+                        id: trade.OrderUuid,
+                        exchange: types_1.EXCHANGES.BITTREX,
+                    });
+                    break;
+                case BittrexOrderType.LIMIT_SELL:
+                    internalFormat.push({
+                        boughtCurrency: pair[0],
+                        soldCurrency: pair[1],
+                        amountSold: parseFloat(trade.Quantity),
+                        rate: parseFloat((parseFloat(trade.Quantity) / parseFloat(trade.Price)).toFixed(8)),
+                        date: new Date(trade.Closed).getTime(),
+                        id: trade.OrderUuid,
+                        exchange: types_1.EXCHANGES.BITTREX,
+                    });
+                    break;
+                default:
+                    throw new Error('Unknown Order Type - ' + trade.OrderUuid);
+            }
         }
-    }
-    return internalFormat;
+        return internalFormat;
+    });
 }
 exports.processData = processData;
 
 },{"../":418,"../../types":424}],417:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
 const types_1 = require("../../types");
@@ -73839,34 +73449,36 @@ function getCurrenciesTraded(trade) {
     }
     return currencies;
 }
-async function processData() {
-    const data = await __1.getCSVData('./src/parsers/bittrex.csv');
-    const internalFormat = [];
-    for (const trade of data) {
-        if (trade.Symbol.length > 3) {
-            const pair = getCurrenciesTraded(trade);
-            switch (trade.Type) {
-                case GeminiOrderType.Buy:
-                case GeminiOrderType.Sell:
-                    internalFormat.push({
-                        boughtCurrency: pair.bought,
-                        soldCurrency: pair.sold,
-                        amountSold: Math.abs(trade[`${pair.sold} Amount`]),
-                        rate: Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`]),
-                        date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
-                        id: trade['Trade ID'],
-                        exchange: types_1.EXCHANGES.GEMINI,
-                    });
-                    break;
-                case GeminiOrderType.Credit:
-                case GeminiOrderType.Debit:
-                    throw new Error('Credit/Debit - Skipping');
-                default:
-                    throw new Error(`Unknown Order Type - ${trade['Order ID']} - ${trade['Trade ID']}`);
+function processData() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield __1.getCSVData('./src/parsers/bittrex.csv');
+        const internalFormat = [];
+        for (const trade of data) {
+            if (trade.Symbol.length > 3) {
+                const pair = getCurrenciesTraded(trade);
+                switch (trade.Type) {
+                    case GeminiOrderType.Buy:
+                    case GeminiOrderType.Sell:
+                        internalFormat.push({
+                            boughtCurrency: pair.bought,
+                            soldCurrency: pair.sold,
+                            amountSold: Math.abs(trade[`${pair.sold} Amount`]),
+                            rate: Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`]),
+                            date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
+                            id: trade['Trade ID'],
+                            exchange: types_1.EXCHANGES.GEMINI,
+                        });
+                        break;
+                    case GeminiOrderType.Credit:
+                    case GeminiOrderType.Debit:
+                        throw new Error('Credit/Debit - Skipping');
+                    default:
+                        throw new Error(`Unknown Order Type - ${trade['Order ID']} - ${trade['Trade ID']}`);
+                }
             }
         }
-    }
-    return internalFormat;
+        return internalFormat;
+    });
 }
 exports.processData = processData;
 
@@ -73880,97 +73492,57 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var csv = require("csvtojson");
+const csv = require("csvtojson");
 function getCSVData(fileData) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, new Promise(function (resolve, reject) {
-                    var promises = [];
-                    csv().fromString(fileData)
-                        .on('json', function (converted) { return promises.push(Promise.resolve(converted)); })
-                        .on('done', function (error) {
-                        if (error) {
-                            reject(error);
-                        }
-                        Promise.all(promises).then(function (convertedResults) { return resolve(convertedResults); });
-                    });
-                })];
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const promises = [];
+            csv().fromString(fileData)
+                .on('json', (converted) => promises.push(Promise.resolve(converted)))
+                .on('done', (error) => {
+                if (error) {
+                    reject(error);
+                }
+                Promise.all(promises).then((convertedResults) => resolve(convertedResults));
+            });
         });
     });
 }
 exports.getCSVData = getCSVData;
 function processData(exchange, filePath) {
-    return __awaiter(this, void 0, void 0, function () {
-        var processExchangeData;
-        return __generator(this, function (_a) {
-            switch (exchange) {
-                case 'BITTREX':
-                    processExchangeData = require('./bittrex').processData;
-                    break;
-                case 'GEMINI':
-                    processExchangeData = require('./gemini').processData;
-                    break;
-                default:
-                    throw new Error("Unknown Exchange - " + exchange);
-            }
-            if (typeof processExchangeData === 'function') {
-                return [2 /*return*/, processExchangeData(filePath)];
-            }
-            return [2 /*return*/, []];
-        });
+    return __awaiter(this, void 0, void 0, function* () {
+        let processExchangeData;
+        switch (exchange) {
+            case 'BITTREX':
+                processExchangeData = require('./bittrex').processData;
+                break;
+            case 'GEMINI':
+                processExchangeData = require('./gemini').processData;
+                break;
+            default:
+                throw new Error(`Unknown Exchange - ${exchange}`);
+        }
+        if (typeof processExchangeData === 'function') {
+            return processExchangeData(filePath);
+        }
+        return [];
     });
 }
 exports.processData = processData;
 
 },{"./bittrex":416,"./gemini":417,"csvtojson":83}],419:[function(require,module,exports){
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var clone = require("clone");
-var types_1 = require("../../types");
-var FULL_YEAR_IN_MILLISECONDS = 31536000000;
+const clone = require("clone");
+const types_1 = require("../../types");
+const FULL_YEAR_IN_MILLISECONDS = 31536000000;
 function calculateGains(holdings, trades) {
-    var shortTermGain = 0;
-    var longTermGain = 0;
-    var newHoldings = clone(holdings);
-    for (var _i = 0, trades_1 = trades; _i < trades_1.length; _i++) {
-        var trade = trades_1[_i];
-        var result = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
+    let shortTermGain = 0;
+    let longTermGain = 0;
+    let newHoldings = clone(holdings);
+    for (const trade of trades) {
+        const result = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
         newHoldings = result.newHoldings;
         if (trade.boughtCurrency in newHoldings === false) {
             newHoldings[trade.boughtCurrency] = [];
@@ -73989,9 +73561,8 @@ function calculateGains(holdings, trades) {
                 rateInUSD: trade.USDRate * trade.rate,
                 date: new Date().getTime(),
             });
-            for (var _a = 0, _b = result.deductedHoldings; _a < _b.length; _a++) {
-                var holding = _b[_a];
-                var gain = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            for (const holding of result.deductedHoldings) {
+                const gain = (trade.USDRate - holding.rateInUSD) * holding.amount;
                 if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                     longTermGain += gain;
                 }
@@ -74002,21 +73573,21 @@ function calculateGains(holdings, trades) {
         }
     }
     return {
-        newHoldings: newHoldings,
-        longTermGain: longTermGain,
-        shortTermGain: shortTermGain,
+        newHoldings,
+        longTermGain,
+        shortTermGain,
     };
 }
 exports.calculateGains = calculateGains;
 function getCurrenyHolding(holdings, currency, amount, method) {
     holdings = clone(holdings);
-    var currencyHolding = [];
-    var amountUsed = amount;
+    const currencyHolding = [];
+    let amountUsed = amount;
     while (amountUsed !== 0) {
         if (currency in holdings) {
             switch (method) {
                 case types_1.METHOD.LIFO:
-                    var lastIn = holdings[currency][holdings[currency].length - 1];
+                    const lastIn = holdings[currency][holdings[currency].length - 1];
                     if (lastIn.amount > amountUsed) {
                         lastIn.amount = lastIn.amount - amountUsed;
                         currencyHolding.push({
@@ -74028,7 +73599,7 @@ function getCurrenyHolding(holdings, currency, amount, method) {
                     }
                     else {
                         amountUsed = amountUsed - lastIn.amount;
-                        var popped = holdings[currency].pop();
+                        const popped = holdings[currency].pop();
                         if (popped !== undefined) {
                             currencyHolding.push(popped);
                         }
@@ -74038,7 +73609,7 @@ function getCurrenyHolding(holdings, currency, amount, method) {
                 // return '';
                 case types_1.METHOD.FIFO:
                 default:
-                    var firstIn = holdings[currency][0];
+                    const firstIn = holdings[currency][0];
                     if (firstIn.amount > amountUsed) {
                         firstIn.amount = firstIn.amount - amountUsed;
                         currencyHolding.push({
@@ -74084,23 +73655,21 @@ function getCurrenyHolding(holdings, currency, amount, method) {
 }
 exports.getCurrenyHolding = getCurrenyHolding;
 function calculateGainPerTrade(holdings, internalFormat) {
-    var tempHoldings = clone(holdings);
-    var finalFormat = [];
-    for (var _i = 0, internalFormat_1 = internalFormat; _i < internalFormat_1.length; _i++) {
-        var trade = internalFormat_1[_i];
-        var result = calculateGains(tempHoldings, [trade]);
+    let tempHoldings = clone(holdings);
+    const finalFormat = [];
+    for (const trade of internalFormat) {
+        const result = calculateGains(tempHoldings, [trade]);
         tempHoldings = result.newHoldings;
-        finalFormat.push(__assign({}, trade, { shortTerm: result.shortTermGain, longTerm: result.longTermGain }));
+        finalFormat.push(Object.assign({}, trade, { shortTerm: result.shortTermGain, longTerm: result.longTermGain }));
     }
     return finalFormat;
 }
 exports.calculateGainPerTrade = calculateGainPerTrade;
 function calculateGainsPerHoldings(holdings, trades) {
-    var newHoldings = clone(holdings);
-    var newTrades = [];
-    for (var _i = 0, trades_2 = trades; _i < trades_2.length; _i++) {
-        var trade = trades_2[_i];
-        var result = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
+    let newHoldings = clone(holdings);
+    const newTrades = [];
+    for (const trade of trades) {
+        const result = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
         newHoldings = result.newHoldings;
         if (trade.boughtCurrency in newHoldings === false) {
             newHoldings[trade.boughtCurrency] = [];
@@ -74110,19 +73679,18 @@ function calculateGainsPerHoldings(holdings, trades) {
             rateInUSD: trade.USDRate * trade.rate,
             date: new Date().getTime(),
         });
-        for (var _a = 0, _b = result.deductedHoldings; _a < _b.length; _a++) {
-            var holding = _b[_a];
-            var gain = (trade.USDRate - holding.rateInUSD) * holding.amount;
-            var shortTerm = 0;
-            var longTerm = 0;
+        for (const holding of result.deductedHoldings) {
+            const gain = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            let shortTerm = 0;
+            let longTerm = 0;
             if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                 longTerm += gain;
             }
             else {
                 shortTerm += gain;
             }
-            newTrades.push(__assign({}, trade, { shortTerm: shortTerm,
-                longTerm: longTerm, dateAcquired: holding.date, costBasis: holding.rateInUSD * holding.amount }));
+            newTrades.push(Object.assign({}, trade, { shortTerm,
+                longTerm, dateAcquired: holding.date, costBasis: holding.rateInUSD * holding.amount }));
         }
     }
     return newTrades;
@@ -74131,27 +73699,18 @@ exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
 },{"../../types":424,"clone":75}],420:[function(require,module,exports){
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 function duplicateCheck(currentTrades, newTrades) {
-    var duplicateTrades = [];
-    var _loop_1 = function (newTrade) {
-        var IDMatchedTrades = currentTrades.filter(function (trade) { return newTrade.id === trade.id; });
+    const duplicateTrades = [];
+    for (const newTrade of newTrades) {
+        const IDMatchedTrades = currentTrades.filter((trade) => newTrade.id === trade.id);
         if (IDMatchedTrades.length) {
-            duplicateTrades.push(__assign({}, newTrade, { probability: 100, duplicate: true }));
-            return "continue";
+            duplicateTrades.push(Object.assign({}, newTrade, { probability: 100, duplicate: true }));
+            continue;
         }
-        for (var _i = 0, currentTrades_1 = currentTrades; _i < currentTrades_1.length; _i++) {
-            var currentTrade = currentTrades_1[_i];
+        for (const currentTrade of currentTrades) {
             if (newTrade.exchange === currentTrade.exchange) {
-                var probability = 0;
+                let probability = 0;
                 if (newTrade.date === currentTrade.date) {
                     if (newTrade.boughtCurrency === currentTrade.boughtCurrency ||
                         newTrade.soldCurrency === currentTrade.soldCurrency) {
@@ -74165,14 +73724,10 @@ function duplicateCheck(currentTrades, newTrades) {
                     }
                 }
                 if (probability > 0) {
-                    duplicateTrades.push(__assign({}, newTrade, { probability: probability, duplicate: probability > 50 }));
+                    duplicateTrades.push(Object.assign({}, newTrade, { probability, duplicate: probability > 50 }));
                 }
             }
         }
-    };
-    for (var _i = 0, newTrades_1 = newTrades; _i < newTrades_1.length; _i++) {
-        var newTrade = newTrades_1[_i];
-        _loop_1(newTrade);
     }
     return duplicateTrades;
 }
@@ -74191,14 +73746,6 @@ function sortTradesByDate(trade1, trade2) {
 
 },{}],422:[function(require,module,exports){
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -74207,39 +73754,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var got = require("got");
+const got = require("got");
 function cryptocompareResponse(response) {
     if ('body' in response) {
         try {
-            var result = JSON.parse(response.body);
+            const result = JSON.parse(response.body);
             if (result.USD !== 0) {
                 return result.USD;
             }
@@ -74275,120 +73795,77 @@ function getUSDTradeRate(trade) {
     }
 }
 function getBTCUSDRate(date) {
-    return __awaiter(this, void 0, void 0, function () {
-        var data, response;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    data = [
-                        "fsym=BTC",
-                        'tsym=USD',
-                        'sign=false',
-                        "toTs=" + date.getTime() / 1000,
-                        'extraParams=tApp',
-                    ];
-                    return [4 /*yield*/, got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'))];
-                case 1:
-                    response = _a.sent();
-                    return [2 /*return*/, cryptocompareResponse(response)];
-            }
-        });
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = [
+            `fsym=BTC`,
+            'tsym=USD',
+            'sign=false',
+            `toTs=${date.getTime() / 1000}`,
+            'extraParams=tApp',
+        ];
+        const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+        return cryptocompareResponse(response);
     });
 }
 function getUSDRate(date, trade) {
-    return __awaiter(this, void 0, void 0, function () {
-        var BTCUSDRate, data, response, rate, backupResponse, backupRate;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (isCurrencyTrade(trade, 'USD')) {
-                        return [2 /*return*/, getUSDTradeRate(trade)];
-                    }
-                    if (!(isCurrencyTrade(trade, 'BTC') || isCurrencyTrade(trade, 'XBT'))) return [3 /*break*/, 2];
-                    return [4 /*yield*/, getBTCUSDRate(date)];
-                case 1:
-                    BTCUSDRate = _a.sent();
-                    if (BTCUSDRate) {
-                        if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
-                            return [2 /*return*/, BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold];
-                        }
-                        else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
-                            return [2 /*return*/, BTCUSDRate];
-                        }
-                    }
-                    _a.label = 2;
-                case 2:
-                    data = [
-                        "fsym=" + trade.soldCurrency,
-                        'tsym=USD',
-                        'sign=false',
-                        "toTs=" + date.getTime() / 1000,
-                        'extraParams=tApp',
-                    ];
-                    return [4 /*yield*/, got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'))];
-                case 3:
-                    response = _a.sent();
-                    rate = cryptocompareResponse(response);
-                    if (!rate) return [3 /*break*/, 4];
-                    return [2 /*return*/, rate];
-                case 4:
-                    data[0] = "fsym=" + trade.boughtCurrency;
-                    return [4 /*yield*/, got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'))];
-                case 5:
-                    backupResponse = _a.sent();
-                    backupRate = cryptocompareResponse(backupResponse);
-                    if (backupRate) {
-                        return [2 /*return*/, backupRate / trade.rate];
-                    }
-                    else {
-                        throw new Error('Cant get any USD Rate for trade ' + trade.id);
-                    }
-                    _a.label = 6;
-                case 6: return [2 /*return*/];
+    return __awaiter(this, void 0, void 0, function* () {
+        if (isCurrencyTrade(trade, 'USD')) {
+            return getUSDTradeRate(trade);
+        }
+        if (isCurrencyTrade(trade, 'BTC') || isCurrencyTrade(trade, 'XBT')) {
+            // get BTC rate and convert back
+            const BTCUSDRate = yield getBTCUSDRate(date);
+            if (BTCUSDRate) {
+                if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
+                    return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
+                }
+                else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
+                    return BTCUSDRate;
+                }
             }
-        });
+        }
+        // fallback to get whatever we can
+        const data = [
+            `fsym=${trade.soldCurrency}`,
+            'tsym=USD',
+            'sign=false',
+            `toTs=${date.getTime() / 1000}`,
+            'extraParams=tApp',
+        ];
+        const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+        const rate = cryptocompareResponse(response);
+        if (rate) {
+            return rate;
+        }
+        else {
+            data[0] = `fsym=${trade.boughtCurrency}`;
+            const backupResponse = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+            const backupRate = cryptocompareResponse(backupResponse);
+            if (backupRate) {
+                return backupRate / trade.rate;
+            }
+            else {
+                throw new Error('Cant get any USD Rate for trade ' + trade.id);
+            }
+        }
     });
 }
 exports.getUSDRate = getUSDRate;
 function addUSDRateToTrade(trade) {
-    return __awaiter(this, void 0, void 0, function () {
-        var USDRate;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getUSDRate(new Date(trade.date), trade)];
-                case 1:
-                    USDRate = _a.sent();
-                    return [2 /*return*/, __assign({}, trade, { USDRate: USDRate })];
-            }
-        });
+    return __awaiter(this, void 0, void 0, function* () {
+        const USDRate = yield getUSDRate(new Date(trade.date), trade);
+        return Object.assign({}, trade, { USDRate });
     });
 }
 exports.addUSDRateToTrade = addUSDRateToTrade;
 function addUSDRateToTrades(trades) {
-    return __awaiter(this, void 0, void 0, function () {
-        var newTrades, _i, trades_1, trade, _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    newTrades = [];
-                    _i = 0, trades_1 = trades;
-                    _c.label = 1;
-                case 1:
-                    if (!(_i < trades_1.length)) return [3 /*break*/, 4];
-                    trade = trades_1[_i];
-                    // cant get some rates without await maybe cryptocompare rate limiting
-                    _b = (_a = newTrades).push;
-                    return [4 /*yield*/, addUSDRateToTrade(trade)];
-                case 2:
-                    // cant get some rates without await maybe cryptocompare rate limiting
-                    _b.apply(_a, [_c.sent()]);
-                    _c.label = 3;
-                case 3:
-                    _i++;
-                    return [3 /*break*/, 1];
-                case 4: return [2 /*return*/, Promise.all(newTrades)];
-            }
-        });
+    return __awaiter(this, void 0, void 0, function* () {
+        const newTrades = [];
+        for (const trade of trades) {
+            // cant get some rates without await maybe cryptocompare rate limiting
+            newTrades.push(yield addUSDRateToTrade(trade));
+        }
+        return Promise.all(newTrades);
     });
 }
 exports.addUSDRateToTrades = addUSDRateToTrades;
@@ -74403,53 +73880,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs = require("fs");
+const fs = require("fs");
 function save(holdings, trades) {
-    return __awaiter(this, void 0, void 0, function () {
-        var data;
-        return __generator(this, function (_a) {
-            data = JSON.stringify({
-                savedDate: new Date(),
-                holdings: holdings,
-                trades: trades,
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = JSON.stringify({
+            savedDate: new Date(),
+            holdings,
+            trades,
+        });
+        return new Promise((resolve, reject) => {
+            fs.writeFile('./data.json', data, (err) => {
+                if (err) {
+                    // console.log(err);
+                    reject(err);
+                }
+                resolve();
             });
-            return [2 /*return*/, new Promise(function (resolve, reject) {
-                    fs.writeFile('./data.json', data, function (err) {
-                        if (err) {
-                            // console.log(err);
-                            reject(err);
-                        }
-                        resolve();
-                    });
-                })];
         });
     });
 }
