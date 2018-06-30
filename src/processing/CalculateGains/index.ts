@@ -8,7 +8,7 @@ import {
     METHOD,
 } from '../../types';
 
-const FULL_YEAR_IN_MILLISECONDS: number = 31536000000;
+const FULL_YEAR_IN_MILLISECONDS = 31536000000;
 
 export interface ICalculateGains {
     newHoldings: IHoldings;
@@ -17,13 +17,13 @@ export interface ICalculateGains {
 }
 
 export function calculateGains(holdings: IHoldings, trades: ITradeWithUSDRate[]): ICalculateGains {
-    let shortTermGain: number = 0;
-    let longTermGain: number = 0;
+    let shortTermGain = 0;
+    let longTermGain = 0;
     let newHoldings: IHoldings = clone(holdings);
     for (const trade of trades) {
         const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
         newHoldings = result.newHoldings;
-        if (trade.boughtCurrency in newHoldings === false) {
+        if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
         }
         if (trade.soldCurrency === 'USD') {
@@ -156,7 +156,7 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
     for (const trade of trades) {
         const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
         newHoldings = result.newHoldings;
-        if (trade.boughtCurrency in newHoldings === false) {
+        if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
         }
         newHoldings[trade.boughtCurrency].push({
@@ -166,8 +166,8 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
         });
         for (const holding of result.deductedHoldings) {
             const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
-            let shortTerm: number = 0;
-            let longTerm: number = 0;
+            let shortTerm = 0;
+            let longTerm = 0;
             if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                 longTerm += gain;
             } else {

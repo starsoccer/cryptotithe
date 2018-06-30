@@ -45,13 +45,21 @@ async function getBTCUSDRate(date: Date) {
         `fsym=BTC`,
         'tsym=USD',
         'sign=false', // change to true for security?
-        `toTs=${date.getTime() / 1000}`,
+        `toTs=${date.getTime()}`,
         'extraParams=tApp',
     ];
     const response: got.Response<any> = await got(
         'https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'),
     );
     return cryptocompareResponse(response);
+}
+
+export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
+    if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
+        return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
+    } else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
+        return BTCUSDRate;
+    }
 }
 
 export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
@@ -62,11 +70,7 @@ export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
         // get BTC rate and convert back
         const BTCUSDRate = await getBTCUSDRate(date);
         if (BTCUSDRate) {
-            if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
-                return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
-            } else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
-                return BTCUSDRate;
-            }
+            return BTCBasedRate(trade, BTCUSDRate);
         }
     }
     // fallback to get whatever we can
@@ -74,7 +78,7 @@ export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
         `fsym=${trade.soldCurrency}`,
         'tsym=USD',
         'sign=false', // change to true for security?
-        `toTs=${date.getTime() / 1000}`,
+        `toTs=${date.getTime()}`,
         'extraParams=tApp',
     ];
     const response: got.Response<any> = await got(

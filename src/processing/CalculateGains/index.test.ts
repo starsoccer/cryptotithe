@@ -1,5 +1,5 @@
 import { mockHoldings, mockTradesWithUSDRate } from '../../mock';
-import { IHoldings, ITradeWithUSDRate, METHOD, EXCHANGES} from '../../types';
+import { EXCHANGES, IHoldings, ITradeWithUSDRate, METHOD} from '../../types';
 import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from './';
 
 describe('getCurrencyHolding LIFO', () => {
@@ -450,7 +450,6 @@ describe('calculateGains fiat', () => {
 
         const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
         const result: ICalculateGains = calculateGains(holdings, trades);
-
 
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe(0);
