@@ -4,14 +4,13 @@ import { TradesTable } from '../TradesTable';
 export interface IViewTradesProp {
     holdings: IHoldings;
     trades: ITrade[];
-    save: (data: IPartialSavedData) => Promise<boolean>;
+    save(data: IPartialSavedData): Promise<boolean>;
 }
 
 export class ViewTrades extends React.Component<IViewTradesProp> {
 
-    public save = (trades: ITrade[] | ITradeWithUSDRate[]) => {
-        return this.props.save({trades: trades as ITradeWithUSDRate[]});
-    }
+    public save = (trades: ITrade[] | ITradeWithUSDRate[]) =>
+        this.props.save({trades: trades as ITradeWithUSDRate[]})
 
     public render() {
         return (

@@ -4,7 +4,7 @@ import { calculateGainPerTrade } from '../../src/processing/CalculateGains';
 import { IHoldings, ITradeWithGains, ITradeWithUSDRate } from '../../src/types';
 // import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
-import {FileDownload, IFileDownloadProps } from '../FileDownload';
+import { FileDownload, IFileDownloadProps } from '../FileDownload';
 import { GainsPerTradeTable } from '../GainsPerTradeTable';
 // import { Loader } from '../Loader';
 export interface ICalculateTradesProp {
@@ -22,7 +22,7 @@ export interface ICalculateTradesState {
 }
 
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
-    constructor(props: ICalculateTradesProp) {
+    public constructor(props: ICalculateTradesProp) {
         super(props);
         const trades = calculateGainPerTrade(props.holdings, props.trades);
         let shortTermGains = 0;

@@ -8,12 +8,12 @@ import TradeDetails from '../TradeDetails';
 export interface ITradeTableProps {
     className?: string;
     trades: ITrade[];
-    save: (trades: ITrade[] | ITradeWithUSDRate[]) => void;
+    save(trades: ITrade[] | ITradeWithUSDRate[]): void;
 }
 
 export class TradesTable extends React.Component<ITradeTableProps, {popup: string | undefined}> {
 
-    constructor(props: ITradeTableProps) {
+    public constructor(props: ITradeTableProps) {
         super(props);
         this.state = {
             popup: undefined,

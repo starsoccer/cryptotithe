@@ -8,9 +8,9 @@ export function mockHoldings(
     endingDate: Date = new Date(),
 ): IHoldings {
     const holdings: IHoldings = {};
-    for (let i: number = 0; i < currencies; i++) {
+    for (let i = 0; i < currencies; i++) {
         const toBeHoldings: ICurrencyHolding[] = [];
-        for (let hpc: number = 0; hpc < holdingsPerCurrency; hpc++) {
+        for (let hpc = 0; hpc < holdingsPerCurrency; hpc++) {
             toBeHoldings.push({
                 amount: faker.random.number(),
                 date: faker.date.between(startingDate, endingDate).getTime(),
@@ -28,12 +28,12 @@ export function mockTrades(
     const trades: ITradeWithUSDRate[] = [];
     const currencies: string[] = Object.keys(currentHoldings);
     for (const currency of currencies) {
-        let totalHoldings: number = 0;
+        let totalHoldings = 0;
         for (const holding of currentHoldings[currency]) {
             totalHoldings += holding.amount;
         }
 
-        for (let i: number = 0; i < amount; i++) {
+        for (let i = 0; i < amount; i++) {
             trades.push({
                 boughtCurrency: faker.random.word().toUpperCase(),
                 soldCurrency: faker.random.arrayElement(currencies),
@@ -54,7 +54,7 @@ export function mockTrades(
 export function mockTradesWithUSDRate(
     amount: number, startingDate: Date, currentHoldings: IHoldings, allowOverflow: boolean): ITradeWithUSDRate[] {
     const trades: ITradeWithUSDRate[] = mockTrades(
-        amount, startingDate, currentHoldings, allowOverflow) as ITradeWithUSDRate[];
+        amount, startingDate, currentHoldings, allowOverflow);
     for (const trade of trades) {
         trade.USDRate = faker.random.number();
     }

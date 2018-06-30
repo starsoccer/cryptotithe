@@ -1,13 +1,13 @@
 import * as React from 'react';
 export interface IFileBrowseProps {
-    onLoaded: (data: string) => void;
+    onLoaded(data: string): void;
     browse: boolean;
 }
 
 export class FileBrowse extends React.Component<IFileBrowseProps> {
-    private fileInput: React.RefObject<HTMLInputElement>;
-    private onetime: boolean = true;
-    constructor(props: IFileBrowseProps) {
+    private readonly fileInput: React.RefObject<HTMLInputElement>;
+    private onetime = true;
+    public constructor(props: IFileBrowseProps) {
         super(props);
         this.fileInput = React.createRef();
     }

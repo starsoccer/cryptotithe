@@ -2,7 +2,7 @@ import * as React from 'react';
 export interface IPopupProps {
     className?: string;
     children: JSX.Element;
-    onClose: () => void;
+    onClose(): void;
 }
 
 export default class Popup extends React.Component<IPopupProps> {

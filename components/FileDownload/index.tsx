@@ -6,9 +6,9 @@ export interface IFileDownloadProps {
 }
 
 export class FileDownload extends React.Component<IFileDownloadProps> {
-    private downloadLink: React.RefObject<HTMLAnchorElement>;
+    private readonly downloadLink: React.RefObject<HTMLAnchorElement>;
 
-    constructor(props: IFileDownloadProps) {
+    public constructor(props: IFileDownloadProps) {
         super(props);
         this.downloadLink = React.createRef();
     }

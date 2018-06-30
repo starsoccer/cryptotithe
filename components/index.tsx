@@ -4,9 +4,9 @@ import { save } from '../src/save';
 import {
     IHoldings,
     IPartialSavedData,
+    ISavedData,
     ITradeWithDuplicateProbability,
     ITradeWithUSDRate,
-    ISavedData,
 } from '../src/types';
 import { AddTrades } from './AddTrades';
 import Button from './Button';
@@ -39,7 +39,7 @@ interface IAppState {
 }
 
 export class rootElement extends React.Component<IAppProps, IAppState> {
-    constructor(props: IAppProps) {
+    public constructor(props: IAppProps) {
         super(props);
         this.state = {
             trades: this.props.trades,
@@ -79,7 +79,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             case TABS.VIEW_TRADES:
                 return <ViewTrades holdings={this.state.holdings} trades={this.state.trades} save={this.saveData}/>;
             case TABS.CALCULATE_GAINS:
-                return <CalculateGains trades={this.state.trades} holdings={this.state.holdings}/>
+                return <CalculateGains trades={this.state.trades} holdings={this.state.holdings}/>;
             case TABS.HOME:
                 return ;
             default:

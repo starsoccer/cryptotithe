@@ -11,7 +11,7 @@ export enum AlertType {
 export interface IAlertBarProps {
     className?: string;
     message: string;
-    onClick?: () => void;
+    onClick?(): void;
     type: AlertType;
 }
 

@@ -21,7 +21,7 @@ import { TradesTable } from '../TradesTable';
 export interface IAddTradesProp {
     holdings: IHoldings;
     trades: ITrade[];
-    save: (data: IPartialSavedData) => Promise<boolean>;
+    save(data: IPartialSavedData): Promise<boolean>;
 }
 
 interface IAlertData {
@@ -30,18 +30,18 @@ interface IAlertData {
 }
 
 interface IAddTradesState {
+    addTrade: boolean;
+    alertData: IAlertData;
     currentTrades: ITrade[];
+    duplicateTrades: ITradeWithDuplicateProbability[];
+    fileBrowseOpen: boolean;
+    holdings: IHoldings;
     processedTrades: ITrade[];
     processing: boolean;
-    holdings: IHoldings;
-    duplicateTrades: ITradeWithDuplicateProbability[];
-    alertData: IAlertData;
-    addTrade: boolean;
-    fileBrowseOpen: boolean;
 }
 
 export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> {
-    constructor(props: IAddTradesProp) {
+    public constructor(props: IAddTradesProp) {
         super(props);
         this.state = {
             processedTrades: [],

@@ -6,7 +6,7 @@ import { Toggle } from '../Toggle';
 export interface IDuplicateTradesTableProps {
     className?: string;
     trades: ITradeWithDuplicateProbability[];
-    duplicateChange: (tradeID: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+    duplicateChange(tradeID: string): (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export class DuplicateTradesTable extends React.Component<IDuplicateTradesTableProps> {

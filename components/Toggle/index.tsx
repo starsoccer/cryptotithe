@@ -2,7 +2,7 @@ import * as React from 'react';
 export interface IToggleProps {
     className?: string;
     defaultValue?: boolean;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange(event: React.ChangeEvent<HTMLInputElement>): void;
 }
 
 export class Toggle extends React.Component<IToggleProps> {

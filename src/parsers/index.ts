@@ -14,7 +14,7 @@ export async function getCSVData(fileData: string): Promise<any> {
             if (error) {
               reject(error);
             }
-            Promise.all(promises).then((convertedResults) => resolve(convertedResults));
+            Promise.all(promises).then(resolve);
         });
     });
 }

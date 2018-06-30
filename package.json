@@ -1,6 +1,6 @@
 {
     "name": "cryptotithe",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -8,7 +8,7 @@
         "web": "npm run build && start ./index.html",
         "test": "jest",
         "build": "tsc -p configs/tsconfig.json && browserify ./react.js -o ./bundle.js",
-        "tslint": "tslint 'src/**/*.ts' -c ./configs/tslint.json --fix",
+        "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
         "full-build-test": "npm run tslint && npm run test && npm run prod-build",
         "prod-start": "set NODE_ENV=production&& npm run start"
     },

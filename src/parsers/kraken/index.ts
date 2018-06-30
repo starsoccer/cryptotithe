@@ -37,7 +37,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
         ];
         switch (trade.type) {
             case KrakenType.BUY:
-                let USDTrade: boolean = false;
+                let USDTrade = false;
                 for (const pair in pairs) {
                     if (pair === 'USD') {
                         USDTrade = true;

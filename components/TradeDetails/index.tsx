@@ -6,7 +6,7 @@ import Button from '../Button';
 export interface ITradeDetailsProps {
     className?: string;
     trade?: ITrade;
-    onSubmit: (trade: ITrade) => void;
+    onSubmit(trade: ITrade): void;
 }
 
 export interface ITradeDetailsState {
@@ -22,7 +22,7 @@ export interface ITradeDetailsState {
 }
 
 export default class TradeDetails extends React.Component<ITradeDetailsProps, ITradeDetailsState> {
-    constructor(props: ITradeDetailsProps) {
+    public constructor(props: ITradeDetailsProps) {
         super(props);
         if ('trade' in props && props.trade !== undefined) {
             this.state = {
