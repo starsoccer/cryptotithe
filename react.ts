@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { rootElement } from './components';
 // import { save } from './src/save';
-import { IHoldings, ITradeWithUSDRate, ISavedData } from './src/types';
+import { IHoldings, ISavedData, ITradeWithUSDRate } from './src/types';
 
 export interface IBootStrapData {
     trades: ITradeWithUSDRate[];

@@ -18,8 +18,8 @@ interface IBittrex {
     Closed: string;
 }
 
-export async function processData(filePath: string): Promise<ITrade[]> {
-    const data: IBittrex[] = await getCSVData(filePath) as IBittrex[];
+export async function processData(fileData: string): Promise<ITrade[]> {
+    const data: IBittrex[] = await getCSVData(fileData) as IBittrex[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pair: string[] = trade.Exchange.split('-');
