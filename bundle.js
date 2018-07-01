@@ -151,7 +151,7 @@ class AddTrades extends React.Component {
 }
 exports.AddTrades = AddTrades;
 
-},{"../../src/parsers":417,"../../src/processing/DuplicateCheck":419,"../../src/processing/SortTrades":420,"../../src/processing/getUSDRate":421,"../../src/types":423,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":13,"../TradesTable":14,"react":294}],2:[function(require,module,exports){
+},{"../../src/parsers":417,"../../src/processing/DuplicateCheck":419,"../../src/processing/SortTrades":420,"../../src/processing/getUSDRate":421,"../../src/types":422,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":13,"../TradesTable":14,"react":294}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const classNames = require("classNames");
@@ -721,11 +721,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const classnames = require("classnames");
 const React = require("react");
-const save_1 = require("../src/save");
 const AddTrades_1 = require("./AddTrades");
 const Button_1 = require("./Button");
 const CalculateGains_1 = require("./CalculateGains");
 const FileBrowse_1 = require("./FileBrowse");
+const FileDownload_1 = require("./FileDownload");
 const Popup_1 = require("./Popup");
 const ViewTrades_1 = require("./ViewTrades");
 var TABS;
@@ -742,10 +742,19 @@ class rootElement extends React.Component {
             const newHoldings = data.holdings || this.state.holdings;
             const newTrades = data.trades || this.state.trades;
             try {
-                yield save_1.save(newHoldings, newTrades);
+                const savedData = {
+                    savedDate: new Date(),
+                    trades: newTrades,
+                    holdings: newHoldings,
+                };
                 this.setState({
                     trades: newTrades,
                     holdings: newHoldings,
+                    downloadProps: {
+                        data: JSON.stringify(savedData),
+                        fileName: 'data.json',
+                        download: true,
+                    },
                 });
                 return true;
             }
@@ -801,7 +810,23 @@ class rootElement extends React.Component {
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
             loadDataPopup: props.browser && props.trades.length + Object.keys(props.holdings).length === 0,
+            downloadProps: {
+                data: '',
+                fileName: 'data.json',
+                download: false,
+            },
         };
+    }
+    componentDidUpdate() {
+        if (this.state.downloadProps.download) {
+            this.setState({
+                downloadProps: {
+                    data: '',
+                    fileName: 'data.json',
+                    download: false,
+                },
+            });
+        }
     }
     render() {
         return (React.createElement("div", { className: 'app' },
@@ -812,6 +837,8 @@ class rootElement extends React.Component {
                         React.createElement("h5", null, "Great Description to be put here"),
                         React.createElement(Button_1.default, { label: 'Load Existing Data', onClick: this.openFileBrowse }),
                         React.createElement(FileBrowse_1.FileBrowse, { onLoaded: this.loadData, browse: this.state.fileBrowseOpen }))),
+            this.state.downloadProps &&
+                React.createElement(FileDownload_1.FileDownload, { data: this.state.downloadProps.data, fileName: this.state.downloadProps.fileName, download: this.state.downloadProps.download }),
             React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/index.css' }),
             React.createElement("div", { className: 'flex bg-dark-gray h2' }, Object.keys(TABS).map((key) => React.createElement("h3", { key: key, className: classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {
                     'bg-dark-gray': TABS[key] !== this.state.currentTab,
@@ -822,7 +849,7 @@ class rootElement extends React.Component {
 }
 exports.rootElement = rootElement;
 
-},{"../src/save":422,"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./Popup":10,"./ViewTrades":15,"classnames":72,"react":294}],17:[function(require,module,exports){
+},{"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./FileDownload":7,"./Popup":10,"./ViewTrades":15,"classnames":72,"react":294}],17:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -73410,7 +73437,7 @@ function processData(filePath) {
 }
 exports.processData = processData;
 
-},{"../":417,"../../types":423}],416:[function(require,module,exports){
+},{"../":417,"../../types":422}],416:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73481,7 +73508,7 @@ function processData() {
 }
 exports.processData = processData;
 
-},{"../":417,"../../types":423}],417:[function(require,module,exports){
+},{"../":417,"../../types":422}],417:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73696,7 +73723,7 @@ function calculateGainsPerHoldings(holdings, trades) {
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
-},{"../../types":423,"clone":74}],419:[function(require,module,exports){
+},{"../../types":422,"clone":74}],419:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function duplicateCheck(currentTrades, newTrades) {
@@ -73877,38 +73904,6 @@ function addUSDRateToTrades(trades) {
 exports.addUSDRateToTrades = addUSDRateToTrades;
 
 },{"got":158}],422:[function(require,module,exports){
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs");
-function save(holdings, trades) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const data = JSON.stringify({
-            savedDate: new Date(),
-            holdings,
-            trades,
-        });
-        return new Promise((resolve, reject) => {
-            fs.writeFile('./data.json', data, (err) => {
-                if (err) {
-                    // console.log(err);
-                    reject(err);
-                }
-                resolve();
-            });
-        });
-    });
-}
-exports.save = save;
-
-},{"fs":63}],423:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var METHOD;

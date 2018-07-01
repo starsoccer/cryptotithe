@@ -1,6 +1,5 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
-import { save } from '../src/save';
 import {
     IHoldings,
     IPartialSavedData,
@@ -12,6 +11,7 @@ import { AddTrades } from './AddTrades';
 import Button from './Button';
 import { CalculateGains } from './CalculateGains';
 import { FileBrowse } from './FileBrowse';
+import { FileDownload, IFileDownloadProps } from './FileDownload';
 import Popup from './Popup';
 import { ViewTrades } from './ViewTrades';
 
@@ -36,6 +36,7 @@ interface IAppState {
     currentTab: TABS;
     loadDataPopup: boolean;
     fileBrowseOpen: boolean;
+    downloadProps: IFileDownloadProps;
 }
 
 export class rootElement extends React.Component<IAppProps, IAppState> {
@@ -49,6 +50,11 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
             loadDataPopup: props.browser && props.trades.length + Object.keys(props.holdings).length === 0,
+            downloadProps: {
+                data: '',
+                fileName: 'data.json',
+                download: false,
+            },
         };
     }
 
@@ -56,15 +62,36 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         const newHoldings = data.holdings || this.state.holdings;
         const newTrades = data.trades || this.state.trades;
         try {
-            await save(newHoldings, newTrades);
+            const savedData: ISavedData = {
+                savedDate: new Date(),
+                trades: newTrades,
+                holdings: newHoldings,
+            };
             this.setState({
                 trades: newTrades,
                 holdings: newHoldings,
+                downloadProps: {
+                    data: JSON.stringify(savedData),
+                    fileName: 'data.json',
+                    download: true,
+                },
             });
             return true;
         } catch (err) {
             alert(err);
             return false;
+        }
+    }
+
+    public componentDidUpdate() {
+        if (this.state.downloadProps.download) {
+            this.setState({
+                downloadProps: {
+                    data: '',
+                    fileName: 'data.json',
+                    download: false,
+                },
+            });
         }
     }
 
@@ -130,6 +157,13 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                             />
                         </div>
                     </Popup>
+                }
+                { this.state.downloadProps &&
+                    <FileDownload
+                        data={this.state.downloadProps.data}
+                        fileName={this.state.downloadProps.fileName}
+                        download={this.state.downloadProps.download}
+                    />
                 }
                 <link rel='stylesheet' type='text/css' href='./components/index.css' />
                 <div className='flex bg-dark-gray h2'>
