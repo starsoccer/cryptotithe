@@ -73303,36 +73303,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const ReactDOM = require("react-dom");
 const components_1 = require("./components");
-function bootstrap() {
-    const isElectron = require('is-electron');
-    const electron = isElectron();
-    if (electron) {
-        try {
-            const savedData = require('./data.json');
-            return {
-                browser: false,
-                trades: savedData.trades || [],
-                holdings: savedData.holdings || {},
-            };
-        }
-        catch (ex) {
-            // couldnt load json file
-        }
-    }
-    return {
-        browser: !electron,
-        trades: [],
-        holdings: {},
-    };
+function render(trades, holdings, browser) {
+    ReactDOM.render(React.createElement(components_1.rootElement, {
+        trades,
+        holdings,
+        browser,
+    }), document.getElementById('cryptotithe'));
 }
-const data = bootstrap();
-ReactDOM.render(React.createElement(components_1.rootElement, {
-    trades: data.trades,
-    holdings: data.holdings,
-    browser: data.browser,
-}), document.getElementById('cryptotithe'));
+const isElectron = require('is-electron');
+const electron = isElectron();
+if (electron) {
+    try {
+        const data = require('./data');
+        render(data.trades, data.holdings, false);
+    }
+    catch (ex) {
+        render([], {}, false);
+    }
+}
+else {
+    render([], {}, true);
+}
 
-},{"./components":16,"./data.json":undefined,"is-electron":183,"react":294,"react-dom":291}],414:[function(require,module,exports){
+},{"./components":16,"./data":undefined,"is-electron":183,"react":294,"react-dom":291}],414:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const CalculateGains_1 = require("../../processing/CalculateGains");

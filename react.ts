@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { rootElement } from './components';
 // import { save } from './src/save';
-import { IHoldings, ITradeWithUSDRate } from './src/types';
+import { IHoldings, ITradeWithUSDRate, ISavedData } from './src/types';
 
 export interface IBootStrapData {
     trades: ITradeWithUSDRate[];
@@ -10,35 +10,26 @@ export interface IBootStrapData {
     browser: boolean;
 }
 
-function bootstrap(): IBootStrapData {
-    const isElectron = require('is-electron');
-    const electron = isElectron();
-    if (electron) {
-        try {
-            const savedData = require('./data.json');
-            return {
-                browser: false,
-                trades: savedData.trades || [],
-                holdings: savedData.holdings || {},
-            };
-        } catch (ex) {
-            // couldnt load json file
-        }
-    }
-    return {
-        browser: !electron,
-        trades: [],
-        holdings: {},
-    };
+function render(trades: ITradeWithUSDRate[], holdings: IHoldings, browser: boolean) {
+    ReactDOM.render(
+        React.createElement(rootElement, {
+            trades,
+            holdings,
+            browser,
+        }),
+        document.getElementById('cryptotithe'),
+    );
 }
 
-const data = bootstrap();
-
-ReactDOM.render(
-    React.createElement(rootElement, {
-        trades: data.trades,
-        holdings: data.holdings,
-        browser: data.browser,
-    }),
-    document.getElementById('cryptotithe'),
-);
+const isElectron = require('is-electron');
+const electron = isElectron();
+if (electron) {
+    try {
+        const data: ISavedData = require('./data');
+        render(data.trades, data.holdings, false);
+    } catch (ex) {
+        render([], {}, false);
+    }
+} else {
+    render([], {}, true);
+}

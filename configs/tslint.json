@@ -10,7 +10,8 @@
         "quotemark": [true, "single"],
         "object-literal-key-quotes": [true, "as-needed"],
         "class-name": false,
-        "member-ordering": false
+        "member-ordering": false,
+        "variable-name": [true, "allow-leading-underscore", "ban-keywords"]
     },
     "rulesDirectory": []
 }
