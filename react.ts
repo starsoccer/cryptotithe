@@ -12,21 +12,24 @@ export interface IBootStrapData {
 
 function bootstrap(): IBootStrapData {
     const isElectron = require('is-electron');
-    const browser = isElectron();
-    if (!browser) {
-        return {
-            browser: true,
-            trades: [],
-            holdings: {},
-        };
-    } else {
-        const savedData = require('./data.json');
-        return {
-            browser: false,
-            trades: savedData.trades || [],
-            holdings: savedData.holdings || {},
-        };
+    const electron = isElectron();
+    if (electron) {
+        try {
+            const savedData = require('./data.json');
+            return {
+                browser: false,
+                trades: savedData.trades || [],
+                holdings: savedData.holdings || {},
+            };
+        } catch (ex) {
+            // couldnt load json file
+        }
     }
+    return {
+        browser: !electron,
+        trades: [],
+        holdings: {},
+    };
 }
 
 const data = bootstrap();
