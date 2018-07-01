@@ -1,6 +1,6 @@
 import * as React from 'react';
 export interface IFileBrowseProps {
-    onLoaded(data: string): void;
+    onLoaded(data: string, input?: React.RefObject<HTMLInputElement>, reader?: FileReader): void;
     browse: boolean;
 }
 
@@ -35,7 +35,7 @@ export class FileBrowse extends React.Component<IFileBrowseProps> {
 
     public onSubmit = async (): Promise<void> => {
         const reader = new FileReader();
-        reader.onload = () => this.props.onLoaded(reader.result);
+        reader.onload = () => this.props.onLoaded(reader.result, this.fileInput, reader);
         if (this.fileInput.current !== null) {
             if (this.fileInput.current.files !== null) {
                 await reader.readAsText(this.fileInput.current.files[0]);

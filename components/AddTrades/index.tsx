@@ -59,32 +59,40 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         this.setState({fileBrowseOpen: true});
     }
 
-    public readFile = async (fileData: string) => {
+    public readFile = async (fileData: string, input: React.RefObject<HTMLInputElement>) => {
         this.setState({fileBrowseOpen: false});
-        if (fileData !== '') {
-            this.setState({processing: true});
-            const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
-                .value as keyof typeof EXCHANGES;
-            const processedData: ITrade[] = await processData(exchange, fileData);
-            if (processedData && processedData.length) {
-                const duplicateTrades = duplicateCheck(this.state.currentTrades, processedData);
-                if (duplicateTrades.length) {
-                    this.setState({
-                        duplicateTrades,
-                        alertData: {
-                            message: 'Duplicate Trades Detected',
-                            type: AlertType.WARNING,
-                        },
-                        processing: false,
-                    });
+        if (input.current !== null && input.current.files !== null && 0 in input.current.files) {
+            if (input.current.files[0].name.match('.+(\.csv)$')) {
+                if (fileData !== '') {
+                    this.setState({processing: true});
+                    const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
+                        .value as keyof typeof EXCHANGES;
+                    const processedData: ITrade[] = await processData(exchange, fileData);
+                    if (processedData && processedData.length) {
+                        const duplicateTrades = duplicateCheck(this.state.currentTrades, processedData);
+                        if (duplicateTrades.length) {
+                            this.setState({
+                                duplicateTrades,
+                                alertData: {
+                                    message: 'Duplicate Trades Detected',
+                                    type: AlertType.WARNING,
+                                },
+                                processing: false,
+                            });
+                        } else {
+                            this.setState({
+                                processedTrades: processedData,
+                                processing: false,
+                            });
+                        }
+                    } else {
+                        alert('Error processing data');
+                    }
                 } else {
-                    this.setState({
-                        processedTrades: processedData,
-                        processing: false,
-                    });
+                    alert('File Data is empty');
                 }
             } else {
-                alert('Error processing data');
+                alert('Not a valid file, must be a csv file');
             }
         }
     }
