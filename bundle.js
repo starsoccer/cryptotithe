@@ -28,34 +28,44 @@ class AddTrades extends React.Component {
         this.openFileBrowser = () => __awaiter(this, void 0, void 0, function* () {
             this.setState({ fileBrowseOpen: true });
         });
-        this.readFile = (fileData) => __awaiter(this, void 0, void 0, function* () {
+        this.readFile = (fileData, input) => __awaiter(this, void 0, void 0, function* () {
             this.setState({ fileBrowseOpen: false });
-            if (fileData !== '') {
-                this.setState({ processing: true });
-                const exchange = document.getElementById('type')
-                    .value;
-                const processedData = yield parsers_1.processData(exchange, fileData);
-                if (processedData && processedData.length) {
-                    const duplicateTrades = DuplicateCheck_1.default(this.state.currentTrades, processedData);
-                    if (duplicateTrades.length) {
-                        this.setState({
-                            duplicateTrades,
-                            alertData: {
-                                message: 'Duplicate Trades Detected',
-                                type: AlertBar_1.AlertType.WARNING,
-                            },
-                            processing: false,
-                        });
+            if (input.current !== null && input.current.files !== null && 0 in input.current.files) {
+                if (input.current.files[0].name.match('.+(\.csv)$')) {
+                    if (fileData !== '') {
+                        this.setState({ processing: true });
+                        const exchange = document.getElementById('type')
+                            .value;
+                        const processedData = yield parsers_1.processData(exchange, fileData);
+                        if (processedData && processedData.length) {
+                            const duplicateTrades = DuplicateCheck_1.default(this.state.currentTrades, processedData);
+                            if (duplicateTrades.length) {
+                                this.setState({
+                                    duplicateTrades,
+                                    alertData: {
+                                        message: 'Duplicate Trades Detected',
+                                        type: AlertBar_1.AlertType.WARNING,
+                                    },
+                                    processing: false,
+                                });
+                            }
+                            else {
+                                this.setState({
+                                    processedTrades: processedData,
+                                    processing: false,
+                                });
+                            }
+                        }
+                        else {
+                            alert('Error processing data');
+                        }
                     }
                     else {
-                        this.setState({
-                            processedTrades: processedData,
-                            processing: false,
-                        });
+                        alert('File Data is empty');
                     }
                 }
                 else {
-                    alert('Error processing data');
+                    alert('Not a valid file, must be a csv file');
                 }
             }
         });
@@ -327,7 +337,7 @@ class FileBrowse extends React.Component {
         this.onetime = true;
         this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
             const reader = new FileReader();
-            reader.onload = () => this.props.onLoaded(reader.result);
+            reader.onload = () => this.props.onLoaded(reader.result, this.fileInput, reader);
             if (this.fileInput.current !== null) {
                 if (this.fileInput.current.files !== null) {
                     yield reader.readAsText(this.fileInput.current.files[0]);
@@ -73392,9 +73402,9 @@ var BittrexOrderType;
     BittrexOrderType["LIMIT_SELL"] = "LIMIT_SELL";
     BittrexOrderType["LIMIT_BUY"] = "LIMIT_BUY";
 })(BittrexOrderType || (BittrexOrderType = {}));
-function processData(filePath) {
+function processData(fileData) {
     return __awaiter(this, void 0, void 0, function* () {
-        const data = yield __1.getCSVData(filePath);
+        const data = yield __1.getCSVData(fileData);
         const internalFormat = [];
         for (const trade of data) {
             const pair = trade.Exchange.split('-');
@@ -73456,9 +73466,9 @@ function getCurrenciesTraded(trade) {
         bought: '',
         sold: '',
     };
-    for (const key in keys) {
-        if (key.indexOf(' Amount') && trade[key] !== undefined && trade[key] !== '') {
-            if (trade[key].substring(0, 1) === '-') {
+    for (const key of keys) {
+        if (key.indexOf(' Amount') !== -1 && trade[key] !== undefined && trade[key] !== '') {
+            if (trade[key].substring(0, 1) === '-' || trade[key].substring(0, 1) === '(') {
                 currencies.sold = key.substring(0, 3);
             }
             else {
@@ -73468,21 +73478,36 @@ function getCurrenciesTraded(trade) {
     }
     return currencies;
 }
-function processData() {
+function parseNumber(amount) {
+    if (!amount || amount === null || amount === '') {
+        return 0;
+    }
+    const amountSold = amount.replace(/[($-,)]/g, '');
+    return parseFloat(amountSold.split(' ')[0]);
+}
+function processData(fileData) {
     return __awaiter(this, void 0, void 0, function* () {
-        const data = yield __1.getCSVData('./src/parsers/bittrex.csv');
+        const data = yield __1.getCSVData(fileData);
         const internalFormat = [];
-        for (const trade of data) {
+        for (let i = 1; i < data.length - 1; i++) {
+            const trade = data[i];
+            console.log(trade);
             if (trade.Symbol.length > 3) {
                 const pair = getCurrenciesTraded(trade);
+                console.log(pair);
                 switch (trade.Type) {
                     case GeminiOrderType.Buy:
                     case GeminiOrderType.Sell:
+                        const amountSold = parseNumber(trade[`${pair.sold} Amount`]);
+                        const amountSoldFee = parseNumber(trade[`Trading Fee (${pair.sold})`]);
+                        const amountBought = parseNumber(trade[`${pair.bought} Amount`]);
+                        const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought})`]);
+                        console.log(amountSold, amountSoldFee, amountBought, amountBoughtFee);
                         internalFormat.push({
                             boughtCurrency: pair.bought,
                             soldCurrency: pair.sold,
-                            amountSold: Math.abs(trade[`${pair.sold} Amount`]),
-                            rate: Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`]),
+                            amountSold: amountSold + amountSoldFee,
+                            rate: (amountSold + amountSoldFee) / (amountBought - amountBoughtFee),
                             date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
                             id: trade['Trade ID'],
                             exchange: types_1.EXCHANGES.GEMINI,

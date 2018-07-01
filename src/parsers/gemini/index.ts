@@ -50,9 +50,9 @@ function getCurrenciesTraded(trade: IGemini): ITraded {
         bought: '',
         sold: '',
     };
-    for (const key in keys) {
-        if (key.indexOf(' Amount') && trade[key] !== undefined && trade[key] !== '') {
-            if (trade[key].substring(0, 1) === '-') {
+    for (const key of keys) {
+        if (key.indexOf(' Amount') !== -1 && trade[key] !== undefined && trade[key] !== '') {
+            if (trade[key].substring(0, 1) === '-' || trade[key].substring(0, 1) === '(') {
                 currencies.sold = key.substring(0, 3);
             } else {
                 currencies.bought = key.substring(0, 3);
@@ -62,20 +62,33 @@ function getCurrenciesTraded(trade: IGemini): ITraded {
     return currencies;
 }
 
-export async function processData(): Promise<ITrade[]> {
-    const data: IGemini[] = await getCSVData('./src/parsers/bittrex.csv') as IGemini[];
+function parseNumber(amount: string): number {
+    if (!amount || amount === null || amount === '') {
+        return 0;
+    }
+    const amountSold = amount.replace(/[($-,)]/g, '');
+    return parseFloat(amountSold.split(' ')[0]);
+}
+
+export async function processData(fileData: string): Promise<ITrade[]> {
+    const data: IGemini[] = await getCSVData(fileData) as IGemini[];
     const internalFormat: ITrade[] = [];
-    for (const trade of data) {
+    for (let i = 1; i < data.length - 1; i++) {
+        const trade = data[i];
         if (trade.Symbol.length > 3) {
             const pair: ITraded = getCurrenciesTraded(trade);
             switch (trade.Type) {
                 case GeminiOrderType.Buy:
                 case GeminiOrderType.Sell:
+                    const amountSold = parseNumber(trade[`${pair.sold} Amount`]);
+                    const amountSoldFee = parseNumber(trade[`Trading Fee (${pair.sold})`]);
+                    const amountBought = parseNumber(trade[`${pair.bought} Amount`]);
+                    const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought})`]);
                     internalFormat.push({
                         boughtCurrency: pair.bought,
                         soldCurrency: pair.sold,
-                        amountSold: Math.abs(trade[`${pair.sold} Amount`]),
-                        rate: Math.abs(trade[`${pair.bought} Amount`]) / Math.abs(trade[`${pair.sold} Amount`]),
+                        amountSold: amountSold + amountSoldFee,
+                        rate: (amountSold + amountSoldFee) / (amountBought - amountBoughtFee),
                         date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
                         id: trade['Trade ID'],
                         exchange: EXCHANGES.GEMINI,
