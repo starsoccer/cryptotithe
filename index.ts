@@ -36,6 +36,15 @@ function createWindow(): void {
         // when you should delete the corresponding element.
         mainWindow = null;
     });
+
+    mainWindow.webContents.session.on('will-download',
+        (_event: any, item: any, _webContent: any) => {
+            switch (item.getFilename()) {
+                case 'data.json':
+                    item.setSavePath('./data.json');
+                    break;
+            }
+    });
 }
 
 // this method will be called when Electron has finished
