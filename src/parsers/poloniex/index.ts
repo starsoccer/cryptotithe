@@ -2,8 +2,8 @@ import { getCSVData } from '../';
 import { EXCHANGES, ITrade } from '../../types';
 
 enum PoloniexOrderType {
-    BUY = 'BUY',
-    SELL = 'SELL',
+    BUY = 'Buy',
+    SELL = 'Sell',
 }
 
 interface IPoloniex {
@@ -20,8 +20,12 @@ interface IPoloniex {
     'Quote Total Less Fee': string;
 }
 
-export async function processData(filePath: string): Promise<ITrade[]> {
-    const data: IPoloniex[] = await getCSVData(filePath) as IPoloniex[];
+function parseNumber(amount: string): number {
+    return Math.abs(parseFloat(amount));
+}
+
+export async function processData(fileData: string): Promise<ITrade[]> {
+    const data: IPoloniex[] = await getCSVData(fileData) as IPoloniex[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pair: string[] = trade.Market.split('/');
@@ -30,8 +34,8 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                 internalFormat.push({
                     boughtCurrency: pair[0],
                     soldCurrency: pair[1],
-                    amountSold: Math.abs(parseFloat(trade['Base Total Less Fee'])),
-                    rate: parseFloat(trade.Price),
+                    amountSold: parseNumber(trade['Base Total Less Fee']),
+                    rate: parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']),
                     date: new Date(trade.Date).getTime(),
                     id: trade['Order Number'],
                     exchange: EXCHANGES.POLONIEX,
@@ -41,8 +45,8 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                 internalFormat.push({
                     boughtCurrency: pair[1],
                     soldCurrency: pair[0],
-                    amountSold: Math.abs(parseFloat(trade['Quote Total Less Fee'])),
-                    rate: parseFloat(trade.Amount) * parseFloat(trade.Price),
+                    amountSold: parseNumber(trade['Quote Total Less Fee']),
+                    rate: parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']),
                     date: new Date(trade.Date).getTime(),
                     id: trade['Order Number'],
                     exchange: EXCHANGES.POLONIEX,
