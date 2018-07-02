@@ -161,7 +161,7 @@ class AddTrades extends React.Component {
 }
 exports.AddTrades = AddTrades;
 
-},{"../../src/parsers":417,"../../src/processing/DuplicateCheck":419,"../../src/processing/SortTrades":420,"../../src/processing/getUSDRate":421,"../../src/types":422,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":13,"../TradesTable":14,"react":294}],2:[function(require,module,exports){
+},{"../../src/parsers":417,"../../src/processing/DuplicateCheck":421,"../../src/processing/SortTrades":422,"../../src/processing/getUSDRate":423,"../../src/types":424,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":13,"../TradesTable":14,"react":294}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const classNames = require("classNames");
@@ -286,7 +286,7 @@ class CalculateGains extends React.Component {
 }
 exports.CalculateGains = CalculateGains;
 
-},{"../../src/output/Form8949":414,"../../src/processing/CalculateGains":418,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":294}],5:[function(require,module,exports){
+},{"../../src/output/Form8949":414,"../../src/processing/CalculateGains":420,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":294}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -694,7 +694,7 @@ class TradesTable extends React.Component {
 }
 exports.TradesTable = TradesTable;
 
-},{"../../src/processing/SortTrades":420,"../Popup":10,"../Table":11,"../TradeDetails":13,"react":294}],15:[function(require,module,exports){
+},{"../../src/processing/SortTrades":422,"../Popup":10,"../Table":11,"../TradeDetails":13,"react":294}],15:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -73384,7 +73384,7 @@ function outputForm8949(holdings, trades) {
 }
 exports.default = outputForm8949;
 
-},{"../../processing/CalculateGains":418}],415:[function(require,module,exports){
+},{"../../processing/CalculateGains":420}],415:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73440,7 +73440,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":417,"../../types":422}],416:[function(require,module,exports){
+},{"../":417,"../../types":424}],416:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73491,10 +73491,8 @@ function processData(fileData) {
         const internalFormat = [];
         for (let i = 1; i < data.length - 1; i++) {
             const trade = data[i];
-            console.log(trade);
             if (trade.Symbol.length > 3) {
                 const pair = getCurrenciesTraded(trade);
-                console.log(pair);
                 switch (trade.Type) {
                     case GeminiOrderType.Buy:
                     case GeminiOrderType.Sell:
@@ -73502,7 +73500,6 @@ function processData(fileData) {
                         const amountSoldFee = parseNumber(trade[`Trading Fee (${pair.sold})`]);
                         const amountBought = parseNumber(trade[`${pair.bought} Amount`]);
                         const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought})`]);
-                        console.log(amountSold, amountSoldFee, amountBought, amountBoughtFee);
                         internalFormat.push({
                             boughtCurrency: pair.bought,
                             soldCurrency: pair.sold,
@@ -73526,7 +73523,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":417,"../../types":422}],417:[function(require,module,exports){
+},{"../":417,"../../types":424}],417:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73554,7 +73551,7 @@ function getCSVData(fileData) {
     });
 }
 exports.getCSVData = getCSVData;
-function processData(exchange, filePath) {
+function processData(exchange, fileData) {
     return __awaiter(this, void 0, void 0, function* () {
         let processExchangeData;
         switch (exchange) {
@@ -73564,18 +73561,185 @@ function processData(exchange, filePath) {
             case 'GEMINI':
                 processExchangeData = require('./gemini').processData;
                 break;
+            case 'POLONIEX':
+                processExchangeData = require('./poloniex').processData;
+                break;
+            case 'KRAKEN':
+                processExchangeData = require('./kraken').processData;
+                break;
             default:
                 throw new Error(`Unknown Exchange - ${exchange}`);
         }
         if (typeof processExchangeData === 'function') {
-            return processExchangeData(filePath);
+            return processExchangeData(fileData);
         }
         return [];
     });
 }
 exports.processData = processData;
 
-},{"./bittrex":415,"./gemini":416,"csvtojson":82}],418:[function(require,module,exports){
+},{"./bittrex":415,"./gemini":416,"./kraken":418,"./poloniex":419,"csvtojson":82}],418:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const __1 = require("../");
+const types_1 = require("../../types");
+var KrakenType;
+(function (KrakenType) {
+    KrakenType["BUY"] = "buy";
+    KrakenType["SELL"] = "sell";
+})(KrakenType || (KrakenType = {}));
+var KrakenOrderType;
+(function (KrakenOrderType) {
+    KrakenOrderType["LIMIT"] = "limit";
+    KrakenOrderType["MARKET"] = "market";
+})(KrakenOrderType || (KrakenOrderType = {}));
+// maybe change it to https://api.kraken.com/0/public/Assets api call
+const KRAKEN_TO_NORMAL_CURRENCY = {
+    XXBT: 'BTC',
+    XBT: 'BTC',
+    XXMR: 'XMR',
+    XXLM: 'XLM',
+    XETC: 'ETC',
+    XETH: 'ETH',
+    ZUSD: 'USD',
+    XZEC: 'ZEC',
+    XDAO: 'DAO',
+    XICN: 'ICN',
+    XLTC: 'LTC',
+    XMLN: 'MLN',
+    XNMC: 'NMC',
+    XREP: 'REP',
+    XXDG: 'DOGE',
+    XXRP: 'XRP',
+    XXVN: 'XVN',
+    ZCAD: 'CAD',
+    ZEUR: 'EUR',
+    ZGBP: 'GBP',
+    ZJPY: 'JPY',
+    ZKRW: 'KRW',
+};
+function getRealTradedPairs(market) {
+    const pairs = [];
+    switch (market.length) {
+        case 6:
+            pairs.push(market.substr(0, 3));
+            pairs.push(market.substr(3));
+            break;
+        case 8:
+            pairs.push(market.substr(0, 4));
+            pairs.push(market.substr(4));
+            break;
+        default:
+            throw new Error('Unknwon Market Length');
+    }
+    return pairs.map((pair) => (pair in KRAKEN_TO_NORMAL_CURRENCY ? KRAKEN_TO_NORMAL_CURRENCY[pair] : pair));
+}
+function processData(filePath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield __1.getCSVData(filePath);
+        const internalFormat = [];
+        for (const trade of data) {
+            const pairs = getRealTradedPairs(trade.pair);
+            switch (trade.type) {
+                case KrakenType.BUY:
+                    internalFormat.push({
+                        boughtCurrency: pairs[0],
+                        soldCurrency: pairs[1],
+                        amountSold: parseFloat(trade.cost),
+                        rate: (parseFloat(trade.cost) + parseFloat(trade.fee)) / (parseFloat(trade.vol)),
+                        date: new Date(trade.time).getTime(),
+                        id: trade.txid,
+                        exchange: types_1.EXCHANGES.KRAKEN,
+                    });
+                    break;
+                case KrakenType.SELL:
+                    internalFormat.push({
+                        boughtCurrency: pairs[1],
+                        soldCurrency: pairs[0],
+                        amountSold: parseFloat(trade.vol),
+                        rate: parseFloat(trade.vol) / (parseFloat(trade.cost) - parseFloat(trade.fee)),
+                        date: new Date(trade.time).getTime(),
+                        id: trade.txid,
+                        exchange: types_1.EXCHANGES.KRAKEN,
+                    });
+                    break;
+                default:
+                    throw new Error('Unknown Order Type - ' + trade['Order Number']);
+            }
+        }
+        return internalFormat;
+    });
+}
+exports.processData = processData;
+
+},{"../":417,"../../types":424}],419:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const __1 = require("../");
+const types_1 = require("../../types");
+var PoloniexOrderType;
+(function (PoloniexOrderType) {
+    PoloniexOrderType["BUY"] = "Buy";
+    PoloniexOrderType["SELL"] = "Sell";
+})(PoloniexOrderType || (PoloniexOrderType = {}));
+function parseNumber(amount) {
+    return Math.abs(parseFloat(amount));
+}
+function processData(fileData) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield __1.getCSVData(fileData);
+        const internalFormat = [];
+        for (const trade of data) {
+            const pair = trade.Market.split('/');
+            switch (trade.Type) {
+                case PoloniexOrderType.BUY:
+                    internalFormat.push({
+                        boughtCurrency: pair[0],
+                        soldCurrency: pair[1],
+                        amountSold: parseNumber(trade['Base Total Less Fee']),
+                        rate: parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']),
+                        date: new Date(trade.Date).getTime(),
+                        id: trade['Order Number'],
+                        exchange: types_1.EXCHANGES.POLONIEX,
+                    });
+                    break;
+                case PoloniexOrderType.SELL:
+                    internalFormat.push({
+                        boughtCurrency: pair[1],
+                        soldCurrency: pair[0],
+                        amountSold: parseNumber(trade['Quote Total Less Fee']),
+                        rate: parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']),
+                        date: new Date(trade.Date).getTime(),
+                        id: trade['Order Number'],
+                        exchange: types_1.EXCHANGES.POLONIEX,
+                    });
+                    break;
+                default:
+                    throw new Error('Unknown Order Type - ' + trade['Order Number']);
+            }
+        }
+        return internalFormat;
+    });
+}
+exports.processData = processData;
+
+},{"../":417,"../../types":424}],420:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const clone = require("clone");
@@ -73741,7 +73905,7 @@ function calculateGainsPerHoldings(holdings, trades) {
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
-},{"../../types":422,"clone":74}],419:[function(require,module,exports){
+},{"../../types":424,"clone":74}],421:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function duplicateCheck(currentTrades, newTrades) {
@@ -73777,7 +73941,7 @@ function duplicateCheck(currentTrades, newTrades) {
 }
 exports.default = duplicateCheck;
 
-},{}],420:[function(require,module,exports){
+},{}],422:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function sortTrades(trades) {
@@ -73788,7 +73952,7 @@ function sortTradesByDate(trade1, trade2) {
     return trade1.date - trade2.date;
 }
 
-},{}],421:[function(require,module,exports){
+},{}],423:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73921,7 +74085,7 @@ function addUSDRateToTrades(trades) {
 }
 exports.addUSDRateToTrades = addUSDRateToTrades;
 
-},{"got":158}],422:[function(require,module,exports){
+},{"got":158}],424:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var METHOD;
