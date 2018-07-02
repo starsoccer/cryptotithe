@@ -19,8 +19,8 @@ export async function getCSVData(fileData: string): Promise<any> {
     });
 }
 
-export async function processData(exchange: keyof typeof EXCHANGES, filePath: string): Promise<ITrade[]> {
-    let processExchangeData: any;
+export async function processData(exchange: keyof typeof EXCHANGES, fileData: string): Promise<ITrade[]> {
+    let processExchangeData: (fileData: string) => ITrade[];
     switch (exchange) {
         case 'BITTREX':
             processExchangeData = require('./bittrex').processData;
@@ -28,11 +28,17 @@ export async function processData(exchange: keyof typeof EXCHANGES, filePath: st
         case 'GEMINI':
             processExchangeData = require('./gemini').processData;
             break;
+        case 'POLONIEX':
+            processExchangeData = require('./poloniex').processData;
+            break;
+        case 'KRAKEN':
+            processExchangeData = require('./kraken').processData;
+            break;
         default:
             throw new Error(`Unknown Exchange - ${exchange}`);
     }
     if (typeof processExchangeData === 'function') {
-        return processExchangeData(filePath);
+        return processExchangeData(fileData);
     }
     return [];
 }
