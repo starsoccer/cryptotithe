@@ -15,11 +15,11 @@ describe('Sort Trades', () => {
         const sortedTrades = sortTrades(trades);
 
         for (let i = 1; i < sortedTrades.length; i++) {
-            expect(trades[i].date > trades[i - 1].date).toBeTruthy();
+            expect(sortedTrades[i].date > sortedTrades[i - 1].date).toBeTruthy();
         }
     });
 
-    test('By Date no overflow', () => {
+    test('By Date with overflow', () => {
         const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(
             faker.random.number(100) + 5,
             faker.date.past(),
@@ -30,7 +30,27 @@ describe('Sort Trades', () => {
         const sortedTrades = sortTrades(trades);
 
         for (let i = 1; i < sortedTrades.length; i++) {
-            expect(trades[i].date > trades[i - 1].date).toBeTruthy();
+            expect(sortedTrades[i].date > sortedTrades[i - 1].date).toBeTruthy();
+        }
+    });
+
+    test('By Date with randomization', () => {
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(
+            faker.random.number(100) + 5,
+            faker.date.past(),
+            mockHoldings(faker.random.number(10) + 5, faker.random.number(10) + 5, faker.date.past()),
+            true,
+        );
+
+        const randomizedTrades: ITradeWithUSDRate[] = [];
+        for (const trade of trades) {
+            randomizedTrades.push(faker.helpers.randomize(trades));
+        }
+
+        const sortedTrades = sortTrades(randomizedTrades);
+
+        for (let i = 1; i < sortedTrades.length; i++) {
+            expect(sortedTrades[i].date >= sortedTrades[i - 1].date).toBeTruthy();
         }
     });
 });
