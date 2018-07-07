@@ -102,7 +102,7 @@ describe('Get USD Rate', () => {
             id: '1',
             exchange: EXCHANGES.GEMINI,
         };
-        const rate = await getUSDRate(date, trade);
+        const rate = await getUSDRate(trade);
         expect(rate).toBe(trade.amountSold / trade.rate / trade.amountSold);
     });
 
@@ -116,7 +116,7 @@ describe('Get USD Rate', () => {
             id: '1',
             exchange: EXCHANGES.GEMINI,
         };
-        const rate = await getUSDRate(date, trade);
+        const rate = await getUSDRate(trade);
         expect(rate).toBe(trade.rate);
     });
 });

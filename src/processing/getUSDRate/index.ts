@@ -45,7 +45,7 @@ async function getBTCUSDRate(date: Date) {
         `fsym=BTC`,
         'tsym=USD',
         'sign=false', // change to true for security?
-        `toTs=${date.getTime()}`,
+        `toTs=${date.getTime() / 1000}`,
         'extraParams=tApp',
     ];
     const response: got.Response<any> = await got(
@@ -64,13 +64,13 @@ export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
     }
 }
 
-export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
+export async function getUSDRate(trade: ITrade): Promise<number> {
     if (isCurrencyTrade(trade, 'USD')) {
         return getUSDTradeRate(trade);
     }
     if (isCurrencyTrade(trade, 'BTC') || isCurrencyTrade(trade, 'XBT')) {
         // get BTC rate and convert back
-        const BTCUSDRate = await getBTCUSDRate(date);
+        const BTCUSDRate = await getBTCUSDRate(new Date(trade.date));
         if (BTCUSDRate) {
             return BTCBasedRate(trade, BTCUSDRate);
         }
@@ -80,7 +80,7 @@ export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
         `fsym=${trade.soldCurrency}`,
         'tsym=USD',
         'sign=false', // change to true for security?
-        `toTs=${date.getTime()}`,
+        `toTs=${new Date(trade.date).getTime() / 1000}`,
         'extraParams=tApp',
     ];
     const response: got.Response<any> = await got(
@@ -102,7 +102,7 @@ export async function getUSDRate(date: Date, trade: ITrade): Promise<number> {
 }
 
 export async function addUSDRateToTrade(trade: ITrade): Promise<ITradeWithUSDRate> {
-    const USDRate = await getUSDRate(new Date(trade.date), trade);
+    const USDRate = await getUSDRate(trade);
     return {
         ...trade,
         USDRate,
