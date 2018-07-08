@@ -64,7 +64,54 @@ export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
     }
 }
 
+function roundHour(date: Date) {
+    date.setUTCHours(date.getUTCHours() + Math.round(date.getUTCMinutes() / 60));
+    date.setUTCMinutes(0);
+    date.setUTCSeconds(0);
+    return date.getTime();
+}
+
+interface IHourlyPriceData {
+    time: number;
+    high: number;
+    low: number;
+    open: number;
+    volumeFrom: number;
+    volumeto: number;
+    close: number;
+}
+
+function calculateAvgerageHourPrice(data: IHourlyPriceData) {
+    return (data.open + data.close + data.high + data.low) / 4;
+}
+
+async function getClosestHourPrices(trade: ITrade): Promise<number[]> {
+    const data = [
+        `fsym=${trade.soldCurrency}`,
+        `tsym=USD`,
+        `limit=2`,
+        `toTs=${roundHour(new Date(trade.date)) / 1000}`,
+    ];
+    const response: got.Response<any> = await got(
+        'https://min-api.cryptocompare.com/data/histohour?' + data.join('&'),
+    );
+    if ('body' in response) {
+        try {
+            const result: any = JSON.parse(response.body);
+            if ('Data' in result) {
+                return [calculateAvgerageHourPrice(result.Data[0]), calculateAvgerageHourPrice(result.Data[1])];
+            }
+            throw new Error('Unknown Response Type');
+        } catch (ex) {
+            throw new Error('Error parsing JSON');
+        }
+    } else {
+        throw new Error('Invalid Response');
+    }
+}
+
 export async function getUSDRate(trade: ITrade): Promise<number> {
+    const hourlyPrices = await getClosestHourPrices(trade);
     if (isCurrencyTrade(trade, 'USD')) {
         return getUSDTradeRate(trade);
     }
@@ -72,7 +119,8 @@ export async function getUSDRate(trade: ITrade): Promise<number> {
         // get BTC rate and convert back
         const BTCUSDRate = await getBTCUSDRate(new Date(trade.date));
         if (BTCUSDRate) {
-            return BTCBasedRate(trade, BTCUSDRate);
+            hourlyPrices.push(BTCBasedRate(trade, BTCUSDRate));
+            return hourlyPrices.reduce((total, currentRate) => total + currentRate) / hourlyPrices.length;
         }
     }
     // fallback to get whatever we can
@@ -88,13 +136,15 @@ export async function getUSDRate(trade: ITrade): Promise<number> {
     );
     const rate = cryptocompareResponse(response);
     if (rate) {
-        return rate;
+        hourlyPrices.push(rate);
+        return hourlyPrices.reduce((total, currentRate) => total + currentRate) / hourlyPrices.length;
     } else {
         data[0] = `fsym=${trade.boughtCurrency}`;
         const backupResponse = await got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
         const backupRate = cryptocompareResponse(backupResponse);
         if (backupRate) {
-            return backupRate / trade.rate;
+            hourlyPrices.push(backupRate / trade.rate);
+            return hourlyPrices.reduce((total, currentRate) => total + currentRate) / hourlyPrices.length;
         } else {
             throw new Error('Cant get any USD Rate for trade ' + trade.id);
         }
