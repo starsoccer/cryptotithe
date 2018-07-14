@@ -34,7 +34,7 @@ function getTradeYears(trades: ITrade[]) {
     return years;
 }
 
-function recalculate(holdings: IHoldings, trades: ITradeWithUSDRate[], includePreviousYears: boolean, year: string) {
+function recalculate(holdings: IHoldings, trades: ITradeWithUSDRate[], gainCalculationMethod: METHOD, includePreviousYears: boolean, year: string) {
     if (year !== '----') {
         let newHoldings = holdings;
         if (includePreviousYears) {
@@ -46,16 +46,16 @@ function recalculate(holdings: IHoldings, trades: ITradeWithUSDRate[], includePr
         const newTrades = trades.filter(
             (trade) => new Date(trade.date).getFullYear().toString() === year,
         );
-        return calculateGainPerTrade(newHoldings, newTrades);
+        return calculateGainPerTrade(newHoldings, newTrades, gainCalculationMethod);
     } else {
-        return calculateGainPerTrade(holdings, trades);
+        return calculateGainPerTrade(holdings, trades, gainCalculationMethod);
     }
 }
 
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
     public constructor(props: ICalculateTradesProp) {
         super(props);
-        const result = calculateGainPerTrade(props.savedData.holdings, props.savedData.trades);
+        const result = calculateGainPerTrade(props.savedData.holdings, props.savedData.trades, METHOD.FIFO);
         this.state = {
             tradeGains: result.trades,
             longTermGains: result.longTerm,
@@ -75,11 +75,13 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
     public componentDidUpdate(_prevProps: ICalculateTradesProp, prevState: ICalculateTradesState)  {
         if (
             this.state.currentYear !== prevState.currentYear ||
-            this.state.includePreviousYears !== prevState.includePreviousYears
+            this.state.includePreviousYears !== prevState.includePreviousYears ||
+            this.state.gainCalculationMethod !== prevState.gainCalculationMethod
         ) {
             const result = recalculate(
                 this.props.savedData.holdings,
                 this.props.savedData.trades,
+                this.state.gainCalculationMethod,
                 this.state.includePreviousYears,
                 this.state.currentYear.toString(),
             );

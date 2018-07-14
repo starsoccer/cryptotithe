@@ -219,7 +219,7 @@ function getTradeYears(trades) {
     });
     return years;
 }
-function recalculate(holdings, trades, includePreviousYears, year) {
+function recalculate(holdings, trades, gainCalculationMethod, includePreviousYears, year) {
     if (year !== '----') {
         let newHoldings = holdings;
         if (includePreviousYears) {
@@ -227,10 +227,10 @@ function recalculate(holdings, trades, includePreviousYears, year) {
             newHoldings = CalculateGains_1.calculateGains(holdings, pastTrades).newHoldings;
         }
         const newTrades = trades.filter((trade) => new Date(trade.date).getFullYear().toString() === year);
-        return CalculateGains_1.calculateGainPerTrade(newHoldings, newTrades);
+        return CalculateGains_1.calculateGainPerTrade(newHoldings, newTrades, gainCalculationMethod);
     }
     else {
-        return CalculateGains_1.calculateGainPerTrade(holdings, trades);
+        return CalculateGains_1.calculateGainPerTrade(holdings, trades, gainCalculationMethod);
     }
 }
 class CalculateGains extends React.Component {
@@ -266,7 +266,7 @@ class CalculateGains extends React.Component {
                     download: true,
                 } });
         };
-        const result = CalculateGains_1.calculateGainPerTrade(props.savedData.holdings, props.savedData.trades);
+        const result = CalculateGains_1.calculateGainPerTrade(props.savedData.holdings, props.savedData.trades, types_1.METHOD.FIFO);
         this.state = {
             tradeGains: result.trades,
             longTermGains: result.longTerm,
@@ -284,8 +284,9 @@ class CalculateGains extends React.Component {
     }
     componentDidUpdate(_prevProps, prevState) {
         if (this.state.currentYear !== prevState.currentYear ||
-            this.state.includePreviousYears !== prevState.includePreviousYears) {
-            const result = recalculate(this.props.savedData.holdings, this.props.savedData.trades, this.state.includePreviousYears, this.state.currentYear.toString());
+            this.state.includePreviousYears !== prevState.includePreviousYears ||
+            this.state.gainCalculationMethod !== prevState.gainCalculationMethod) {
+            const result = recalculate(this.props.savedData.holdings, this.props.savedData.trades, this.state.gainCalculationMethod, this.state.includePreviousYears, this.state.currentYear.toString());
             this.setState({
                 filteredTradesWithGains: result.trades,
                 longTermGains: result.longTerm,
@@ -74019,13 +74020,13 @@ function getCurrenyHolding(holdings, currency, amount, method) {
     };
 }
 exports.getCurrenyHolding = getCurrenyHolding;
-function calculateGainPerTrade(holdings, internalFormat) {
+function calculateGainPerTrade(holdings, internalFormat, method) {
     let tempHoldings = clone(holdings);
     let shortTerm = 0;
     let longTerm = 0;
     const finalFormat = [];
     for (const trade of internalFormat) {
-        const result = calculateGains(tempHoldings, [trade]);
+        const result = calculateGains(tempHoldings, [trade], method);
         tempHoldings = result.newHoldings;
         shortTerm += result.shortTermGain;
         longTerm += result.longTermGain;

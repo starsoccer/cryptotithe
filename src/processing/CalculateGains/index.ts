@@ -150,13 +150,14 @@ export interface ICalculateGainsPerTrade {
 export function calculateGainPerTrade(
     holdings: IHoldings,
     internalFormat: ITradeWithUSDRate[],
+    method: METHOD,
 ): ICalculateGainsPerTrade {
     let tempHoldings: IHoldings = clone(holdings);
     let shortTerm = 0;
     let longTerm = 0;
     const finalFormat: ITradeWithGains[] = [];
     for (const trade of internalFormat) {
-        const result: ICalculateGains = calculateGains(tempHoldings, [trade]);
+        const result: ICalculateGains = calculateGains(tempHoldings, [trade], method);
         tempHoldings = result.newHoldings;
         shortTerm += result.shortTermGain;
         longTerm += result.longTermGain;
