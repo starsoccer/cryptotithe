@@ -1,20 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { rootElement } from './components';
-// import { save } from './src/save';
-import { IHoldings, ISavedData, ITradeWithUSDRate } from './src/types';
+import { ISavedData } from './src/types';
 
-export interface IBootStrapData {
-    trades: ITradeWithUSDRate[];
-    holdings: IHoldings;
-    browser: boolean;
-}
-
-function render(trades: ITradeWithUSDRate[], holdings: IHoldings, browser: boolean) {
+function render(browser: boolean, savedData = {} as ISavedData) {
     ReactDOM.render(
         React.createElement(rootElement, {
-            trades,
-            holdings,
+            savedData,
             browser,
         }),
         document.getElementById('cryptotithe'),
@@ -26,10 +18,10 @@ const electron = isElectron();
 if (electron) {
     try {
         const data: ISavedData = require('./data');
-        render(data.trades, data.holdings, false);
+        render(false, data);
     } catch (ex) {
-        render([], {}, false);
+        render(false);
     }
 } else {
-    render([], {}, true);
+    render(true);
 }

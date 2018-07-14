@@ -2,12 +2,18 @@ export interface ISavedData extends IPartialSavedData {
     savedDate: Date;
     trades: ITradeWithUSDRate[];
     holdings: IHoldings;
+    settings: ISettings;
 }
 
 export interface IPartialSavedData {
     savedDate?: Date;
     trades?: ITradeWithUSDRate[];
     holdings?: IHoldings;
+    settings?: ISettings;
+}
+
+export interface ISettings {
+    fiatRateMethod?: keyof typeof FiatRateMethod;
 }
 
 export interface IHoldings {
@@ -66,14 +72,14 @@ export enum METHOD {
 }
 
 export enum FiatRateMethod {
-    DoubleAverage,
-    BitcoinAverage,
-    HourAvg, // open, close, high, low averaged
-    HourHigh,
-    HourLow,
-    HourClose,
-    HourOpen,
-    DayAverage,
+    DOUBLEAVERAGE = 'Double Average',
+    BITCOINAVERAGE = 'Bitcoin Average',
+    HOURAVG = 'Hour Avg', // open, close, high, low averaged
+    HOURHIGH = 'Hour High',
+    HOURLOW= 'Hour Low',
+    HOURCLOSE = 'Hour Close',
+    HOUROPEN = 'Hour Open',
+    DAYAVERAGE = 'Day Average',
 }
 
 export enum EXCHANGES {

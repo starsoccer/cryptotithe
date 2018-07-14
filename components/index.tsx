@@ -7,6 +7,7 @@ import {
     ISavedData,
     ITradeWithDuplicateProbability,
     ITradeWithUSDRate,
+    ISettings,
 } from '../src/types';
 import { AddTrades } from './AddTrades';
 import Button from './Button';
@@ -15,10 +16,10 @@ import { FileBrowse } from './FileBrowse';
 import { FileDownload, IFileDownloadProps } from './FileDownload';
 import Popup from './Popup';
 import { ViewTrades } from './ViewTrades';
+import { Settings } from './Settings';
 
 export interface IAppProps {
-    trades: ITradeWithUSDRate[];
-    holdings: IHoldings;
+    savedData: ISavedData;
     browser: boolean;
 }
 
@@ -38,35 +39,41 @@ interface IAppState {
     loadDataPopup: boolean;
     fileBrowseOpen: boolean;
     downloadProps: IFileDownloadProps;
+    settings: ISettings;
+    settingsPopup: boolean;
 }
 
 export class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
         this.state = {
-            trades: this.props.trades,
-            holdings: this.props.holdings,
+            trades: props.savedData.trades,
+            holdings: props.savedData.holdings,
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser && props.trades.length + Object.keys(props.holdings).length === 0,
+            loadDataPopup: props.browser && props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
                 download: false,
             },
+            settings: props.savedData.settings,
+            settingsPopup: false
         };
     }
 
     public saveData = async (data: IPartialSavedData): Promise<boolean> => {
         const newHoldings = data.holdings || this.state.holdings;
         const newTrades = data.trades || this.state.trades;
+        const newSettings = data.settings || this.state.settings;
         try {
             const savedData: ISavedData = {
                 savedDate: new Date(),
                 trades: SortTrades(newTrades) as ITradeWithUSDRate[],
                 holdings: newHoldings,
+                settings: newSettings,
             };
             this.setState({
                 trades: newTrades,
@@ -76,6 +83,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                     fileName: 'data.json',
                     download: true,
                 },
+                settings: newSettings,
             });
             return true;
         } catch (err) {
@@ -143,6 +151,10 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         this.setState({fileBrowseOpen: true});
     }
 
+    public settingsPopup = () => {
+        this.setState({settingsPopup: !this.state.settingsPopup});
+    }
+
     public render() {
         return (
             <div className='app'>
@@ -166,7 +178,15 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                         download={this.state.downloadProps.download}
                     />
                 }
+                { this.state.settingsPopup &&
+                    <Settings
+                        settings={this.state.settings}
+                        onSettingsSave={this.saveData}
+                        onClose={this.settingsPopup}
+                    />
+                }
                 <link rel='stylesheet' type='text/css' href='./components/index.css' />
+                <i className="fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray" onClick={this.settingsPopup}/>
                 <div className='flex bg-dark-gray h2'>
                     {Object.keys(TABS).map((key: string) => <h3
                         key={key}

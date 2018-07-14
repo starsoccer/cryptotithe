@@ -9,7 +9,7 @@ export async function getFiatRate(trade: ITrade, fiatCurrency: string, method: F
     } else {
         // non fiat currency trade
         switch (method) {
-            case FiatRateMethod.DoubleAverage:
+            case FiatRateMethod.DOUBLEAVERAGE:
             default:
                 const closestHoursAvg = await getClosestHourPrices(trade, 1, fiatCurrency);
                 const BTCDayAvg = await getBTCFiatRate(trade, fiatCurrency);
@@ -28,7 +28,7 @@ function addRatetoTrade(trade: ITrade, rate: number): ITradeWithUSDRate {
 export async function addFiatRateToTrades(
     trades: ITrade[],
     fiatCurrency: string,
-    method: FiatRateMethod = FiatRateMethod.BitcoinAverage,
+    method: FiatRateMethod = FiatRateMethod.DOUBLEAVERAGE,
 ): Promise<ITradeWithUSDRate[]> {
     const newTrades: ITradeWithUSDRate[]  = [];
     for (const trade of trades) {

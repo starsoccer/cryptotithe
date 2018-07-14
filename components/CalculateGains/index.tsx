@@ -74,7 +74,6 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
     }
 
     public componentDidUpdate(_prevProps: ICalculateTradesProp, prevState: ICalculateTradesState)  {
-        console.log(this.state.currentYear, this.state.includePreviousYears);
         if (
             this.state.currentYear !== prevState.currentYear ||
             this.state.includePreviousYears !== prevState.includePreviousYears
