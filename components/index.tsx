@@ -2,12 +2,10 @@ import * as classnames from 'classnames';
 import * as React from 'react';
 import SortTrades from '../src/processing/SortTrades';
 import {
-    IHoldings,
     IPartialSavedData,
     ISavedData,
     ITradeWithDuplicateProbability,
     ITradeWithUSDRate,
-    ISettings,
 } from '../src/types';
 import { AddTrades } from './AddTrades';
 import Button from './Button';
@@ -31,15 +29,13 @@ enum TABS {
 }
 
 interface IAppState {
-    trades: ITradeWithUSDRate[];
+    savedData: ISavedData;
     processing: boolean;
-    holdings: IHoldings;
     duplicateTrades: ITradeWithDuplicateProbability[];
     currentTab: TABS;
     loadDataPopup: boolean;
     fileBrowseOpen: boolean;
     downloadProps: IFileDownloadProps;
-    settings: ISettings;
     settingsPopup: boolean;
 }
 
@@ -47,27 +43,25 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
         this.state = {
-            trades: props.savedData.trades,
-            holdings: props.savedData.holdings,
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser && props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
+            loadDataPopup: props.browser || props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
                 download: false,
             },
-            settings: props.savedData.settings,
-            settingsPopup: false
+            settingsPopup: false,
+            savedData: props.savedData,
         };
     }
 
     public saveData = async (data: IPartialSavedData): Promise<boolean> => {
-        const newHoldings = data.holdings || this.state.holdings;
-        const newTrades = data.trades || this.state.trades;
-        const newSettings = data.settings || this.state.settings;
+        const newHoldings = data.holdings || this.state.savedData.holdings;
+        const newTrades = data.trades || this.state.savedData.trades;
+        const newSettings = data.settings || this.state.savedData.settings;
         try {
             const savedData: ISavedData = {
                 savedDate: new Date(),
@@ -76,14 +70,12 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                 settings: newSettings,
             };
             this.setState({
-                trades: newTrades,
-                holdings: newHoldings,
                 downloadProps: {
                     data: JSON.stringify(savedData),
                     fileName: 'data.json',
                     download: true,
                 },
-                settings: newSettings,
+                savedData,
             });
             return true;
         } catch (err) {
@@ -108,14 +100,13 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         switch (currentTab) {
             case TABS.ADD_TRADES:
                 return <AddTrades
-                    holdings={this.state.holdings}
-                    trades={this.state.trades}
+                    savedData={this.state.savedData}
                     save={this.saveData}
                 />;
             case TABS.VIEW_TRADES:
-                return <ViewTrades holdings={this.state.holdings} trades={this.state.trades} save={this.saveData}/>;
+                return <ViewTrades holdings={this.state.savedData.holdings} trades={this.state.savedData.trades} save={this.saveData}/>;
             case TABS.CALCULATE_GAINS:
-                return <CalculateGains trades={this.state.trades} holdings={this.state.holdings}/>;
+                return <CalculateGains savedData={this.state.savedData}/>;
             case TABS.HOME:
                 return ;
             default:
@@ -137,8 +128,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             try {
                 const parsedData: ISavedData = JSON.parse(data);
                 this.setState({
-                    trades: parsedData.trades,
-                    holdings: parsedData.holdings,
+                    savedData: parsedData,
                     loadDataPopup: false,
                 });
             } catch (ex) {
@@ -180,7 +170,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                 }
                 { this.state.settingsPopup &&
                     <Settings
-                        settings={this.state.settings}
+                        settings={this.state.savedData.settings}
                         onSettingsSave={this.saveData}
                         onClose={this.settingsPopup}
                     />

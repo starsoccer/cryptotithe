@@ -13,7 +13,7 @@ export interface IPartialSavedData {
 }
 
 export interface ISettings {
-    fiatRateMethod?: keyof typeof FiatRateMethod;
+    fiatRateMethod: keyof typeof FiatRateMethod;
 }
 
 export interface IHoldings {

@@ -73,7 +73,7 @@ class AddTrades extends React.Component {
             this.setState({ processing: true });
             const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
             const tradesToSave = this.state.processedTrades.concat(duplicateToSave);
-            const tradesWithUSDRate = yield getFiatRate_1.addFiatRateToTrades(tradesToSave, 'USD');
+            const tradesWithUSDRate = yield getFiatRate_1.addFiatRateToTrades(tradesToSave, 'USD', types_1.FiatRateMethod[this.props.savedData.settings.fiatRateMethod]);
             const newTrades = SortTrades_1.default(this.state.currentTrades.concat(tradesWithUSDRate));
             if (yield this.props.save({ trades: newTrades })) {
                 this.setState({
@@ -120,8 +120,8 @@ class AddTrades extends React.Component {
         };
         this.state = {
             processedTrades: [],
-            currentTrades: this.props.trades,
-            holdings: this.props.holdings,
+            currentTrades: this.props.savedData.trades,
+            holdings: this.props.savedData.holdings,
             processing: false,
             duplicateTrades: [],
             alertData: {},
@@ -254,10 +254,10 @@ class CalculateGains extends React.Component {
             }
         };
         this.generateForm8949 = () => {
-            let holdings = this.props.holdings;
+            let holdings = this.props.savedData.holdings;
             if (this.state.includePreviousYears) {
-                const trades = this.props.trades.filter((trade) => new Date(trade.date).getFullYear() < this.state.currentYear);
-                holdings = CalculateGains_1.calculateGains(this.props.holdings, trades).newHoldings;
+                const trades = this.props.savedData.trades.filter((trade) => new Date(trade.date).getFullYear() < this.state.currentYear);
+                holdings = CalculateGains_1.calculateGains(this.props.savedData.holdings, trades).newHoldings;
             }
             const data = Form8949_1.default(holdings, this.state.tradeGains);
             this.setState({ downloadProps: {
@@ -266,12 +266,12 @@ class CalculateGains extends React.Component {
                     download: true,
                 } });
         };
-        const result = CalculateGains_1.calculateGainPerTrade(props.holdings, props.trades);
+        const result = CalculateGains_1.calculateGainPerTrade(props.savedData.holdings, props.savedData.trades);
         this.state = {
             tradeGains: result.trades,
             longTermGains: result.longTerm,
             shortTermGains: result.shortTerm,
-            years: getTradeYears(props.trades),
+            years: getTradeYears(props.savedData.trades),
             includePreviousYears: true,
             downloadProps: {
                 fileName: '',
@@ -285,7 +285,7 @@ class CalculateGains extends React.Component {
     componentDidUpdate(_prevProps, prevState) {
         if (this.state.currentYear !== prevState.currentYear ||
             this.state.includePreviousYears !== prevState.includePreviousYears) {
-            const result = recalculate(this.props.holdings, this.props.trades, this.state.includePreviousYears, this.state.currentYear.toString());
+            const result = recalculate(this.props.savedData.holdings, this.props.savedData.trades, this.state.includePreviousYears, this.state.currentYear.toString());
             this.setState({
                 filteredTradesWithGains: result.trades,
                 longTermGains: result.longTerm,
@@ -840,9 +840,9 @@ class rootElement extends React.Component {
     constructor(props) {
         super(props);
         this.saveData = (data) => __awaiter(this, void 0, void 0, function* () {
-            const newHoldings = data.holdings || this.state.holdings;
-            const newTrades = data.trades || this.state.trades;
-            const newSettings = data.settings || this.state.settings;
+            const newHoldings = data.holdings || this.state.savedData.holdings;
+            const newTrades = data.trades || this.state.savedData.trades;
+            const newSettings = data.settings || this.state.savedData.settings;
             try {
                 const savedData = {
                     savedDate: new Date(),
@@ -851,14 +851,12 @@ class rootElement extends React.Component {
                     settings: newSettings,
                 };
                 this.setState({
-                    trades: newTrades,
-                    holdings: newHoldings,
                     downloadProps: {
                         data: JSON.stringify(savedData),
                         fileName: 'data.json',
                         download: true,
                     },
-                    settings: newSettings,
+                    savedData,
                 });
                 return true;
             }
@@ -870,11 +868,11 @@ class rootElement extends React.Component {
         this.showCurrentTab = (currentTab) => {
             switch (currentTab) {
                 case TABS.ADD_TRADES:
-                    return React.createElement(AddTrades_1.AddTrades, { holdings: this.state.holdings, trades: this.state.trades, save: this.saveData });
+                    return React.createElement(AddTrades_1.AddTrades, { savedData: this.state.savedData, save: this.saveData });
                 case TABS.VIEW_TRADES:
-                    return React.createElement(ViewTrades_1.ViewTrades, { holdings: this.state.holdings, trades: this.state.trades, save: this.saveData });
+                    return React.createElement(ViewTrades_1.ViewTrades, { holdings: this.state.savedData.holdings, trades: this.state.savedData.trades, save: this.saveData });
                 case TABS.CALCULATE_GAINS:
-                    return React.createElement(CalculateGains_1.CalculateGains, { trades: this.state.trades, holdings: this.state.holdings });
+                    return React.createElement(CalculateGains_1.CalculateGains, { savedData: this.state.savedData });
                 case TABS.HOME:
                     return;
                 default:
@@ -893,8 +891,7 @@ class rootElement extends React.Component {
                 try {
                     const parsedData = JSON.parse(data);
                     this.setState({
-                        trades: parsedData.trades,
-                        holdings: parsedData.holdings,
+                        savedData: parsedData,
                         loadDataPopup: false,
                     });
                 }
@@ -910,20 +907,18 @@ class rootElement extends React.Component {
             this.setState({ settingsPopup: !this.state.settingsPopup });
         };
         this.state = {
-            trades: props.savedData.trades,
-            holdings: props.savedData.holdings,
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser && props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
+            loadDataPopup: props.browser || props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
                 download: false,
             },
-            settings: props.savedData.settings,
-            settingsPopup: false
+            settingsPopup: false,
+            savedData: props.savedData,
         };
     }
     componentDidUpdate() {
@@ -949,7 +944,7 @@ class rootElement extends React.Component {
             this.state.downloadProps &&
                 React.createElement(FileDownload_1.FileDownload, { data: this.state.downloadProps.data, fileName: this.state.downloadProps.fileName, download: this.state.downloadProps.download }),
             this.state.settingsPopup &&
-                React.createElement(Settings_1.Settings, { settings: this.state.settings, onSettingsSave: this.saveData, onClose: this.settingsPopup }),
+                React.createElement(Settings_1.Settings, { settings: this.state.savedData.settings, onSettingsSave: this.saveData, onClose: this.settingsPopup }),
             React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/index.css' }),
             React.createElement("i", { className: "fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray", onClick: this.settingsPopup }),
             React.createElement("div", { className: 'flex bg-dark-gray h2' }, Object.keys(TABS).map((key) => React.createElement("h3", { key: key, className: classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {
@@ -73415,7 +73410,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const ReactDOM = require("react-dom");
 const components_1 = require("./components");
-function render(browser, savedData = {}) {
+const types_1 = require("./src/types");
+function createEmptySavedData() {
+    return {
+        trades: [],
+        holdings: {},
+        savedDate: new Date(),
+        settings: {
+            fiatRateMethod: Object.keys(types_1.FiatRateMethod)[0],
+        },
+    };
+}
+;
+function render(browser, savedData = createEmptySavedData()) {
     ReactDOM.render(React.createElement(components_1.rootElement, {
         savedData,
         browser,
@@ -73436,7 +73443,7 @@ else {
     render(true);
 }
 
-},{"./components":17,"./data":undefined,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
+},{"./components":17,"./data":undefined,"./src/types":428,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const CalculateGains_1 = require("../../processing/CalculateGains");

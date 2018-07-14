@@ -1,15 +1,14 @@
 import * as React from 'react';
 import generateForm8949 from '../../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../../src/processing/CalculateGains';
-import { IHoldings, ITrade, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../src/types';
+import { IHoldings, ITrade, ITradeWithGains, ITradeWithUSDRate, METHOD, ISavedData } from '../../src/types';
 // import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
 import { FileDownload, IFileDownloadProps } from '../FileDownload';
 import { GainsPerTradeTable } from '../GainsPerTradeTable';
 // import { Loader } from '../Loader';
 export interface ICalculateTradesProp {
-    holdings: IHoldings;
-    trades: ITradeWithUSDRate[];
+    savedData: ISavedData,
 }
 
 export interface ICalculateTradesState {
@@ -56,12 +55,12 @@ function recalculate(holdings: IHoldings, trades: ITradeWithUSDRate[], includePr
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
     public constructor(props: ICalculateTradesProp) {
         super(props);
-        const result = calculateGainPerTrade(props.holdings, props.trades);
+        const result = calculateGainPerTrade(props.savedData.holdings, props.savedData.trades);
         this.state = {
             tradeGains: result.trades,
             longTermGains: result.longTerm,
             shortTermGains: result.shortTerm,
-            years: getTradeYears(props.trades),
+            years: getTradeYears(props.savedData.trades),
             includePreviousYears: true,
             downloadProps: {
                 fileName: '',
@@ -79,8 +78,8 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
             this.state.includePreviousYears !== prevState.includePreviousYears
         ) {
             const result = recalculate(
-                this.props.holdings,
-                this.props.trades,
+                this.props.savedData.holdings,
+                this.props.savedData.trades,
                 this.state.includePreviousYears,
                 this.state.currentYear.toString(),
             );
@@ -112,11 +111,11 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
     }
 
     public generateForm8949 = () => {
-        let holdings = this.props.holdings;
+        let holdings = this.props.savedData.holdings;
         if (this.state.includePreviousYears) {
-            const trades = this.props.trades.filter((trade) =>
+            const trades = this.props.savedData.trades.filter((trade) =>
                 new Date(trade.date).getFullYear() < this.state.currentYear);
-            holdings = calculateGains(this.props.holdings, trades).newHoldings;
+            holdings = calculateGains(this.props.savedData.holdings, trades).newHoldings;
         }
         const data = generateForm8949(holdings, this.state.tradeGains);
         this.setState({downloadProps: {
