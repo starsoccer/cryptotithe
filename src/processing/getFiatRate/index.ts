@@ -8,12 +8,15 @@ export async function getFiatRate(trade: ITrade, fiatCurrency: string, method: F
         return addRatetoTrade(trade, getUSDTradeRate(trade, fiatCurrency));
     } else {
         // non fiat currency trade
-        switch (method) {
-            case FiatRateMethod.DOUBLEAVERAGE:
-            default:
-                const closestHoursAvg = await getClosestHourPrices(trade, 1, fiatCurrency);
-                const BTCDayAvg = await getBTCFiatRate(trade, fiatCurrency);
-                return addRatetoTrade(trade, (closestHoursAvg[0] + BTCDayAvg) / 2);
+        if (isCurrencyTrade(trade, 'BTC')) {
+            const BTCBasedRate = await getBTCFiatRate(trade, fiatCurrency);
+            return addRatetoTrade(trade, BTCBasedRate); 
+        } else {
+            switch (method) {
+                default:
+                    const closestHoursAvg = await getClosestHourPrices(trade, 1, fiatCurrency);
+                    return addRatetoTrade(trade, closestHoursAvg);
+            }
         }
     }
 }

@@ -74095,19 +74095,38 @@ function BTCBasedRate(trade, BTCUSDRate) {
 exports.BTCBasedRate = BTCBasedRate;
 function getBTCFiatRate(trade, fiatCurrency) {
     return __awaiter(this, void 0, void 0, function* () {
+        const tradeTime = utils_1.roundHour(new Date(trade.date)) / 1000;
         const data = [
             `fsym=BTC`,
             `tsym=${fiatCurrency}`,
             'sign=false',
-            `toTs=${new Date(trade.date).getTime() / 1000}`,
+            `toTs=${tradeTime}`,
             'extraParams=tApp',
+            `limit=1`,
         ];
-        const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
-        const rate = utils_1.cryptocompareRateResponse(response);
-        if (rate) {
-            return BTCBasedRate(trade, rate);
+        const response = yield got('https://min-api.cryptocompare.com/data/histohour?' + data.join('&'));
+        if ('body' in response) {
+            try {
+                const result = JSON.parse(response.body);
+                if ('Data' in result) {
+                    for (const hourData of result.Data) {
+                        if (hourData.time <= tradeTime && tradeTime >= hourData.time + 3600) {
+                            return BTCBasedRate(trade, utils_1.calculateAvgerageHourPrice(hourData));
+                        }
+                    }
+                    throw new Error('Could not get Rate');
+                }
+                else {
+                    throw new Error('Unknown Response Type');
+                }
+            }
+            catch (ex) {
+                throw new Error('Error parsing JSON');
+            }
         }
-        throw new Error('Unable to get BTC Rate for trade ' + trade.id);
+        else {
+            throw new Error('Invalid Response');
+        }
     });
 }
 exports.getBTCFiatRate = getBTCFiatRate;
@@ -74142,7 +74161,7 @@ function getClosestHourPrices(trade, limit, fiatCurrency) {
                     for (const hourData of result.Data) {
                         avgs.push(utils_1.calculateAvgerageHourPrice(hourData));
                     }
-                    return avgs;
+                    return utils_1.calculateAverageFromArray(avgs);
                 }
                 throw new Error('Unknown Response Type');
             }
@@ -74179,12 +74198,16 @@ function getFiatRate(trade, fiatCurrency, method) {
         }
         else {
             // non fiat currency trade
-            switch (method) {
-                case types_1.FiatRateMethod.DOUBLEAVERAGE:
-                default:
-                    const closestHoursAvg = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
-                    const BTCDayAvg = yield BTCBasedRate_1.getBTCFiatRate(trade, fiatCurrency);
-                    return addRatetoTrade(trade, (closestHoursAvg[0] + BTCDayAvg) / 2);
+            if (utils_1.isCurrencyTrade(trade, 'BTC')) {
+                const BTCBasedRate = yield BTCBasedRate_1.getBTCFiatRate(trade, fiatCurrency);
+                return addRatetoTrade(trade, BTCBasedRate);
+            }
+            else {
+                switch (method) {
+                    default:
+                        const closestHoursAvg = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
+                        return addRatetoTrade(trade, closestHoursAvg);
+                }
             }
         }
     });
@@ -74259,6 +74282,10 @@ function calculateAvgerageHourPrice(data) {
     return (data.open + data.close + data.high + data.low) / 4;
 }
 exports.calculateAvgerageHourPrice = calculateAvgerageHourPrice;
+function calculateAverageFromArray(avgs) {
+    return avgs.reduce((accumulator, currentValue) => accumulator + currentValue) / avgs.length;
+}
+exports.calculateAverageFromArray = calculateAverageFromArray;
 
 },{}],428:[function(require,module,exports){
 "use strict";

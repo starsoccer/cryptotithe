@@ -1,8 +1,8 @@
 import * as got from 'got';
 import { ITrade } from '../../../types';
-import { calculateAvgerageHourPrice, roundHour } from '../utils';
+import { calculateAvgerageHourPrice, roundHour, calculateAverageFromArray } from '../utils';
 
-export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCurrency: string): Promise<number[]> {
+export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCurrency: string): Promise<number> {
     const data = [
         `fsym=${trade.soldCurrency}`,
         `tsym=${fiatCurrency}`,
@@ -20,7 +20,7 @@ export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCur
                 for (const hourData of result.Data) {
                     avgs.push(calculateAvgerageHourPrice(hourData));
                 }
-                return avgs;
+                return calculateAverageFromArray(avgs);
             }
             throw new Error('Unknown Response Type');
         } catch (ex) {

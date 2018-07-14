@@ -1,6 +1,6 @@
 import * as got from 'got';
 import { ITrade } from '../../../types';
-import { cryptocompareRateResponse } from '../utils';
+import { roundHour, calculateAvgerageHourPrice } from '../utils'; 
 
 export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
     if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
@@ -13,19 +13,35 @@ export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
 }
 
 export async function getBTCFiatRate(trade: ITrade, fiatCurrency: string) {
+    const tradeTime = roundHour(new Date(trade.date)) / 1000;
     const data: string[] = [
         `fsym=BTC`,
         `tsym=${fiatCurrency}`,
         'sign=false', // change to true for security?
-        `toTs=${new Date(trade.date).getTime() / 1000}`,
+        `toTs=${tradeTime}`,
         'extraParams=tApp',
+        `limit=1`,
     ];
     const response: got.Response<any> = await got(
-        'https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'),
+        'https://min-api.cryptocompare.com/data/histohour?' + data.join('&'),
     );
-    const rate = cryptocompareRateResponse(response);
-    if (rate) {
-        return BTCBasedRate(trade, rate);
+    if ('body' in response) {
+        try {
+            const result: any = JSON.parse(response.body);
+            if ('Data' in result) {
+                for (const hourData of result.Data) {
+                    if (hourData.time <= tradeTime && tradeTime >= hourData.time + 3600) {
+                        return BTCBasedRate(trade, calculateAvgerageHourPrice(hourData)); 
+                    }
+                }
+                throw new Error('Could not get Rate');
+            } else {
+                throw new Error('Unknown Response Type');
+            }
+        } catch (ex) {
+            throw new Error('Error parsing JSON');
+        }
+    } else {
+        throw new Error('Invalid Response');
     }
-    throw new Error('Unable to get BTC Rate for trade ' + trade.id);
 }

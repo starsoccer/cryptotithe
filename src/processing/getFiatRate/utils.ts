@@ -50,3 +50,7 @@ export interface IHourlyPriceData {
 export function calculateAvgerageHourPrice(data: IHourlyPriceData) {
     return (data.open + data.close + data.high + data.low) / 4;
 }
+
+export function calculateAverageFromArray(avgs: number[]) {
+    return avgs.reduce((accumulator, currentValue) => accumulator + currentValue) / avgs.length;
+}
