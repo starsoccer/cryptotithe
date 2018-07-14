@@ -16,12 +16,18 @@ export interface ICalculateGains {
     shortTermGain: number;
 }
 
-export function calculateGains(holdings: IHoldings, trades: ITradeWithUSDRate[]): ICalculateGains {
+export function calculateGains(
+    holdings: IHoldings,
+    trades: ITradeWithUSDRate[],
+    method: METHOD = METHOD.FIFO,
+): ICalculateGains {
     let shortTermGain = 0;
     let longTermGain = 0;
     let newHoldings: IHoldings = clone(holdings);
     for (const trade of trades) {
-        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
+        const result: IGetCurrencyHolding = getCurrenyHolding(
+            newHoldings, trade.soldCurrency, trade.amountSold, method,
+        );
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
@@ -135,19 +141,36 @@ export function getCurrenyHolding(
     };
 }
 
-export function calculateGainPerTrade(holdings: IHoldings, internalFormat: ITradeWithUSDRate[]): ITradeWithGains[] {
+export interface ICalculateGainsPerTrade {
+    trades: ITradeWithGains[];
+    shortTerm: number;
+    longTerm: number;
+}
+
+export function calculateGainPerTrade(
+    holdings: IHoldings,
+    internalFormat: ITradeWithUSDRate[],
+): ICalculateGainsPerTrade {
     let tempHoldings: IHoldings = clone(holdings);
+    let shortTerm = 0;
+    let longTerm = 0;
     const finalFormat: ITradeWithGains[] = [];
     for (const trade of internalFormat) {
         const result: ICalculateGains = calculateGains(tempHoldings, [trade]);
         tempHoldings = result.newHoldings;
+        shortTerm += result.shortTermGain;
+        longTerm += result.longTermGain;
         finalFormat.push({
             ...trade,
             shortTerm: result.shortTermGain,
             longTerm: result.longTermGain,
         });
     }
-    return finalFormat;
+    return {
+        trades: finalFormat,
+        shortTerm,
+        longTerm,
+    };
 }
 
 export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWithUSDRate[]): ITradeWithCostBasis[] {

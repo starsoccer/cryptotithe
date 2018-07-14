@@ -1,5 +1,6 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
+import SortTrades from '../src/processing/SortTrades';
 import {
     IHoldings,
     IPartialSavedData,
@@ -64,7 +65,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         try {
             const savedData: ISavedData = {
                 savedDate: new Date(),
-                trades: newTrades,
+                trades: SortTrades(newTrades) as ITradeWithUSDRate[],
                 holdings: newHoldings,
             };
             this.setState({

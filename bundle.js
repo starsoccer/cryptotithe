@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const parsers_1 = require("../../src/parsers");
 const DuplicateCheck_1 = require("../../src/processing/DuplicateCheck");
-const getUSDRate_1 = require("../../src/processing/getUSDRate");
+const getFiatRate_1 = require("../../src/processing/getFiatRate");
 const SortTrades_1 = require("../../src/processing/SortTrades");
 const types_1 = require("../../src/types");
 const AlertBar_1 = require("../AlertBar");
@@ -73,7 +73,7 @@ class AddTrades extends React.Component {
             this.setState({ processing: true });
             const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
             const tradesToSave = this.state.processedTrades.concat(duplicateToSave);
-            const tradesWithUSDRate = yield getUSDRate_1.addUSDRateToTrades(tradesToSave);
+            const tradesWithUSDRate = yield getFiatRate_1.addFiatRateToTrades(tradesToSave, 'USD');
             const newTrades = SortTrades_1.default(this.state.currentTrades.concat(tradesWithUSDRate));
             if (yield this.props.save({ trades: newTrades })) {
                 this.setState({
@@ -161,7 +161,7 @@ class AddTrades extends React.Component {
 }
 exports.AddTrades = AddTrades;
 
-},{"../../src/parsers":417,"../../src/processing/DuplicateCheck":421,"../../src/processing/SortTrades":422,"../../src/processing/getUSDRate":423,"../../src/types":424,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":13,"../TradesTable":14,"react":294}],2:[function(require,module,exports){
+},{"../../src/parsers":417,"../../src/processing/DuplicateCheck":421,"../../src/processing/SortTrades":422,"../../src/processing/getFiatRate":425,"../../src/types":427,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":13,"../TradesTable":14,"react":294}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const classNames = require("classNames");
@@ -204,64 +204,95 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const Form8949_1 = require("../../src/output/Form8949");
 const CalculateGains_1 = require("../../src/processing/CalculateGains");
+const types_1 = require("../../src/types");
 // import { AlertBar, AlertType } from '../AlertBar';
 const Button_1 = require("../Button");
 const FileDownload_1 = require("../FileDownload");
 const GainsPerTradeTable_1 = require("../GainsPerTradeTable");
+function getTradeYears(trades) {
+    const years = ['----'];
+    trades.forEach((trade) => {
+        const year = new Date(trade.date).getFullYear();
+        if (years.indexOf(year.toString()) === -1) {
+            years.push(year.toString());
+        }
+    });
+    return years;
+}
+function recalculate(holdings, trades, includePreviousYears, year) {
+    if (year !== '----') {
+        let newHoldings = holdings;
+        if (includePreviousYears) {
+            const pastTrades = trades.filter((trade) => new Date(trade.date).getFullYear() < parseInt(year, 10));
+            newHoldings = CalculateGains_1.calculateGains(holdings, pastTrades).newHoldings;
+        }
+        const newTrades = trades.filter((trade) => new Date(trade.date).getFullYear().toString() === year);
+        return CalculateGains_1.calculateGainPerTrade(newHoldings, newTrades);
+    }
+    else {
+        return CalculateGains_1.calculateGainPerTrade(holdings, trades);
+    }
+}
 class CalculateGains extends React.Component {
     constructor(props) {
         super(props);
+        this.onChangeCheckBox = () => (e) => {
+            this.setState({ includePreviousYears: e.currentTarget.checked });
+        };
         this.onChange = (key) => (e) => {
             switch (key) {
                 case 'year':
-                    const newTrades = (e.currentTarget.value === '----' ?
-                        this.state.tradeGains :
-                        this.state.tradeGains.filter((trade) => new Date(trade.date).getFullYear().toString() === e.currentTarget.value));
-                    let shortTermGains = 0;
-                    let longTermGains = 0;
-                    newTrades.forEach((trade) => {
-                        shortTermGains += trade.shortTerm;
-                        longTermGains += trade.longTerm;
-                    });
                     this.setState({
-                        filteredTradesWithGains: newTrades,
-                        longTermGains,
-                        shortTermGains,
+                        currentYear: parseInt(e.currentTarget.value, 10),
+                    });
+                    break;
+                case 'gainCalculationMethod':
+                    this.setState({
+                        gainCalculationMethod: e.currentTarget.value,
                     });
                     break;
             }
         };
         this.generateForm8949 = () => {
-            const data = Form8949_1.default(this.props.holdings, this.state.tradeGains);
+            let holdings = this.props.holdings;
+            if (this.state.includePreviousYears) {
+                const trades = this.props.trades.filter((trade) => new Date(trade.date).getFullYear() < this.state.currentYear);
+                holdings = CalculateGains_1.calculateGains(this.props.holdings, trades).newHoldings;
+            }
+            const data = Form8949_1.default(holdings, this.state.tradeGains);
             this.setState({ downloadProps: {
                     data,
                     fileName: 'Form8949.csv',
                     download: true,
                 } });
         };
-        const trades = CalculateGains_1.calculateGainPerTrade(props.holdings, props.trades);
-        let shortTermGains = 0;
-        let longTermGains = 0;
-        const years = ['----'];
-        trades.forEach((trade) => {
-            shortTermGains += trade.shortTerm;
-            longTermGains += trade.longTerm;
-            const year = new Date(trade.date).getFullYear();
-            if (years.indexOf(year.toString()) === -1) {
-                years.push(year.toString());
-            }
-        });
+        const result = CalculateGains_1.calculateGainPerTrade(props.holdings, props.trades);
         this.state = {
-            tradeGains: trades,
-            longTermGains,
-            shortTermGains,
-            years,
+            tradeGains: result.trades,
+            longTermGains: result.longTerm,
+            shortTermGains: result.shortTerm,
+            years: getTradeYears(props.trades),
+            includePreviousYears: true,
             downloadProps: {
                 fileName: '',
                 data: '',
                 download: false,
             },
+            currentYear: 0,
+            gainCalculationMethod: types_1.METHOD.FIFO,
         };
+    }
+    componentDidUpdate(_prevProps, prevState) {
+        console.log(this.state.currentYear, this.state.includePreviousYears);
+        if (this.state.currentYear !== prevState.currentYear ||
+            this.state.includePreviousYears !== prevState.includePreviousYears) {
+            const result = recalculate(this.props.holdings, this.props.trades, this.state.includePreviousYears, this.state.currentYear.toString());
+            this.setState({
+                filteredTradesWithGains: result.trades,
+                longTermGains: result.longTerm,
+                shortTermGains: result.shortTerm,
+            });
+        }
     }
     render() {
         return (React.createElement("div", { className: 'calculategains' },
@@ -275,6 +306,10 @@ class CalculateGains extends React.Component {
             React.createElement("div", { className: 'tc' },
                 React.createElement("label", null, "Year"),
                 React.createElement("select", { className: 'pl2', onChange: this.onChange('year') }, this.state.years.map((year) => React.createElement("option", { key: year, value: year }, year))),
+                React.createElement("label", null, "Calculation Method"),
+                React.createElement("select", { className: 'pl2', onChange: this.onChange('gainCalculationMethod') }, Object.keys(types_1.METHOD).map((method) => React.createElement("option", { key: method, value: types_1.METHOD[method] }, method))),
+                React.createElement("label", null, "Include Previous Years"),
+                React.createElement("input", { type: 'checkbox', onChange: this.onChangeCheckBox(), checked: this.state.includePreviousYears }),
                 React.createElement(Button_1.default, { label: 'Form 8949', onClick: this.generateForm8949 })),
             this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
                 React.createElement(GainsPerTradeTable_1.GainsPerTradeTable, { trades: this.state.filteredTradesWithGains })
@@ -286,7 +321,7 @@ class CalculateGains extends React.Component {
 }
 exports.CalculateGains = CalculateGains;
 
-},{"../../src/output/Form8949":414,"../../src/processing/CalculateGains":420,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":294}],5:[function(require,module,exports){
+},{"../../src/output/Form8949":414,"../../src/processing/CalculateGains":420,"../../src/types":427,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":294}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -731,6 +766,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const classnames = require("classnames");
 const React = require("react");
+const SortTrades_1 = require("../src/processing/SortTrades");
 const AddTrades_1 = require("./AddTrades");
 const Button_1 = require("./Button");
 const CalculateGains_1 = require("./CalculateGains");
@@ -754,7 +790,7 @@ class rootElement extends React.Component {
             try {
                 const savedData = {
                     savedDate: new Date(),
-                    trades: newTrades,
+                    trades: SortTrades_1.default(newTrades),
                     holdings: newHoldings,
                 };
                 this.setState({
@@ -859,7 +895,7 @@ class rootElement extends React.Component {
 }
 exports.rootElement = rootElement;
 
-},{"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./FileDownload":7,"./Popup":10,"./ViewTrades":15,"classnames":72,"react":294}],17:[function(require,module,exports){
+},{"../src/processing/SortTrades":422,"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./FileDownload":7,"./Popup":10,"./ViewTrades":15,"classnames":72,"react":294}],17:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -73440,7 +73476,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":417,"../../types":424}],416:[function(require,module,exports){
+},{"../":417,"../../types":427}],416:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73523,7 +73559,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":417,"../../types":424}],417:[function(require,module,exports){
+},{"../":417,"../../types":427}],417:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73680,7 +73716,7 @@ function processData(filePath) {
 }
 exports.processData = processData;
 
-},{"../":417,"../../types":424}],419:[function(require,module,exports){
+},{"../":417,"../../types":427}],419:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73739,18 +73775,18 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":417,"../../types":424}],420:[function(require,module,exports){
+},{"../":417,"../../types":427}],420:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const clone = require("clone");
 const types_1 = require("../../types");
 const FULL_YEAR_IN_MILLISECONDS = 31536000000;
-function calculateGains(holdings, trades) {
+function calculateGains(holdings, trades, method = types_1.METHOD.FIFO) {
     let shortTermGain = 0;
     let longTermGain = 0;
     let newHoldings = clone(holdings);
     for (const trade of trades) {
-        const result = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
+        const result = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold, method);
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
@@ -73864,13 +73900,21 @@ function getCurrenyHolding(holdings, currency, amount, method) {
 exports.getCurrenyHolding = getCurrenyHolding;
 function calculateGainPerTrade(holdings, internalFormat) {
     let tempHoldings = clone(holdings);
+    let shortTerm = 0;
+    let longTerm = 0;
     const finalFormat = [];
     for (const trade of internalFormat) {
         const result = calculateGains(tempHoldings, [trade]);
         tempHoldings = result.newHoldings;
+        shortTerm += result.shortTermGain;
+        longTerm += result.longTermGain;
         finalFormat.push(Object.assign({}, trade, { shortTerm: result.shortTermGain, longTerm: result.longTermGain }));
     }
-    return finalFormat;
+    return {
+        trades: finalFormat,
+        shortTerm,
+        longTerm,
+    };
 }
 exports.calculateGainPerTrade = calculateGainPerTrade;
 function calculateGainsPerHoldings(holdings, trades) {
@@ -73905,7 +73949,7 @@ function calculateGainsPerHoldings(holdings, trades) {
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
-},{"../../types":424,"clone":74}],421:[function(require,module,exports){
+},{"../../types":427,"clone":74}],421:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function duplicateCheck(currentTrades, newTrades) {
@@ -73964,7 +74008,146 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const got = require("got");
-function cryptocompareResponse(response) {
+const utils_1 = require("../utils");
+function BTCBasedRate(trade, BTCUSDRate) {
+    if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
+        return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
+    }
+    else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
+        return BTCUSDRate;
+    }
+    else {
+        throw new Error('Not a BTC Trade' + trade.id);
+    }
+}
+exports.BTCBasedRate = BTCBasedRate;
+function getBTCFiatRate(trade, fiatCurrency) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = [
+            `fsym=BTC`,
+            `tsym=${fiatCurrency}`,
+            'sign=false',
+            `toTs=${new Date(trade.date).getTime() / 1000}`,
+            'extraParams=tApp',
+        ];
+        const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+        const rate = utils_1.cryptocompareRateResponse(response);
+        if (rate) {
+            return BTCBasedRate(trade, rate);
+        }
+        throw new Error('Unable to get BTC Rate for trade ' + trade.id);
+    });
+}
+exports.getBTCFiatRate = getBTCFiatRate;
+
+},{"../utils":426,"got":158}],424:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const got = require("got");
+const utils_1 = require("../utils");
+function getClosestHourPrices(trade, limit, fiatCurrency) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = [
+            `fsym=${trade.soldCurrency}`,
+            `tsym=${fiatCurrency}`,
+            `limit=${limit}`,
+            `toTs=${utils_1.roundHour(new Date(trade.date)) / 1000}`,
+        ];
+        const response = yield got('https://min-api.cryptocompare.com/data/histohour?' + data.join('&'));
+        if ('body' in response) {
+            try {
+                const result = JSON.parse(response.body);
+                if ('Data' in result) {
+                    const avgs = [];
+                    for (const hourData of result.Data) {
+                        avgs.push(utils_1.calculateAvgerageHourPrice(hourData));
+                    }
+                    return avgs;
+                }
+                throw new Error('Unknown Response Type');
+            }
+            catch (ex) {
+                throw new Error('Error parsing JSON');
+            }
+        }
+        else {
+            throw new Error('Invalid Response');
+        }
+    });
+}
+exports.getClosestHourPrices = getClosestHourPrices;
+
+},{"../utils":426,"got":158}],425:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const types_1 = require("../../types");
+const getClosestHourPrices_1 = require("./getClosestHourPrices");
+const utils_1 = require("./utils");
+const BTCBasedRate_1 = require("./BTCBasedRate");
+function getFiatRate(trade, fiatCurrency, method) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (utils_1.isCurrencyTrade(trade, fiatCurrency)) {
+            return addRatetoTrade(trade, getUSDTradeRate(trade, fiatCurrency));
+        }
+        else {
+            // non fiat currency trade
+            switch (method) {
+                case types_1.FiatRateMethod.DoubleAverage:
+                default:
+                    const closestHoursAvg = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
+                    const BTCDayAvg = yield BTCBasedRate_1.getBTCFiatRate(trade, fiatCurrency);
+                    return addRatetoTrade(trade, (closestHoursAvg[0] + BTCDayAvg) / 2);
+            }
+        }
+    });
+}
+exports.getFiatRate = getFiatRate;
+function addRatetoTrade(trade, rate) {
+    return Object.assign({}, trade, { USDRate: rate });
+}
+function addFiatRateToTrades(trades, fiatCurrency, method = types_1.FiatRateMethod.BitcoinAverage) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const newTrades = [];
+        for (const trade of trades) {
+            // cant get some rates without await maybe cryptocompare rate limiting
+            newTrades.push(yield getFiatRate(trade, fiatCurrency, method));
+        }
+        return Promise.all(newTrades);
+    });
+}
+exports.addFiatRateToTrades = addFiatRateToTrades;
+function getUSDTradeRate(trade, fiatCurrency) {
+    if (trade.boughtCurrency === fiatCurrency) {
+        return trade.amountSold / trade.rate / trade.amountSold;
+    }
+    else if (trade.soldCurrency === fiatCurrency) {
+        return trade.rate;
+    }
+    else {
+        throw new Error(`Not ${fiatCurrency} Trade`);
+    }
+}
+
+},{"../../types":427,"./BTCBasedRate":423,"./getClosestHourPrices":424,"./utils":426}],426:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function cryptocompareRateResponse(response) {
     if ('body' in response) {
         try {
             const result = JSON.parse(response.body);
@@ -73983,6 +74166,14 @@ function cryptocompareResponse(response) {
         throw new Error('Invalid Response');
     }
 }
+exports.cryptocompareRateResponse = cryptocompareRateResponse;
+function roundHour(date) {
+    date.setUTCHours(date.getUTCHours() + Math.round(date.getUTCMinutes() / 60));
+    date.setUTCMinutes(0);
+    date.setUTCSeconds(0);
+    return date.getTime();
+}
+exports.roundHour = roundHour;
 function isCurrencyTrade(trade, currency) {
     if (trade.boughtCurrency === currency || trade.soldCurrency === currency) {
         return true;
@@ -73991,101 +74182,13 @@ function isCurrencyTrade(trade, currency) {
         return false;
     }
 }
-function getUSDTradeRate(trade) {
-    if (trade.boughtCurrency === 'USD') {
-        return trade.amountSold / trade.rate / trade.amountSold;
-    }
-    else if (trade.soldCurrency === 'USD') {
-        return trade.rate;
-    }
-    else {
-        throw new Error('Not USD Trade');
-    }
+exports.isCurrencyTrade = isCurrencyTrade;
+function calculateAvgerageHourPrice(data) {
+    return (data.open + data.close + data.high + data.low) / 4;
 }
-function getBTCUSDRate(date) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const data = [
-            `fsym=BTC`,
-            'tsym=USD',
-            'sign=false',
-            `toTs=${date.getTime()}`,
-            'extraParams=tApp',
-        ];
-        const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
-        return cryptocompareResponse(response);
-    });
-}
-function BTCBasedRate(trade, BTCUSDRate) {
-    if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
-        return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
-    }
-    else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
-        return BTCUSDRate;
-    }
-    else {
-        throw new Error('Not a BTC Trade' + trade.id);
-    }
-}
-exports.BTCBasedRate = BTCBasedRate;
-function getUSDRate(date, trade) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (isCurrencyTrade(trade, 'USD')) {
-            return getUSDTradeRate(trade);
-        }
-        if (isCurrencyTrade(trade, 'BTC') || isCurrencyTrade(trade, 'XBT')) {
-            // get BTC rate and convert back
-            const BTCUSDRate = yield getBTCUSDRate(date);
-            if (BTCUSDRate) {
-                return BTCBasedRate(trade, BTCUSDRate);
-            }
-        }
-        // fallback to get whatever we can
-        const data = [
-            `fsym=${trade.soldCurrency}`,
-            'tsym=USD',
-            'sign=false',
-            `toTs=${date.getTime()}`,
-            'extraParams=tApp',
-        ];
-        const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
-        const rate = cryptocompareResponse(response);
-        if (rate) {
-            return rate;
-        }
-        else {
-            data[0] = `fsym=${trade.boughtCurrency}`;
-            const backupResponse = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
-            const backupRate = cryptocompareResponse(backupResponse);
-            if (backupRate) {
-                return backupRate / trade.rate;
-            }
-            else {
-                throw new Error('Cant get any USD Rate for trade ' + trade.id);
-            }
-        }
-    });
-}
-exports.getUSDRate = getUSDRate;
-function addUSDRateToTrade(trade) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const USDRate = yield getUSDRate(new Date(trade.date), trade);
-        return Object.assign({}, trade, { USDRate });
-    });
-}
-exports.addUSDRateToTrade = addUSDRateToTrade;
-function addUSDRateToTrades(trades) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const newTrades = [];
-        for (const trade of trades) {
-            // cant get some rates without await maybe cryptocompare rate limiting
-            newTrades.push(yield addUSDRateToTrade(trade));
-        }
-        return Promise.all(newTrades);
-    });
-}
-exports.addUSDRateToTrades = addUSDRateToTrades;
+exports.calculateAvgerageHourPrice = calculateAvgerageHourPrice;
 
-},{"got":158}],424:[function(require,module,exports){
+},{}],427:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var METHOD;
@@ -74094,6 +74197,17 @@ var METHOD;
     METHOD["FIFO"] = "FIFO";
     METHOD["HCFO"] = "HCFO";
 })(METHOD = exports.METHOD || (exports.METHOD = {}));
+var FiatRateMethod;
+(function (FiatRateMethod) {
+    FiatRateMethod[FiatRateMethod["DoubleAverage"] = 0] = "DoubleAverage";
+    FiatRateMethod[FiatRateMethod["BitcoinAverage"] = 1] = "BitcoinAverage";
+    FiatRateMethod[FiatRateMethod["HourAvg"] = 2] = "HourAvg";
+    FiatRateMethod[FiatRateMethod["HourHigh"] = 3] = "HourHigh";
+    FiatRateMethod[FiatRateMethod["HourLow"] = 4] = "HourLow";
+    FiatRateMethod[FiatRateMethod["HourClose"] = 5] = "HourClose";
+    FiatRateMethod[FiatRateMethod["HourOpen"] = 6] = "HourOpen";
+    FiatRateMethod[FiatRateMethod["DayAverage"] = 7] = "DayAverage";
+})(FiatRateMethod = exports.FiatRateMethod || (exports.FiatRateMethod = {}));
 var EXCHANGES;
 (function (EXCHANGES) {
     EXCHANGES["BITTREX"] = "Bittrex";

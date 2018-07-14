@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { processData } from '../../src/parsers';
 import duplicateCheck from '../../src/processing/DuplicateCheck';
-import { addUSDRateToTrades } from '../../src/processing/getUSDRate';
+import { addFiatRateToTrades } from '../../src/processing/getFiatRate';
 import sortTrades from '../../src/processing/SortTrades';
 import {
     EXCHANGES,
@@ -101,7 +101,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         this.setState({processing: true});
         const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
         const tradesToSave = this.state.processedTrades.concat(duplicateToSave);
-        const tradesWithUSDRate: ITradeWithUSDRate[] = await addUSDRateToTrades(tradesToSave);
+        const tradesWithUSDRate: ITradeWithUSDRate[] = await addFiatRateToTrades(tradesToSave, 'USD');
 
         const newTrades: ITradeWithUSDRate[] = sortTrades(
             this.state.currentTrades.concat(tradesWithUSDRate),

@@ -65,6 +65,17 @@ export enum METHOD {
     HCFO = 'HCFO',
 }
 
+export enum FiatRateMethod {
+    DoubleAverage,
+    BitcoinAverage,
+    HourAvg, // open, close, high, low averaged
+    HourHigh,
+    HourLow,
+    HourClose,
+    HourOpen,
+    DayAverage,
+}
+
 export enum EXCHANGES {
     BITTREX = 'Bittrex',
     GEMINI = 'Gemini',
