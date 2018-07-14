@@ -597,8 +597,8 @@ class TradeDetails extends React.Component {
                 const trade = {
                     date: new Date(this.state.date).getTime(),
                     amountSold: parseFloat(this.state.amountSold),
-                    boughtCurrency: this.state.boughtCurrency,
-                    soldCurrency: this.state.soldCurrency,
+                    boughtCurrency: this.state.boughtCurrency.toUpperCase(),
+                    soldCurrency: this.state.soldCurrency.toUpperCase(),
                     rate: parseFloat(this.state.rate),
                     exchange: this.state.exchange,
                 };
@@ -73447,8 +73447,8 @@ function processData(fileData) {
             switch (trade.Type) {
                 case BittrexOrderType.LIMIT_BUY:
                     internalFormat.push({
-                        boughtCurrency: pair[1],
-                        soldCurrency: pair[0],
+                        boughtCurrency: pair[1].toUpperCase(),
+                        soldCurrency: pair[0].toUpperCase(),
                         amountSold: parseFloat(trade.Quantity) * parseFloat(trade.Limit),
                         rate: parseFloat((parseFloat(trade.Price) / parseFloat(trade.Quantity)).toFixed(8)),
                         date: new Date(trade.Closed).getTime(),
@@ -73458,8 +73458,8 @@ function processData(fileData) {
                     break;
                 case BittrexOrderType.LIMIT_SELL:
                     internalFormat.push({
-                        boughtCurrency: pair[0],
-                        soldCurrency: pair[1],
+                        boughtCurrency: pair[0].toUpperCase(),
+                        soldCurrency: pair[1].toUpperCase(),
                         amountSold: parseFloat(trade.Quantity),
                         rate: parseFloat((parseFloat(trade.Quantity) / parseFloat(trade.Price)).toFixed(8)),
                         date: new Date(trade.Closed).getTime(),
@@ -73537,8 +73537,8 @@ function processData(fileData) {
                         const amountBought = parseNumber(trade[`${pair.bought} Amount`]);
                         const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought})`]);
                         internalFormat.push({
-                            boughtCurrency: pair.bought,
-                            soldCurrency: pair.sold,
+                            boughtCurrency: pair.bought.toUpperCase(),
+                            soldCurrency: pair.sold.toUpperCase(),
                             amountSold: amountSold + amountSoldFee,
                             rate: (amountSold + amountSoldFee) / (amountBought - amountBoughtFee),
                             date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
@@ -73687,8 +73687,8 @@ function processData(filePath) {
             switch (trade.type) {
                 case KrakenType.BUY:
                     internalFormat.push({
-                        boughtCurrency: pairs[0],
-                        soldCurrency: pairs[1],
+                        boughtCurrency: pairs[0].toUpperCase(),
+                        soldCurrency: pairs[1].toUpperCase(),
                         amountSold: parseFloat(trade.cost),
                         rate: (parseFloat(trade.cost) + parseFloat(trade.fee)) / (parseFloat(trade.vol)),
                         date: new Date(trade.time).getTime(),
@@ -73698,8 +73698,8 @@ function processData(filePath) {
                     break;
                 case KrakenType.SELL:
                     internalFormat.push({
-                        boughtCurrency: pairs[1],
-                        soldCurrency: pairs[0],
+                        boughtCurrency: pairs[1].toUpperCase(),
+                        soldCurrency: pairs[0].toUpperCase(),
                         amountSold: parseFloat(trade.vol),
                         rate: parseFloat(trade.vol) / (parseFloat(trade.cost) - parseFloat(trade.fee)),
                         date: new Date(trade.time).getTime(),
@@ -73746,8 +73746,8 @@ function processData(fileData) {
             switch (trade.Type) {
                 case PoloniexOrderType.BUY:
                     internalFormat.push({
-                        boughtCurrency: pair[0],
-                        soldCurrency: pair[1],
+                        boughtCurrency: pair[0].toUpperCase(),
+                        soldCurrency: pair[1].toUpperCase(),
                         amountSold: parseNumber(trade['Base Total Less Fee']),
                         rate: parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']),
                         date: new Date(trade.Date).getTime(),
@@ -73757,8 +73757,8 @@ function processData(fileData) {
                     break;
                 case PoloniexOrderType.SELL:
                     internalFormat.push({
-                        boughtCurrency: pair[1],
-                        soldCurrency: pair[0],
+                        boughtCurrency: pair[1].toUpperCase(),
+                        soldCurrency: pair[0].toUpperCase(),
                         amountSold: parseNumber(trade['Quote Total Less Fee']),
                         rate: parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']),
                         date: new Date(trade.Date).getTime(),

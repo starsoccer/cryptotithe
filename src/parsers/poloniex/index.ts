@@ -32,8 +32,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
         switch (trade.Type) {
             case PoloniexOrderType.BUY:
                 internalFormat.push({
-                    boughtCurrency: pair[0],
-                    soldCurrency: pair[1],
+                    boughtCurrency: pair[0].toUpperCase(),
+                    soldCurrency: pair[1].toUpperCase(),
                     amountSold: parseNumber(trade['Base Total Less Fee']),
                     rate: parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']),
                     date: new Date(trade.Date).getTime(),
@@ -43,8 +43,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                 break;
             case PoloniexOrderType.SELL:
                 internalFormat.push({
-                    boughtCurrency: pair[1],
-                    soldCurrency: pair[0],
+                    boughtCurrency: pair[1].toUpperCase(),
+                    soldCurrency: pair[0].toUpperCase(),
                     amountSold: parseNumber(trade['Quote Total Less Fee']),
                     rate: parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']),
                     date: new Date(trade.Date).getTime(),

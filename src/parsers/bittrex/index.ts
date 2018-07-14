@@ -26,8 +26,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
         switch (trade.Type) {
             case BittrexOrderType.LIMIT_BUY:
                 internalFormat.push({
-                    boughtCurrency: pair[1],
-                    soldCurrency: pair[0],
+                    boughtCurrency: pair[1].toUpperCase(),
+                    soldCurrency: pair[0].toUpperCase(),
                     amountSold: parseFloat(trade.Quantity) * parseFloat(trade.Limit),
                     rate: parseFloat((parseFloat(trade.Price) / parseFloat(trade.Quantity)).toFixed(8)),
                     date: new Date(trade.Closed).getTime(),
@@ -37,8 +37,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                 break;
             case BittrexOrderType.LIMIT_SELL:
                 internalFormat.push({
-                    boughtCurrency: pair[0],
-                    soldCurrency: pair[1],
+                    boughtCurrency: pair[0].toUpperCase(),
+                    soldCurrency: pair[1].toUpperCase(),
                     amountSold: parseFloat(trade.Quantity),
                     rate: parseFloat((parseFloat(trade.Quantity) / parseFloat(trade.Price)).toFixed(8)),
                     date: new Date(trade.Closed).getTime(),

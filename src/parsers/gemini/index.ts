@@ -85,8 +85,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                     const amountBought = parseNumber(trade[`${pair.bought} Amount`]);
                     const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought})`]);
                     internalFormat.push({
-                        boughtCurrency: pair.bought,
-                        soldCurrency: pair.sold,
+                        boughtCurrency: pair.bought.toUpperCase(),
+                        soldCurrency: pair.sold.toUpperCase(),
                         amountSold: amountSold + amountSoldFee,
                         rate: (amountSold + amountSoldFee) / (amountBought - amountBoughtFee),
                         date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),

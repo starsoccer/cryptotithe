@@ -78,8 +78,8 @@ export async function processData(filePath: string): Promise<ITrade[]> {
         switch (trade.type) {
             case KrakenType.BUY:
                 internalFormat.push({
-                    boughtCurrency: pairs[0],
-                    soldCurrency: pairs[1],
+                    boughtCurrency: pairs[0].toUpperCase(),
+                    soldCurrency: pairs[1].toUpperCase(),
                     amountSold: parseFloat(trade.cost),
                     rate: (parseFloat(trade.cost) + parseFloat(trade.fee)) / (parseFloat(trade.vol)),
                     date: new Date(trade.time).getTime(),
@@ -89,8 +89,8 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                 break;
             case KrakenType.SELL:
                 internalFormat.push({
-                    boughtCurrency: pairs[1],
-                    soldCurrency: pairs[0],
+                    boughtCurrency: pairs[1].toUpperCase(),
+                    soldCurrency: pairs[0].toUpperCase(),
                     amountSold: parseFloat(trade.vol),
                     rate: parseFloat(trade.vol) / (parseFloat(trade.cost) - parseFloat(trade.fee)),
                     date: new Date(trade.time).getTime(),
