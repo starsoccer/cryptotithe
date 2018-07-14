@@ -592,6 +592,7 @@ const crypto = require("crypto");
 const React = require("react");
 const validator = require("validator");
 const Button_1 = require("../Button");
+const utils_1 = require("../../src/parsers/utils");
 class TradeDetails extends React.Component {
     constructor(props) {
         super(props);
@@ -649,7 +650,7 @@ class TradeDetails extends React.Component {
             }
             else {
                 const trade = {
-                    date: new Date(this.state.date).getTime(),
+                    date: utils_1.createDateAsUTC(new Date(this.state.date)).getTime(),
                     amountSold: parseFloat(this.state.amountSold),
                     boughtCurrency: this.state.boughtCurrency.toUpperCase(),
                     soldCurrency: this.state.soldCurrency.toUpperCase(),
@@ -722,7 +723,7 @@ class TradeDetails extends React.Component {
 }
 exports.default = TradeDetails;
 
-},{"../Button":3,"crypto":82,"react":295,"validator":339}],15:[function(require,module,exports){
+},{"../../src/parsers/utils":421,"../Button":3,"crypto":82,"react":295,"validator":339}],15:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -785,29 +786,57 @@ exports.TradesTable = TradesTable;
 
 },{"../../src/processing/SortTrades":424,"../Popup":10,"../Table":12,"../TradeDetails":14,"react":295}],16:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
+const types_1 = require("../../src/types");
 const TradesTable_1 = require("../TradesTable");
+const Button_1 = require("../Button");
+const getFiatRate_1 = require("../../src/processing/getFiatRate");
+const SortTrades_1 = require("../../src/processing/SortTrades");
+const Loader_1 = require("../Loader");
 class ViewTrades extends React.Component {
-    constructor() {
-        super(...arguments);
+    constructor(props) {
+        super(props);
         this.save = (trades) => this.props.save({ trades: trades });
+        this.refetchUSDRate = () => __awaiter(this, void 0, void 0, function* () {
+            this.setState({ processing: true });
+            const newTrades = yield getFiatRate_1.addFiatRateToTrades(this.props.savedData.trades, 'USD', types_1.FiatRateMethod[this.props.savedData.settings.fiatRateMethod]);
+            const sortedTrades = SortTrades_1.default(newTrades);
+            this.props.save({ trades: sortedTrades });
+            this.setState({ processing: false });
+        });
+        this.state = {
+            processing: false,
+        };
     }
     render() {
-        return (React.createElement("div", { className: 'viewTrades' }, this.props.trades.length > 0 ?
-            React.createElement("div", null,
-                React.createElement("h3", { className: 'tc' }, "Trades"),
-                React.createElement("hr", { className: 'center w-50' }),
-                React.createElement(TradesTable_1.TradesTable, { trades: this.props.trades, save: this.save }))
-            :
-                React.createElement("h3", { className: 'tc' },
-                    "No Trades ",
-                    React.createElement("i", { className: 'fa fa-frown-o' }))));
+        return (React.createElement("div", { className: 'viewTrades' },
+            React.createElement("h3", { className: 'tc' }, "Trades"),
+            React.createElement("hr", { className: 'center w-50' }),
+            React.createElement("div", { className: "tc center" },
+                React.createElement(Button_1.default, { label: "Refresh Trade Data", onClick: this.refetchUSDRate }),
+                this.state.processing ?
+                    React.createElement(Loader_1.Loader, null)
+                    :
+                        this.props.savedData.trades.length > 0 ?
+                            React.createElement(TradesTable_1.TradesTable, { trades: this.props.savedData.trades, save: this.save })
+                            :
+                                React.createElement("h3", { className: 'tc' },
+                                    "No Trades ",
+                                    React.createElement("i", { className: 'fa fa-frown-o' })))));
     }
 }
 exports.ViewTrades = ViewTrades;
 
-},{"../TradesTable":15,"react":295}],17:[function(require,module,exports){
+},{"../../src/processing/SortTrades":424,"../../src/processing/getFiatRate":427,"../../src/types":429,"../Button":3,"../Loader":9,"../TradesTable":15,"react":295}],17:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -870,7 +899,7 @@ class rootElement extends React.Component {
                 case TABS.ADD_TRADES:
                     return React.createElement(AddTrades_1.AddTrades, { savedData: this.state.savedData, save: this.saveData });
                 case TABS.VIEW_TRADES:
-                    return React.createElement(ViewTrades_1.ViewTrades, { holdings: this.state.savedData.holdings, trades: this.state.savedData.trades, save: this.saveData });
+                    return React.createElement(ViewTrades_1.ViewTrades, { savedData: this.state.savedData, save: this.saveData });
                 case TABS.CALCULATE_GAINS:
                     return React.createElement(CalculateGains_1.CalculateGains, { savedData: this.state.savedData });
                 case TABS.HOME:
@@ -74085,7 +74114,7 @@ function sortTrades(trades) {
 }
 exports.default = sortTrades;
 function sortTradesByDate(trade1, trade2) {
-    return trade1.date - trade2.date;
+    return new Date(trade1.date).getTime() - new Date(trade2.date).getTime();
 }
 
 },{}],425:[function(require,module,exports){

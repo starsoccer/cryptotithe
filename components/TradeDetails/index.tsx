@@ -3,6 +3,8 @@ import * as React from 'react';
 import * as validator from 'validator';
 import { EXCHANGES, IPartialTrade, ITrade } from '../../src/types';
 import Button from '../Button';
+import { createDateAsUTC } from '../../src/parsers/utils';
+
 export interface ITradeDetailsProps {
     className?: string;
     trade?: ITrade;
@@ -103,7 +105,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
             alert(errors.join('\n'));
         } else {
             const trade: IPartialTrade = {
-                date: new Date(this.state.date).getTime(),
+                date: createDateAsUTC(new Date(this.state.date)).getTime(),
                 amountSold: parseFloat(this.state.amountSold),
                 boughtCurrency: this.state.boughtCurrency.toUpperCase(),
                 soldCurrency: this.state.soldCurrency.toUpperCase(),
