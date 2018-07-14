@@ -13,7 +13,7 @@ export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
 }
 
 export async function getBTCFiatRate(trade: ITrade, fiatCurrency: string) {
-    const tradeTime = roundHour(new Date(trade.date)) / 1000;
+    const tradeTime = parseInt((roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
     const data: string[] = [
         `fsym=BTC`,
         `tsym=${fiatCurrency}`,

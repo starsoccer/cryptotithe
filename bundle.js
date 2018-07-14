@@ -73809,12 +73809,20 @@ var PoloniexOrderType;
 function parseNumber(amount) {
     return Math.abs(parseFloat(amount));
 }
+function garbageTrade(trade) {
+    return parseNumber(trade['Quote Total Less Fee']) === 0 || parseNumber(trade['Base Total Less Fee']) === 0;
+}
 function processData(fileData) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = yield __1.getCSVData(fileData);
         const internalFormat = [];
         for (const trade of data) {
             const pair = trade.Market.split('/');
+            // some trades have 0 cost/value so skip those
+            if (garbageTrade(trade)) {
+                console.log('Garbage Trade Skipped - ' + trade['Order Number']);
+                continue;
+            }
             switch (trade.Type) {
                 case PoloniexOrderType.BUY:
                     internalFormat.push({
@@ -74095,7 +74103,7 @@ function BTCBasedRate(trade, BTCUSDRate) {
 exports.BTCBasedRate = BTCBasedRate;
 function getBTCFiatRate(trade, fiatCurrency) {
     return __awaiter(this, void 0, void 0, function* () {
-        const tradeTime = utils_1.roundHour(new Date(trade.date)) / 1000;
+        const tradeTime = parseInt((utils_1.roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
         const data = [
             `fsym=BTC`,
             `tsym=${fiatCurrency}`,

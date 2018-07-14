@@ -24,11 +24,20 @@ function parseNumber(amount: string): number {
     return Math.abs(parseFloat(amount));
 }
 
+function garbageTrade(trade: IPoloniex) {
+    return parseNumber(trade['Quote Total Less Fee']) === 0 || parseNumber(trade['Base Total Less Fee']) === 0;
+}
+
 export async function processData(fileData: string): Promise<ITrade[]> {
     const data: IPoloniex[] = await getCSVData(fileData) as IPoloniex[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pair: string[] = trade.Market.split('/');
+        // some trades have 0 cost/value so skip those
+        if(garbageTrade(trade))  {
+            console.log('Garbage Trade Skipped - ' + trade['Order Number']);
+            continue;
+        }
         switch (trade.Type) {
             case PoloniexOrderType.BUY:
                 internalFormat.push({
