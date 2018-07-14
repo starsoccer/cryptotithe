@@ -104,7 +104,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                     save={this.saveData}
                 />;
             case TABS.VIEW_TRADES:
-                return <ViewTrades holdings={this.state.savedData.holdings} trades={this.state.savedData.trades} save={this.saveData}/>;
+                return <ViewTrades savedData={this.state.savedData} save={this.saveData}/>;
             case TABS.CALCULATE_GAINS:
                 return <CalculateGains savedData={this.state.savedData}/>;
             case TABS.HOME:
