@@ -161,7 +161,7 @@ class AddTrades extends React.Component {
 }
 exports.AddTrades = AddTrades;
 
-},{"../../src/parsers":418,"../../src/processing/DuplicateCheck":422,"../../src/processing/SortTrades":423,"../../src/processing/getFiatRate":426,"../../src/types":428,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":14,"../TradesTable":15,"react":295}],2:[function(require,module,exports){
+},{"../../src/parsers":418,"../../src/processing/DuplicateCheck":423,"../../src/processing/SortTrades":424,"../../src/processing/getFiatRate":427,"../../src/types":429,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":14,"../TradesTable":15,"react":295}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const classNames = require("classNames");
@@ -320,7 +320,7 @@ class CalculateGains extends React.Component {
 }
 exports.CalculateGains = CalculateGains;
 
-},{"../../src/output/Form8949":415,"../../src/processing/CalculateGains":421,"../../src/types":428,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":295}],5:[function(require,module,exports){
+},{"../../src/output/Form8949":415,"../../src/processing/CalculateGains":422,"../../src/types":429,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":295}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -555,7 +555,7 @@ class Settings extends React.Component {
 }
 exports.Settings = Settings;
 
-},{"../../src/types":428,"../Button":3,"../Popup":10,"react":295}],12:[function(require,module,exports){
+},{"../../src/types":429,"../Button":3,"../Popup":10,"react":295}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -783,7 +783,7 @@ class TradesTable extends React.Component {
 }
 exports.TradesTable = TradesTable;
 
-},{"../../src/processing/SortTrades":423,"../Popup":10,"../Table":12,"../TradeDetails":14,"react":295}],16:[function(require,module,exports){
+},{"../../src/processing/SortTrades":424,"../Popup":10,"../Table":12,"../TradeDetails":14,"react":295}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -956,7 +956,7 @@ class rootElement extends React.Component {
 }
 exports.rootElement = rootElement;
 
-},{"../src/processing/SortTrades":423,"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./FileDownload":7,"./Popup":10,"./Settings":11,"./ViewTrades":16,"classnames":73,"react":295}],18:[function(require,module,exports){
+},{"../src/processing/SortTrades":424,"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./FileDownload":7,"./Popup":10,"./Settings":11,"./ViewTrades":16,"classnames":73,"react":295}],18:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -73443,7 +73443,7 @@ else {
     render(true);
 }
 
-},{"./components":17,"./data":undefined,"./src/types":428,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
+},{"./components":17,"./data":undefined,"./src/types":429,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const CalculateGains_1 = require("../../processing/CalculateGains");
@@ -73492,7 +73492,7 @@ function outputForm8949(holdings, trades) {
 }
 exports.default = outputForm8949;
 
-},{"../../processing/CalculateGains":421}],416:[function(require,module,exports){
+},{"../../processing/CalculateGains":422}],416:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73505,6 +73505,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
 const types_1 = require("../../types");
+const utils_1 = require("../utils");
 var BittrexOrderType;
 (function (BittrexOrderType) {
     BittrexOrderType["LIMIT_SELL"] = "LIMIT_SELL";
@@ -73523,7 +73524,7 @@ function processData(fileData) {
                         soldCurrency: pair[0].toUpperCase(),
                         amountSold: parseFloat(trade.Quantity) * parseFloat(trade.Limit),
                         rate: parseFloat((parseFloat(trade.Price) / parseFloat(trade.Quantity)).toFixed(8)),
-                        date: new Date(trade.Closed).getTime(),
+                        date: utils_1.createDateAsUTC(new Date(trade.Closed)).getTime(),
                         id: trade.OrderUuid,
                         exchange: types_1.EXCHANGES.BITTREX,
                     });
@@ -73534,7 +73535,7 @@ function processData(fileData) {
                         soldCurrency: pair[1].toUpperCase(),
                         amountSold: parseFloat(trade.Quantity),
                         rate: parseFloat((parseFloat(trade.Quantity) / parseFloat(trade.Price)).toFixed(8)),
-                        date: new Date(trade.Closed).getTime(),
+                        date: utils_1.createDateAsUTC(new Date(trade.Closed)).getTime(),
                         id: trade.OrderUuid,
                         exchange: types_1.EXCHANGES.BITTREX,
                     });
@@ -73548,7 +73549,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":418,"../../types":428}],417:[function(require,module,exports){
+},{"../":418,"../../types":429,"../utils":421}],417:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73561,6 +73562,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
 const types_1 = require("../../types");
+const utils_1 = require("../utils");
 var GeminiOrderType;
 (function (GeminiOrderType) {
     GeminiOrderType["Sell"] = "Sell";
@@ -73613,7 +73615,7 @@ function processData(fileData) {
                             soldCurrency: pair.sold.toUpperCase(),
                             amountSold: amountSold + amountSoldFee,
                             rate: (amountSold + amountSoldFee) / (amountBought - amountBoughtFee),
-                            date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
+                            date: utils_1.createDateAsUTC(new Date(`${trade['Order Date']} ${trade['Order Time']}`)).getTime(),
                             id: trade['Trade ID'],
                             exchange: types_1.EXCHANGES.GEMINI,
                         });
@@ -73631,7 +73633,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":418,"../../types":428}],418:[function(require,module,exports){
+},{"../":418,"../../types":429,"../utils":421}],418:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73699,6 +73701,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
 const types_1 = require("../../types");
+const utils_1 = require("../utils");
 var KrakenType;
 (function (KrakenType) {
     KrakenType["BUY"] = "buy";
@@ -73763,7 +73766,7 @@ function processData(filePath) {
                         soldCurrency: pairs[1].toUpperCase(),
                         amountSold: parseFloat(trade.cost),
                         rate: (parseFloat(trade.cost) + parseFloat(trade.fee)) / (parseFloat(trade.vol)),
-                        date: new Date(trade.time).getTime(),
+                        date: utils_1.createDateAsUTC(new Date(trade.time)).getTime(),
                         id: trade.txid,
                         exchange: types_1.EXCHANGES.KRAKEN,
                     });
@@ -73774,7 +73777,7 @@ function processData(filePath) {
                         soldCurrency: pairs[0].toUpperCase(),
                         amountSold: parseFloat(trade.vol),
                         rate: parseFloat(trade.vol) / (parseFloat(trade.cost) - parseFloat(trade.fee)),
-                        date: new Date(trade.time).getTime(),
+                        date: utils_1.createDateAsUTC(new Date(trade.time)).getTime(),
                         id: trade.txid,
                         exchange: types_1.EXCHANGES.KRAKEN,
                     });
@@ -73788,7 +73791,7 @@ function processData(filePath) {
 }
 exports.processData = processData;
 
-},{"../":418,"../../types":428}],420:[function(require,module,exports){
+},{"../":418,"../../types":429,"../utils":421}],420:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73801,6 +73804,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
 const types_1 = require("../../types");
+const utils_1 = require("../utils");
 var PoloniexOrderType;
 (function (PoloniexOrderType) {
     PoloniexOrderType["BUY"] = "Buy";
@@ -73830,7 +73834,7 @@ function processData(fileData) {
                         soldCurrency: pair[1].toUpperCase(),
                         amountSold: parseNumber(trade['Base Total Less Fee']),
                         rate: parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']),
-                        date: new Date(trade.Date).getTime(),
+                        date: utils_1.createDateAsUTC(new Date(trade.Date)).getTime(),
                         id: trade['Order Number'],
                         exchange: types_1.EXCHANGES.POLONIEX,
                     });
@@ -73841,7 +73845,7 @@ function processData(fileData) {
                         soldCurrency: pair[0].toUpperCase(),
                         amountSold: parseNumber(trade['Quote Total Less Fee']),
                         rate: parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']),
-                        date: new Date(trade.Date).getTime(),
+                        date: utils_1.createDateAsUTC(new Date(trade.Date)).getTime(),
                         id: trade['Order Number'],
                         exchange: types_1.EXCHANGES.POLONIEX,
                     });
@@ -73855,7 +73859,15 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":418,"../../types":428}],421:[function(require,module,exports){
+},{"../":418,"../../types":429,"../utils":421}],421:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function createDateAsUTC(date) {
+    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()));
+}
+exports.createDateAsUTC = createDateAsUTC;
+
+},{}],422:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const clone = require("clone");
@@ -74029,7 +74041,7 @@ function calculateGainsPerHoldings(holdings, trades) {
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
-},{"../../types":428,"clone":75}],422:[function(require,module,exports){
+},{"../../types":429,"clone":75}],423:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function duplicateCheck(currentTrades, newTrades) {
@@ -74065,7 +74077,7 @@ function duplicateCheck(currentTrades, newTrades) {
 }
 exports.default = duplicateCheck;
 
-},{}],423:[function(require,module,exports){
+},{}],424:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function sortTrades(trades) {
@@ -74076,7 +74088,7 @@ function sortTradesByDate(trade1, trade2) {
     return trade1.date - trade2.date;
 }
 
-},{}],424:[function(require,module,exports){
+},{}],425:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74139,7 +74151,7 @@ function getBTCFiatRate(trade, fiatCurrency) {
 }
 exports.getBTCFiatRate = getBTCFiatRate;
 
-},{"../utils":427,"got":159}],425:[function(require,module,exports){
+},{"../utils":428,"got":159}],426:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74184,7 +74196,7 @@ function getClosestHourPrices(trade, limit, fiatCurrency) {
 }
 exports.getClosestHourPrices = getClosestHourPrices;
 
-},{"../utils":427,"got":159}],426:[function(require,module,exports){
+},{"../utils":428,"got":159}],427:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74247,7 +74259,7 @@ function getUSDTradeRate(trade, fiatCurrency) {
     }
 }
 
-},{"../../types":428,"./BTCBasedRate":424,"./getClosestHourPrices":425,"./utils":427}],427:[function(require,module,exports){
+},{"../../types":429,"./BTCBasedRate":425,"./getClosestHourPrices":426,"./utils":428}],428:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function cryptocompareRateResponse(response) {
@@ -74295,7 +74307,7 @@ function calculateAverageFromArray(avgs) {
 }
 exports.calculateAverageFromArray = calculateAverageFromArray;
 
-},{}],428:[function(require,module,exports){
+},{}],429:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var METHOD;

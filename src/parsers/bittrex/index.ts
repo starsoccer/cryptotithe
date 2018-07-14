@@ -1,5 +1,6 @@
 import { getCSVData } from '../';
 import { EXCHANGES, ITrade } from '../../types';
+import { createDateAsUTC } from '../utils';
 
 enum BittrexOrderType {
     LIMIT_SELL = 'LIMIT_SELL',
@@ -30,7 +31,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                     soldCurrency: pair[0].toUpperCase(),
                     amountSold: parseFloat(trade.Quantity) * parseFloat(trade.Limit),
                     rate: parseFloat((parseFloat(trade.Price) / parseFloat(trade.Quantity)).toFixed(8)),
-                    date: new Date(trade.Closed).getTime(),
+                    date: createDateAsUTC(new Date(trade.Closed)).getTime(),
                     id: trade.OrderUuid,
                     exchange: EXCHANGES.BITTREX,
                 });
@@ -41,7 +42,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                     soldCurrency: pair[1].toUpperCase(),
                     amountSold: parseFloat(trade.Quantity),
                     rate: parseFloat((parseFloat(trade.Quantity) / parseFloat(trade.Price)).toFixed(8)),
-                    date: new Date(trade.Closed).getTime(),
+                    date: createDateAsUTC(new Date(trade.Closed)).getTime(),
                     id: trade.OrderUuid,
                     exchange: EXCHANGES.BITTREX,
                 });

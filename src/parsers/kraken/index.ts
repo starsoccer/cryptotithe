@@ -1,5 +1,6 @@
 import { getCSVData } from '../';
 import { EXCHANGES, ITrade } from '../../types';
+import { createDateAsUTC } from '../utils';
 
 enum KrakenType {
     BUY = 'buy',
@@ -82,7 +83,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                     soldCurrency: pairs[1].toUpperCase(),
                     amountSold: parseFloat(trade.cost),
                     rate: (parseFloat(trade.cost) + parseFloat(trade.fee)) / (parseFloat(trade.vol)),
-                    date: new Date(trade.time).getTime(),
+                    date: createDateAsUTC(new Date(trade.time)).getTime(),
                     id: trade.txid,
                     exchange: EXCHANGES.KRAKEN,
                 });
@@ -93,7 +94,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                     soldCurrency: pairs[0].toUpperCase(),
                     amountSold: parseFloat(trade.vol),
                     rate: parseFloat(trade.vol) / (parseFloat(trade.cost) - parseFloat(trade.fee)),
-                    date: new Date(trade.time).getTime(),
+                    date: createDateAsUTC(new Date(trade.time)).getTime(),
                     id: trade.txid,
                     exchange: EXCHANGES.KRAKEN,
                 });

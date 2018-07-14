@@ -1,5 +1,6 @@
 import { getCSVData } from '../';
 import { EXCHANGES, ITrade } from '../../types';
+import { createDateAsUTC } from '../utils';
 
 enum PoloniexOrderType {
     BUY = 'Buy',
@@ -45,7 +46,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                     soldCurrency: pair[1].toUpperCase(),
                     amountSold: parseNumber(trade['Base Total Less Fee']),
                     rate: parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']),
-                    date: new Date(trade.Date).getTime(),
+                    date: createDateAsUTC(new Date(trade.Date)).getTime(),
                     id: trade['Order Number'],
                     exchange: EXCHANGES.POLONIEX,
                 });
@@ -56,7 +57,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                     soldCurrency: pair[0].toUpperCase(),
                     amountSold: parseNumber(trade['Quote Total Less Fee']),
                     rate: parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']),
-                    date: new Date(trade.Date).getTime(),
+                    date: createDateAsUTC(new Date(trade.Date)).getTime(),
                     id: trade['Order Number'],
                     exchange: EXCHANGES.POLONIEX,
                 });

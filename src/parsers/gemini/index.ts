@@ -1,5 +1,6 @@
 import { getCSVData } from '../';
 import { EXCHANGES, ITrade } from '../../types';
+import { createDateAsUTC } from '../utils';
 
 enum GeminiOrderType {
     Sell = 'Sell',
@@ -89,7 +90,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                         soldCurrency: pair.sold.toUpperCase(),
                         amountSold: amountSold + amountSoldFee,
                         rate: (amountSold + amountSoldFee) / (amountBought - amountBoughtFee),
-                        date: new Date(`${trade['Order Date']} ${trade['Order Time']}`).getTime(),
+                        date: createDateAsUTC(new Date(`${trade['Order Date']} ${trade['Order Time']}`)).getTime(),
                         id: trade['Trade ID'],
                         exchange: EXCHANGES.GEMINI,
                     });
