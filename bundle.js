@@ -73489,36 +73489,36 @@ const headers = [
     'Gain or Loss',
 ].join(',');
 function outputForm8949(holdings, trades) {
-    const holdingsTrades = CalculateGains_1.calculateGainsPerHoldings(holdings, trades);
-    const shortTermTrades = holdingsTrades.filter((trade) => trade.shortTerm !== 0);
-    const longTermTrades = holdingsTrades.filter((trade) => trade.longTerm !== 0);
+    const result = CalculateGains_1.calculateGainsPerHoldings(holdings, trades);
     let csvData = [
         'Form 8949 Statement',
         '',
         'Part 1 (Short-Term)',
     ];
     csvData = csvData.concat(headers);
-    csvData = csvData.concat(shortTermTrades.map((trade) => [
+    csvData = csvData.concat(result.shortTermTrades.map((trade) => [
         `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
         trade.USDRate * trade.amountSold,
-        (trade.USDRate * trade.amountSold) - trade.shortTerm,
+        trade.costBasis,
         null,
         null,
         trade.shortTerm,
     ]));
+    csvData = csvData.concat(['Totals', '', '', result.shortTermProceeds, result.shortTermCostBasis, '', 0, result.shortTermGain].join(','));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
-    csvData = csvData.concat(longTermTrades.map((trade) => [
+    csvData = csvData.concat(result.longTermTrades.map((trade) => [
         `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
         trade.USDRate * trade.amountSold,
-        (trade.USDRate * trade.amountSold) - trade.shortTerm,
+        trade.costBasis,
         null,
         null,
         trade.longTerm,
     ]));
+    csvData = csvData.concat(['Totals', '', '', result.longTermProceeds, result.longTermCostBasis, '', 0, result.longTermGain].join(','));
     return csvData.join('\n');
 }
 exports.default = outputForm8949;
@@ -74124,7 +74124,14 @@ function calculateGainPerTrade(holdings, internalFormat, method) {
 exports.calculateGainPerTrade = calculateGainPerTrade;
 function calculateGainsPerHoldings(holdings, trades) {
     let newHoldings = clone(holdings);
-    const newTrades = [];
+    let shortTermGain = 0;
+    let shortTermProceeds = 0;
+    let shortTermCostBasis = 0;
+    let longTermGain = 0;
+    let longTermProceeds = 0;
+    let longTermCostBasis = 0;
+    const shortTermTrades = [];
+    const longTermTrades = [];
     for (const trade of trades) {
         const result = getCurrenyHolding(newHoldings, trade);
         newHoldings = result.newHoldings;
@@ -74150,13 +74157,7 @@ function calculateGainsPerHoldings(holdings, trades) {
             const gain = (trade.USDRate - holding.rateInUSD) * holding.amount;
             let shortTerm = 0;
             let longTerm = 0;
-            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
-                longTerm += gain;
-            }
-            else {
-                shortTerm += gain;
-            }
-            newTrades.push({
+            const tradeToAdd = {
                 USDRate: trade.USDRate,
                 boughtCurrency: trade.boughtCurrency,
                 soldCurrency: trade.soldCurrency,
@@ -74169,10 +74170,33 @@ function calculateGainsPerHoldings(holdings, trades) {
                 longTerm,
                 dateAcquired: holding.date,
                 costBasis: holding.rateInUSD * holding.amount,
-            });
+            };
+            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
+                longTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
+                longTermCostBasis += tradeToAdd.costBasis;
+                longTermGain += gain;
+                tradeToAdd.longTerm += gain;
+                longTermTrades.push(tradeToAdd);
+            }
+            else {
+                shortTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
+                shortTermCostBasis += tradeToAdd.costBasis;
+                shortTermGain += gain;
+                tradeToAdd.shortTerm += gain;
+                shortTermTrades.push(tradeToAdd);
+            }
         }
     }
-    return newTrades;
+    return {
+        shortTermTrades,
+        longTermTrades,
+        shortTermGain,
+        longTermGain,
+        shortTermProceeds,
+        longTermProceeds,
+        shortTermCostBasis,
+        longTermCostBasis,
+    };
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
@@ -74305,7 +74329,7 @@ function getClosestHourPrices(trade, limit, fiatCurrency) {
             `fsym=${trade.soldCurrency}`,
             `tsym=${fiatCurrency}`,
             `limit=${limit}`,
-            `toTs=${utils_1.roundHour(new Date(trade.date)) / 1000}`,
+            `toTs=${(utils_1.roundHour(new Date(trade.date)) / 1000).toFixed(0)}`,
         ];
         const response = yield got('https://min-api.cryptocompare.com/data/histohour?' + data.join('&'));
         if ('body' in response) {

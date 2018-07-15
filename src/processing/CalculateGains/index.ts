@@ -174,9 +174,27 @@ export function calculateGainPerTrade(
     };
 }
 
-export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWithUSDRate[]): ITradeWithCostBasis[] {
+export interface ICalculateGainsPerHoldings {
+    shortTermTrades: ITradeWithCostBasis[];
+    longTermTrades: ITradeWithCostBasis[];
+    longTermGain: number;
+    longTermProceeds: number;
+    longTermCostBasis: number;
+    shortTermGain: number;
+    shortTermProceeds: number;
+    shortTermCostBasis: number;
+}
+
+export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWithUSDRate[]): ICalculateGainsPerHoldings {
     let newHoldings: IHoldings = clone(holdings);
-    const newTrades: ITradeWithCostBasis[] = [];
+    let shortTermGain = 0;
+    let shortTermProceeds = 0;
+    let shortTermCostBasis = 0;
+    let longTermGain = 0;
+    let longTermProceeds = 0;
+    let longTermCostBasis = 0;
+    const shortTermTrades: ITradeWithCostBasis[] = [];
+    const longTermTrades: ITradeWithCostBasis[] = [];
     for (const trade of trades) {
         const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade);
         newHoldings = result.newHoldings;
@@ -201,12 +219,7 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
             const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
             let shortTerm = 0;
             let longTerm = 0;
-            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
-                longTerm += gain;
-            } else {
-                shortTerm += gain;
-            }
-            newTrades.push({
+            const tradeToAdd: ITradeWithCostBasis = {
                 USDRate: trade.USDRate,
                 boughtCurrency: trade.boughtCurrency,
                 soldCurrency: trade.soldCurrency,
@@ -219,8 +232,30 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
                 longTerm,
                 dateAcquired: holding.date,
                 costBasis: holding.rateInUSD * holding.amount,
-            });
+            };
+            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
+                longTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
+                longTermCostBasis += tradeToAdd.costBasis;
+                longTermGain += gain;
+                tradeToAdd.longTerm += gain;
+                longTermTrades.push(tradeToAdd);
+            } else {
+                shortTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
+                shortTermCostBasis += tradeToAdd.costBasis;
+                shortTermGain += gain;
+                tradeToAdd.shortTerm += gain;
+                shortTermTrades.push(tradeToAdd);
+            }
         }
     }
-    return newTrades;
+    return {
+        shortTermTrades,
+        longTermTrades,
+        shortTermGain,
+        longTermGain,
+        shortTermProceeds,
+        longTermProceeds,
+        shortTermCostBasis,
+        longTermCostBasis,
+    };
 }
