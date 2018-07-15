@@ -6,7 +6,8 @@ describe('getCurrencyHolding LIFO', () => {
     test('One Holdings', () => {
         const holdings: IHoldings  = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
-        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1, METHOD.LIFO);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0], METHOD.LIFO);
 
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
@@ -14,14 +15,18 @@ describe('getCurrencyHolding LIFO', () => {
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
-        expect(totalReduced).toBe(1);
-        expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
+        expect(totalReduced).toBe(trades[0].amountSold);
+        expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(trades[0].amountSold);
     });
 
     test('More then one Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 5);
         const currency: string = Object.keys(holdings)[0];
-        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1, METHOD.LIFO);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        if (trades[0].amountSold > holdings[currency][0].amount) {
+            trades[0].amountSold = holdings[currency][0].amount + 1;
+        }
+        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0], METHOD.LIFO);
 
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
@@ -29,8 +34,7 @@ describe('getCurrencyHolding LIFO', () => {
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
-        expect(totalReduced).toBe(1);
-        expect(holdings[currency][4].amount - result.newHoldings[currency][4].amount).toBe(1);
+        expect(totalReduced).toBe(trades[0].amountSold);
     });
 });
 
@@ -39,7 +43,8 @@ describe('getCurrencyHolding FIFO', () => {
     test('default to FIFO', () => {
         const holdings: IHoldings = mockHoldings(1, 3);
         const currency: string = Object.keys(holdings)[0];
-        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0]);
 
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
@@ -47,14 +52,14 @@ describe('getCurrencyHolding FIFO', () => {
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
-        expect(totalReduced).toBe(1);
-        expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
+        expect(totalReduced).toBe(trades[0].amountSold);
     });
 
     test('One Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
-        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1, METHOD.FIFO);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0], METHOD.FIFO);
 
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
@@ -62,14 +67,15 @@ describe('getCurrencyHolding FIFO', () => {
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
-        expect(totalReduced).toBe(1);
-        expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
+        expect(totalReduced).toBe(trades[0].amountSold);
+        expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(trades[0].amountSold);
     });
 
     test('More then one Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 5);
         const currency: string = Object.keys(holdings)[0];
-        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, 1, METHOD.FIFO);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0], METHOD.FIFO);
 
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
@@ -77,8 +83,7 @@ describe('getCurrencyHolding FIFO', () => {
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
-        expect(totalReduced).toBe(1);
-        expect(holdings[currency][0].amount - result.newHoldings[currency][0].amount).toBe(1);
+        expect(totalReduced).toBe(trades[0].amountSold);
     });
 });
 
@@ -87,16 +92,17 @@ describe('getCurrencyHolding Overflow', () => {
     test('with one holding', () => {
         const holdings: IHoldings = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
-        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, holdings[currency][0].amount + 1);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0]);
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
-        expect(totalReduced).toBe(holdings[currency][0].amount + 1);
+        expect(totalReduced).toBe(trades[0].amountSold);
         expect(result.deductedHoldings.length).toBe(2);
-        expect(result.deductedHoldings[1].amount).toBe(1);
+        expect(result.deductedHoldings[1].amount).toBe(trades[0].amountSold - result.deductedHoldings[0].amount);
         expect(result.deductedHoldings[1].rateInUSD).toBe(0);
         expect(result.deductedHoldings[1].date - new Date().getTime()).toBeLessThan(60000);
         expect(Object.keys(result.newHoldings).length).toBe(0);
@@ -109,16 +115,17 @@ describe('getCurrencyHolding Overflow', () => {
         for (const holding of holdings[currency]) {
             totalAmount += holding.amount;
         }
-        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, currency, totalAmount);
+        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0]);
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
         let totalReduced: number = 0;
         for (const deductedHolding of result.deductedHoldings) {
             totalReduced += deductedHolding.amount;
         }
-        expect(totalReduced).toBe(totalAmount);
+        expect(totalReduced).toBe(trades[0].amountSold);
         expect(result.deductedHoldings.length).toBe(4);
-        expect(result.deductedHoldings[3].amount).toBe(1);
+        expect(result.deductedHoldings[3].amount).toBe(trades[0].amountSold - result.deductedHoldings[2].amount - result.deductedHoldings[1].amount - result.deductedHoldings[0].amount);
         expect(result.deductedHoldings[3].rateInUSD).toBe(0);
         expect(result.deductedHoldings[3].date - new Date().getTime()).toBeLessThan(60000);
         expect(Object.keys(result.newHoldings).length).toBe(0);

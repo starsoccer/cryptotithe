@@ -1,6 +1,6 @@
 import * as faker from 'faker';
-import { EXCHANGES, IHoldings, ITrade, ITradeWithUSDRate} from '../../types';
-import { addUSDRateToTrade, addUSDRateToTrades, BTCBasedRate, getUSDRate } from './';
+import { EXCHANGES, IHoldings, ITrade, ITradeWithUSDRate, FiatRateMethod} from '../../types';
+import { addFiatRateToTrades } from './';
 
 describe('Add USD Rate to Trade', () => {
     test('add USD rate to one trade', async () => {
@@ -14,10 +14,10 @@ describe('Add USD Rate to Trade', () => {
             exchange: EXCHANGES.GEMINI,
         };
 
-        const tradeWithUSDRate: ITradeWithUSDRate = await addUSDRateToTrade(trade);
+        const tradeWithUSDRate: ITradeWithUSDRate[] = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.BITCOINAVERAGE);
 
-        expect('USDRate' in tradeWithUSDRate).toBeTruthy();
-        expect(typeof tradeWithUSDRate.USDRate).toBe('number');
+        expect('USDRate' in tradeWithUSDRate[0]).toBeTruthy();
+        expect(typeof tradeWithUSDRate[0].USDRate).toBe('number');
     });
 });
 
@@ -53,70 +53,11 @@ describe('Add USD Rate to Trades', () => {
             },
         ];
 
-        const tradesWithUSDRate: ITradeWithUSDRate[] = await addUSDRateToTrades(trades);
+        const tradesWithUSDRate: ITradeWithUSDRate[] = await addFiatRateToTrades(trades, 'USD', FiatRateMethod.BITCOINAVERAGE);
 
         for (const trade of tradesWithUSDRate) {
             expect('USDRate' in trade).toBeTruthy();
             expect(typeof trade.USDRate).toBe('number');
         }
-    });
-});
-
-describe('Get USD Rate', () => {
-    const date = new Date(1508087399612); // random but fixed date for testing
-    test('add USD rate to BTC Sold trade', () => {
-        const trade: ITrade = {
-            boughtCurrency: 'LTC',
-            soldCurrency: 'BTC',
-            amountSold: 5,
-            rate: 1,
-            date: date.getTime(),
-            id: '1',
-            exchange: EXCHANGES.GEMINI,
-        };
-        const rate = BTCBasedRate(trade, 1000);
-        expect(rate).toBe(1000);
-    });
-
-    test('add USD rate to BTC Bought trade', () => {
-        const trade: ITrade = {
-            boughtCurrency: 'BTC',
-            soldCurrency: 'LTC',
-            amountSold: 5,
-            rate: 0.01,
-            date: date.getTime(),
-            id: '1',
-            exchange: EXCHANGES.GEMINI,
-        };
-        const rate = BTCBasedRate(trade, 1000);
-        expect(rate).toBe(1000 * (trade.amountSold / trade.rate) / trade.amountSold);
-    });
-
-    test('add USD rate to USD Bought trade', async () => {
-        const trade: ITrade = {
-            boughtCurrency: 'USD',
-            soldCurrency: 'BTC',
-            amountSold: faker.random.number(),
-            rate: faker.random.number(),
-            date: date.getTime(),
-            id: '1',
-            exchange: EXCHANGES.GEMINI,
-        };
-        const rate = await getUSDRate(trade);
-        expect(rate).toBe(trade.amountSold / trade.rate / trade.amountSold);
-    });
-
-    test('add USD rate to USD Sold trade', async () => {
-        const trade: ITrade = {
-            boughtCurrency: 'BTC',
-            soldCurrency: 'USD',
-            amountSold: faker.random.number(),
-            rate: faker.random.number(),
-            date: date.getTime(),
-            id: '1',
-            exchange: EXCHANGES.GEMINI,
-        };
-        const rate = await getUSDRate(trade);
-        expect(rate).toBe(trade.rate);
     });
 });

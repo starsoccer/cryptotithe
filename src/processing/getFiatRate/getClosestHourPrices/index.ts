@@ -7,7 +7,7 @@ export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCur
         `fsym=${trade.soldCurrency}`,
         `tsym=${fiatCurrency}`,
         `limit=${limit}`,
-        `toTs=${roundHour(new Date(trade.date)) / 1000}`,
+        `toTs=${(roundHour(new Date(trade.date)) / 1000).toFixed(0)}`,
     ];
     const response: got.Response<any> = await got(
         'https://min-api.cryptocompare.com/data/histohour?' + data.join('&'),
