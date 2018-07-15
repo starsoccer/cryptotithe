@@ -34,6 +34,9 @@ export async function processData(exchange: keyof typeof EXCHANGES, fileData: st
         case 'KRAKEN':
             processExchangeData = require('./kraken').processData;
             break;
+        case 'BINANCE':
+            processExchangeData = require('./binance').processData;
+            break;
         default:
             throw new Error(`Unknown Exchange - ${exchange}`);
     }

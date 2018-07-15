@@ -87,4 +87,5 @@ export enum EXCHANGES {
     GEMINI = 'Gemini',
     POLONIEX = 'Poloniex',
     KRAKEN = 'Kraken',
+    BINANCE = 'Binance',
 }

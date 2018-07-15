@@ -161,7 +161,7 @@ class AddTrades extends React.Component {
 }
 exports.AddTrades = AddTrades;
 
-},{"../../src/parsers":418,"../../src/processing/DuplicateCheck":423,"../../src/processing/SortTrades":424,"../../src/processing/getFiatRate":427,"../../src/types":429,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":14,"../TradesTable":15,"react":295}],2:[function(require,module,exports){
+},{"../../src/parsers":419,"../../src/processing/DuplicateCheck":424,"../../src/processing/SortTrades":425,"../../src/processing/getFiatRate":428,"../../src/types":430,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":14,"../TradesTable":15,"react":295}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const classNames = require("classNames");
@@ -321,7 +321,7 @@ class CalculateGains extends React.Component {
 }
 exports.CalculateGains = CalculateGains;
 
-},{"../../src/output/Form8949":415,"../../src/processing/CalculateGains":422,"../../src/types":429,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":295}],5:[function(require,module,exports){
+},{"../../src/output/Form8949":415,"../../src/processing/CalculateGains":423,"../../src/types":430,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":295}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -556,7 +556,7 @@ class Settings extends React.Component {
 }
 exports.Settings = Settings;
 
-},{"../../src/types":429,"../Button":3,"../Popup":10,"react":295}],12:[function(require,module,exports){
+},{"../../src/types":430,"../Button":3,"../Popup":10,"react":295}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -724,7 +724,7 @@ class TradeDetails extends React.Component {
 }
 exports.default = TradeDetails;
 
-},{"../../src/parsers/utils":421,"../Button":3,"crypto":82,"react":295,"validator":339}],15:[function(require,module,exports){
+},{"../../src/parsers/utils":422,"../Button":3,"crypto":82,"react":295,"validator":339}],15:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -785,7 +785,7 @@ class TradesTable extends React.Component {
 }
 exports.TradesTable = TradesTable;
 
-},{"../../src/processing/SortTrades":424,"../Popup":10,"../Table":12,"../TradeDetails":14,"react":295}],16:[function(require,module,exports){
+},{"../../src/processing/SortTrades":425,"../Popup":10,"../Table":12,"../TradeDetails":14,"react":295}],16:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -837,7 +837,7 @@ class ViewTrades extends React.Component {
 }
 exports.ViewTrades = ViewTrades;
 
-},{"../../src/processing/SortTrades":424,"../../src/processing/getFiatRate":427,"../../src/types":429,"../Button":3,"../Loader":9,"../TradesTable":15,"react":295}],17:[function(require,module,exports){
+},{"../../src/processing/SortTrades":425,"../../src/processing/getFiatRate":428,"../../src/types":430,"../Button":3,"../Loader":9,"../TradesTable":15,"react":295}],17:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -986,7 +986,7 @@ class rootElement extends React.Component {
 }
 exports.rootElement = rootElement;
 
-},{"../src/processing/SortTrades":424,"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./FileDownload":7,"./Popup":10,"./Settings":11,"./ViewTrades":16,"classnames":73,"react":295}],18:[function(require,module,exports){
+},{"../src/processing/SortTrades":425,"./AddTrades":1,"./Button":3,"./CalculateGains":4,"./FileBrowse":6,"./FileDownload":7,"./Popup":10,"./Settings":11,"./ViewTrades":16,"classnames":73,"react":295}],18:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -73473,7 +73473,7 @@ else {
     render(true);
 }
 
-},{"./components":17,"./data":undefined,"./src/types":429,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
+},{"./components":17,"./data":undefined,"./src/types":430,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const CalculateGains_1 = require("../../processing/CalculateGains");
@@ -73522,7 +73522,86 @@ function outputForm8949(holdings, trades) {
 }
 exports.default = outputForm8949;
 
-},{"../../processing/CalculateGains":422}],416:[function(require,module,exports){
+},{"../../processing/CalculateGains":423}],416:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const __1 = require("../");
+const types_1 = require("../../types");
+const utils_1 = require("../utils");
+const crypto = require("crypto");
+var BinanceOrderType;
+(function (BinanceOrderType) {
+    BinanceOrderType["SELL"] = "SELL";
+    BinanceOrderType["BUY"] = "BUY";
+})(BinanceOrderType || (BinanceOrderType = {}));
+function getPairs(market) {
+    const pairs = [];
+    if (market.length === 6) {
+        pairs.push(market.substr(0, 3));
+        pairs.push(market.substr(3, 3));
+    }
+    else {
+        pairs.push(market.substr(0, 4));
+        pairs.push(market.substr(4, 3));
+    }
+    return pairs;
+}
+function processData(fileData) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield __1.getCSVData(fileData);
+        const internalFormat = [];
+        for (const trade of data) {
+            const pair = getPairs(trade.Market);
+            const tradeToAdd = {};
+            switch (trade.Type) {
+                case BinanceOrderType.BUY:
+                    tradeToAdd.boughtCurrency = pair[0].toUpperCase();
+                    tradeToAdd.soldCurrency = pair[1].toUpperCase();
+                    tradeToAdd.date = utils_1.createDateAsUTC(new Date(trade['Date(UTC)'])).getTime();
+                    tradeToAdd.exchange = types_1.EXCHANGES.BINANCE;
+                    if (pair[1].toUpperCase() === trade['Fee Coin']) {
+                        tradeToAdd.amountSold = parseFloat(trade.Total) + parseFloat(trade.Fee);
+                        tradeToAdd.rate = tradeToAdd.amountSold / parseFloat(trade.Amount);
+                    }
+                    else {
+                        tradeToAdd.amountSold = parseFloat(trade.Total);
+                        tradeToAdd.rate = parseFloat(trade.Total) / (parseFloat(trade.Amount) + parseFloat(trade.Fee));
+                    }
+                    break;
+                case BinanceOrderType.SELL:
+                    tradeToAdd.soldCurrency = pair[0].toUpperCase();
+                    tradeToAdd.boughtCurrency = pair[1].toUpperCase();
+                    tradeToAdd.date = utils_1.createDateAsUTC(new Date(trade['Date(UTC)'])).getTime();
+                    tradeToAdd.exchange = types_1.EXCHANGES.BINANCE;
+                    if (pair[1].toUpperCase() === trade['Fee Coin']) {
+                        tradeToAdd.amountSold = parseFloat(trade.Amount);
+                        tradeToAdd.rate = parseFloat(trade.Amount) / (parseFloat(trade.Total) - parseFloat(trade.Fee));
+                    }
+                    else {
+                        tradeToAdd.amountSold = parseFloat(trade.Amount) + parseFloat(trade.Fee);
+                        tradeToAdd.rate = tradeToAdd.amountSold / parseFloat(trade.Total);
+                    }
+                    break;
+                default:
+                    throw new Error('Unknown Order Type - ' + trade['Date(UTC)']);
+            }
+            tradeToAdd.id = crypto.createHash('sha256').update(JSON.stringify(tradeToAdd)).digest('hex');
+            internalFormat.push(tradeToAdd);
+        }
+        return internalFormat;
+    });
+}
+exports.processData = processData;
+
+},{"../":419,"../../types":430,"../utils":422,"crypto":82}],417:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73579,7 +73658,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":418,"../../types":429,"../utils":421}],417:[function(require,module,exports){
+},{"../":419,"../../types":430,"../utils":422}],418:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73663,7 +73742,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":418,"../../types":429,"../utils":421}],418:[function(require,module,exports){
+},{"../":419,"../../types":430,"../utils":422}],419:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73707,6 +73786,9 @@ function processData(exchange, fileData) {
             case 'KRAKEN':
                 processExchangeData = require('./kraken').processData;
                 break;
+            case 'BINANCE':
+                processExchangeData = require('./binance').processData;
+                break;
             default:
                 throw new Error(`Unknown Exchange - ${exchange}`);
         }
@@ -73718,7 +73800,7 @@ function processData(exchange, fileData) {
 }
 exports.processData = processData;
 
-},{"./bittrex":416,"./gemini":417,"./kraken":419,"./poloniex":420,"csvtojson":83}],419:[function(require,module,exports){
+},{"./binance":416,"./bittrex":417,"./gemini":418,"./kraken":420,"./poloniex":421,"csvtojson":83}],420:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73821,7 +73903,7 @@ function processData(filePath) {
 }
 exports.processData = processData;
 
-},{"../":418,"../../types":429,"../utils":421}],420:[function(require,module,exports){
+},{"../":419,"../../types":430,"../utils":422}],421:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73889,7 +73971,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":418,"../../types":429,"../utils":421}],421:[function(require,module,exports){
+},{"../":419,"../../types":430,"../utils":422}],422:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function createDateAsUTC(date) {
@@ -73897,7 +73979,7 @@ function createDateAsUTC(date) {
 }
 exports.createDateAsUTC = createDateAsUTC;
 
-},{}],422:[function(require,module,exports){
+},{}],423:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const clone = require("clone");
@@ -74071,7 +74153,7 @@ function calculateGainsPerHoldings(holdings, trades) {
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
-},{"../../types":429,"clone":75}],423:[function(require,module,exports){
+},{"../../types":430,"clone":75}],424:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function duplicateCheck(currentTrades, newTrades) {
@@ -74107,7 +74189,7 @@ function duplicateCheck(currentTrades, newTrades) {
 }
 exports.default = duplicateCheck;
 
-},{}],424:[function(require,module,exports){
+},{}],425:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function sortTrades(trades) {
@@ -74118,7 +74200,7 @@ function sortTradesByDate(trade1, trade2) {
     return new Date(trade1.date).getTime() - new Date(trade2.date).getTime();
 }
 
-},{}],425:[function(require,module,exports){
+},{}],426:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74181,7 +74263,7 @@ function getBTCFiatRate(trade, fiatCurrency) {
 }
 exports.getBTCFiatRate = getBTCFiatRate;
 
-},{"../utils":428,"got":159}],426:[function(require,module,exports){
+},{"../utils":429,"got":159}],427:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74226,7 +74308,7 @@ function getClosestHourPrices(trade, limit, fiatCurrency) {
 }
 exports.getClosestHourPrices = getClosestHourPrices;
 
-},{"../utils":428,"got":159}],427:[function(require,module,exports){
+},{"../utils":429,"got":159}],428:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74289,7 +74371,7 @@ function getUSDTradeRate(trade, fiatCurrency) {
     }
 }
 
-},{"../../types":429,"./BTCBasedRate":425,"./getClosestHourPrices":426,"./utils":428}],428:[function(require,module,exports){
+},{"../../types":430,"./BTCBasedRate":426,"./getClosestHourPrices":427,"./utils":429}],429:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function cryptocompareRateResponse(response) {
@@ -74337,7 +74419,7 @@ function calculateAverageFromArray(avgs) {
 }
 exports.calculateAverageFromArray = calculateAverageFromArray;
 
-},{}],429:[function(require,module,exports){
+},{}],430:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var METHOD;
@@ -74363,6 +74445,7 @@ var EXCHANGES;
     EXCHANGES["GEMINI"] = "Gemini";
     EXCHANGES["POLONIEX"] = "Poloniex";
     EXCHANGES["KRAKEN"] = "Kraken";
+    EXCHANGES["BINANCE"] = "Binance";
 })(EXCHANGES = exports.EXCHANGES || (exports.EXCHANGES = {}));
 
 },{}]},{},[414]);
