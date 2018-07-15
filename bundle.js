@@ -257,10 +257,10 @@ class CalculateGains extends React.Component {
             let holdings = this.props.savedData.holdings;
             if (this.state.includePreviousYears) {
                 const trades = this.props.savedData.trades.filter((trade) => new Date(trade.date).getFullYear() < this.state.currentYear);
-                holdings = CalculateGains_1.calculateGains(this.props.savedData.holdings, trades).newHoldings;
+                holdings = CalculateGains_1.calculateGains(this.props.savedData.holdings, trades, this.state.gainCalculationMethod).newHoldings;
             }
             const tradesForThisYear = this.props.savedData.trades.filter((trade) => new Date(trade.date).getFullYear() === this.state.currentYear);
-            const data = Form8949_1.default(holdings, tradesForThisYear);
+            const data = Form8949_1.default(holdings, tradesForThisYear, this.state.gainCalculationMethod);
             this.setState({ downloadProps: {
                     data,
                     fileName: 'Form8949.csv',
@@ -73488,8 +73488,8 @@ const headers = [
     'Adjustment Amount',
     'Gain or Loss',
 ].join(',');
-function outputForm8949(holdings, trades) {
-    const result = CalculateGains_1.calculateGainsPerHoldings(holdings, trades);
+function outputForm8949(holdings, trades, method) {
+    const result = CalculateGains_1.calculateGainsPerHoldings(holdings, trades, method);
     let csvData = [
         'Form 8949 Statement',
         '',
@@ -74122,7 +74122,7 @@ function calculateGainPerTrade(holdings, internalFormat, method) {
     };
 }
 exports.calculateGainPerTrade = calculateGainPerTrade;
-function calculateGainsPerHoldings(holdings, trades) {
+function calculateGainsPerHoldings(holdings, trades, method) {
     let newHoldings = clone(holdings);
     let shortTermGain = 0;
     let shortTermProceeds = 0;
@@ -74133,7 +74133,7 @@ function calculateGainsPerHoldings(holdings, trades) {
     const shortTermTrades = [];
     const longTermTrades = [];
     for (const trade of trades) {
-        const result = getCurrenyHolding(newHoldings, trade);
+        const result = getCurrenyHolding(newHoldings, trade, method);
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];

@@ -185,7 +185,7 @@ export interface ICalculateGainsPerHoldings {
     shortTermCostBasis: number;
 }
 
-export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWithUSDRate[]): ICalculateGainsPerHoldings {
+export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWithUSDRate[], method: METHOD): ICalculateGainsPerHoldings {
     let newHoldings: IHoldings = clone(holdings);
     let shortTermGain = 0;
     let shortTermProceeds = 0;
@@ -196,7 +196,7 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
     const shortTermTrades: ITradeWithCostBasis[] = [];
     const longTermTrades: ITradeWithCostBasis[] = [];
     for (const trade of trades) {
-        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade);
+        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade, method);
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
