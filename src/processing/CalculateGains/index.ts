@@ -6,6 +6,7 @@ import {
     ITradeWithGains,
     ITradeWithUSDRate,
     METHOD,
+    ITrade,
 } from '../../types';
 
 const FULL_YEAR_IN_MILLISECONDS = 31536000000;
@@ -26,7 +27,7 @@ export function calculateGains(
     let newHoldings: IHoldings = clone(holdings);
     for (const trade of trades) {
         const result: IGetCurrencyHolding = getCurrenyHolding(
-            newHoldings, trade.soldCurrency, trade.amountSold, method,
+            newHoldings, trade, method,
         );
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
@@ -36,18 +37,17 @@ export function calculateGains(
             newHoldings[trade.boughtCurrency].push({
                 amount: trade.amountSold / trade.rate,
                 rateInUSD: trade.USDRate,
-                date: new Date().getTime(),
+                date: trade.date,
             });
             continue;
         } else {
             newHoldings[trade.boughtCurrency].push({
                 amount: trade.amountSold / trade.rate,
                 rateInUSD: trade.USDRate * trade.rate,
-                date: new Date().getTime(),
+                date: trade.date,
             });
             for (const holding of result.deductedHoldings) {
                 const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
-
                 if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                     longTermGain += gain;
                 } else {
@@ -69,16 +69,16 @@ export interface IGetCurrencyHolding {
 }
 
 export function getCurrenyHolding(
-    holdings: IHoldings, currency: string, amount: number, method?: METHOD,
+    holdings: IHoldings, trade: ITrade, method?: METHOD,
 ): IGetCurrencyHolding {
     holdings = clone(holdings);
     const currencyHolding: ICurrencyHolding[] = [];
-    let amountUsed: number = amount;
+    let amountUsed: number = trade.amountSold;
     while (amountUsed !== 0) {
-        if (currency in holdings) {
+        if (trade.soldCurrency in holdings) {
             switch (method) {
                 case METHOD.LIFO:
-                    const lastIn: ICurrencyHolding = holdings[currency][holdings[currency].length - 1];
+                    const lastIn: ICurrencyHolding = holdings[trade.soldCurrency][holdings[trade.soldCurrency].length - 1];
                     if (lastIn.amount > amountUsed) {
                         lastIn.amount = lastIn.amount - amountUsed;
                         currencyHolding.push({
@@ -89,7 +89,7 @@ export function getCurrenyHolding(
                         amountUsed = 0;
                     } else {
                         amountUsed = amountUsed - lastIn.amount;
-                        const popped = holdings[currency].pop();
+                        const popped = holdings[trade.soldCurrency].pop();
                         if (popped !== undefined) {
                             currencyHolding.push(popped);
                         }
@@ -99,7 +99,7 @@ export function getCurrenyHolding(
                     // return '';
                 case METHOD.FIFO:
                 default:
-                    const firstIn: ICurrencyHolding = holdings[currency][0];
+                    const firstIn: ICurrencyHolding = holdings[trade.soldCurrency][0];
                     if (firstIn.amount > amountUsed) {
                         firstIn.amount = firstIn.amount - amountUsed;
                         currencyHolding.push({
@@ -110,25 +110,25 @@ export function getCurrenyHolding(
                         amountUsed = 0;
                     } else {
                         amountUsed = amountUsed - firstIn.amount;
-                        currencyHolding.push(holdings[currency][0]);
-                        holdings[currency].splice(0, 1);
+                        currencyHolding.push(holdings[trade.soldCurrency][0]);
+                        holdings[trade.soldCurrency].splice(0, 1);
                     }
                     break;
             }
-            if (!holdings[currency].length) {
-                delete holdings[currency];
+            if (!holdings[trade.soldCurrency].length) {
+                delete holdings[trade.soldCurrency];
             }
         } else {
-            if (currency === 'USD') {
+            if (trade.soldCurrency === 'USD') {
                 currencyHolding.push({
                     amount: amountUsed,
-                    date: new Date().getTime(),
+                    date: trade.date,
                     rateInUSD: 1,
                 });
             } else {
                 currencyHolding.push({
                     amount: amountUsed,
-                    date: new Date().getTime(),
+                    date: trade.date,
                     rateInUSD: 0,
                 });
             }
@@ -178,16 +178,25 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
     let newHoldings: IHoldings = clone(holdings);
     const newTrades: ITradeWithCostBasis[] = [];
     for (const trade of trades) {
-        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade.soldCurrency, trade.amountSold);
+        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade);
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
         }
-        newHoldings[trade.boughtCurrency].push({
-            amount: trade.amountSold / trade.rate,
-            rateInUSD: trade.USDRate * trade.rate,
-            date: new Date().getTime(),
-        });
+        if (trade.soldCurrency === 'USD') {
+            newHoldings[trade.boughtCurrency].push({
+                amount: trade.amountSold / trade.rate,
+                rateInUSD: trade.USDRate,
+                date: trade.date,
+            });
+            continue;
+        } else {
+            newHoldings[trade.boughtCurrency].push({
+                amount: trade.amountSold / trade.rate,
+                rateInUSD: trade.USDRate * trade.rate,
+                date: trade.date,
+            });
+        }
         for (const holding of result.deductedHoldings) {
             const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
             let shortTerm = 0;
@@ -198,7 +207,14 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
                 shortTerm += gain;
             }
             newTrades.push({
-                ...trade,
+                USDRate: trade.USDRate,
+                boughtCurrency: trade.boughtCurrency,
+                soldCurrency: trade.soldCurrency,
+                amountSold: holding.amount,
+                rate: trade.rate,
+                date: trade.date,
+                id: trade.id,
+                exchange: trade.exchange,
                 shortTerm,
                 longTerm,
                 dateAcquired: holding.date,

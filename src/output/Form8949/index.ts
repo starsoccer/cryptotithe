@@ -1,5 +1,5 @@
 import { calculateGainsPerHoldings } from '../../processing/CalculateGains';
-import { IHoldings, ITradeWithCostBasis, ITradeWithGains } from '../../types';
+import { IHoldings, ITradeWithCostBasis, ITradeWithUSDRate } from '../../types';
 
 const headers = [
     'Description',
@@ -12,7 +12,7 @@ const headers = [
     'Gain or Loss',
 ].join(',');
 
-export default function outputForm8949(holdings: IHoldings, trades: ITradeWithGains[]) {
+export default function outputForm8949(holdings: IHoldings, trades: ITradeWithUSDRate[]) {
     const holdingsTrades: ITradeWithCostBasis[] = calculateGainsPerHoldings(holdings, trades);
     const shortTermTrades = holdingsTrades.filter((trade) => trade.shortTerm !== 0);
     const longTermTrades = holdingsTrades.filter((trade) => trade.longTerm !== 0);
@@ -23,7 +23,7 @@ export default function outputForm8949(holdings: IHoldings, trades: ITradeWithGa
     ];
     csvData = csvData.concat(headers);
     csvData = csvData.concat(shortTermTrades.map((trade) => [
-        `${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
+        `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
         trade.USDRate * trade.amountSold,
@@ -34,7 +34,7 @@ export default function outputForm8949(holdings: IHoldings, trades: ITradeWithGa
     ]));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
     csvData = csvData.concat(longTermTrades.map((trade) => [
-        `${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
+        `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
         trade.USDRate * trade.amountSold,

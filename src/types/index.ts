@@ -66,8 +66,8 @@ export interface ITradeWithDuplicateProbability extends ITrade {
 }
 
 export enum METHOD {
-    LIFO = 'LIFO',
     FIFO = 'FIFO',
+    LIFO = 'LIFO',
     HCFO = 'HCFO',
 }
 
