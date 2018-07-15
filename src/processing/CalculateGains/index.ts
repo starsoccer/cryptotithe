@@ -237,7 +237,22 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
             });
         }
         for (const holding of result.deductedHoldings) {
-            const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            const unFixedGain = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            let trueGain = 0;
+            if (parseInt(unFixedGain.toFixed(2), 10) === 0) {
+                if (unFixedGain === 0) {
+                    trueGain = 0;
+                } else {
+                    if (unFixedGain > 0) {
+                        trueGain = 0.01;
+                    } else {
+                        trueGain = -0.01;
+                    }
+                }
+            } else {
+                trueGain = parseInt(unFixedGain.toFixed(2), 10);
+            }
+            const gain: number = trueGain;
             let shortTerm = 0;
             let longTerm = 0;
             const tradeToAdd: ITradeWithCostBasis = {

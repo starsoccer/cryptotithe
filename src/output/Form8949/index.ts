@@ -24,24 +24,24 @@ export default function outputForm8949(holdings: IHoldings, trades: ITradeWithUS
         `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
-        trade.USDRate * trade.amountSold,
-        trade.costBasis,
+        (trade.USDRate * trade.amountSold).toFixed(2),
+        (trade.costBasis).toFixed(2),
         null,
         null,
-        trade.shortTerm,
+        (trade.shortTerm).toFixed(2),
     ]));
-    csvData = csvData.concat(['Totals', '', '', result.shortTermProceeds, result.shortTermCostBasis, '', 0, result.shortTermGain].join(','));
+    csvData = csvData.concat(['Totals', '', '', result.shortTermProceeds.toFixed(2), result.shortTermCostBasis.toFixed(2), '', 0, result.shortTermGain.toFixed(2)].join(','));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
     csvData = csvData.concat(result.longTermTrades.map((trade) => [
         `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
-        trade.USDRate * trade.amountSold,
-        trade.costBasis,
+        (trade.USDRate * trade.amountSold).toFixed(2),
+        (trade.costBasis).toFixed(2),
         null,
         null,
-        trade.longTerm,
+        (trade.longTerm).toFixed(2),
     ]));
-    csvData = csvData.concat(['Totals', '', '', result.longTermProceeds, result.longTermCostBasis, '', 0, result.longTermGain].join(','));
+    csvData = csvData.concat(['Totals', '', '', result.longTermProceeds.toFixed(2), result.longTermCostBasis.toFixed(2), '', 0, result.longTermGain.toFixed(2)].join(','));
     return csvData.join('\n');
 }

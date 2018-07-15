@@ -73500,25 +73500,25 @@ function outputForm8949(holdings, trades, method) {
         `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
-        trade.USDRate * trade.amountSold,
-        trade.costBasis,
+        (trade.USDRate * trade.amountSold).toFixed(2),
+        (trade.costBasis).toFixed(2),
         null,
         null,
-        trade.shortTerm,
+        (trade.shortTerm).toFixed(2),
     ]));
-    csvData = csvData.concat(['Totals', '', '', result.shortTermProceeds, result.shortTermCostBasis, '', 0, result.shortTermGain].join(','));
+    csvData = csvData.concat(['Totals', '', '', result.shortTermProceeds.toFixed(2), result.shortTermCostBasis.toFixed(2), '', 0, result.shortTermGain.toFixed(2)].join(','));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
     csvData = csvData.concat(result.longTermTrades.map((trade) => [
         `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
         new Date(trade.dateAcquired),
         new Date(trade.date),
-        trade.USDRate * trade.amountSold,
-        trade.costBasis,
+        (trade.USDRate * trade.amountSold).toFixed(2),
+        (trade.costBasis).toFixed(2),
         null,
         null,
-        trade.longTerm,
+        (trade.longTerm).toFixed(2),
     ]));
-    csvData = csvData.concat(['Totals', '', '', result.longTermProceeds, result.longTermCostBasis, '', 0, result.longTermGain].join(','));
+    csvData = csvData.concat(['Totals', '', '', result.longTermProceeds.toFixed(2), result.longTermCostBasis.toFixed(2), '', 0, result.longTermGain.toFixed(2)].join(','));
     return csvData.join('\n');
 }
 exports.default = outputForm8949;
@@ -74055,7 +74055,29 @@ function getCurrenyHolding(holdings, trade, method) {
                     }
                     break;
                 case types_1.METHOD.HCFO:
-                // return '';
+                    let highestCostPosition = 0;
+                    for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
+                        const holding = holdings[trade.soldCurrency][index];
+                        if (holding.rateInUSD > holdings[trade.soldCurrency][highestCostPosition].rateInUSD) {
+                            highestCostPosition = index;
+                        }
+                    }
+                    const highestCostHolding = holdings[trade.soldCurrency][highestCostPosition];
+                    if (highestCostHolding.amount > amountUsed) {
+                        highestCostHolding.amount = highestCostHolding.amount - amountUsed;
+                        currencyHolding.push({
+                            amount: amountUsed,
+                            rateInUSD: highestCostHolding.rateInUSD,
+                            date: highestCostHolding.date,
+                        });
+                        amountUsed = 0;
+                    }
+                    else {
+                        amountUsed = amountUsed - highestCostHolding.amount;
+                        currencyHolding.push(highestCostHolding);
+                        holdings[trade.soldCurrency].splice(highestCostPosition, 1);
+                    }
+                    break;
                 case types_1.METHOD.FIFO:
                 default:
                     const firstIn = holdings[trade.soldCurrency][0];
@@ -74154,7 +74176,25 @@ function calculateGainsPerHoldings(holdings, trades, method) {
             });
         }
         for (const holding of result.deductedHoldings) {
-            const gain = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            const unFixedGain = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            let trueGain = 0;
+            if (parseInt(unFixedGain.toFixed(2), 10) === 0) {
+                if (unFixedGain === 0) {
+                    trueGain = 0;
+                }
+                else {
+                    if (unFixedGain > 0) {
+                        trueGain = 0.01;
+                    }
+                    else {
+                        trueGain = -0.01;
+                    }
+                }
+            }
+            else {
+                trueGain = parseInt(unFixedGain.toFixed(2), 10);
+            }
+            const gain = trueGain;
             let shortTerm = 0;
             let longTerm = 0;
             const tradeToAdd = {
@@ -74259,6 +74299,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const got = require("got");
+const types_1 = require("../../../types");
 const utils_1 = require("../utils");
 function BTCBasedRate(trade, BTCUSDRate) {
     if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
@@ -74272,7 +74313,7 @@ function BTCBasedRate(trade, BTCUSDRate) {
     }
 }
 exports.BTCBasedRate = BTCBasedRate;
-function getBTCFiatRate(trade, fiatCurrency) {
+function getBTCFiatRate(trade, fiatCurrency, method) {
     return __awaiter(this, void 0, void 0, function* () {
         const tradeTime = parseInt((utils_1.roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
         const data = [
@@ -74290,7 +74331,14 @@ function getBTCFiatRate(trade, fiatCurrency) {
                 if ('Data' in result) {
                     for (const hourData of result.Data) {
                         if (hourData.time <= tradeTime && tradeTime >= hourData.time + 3600) {
-                            return BTCBasedRate(trade, utils_1.calculateAvgerageHourPrice(hourData));
+                            switch (method) {
+                                case types_1.FiatRateMethod.HOURLOW:
+                                    return BTCBasedRate(trade, hourData.low);
+                                case types_1.FiatRateMethod.HOURHIGH:
+                                    return BTCBasedRate(trade, hourData.high);
+                                default:
+                                    return BTCBasedRate(trade, utils_1.calculateAvgerageHourPrice(hourData));
+                            }
                         }
                     }
                     throw new Error('Could not get Rate');
@@ -74310,7 +74358,7 @@ function getBTCFiatRate(trade, fiatCurrency) {
 }
 exports.getBTCFiatRate = getBTCFiatRate;
 
-},{"../utils":429,"got":159}],427:[function(require,module,exports){
+},{"../../../types":430,"../utils":429,"got":159}],427:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74325,22 +74373,23 @@ const got = require("got");
 const utils_1 = require("../utils");
 function getClosestHourPrices(trade, limit, fiatCurrency) {
     return __awaiter(this, void 0, void 0, function* () {
+        const tradeTime = parseInt((utils_1.roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
         const data = [
             `fsym=${trade.soldCurrency}`,
             `tsym=${fiatCurrency}`,
             `limit=${limit}`,
-            `toTs=${(utils_1.roundHour(new Date(trade.date)) / 1000).toFixed(0)}`,
+            `toTs=${tradeTime}`,
         ];
         const response = yield got('https://min-api.cryptocompare.com/data/histohour?' + data.join('&'));
         if ('body' in response) {
             try {
                 const result = JSON.parse(response.body);
                 if ('Data' in result) {
-                    const avgs = [];
                     for (const hourData of result.Data) {
-                        avgs.push(utils_1.calculateAvgerageHourPrice(hourData));
+                        if (hourData.time <= tradeTime && tradeTime >= hourData.time + 3600) {
+                            return hourData;
+                        }
                     }
-                    return utils_1.calculateAverageFromArray(avgs);
                 }
                 throw new Error('Unknown Response Type');
             }
@@ -74378,14 +74427,20 @@ function getFiatRate(trade, fiatCurrency, method) {
         else {
             // non fiat currency trade
             if (utils_1.isCurrencyTrade(trade, 'BTC')) {
-                const BTCBasedRate = yield BTCBasedRate_1.getBTCFiatRate(trade, fiatCurrency);
+                const BTCBasedRate = yield BTCBasedRate_1.getBTCFiatRate(trade, fiatCurrency, method);
                 return addRatetoTrade(trade, BTCBasedRate);
             }
             else {
                 switch (method) {
+                    case types_1.FiatRateMethod.HOURLOW:
+                        const lowPrice = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
+                        return addRatetoTrade(trade, lowPrice.low);
+                    case types_1.FiatRateMethod.HOURHIGH:
+                        const highPrice = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
+                        return addRatetoTrade(trade, highPrice.high);
                     default:
-                        const closestHoursAvg = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
-                        return addRatetoTrade(trade, closestHoursAvg);
+                        const avg = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
+                        return addRatetoTrade(trade, utils_1.calculateAvgerageHourPrice(avg));
                 }
             }
         }
