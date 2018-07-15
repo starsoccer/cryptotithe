@@ -1,6 +1,6 @@
 import * as got from 'got';
-import { ITrade } from '../../../types';
-import { roundHour, calculateAvgerageHourPrice } from '../utils'; 
+import { ITrade, FiatRateMethod } from '../../../types';
+import { roundHour, calculateAvgerageHourPrice, IHourlyPriceData } from '../utils'; 
 
 export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
     if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
@@ -12,7 +12,7 @@ export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
     }
 }
 
-export async function getBTCFiatRate(trade: ITrade, fiatCurrency: string) {
+export async function getBTCFiatRate(trade: ITrade, fiatCurrency: string, method: FiatRateMethod) {
     const tradeTime = parseInt((roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
     const data: string[] = [
         `fsym=BTC`,
@@ -29,9 +29,16 @@ export async function getBTCFiatRate(trade: ITrade, fiatCurrency: string) {
         try {
             const result: any = JSON.parse(response.body);
             if ('Data' in result) {
-                for (const hourData of result.Data) {
+                for (const hourData of result.Data as IHourlyPriceData[]) {
                     if (hourData.time <= tradeTime && tradeTime >= hourData.time + 3600) {
-                        return BTCBasedRate(trade, calculateAvgerageHourPrice(hourData)); 
+                        switch (method) {
+                            case FiatRateMethod.HOURLOW:
+                                return BTCBasedRate(trade, hourData.low);
+                            case FiatRateMethod.HOURHIGH:
+                                return BTCBasedRate(trade, hourData.high);
+                            default:
+                                return BTCBasedRate(trade, calculateAvgerageHourPrice(hourData));
+                        }
                     }
                 }
                 throw new Error('Could not get Rate');

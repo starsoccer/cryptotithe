@@ -1,13 +1,14 @@
 import * as got from 'got';
 import { ITrade } from '../../../types';
-import { calculateAvgerageHourPrice, roundHour, calculateAverageFromArray } from '../utils';
+import { roundHour, IHourlyPriceData } from '../utils';
 
-export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCurrency: string): Promise<number> {
+export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCurrency: string): Promise<IHourlyPriceData> {
+    const tradeTime = parseInt((roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
     const data = [
         `fsym=${trade.soldCurrency}`,
         `tsym=${fiatCurrency}`,
         `limit=${limit}`,
-        `toTs=${(roundHour(new Date(trade.date)) / 1000).toFixed(0)}`,
+        `toTs=${tradeTime}`,
     ];
     const response: got.Response<any> = await got(
         'https://min-api.cryptocompare.com/data/histohour?' + data.join('&'),
@@ -16,11 +17,11 @@ export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCur
         try {
             const result: any = JSON.parse(response.body);
             if ('Data' in result) {
-                const avgs: number[] = [];
-                for (const hourData of result.Data) {
-                    avgs.push(calculateAvgerageHourPrice(hourData));
+                for (const hourData of result.Data as IHourlyPriceData[]) {
+                    if (hourData.time <= tradeTime && tradeTime >= hourData.time + 3600) {
+                        return hourData;
+                    }
                 }
-                return calculateAverageFromArray(avgs);
             }
             throw new Error('Unknown Response Type');
         } catch (ex) {
