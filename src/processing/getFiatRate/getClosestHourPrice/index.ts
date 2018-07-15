@@ -2,12 +2,12 @@ import * as got from 'got';
 import { ITrade } from '../../../types';
 import { roundHour, IHourlyPriceData } from '../utils';
 
-export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCurrency: string): Promise<IHourlyPriceData> {
-    const tradeTime = parseInt((roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
+export async function getClosestHourPrice(currency: string, fiatCurrency: string, date: number): Promise<IHourlyPriceData> {
+    const tradeTime = parseInt((roundHour(new Date(date)) / 1000).toFixed(0), 10);
     const data = [
-        `fsym=${trade.soldCurrency}`,
+        `fsym=${currency}`,
         `tsym=${fiatCurrency}`,
-        `limit=${limit}`,
+        `limit=1`,
         `toTs=${tradeTime}`,
     ];
     const response: got.Response<any> = await got(
@@ -30,4 +30,8 @@ export async function getClosestHourPrices(trade: ITrade, limit: number, fiatCur
     } else {
         throw new Error('Invalid Response');
     }
+}
+
+export async function getClosestHourPriceForTrade(trade: ITrade, fiatCurrency: string): Promise<IHourlyPriceData> {
+    return getClosestHourPrice(trade.soldCurrency, fiatCurrency, trade.date);
 }

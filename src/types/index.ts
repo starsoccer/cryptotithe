@@ -73,13 +73,14 @@ export enum METHOD {
 
 export enum FiatRateMethod {
     DOUBLEAVERAGE = 'Double Average',
-    BITCOINAVERAGE = 'Bitcoin Average',
     HOURAVG = 'Hour Avg', // open, close, high, low averaged
     HOURHIGH = 'Hour High',
     HOURLOW= 'Hour Low',
     HOURCLOSE = 'Hour Close',
     HOUROPEN = 'Hour Open',
     DAYAVERAGE = 'Day Average',
+    DAYAVERAGEMID = 'Dav Average Middle',
+    DAYAVERAGEVOLUME = 'Day Average Volume',
 }
 
 export enum EXCHANGES {

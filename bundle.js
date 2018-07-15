@@ -161,7 +161,7 @@ class AddTrades extends React.Component {
 }
 exports.AddTrades = AddTrades;
 
-},{"../../src/parsers":419,"../../src/processing/DuplicateCheck":424,"../../src/processing/SortTrades":425,"../../src/processing/getFiatRate":428,"../../src/types":430,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":14,"../TradesTable":15,"react":295}],2:[function(require,module,exports){
+},{"../../src/parsers":419,"../../src/processing/DuplicateCheck":424,"../../src/processing/SortTrades":425,"../../src/processing/getFiatRate":429,"../../src/types":431,"../AlertBar":2,"../Button":3,"../DuplicateTradesTable":5,"../FileBrowse":6,"../Loader":9,"../TradeDetails":14,"../TradesTable":15,"react":295}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const classNames = require("classNames");
@@ -322,7 +322,7 @@ class CalculateGains extends React.Component {
 }
 exports.CalculateGains = CalculateGains;
 
-},{"../../src/output/Form8949":415,"../../src/processing/CalculateGains":423,"../../src/types":430,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":295}],5:[function(require,module,exports){
+},{"../../src/output/Form8949":415,"../../src/processing/CalculateGains":423,"../../src/types":431,"../Button":3,"../FileDownload":7,"../GainsPerTradeTable":8,"react":295}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -557,7 +557,7 @@ class Settings extends React.Component {
 }
 exports.Settings = Settings;
 
-},{"../../src/types":430,"../Button":3,"../Popup":10,"react":295}],12:[function(require,module,exports){
+},{"../../src/types":431,"../Button":3,"../Popup":10,"react":295}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -838,7 +838,7 @@ class ViewTrades extends React.Component {
 }
 exports.ViewTrades = ViewTrades;
 
-},{"../../src/processing/SortTrades":425,"../../src/processing/getFiatRate":428,"../../src/types":430,"../Button":3,"../Loader":9,"../TradesTable":15,"react":295}],17:[function(require,module,exports){
+},{"../../src/processing/SortTrades":425,"../../src/processing/getFiatRate":429,"../../src/types":431,"../Button":3,"../Loader":9,"../TradesTable":15,"react":295}],17:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73474,7 +73474,7 @@ else {
     render(true);
 }
 
-},{"./components":17,"./data":undefined,"./src/types":430,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
+},{"./components":17,"./data":undefined,"./src/types":431,"is-electron":184,"react":295,"react-dom":292}],415:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const CalculateGains_1 = require("../../processing/CalculateGains");
@@ -73602,7 +73602,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":419,"../../types":430,"../utils":422,"crypto":82}],417:[function(require,module,exports){
+},{"../":419,"../../types":431,"../utils":422,"crypto":82}],417:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73659,7 +73659,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":419,"../../types":430,"../utils":422}],418:[function(require,module,exports){
+},{"../":419,"../../types":431,"../utils":422}],418:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73743,7 +73743,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":419,"../../types":430,"../utils":422}],419:[function(require,module,exports){
+},{"../":419,"../../types":431,"../utils":422}],419:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73904,7 +73904,7 @@ function processData(filePath) {
 }
 exports.processData = processData;
 
-},{"../":419,"../../types":430,"../utils":422}],421:[function(require,module,exports){
+},{"../":419,"../../types":431,"../utils":422}],421:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73972,7 +73972,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":419,"../../types":430,"../utils":422}],422:[function(require,module,exports){
+},{"../":419,"../../types":431,"../utils":422}],422:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function createDateAsUTC(date) {
@@ -74240,7 +74240,7 @@ function calculateGainsPerHoldings(holdings, trades, method) {
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
-},{"../../types":430,"clone":75}],424:[function(require,module,exports){
+},{"../../types":431,"clone":75}],424:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function duplicateCheck(currentTrades, newTrades) {
@@ -74298,9 +74298,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const got = require("got");
 const types_1 = require("../../../types");
 const utils_1 = require("../utils");
+const getDayAvgCurrencyRate_1 = require("../getDayAvgCurrencyRate");
+const getClosestHourPrice_1 = require("../getClosestHourPrice");
 function BTCBasedRate(trade, BTCUSDRate) {
     if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
         return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
@@ -74315,50 +74316,40 @@ function BTCBasedRate(trade, BTCUSDRate) {
 exports.BTCBasedRate = BTCBasedRate;
 function getBTCFiatRate(trade, fiatCurrency, method) {
     return __awaiter(this, void 0, void 0, function* () {
-        const tradeTime = parseInt((utils_1.roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
-        const data = [
-            `fsym=BTC`,
-            `tsym=${fiatCurrency}`,
-            'sign=false',
-            `toTs=${tradeTime}`,
-            'extraParams=tApp',
-            `limit=1`,
-        ];
-        const response = yield got('https://min-api.cryptocompare.com/data/histohour?' + data.join('&'));
-        if ('body' in response) {
-            try {
-                const result = JSON.parse(response.body);
-                if ('Data' in result) {
-                    for (const hourData of result.Data) {
-                        if (hourData.time <= tradeTime && tradeTime >= hourData.time + 3600) {
-                            switch (method) {
-                                case types_1.FiatRateMethod.HOURLOW:
-                                    return BTCBasedRate(trade, hourData.low);
-                                case types_1.FiatRateMethod.HOURHIGH:
-                                    return BTCBasedRate(trade, hourData.high);
-                                default:
-                                    return BTCBasedRate(trade, utils_1.calculateAvgerageHourPrice(hourData));
-                            }
-                        }
-                    }
-                    throw new Error('Could not get Rate');
+        switch (method) {
+            case types_1.FiatRateMethod.DOUBLEAVERAGE:
+                const dayAvg = yield getDayAvgCurrencyRate_1.getDayAvg(fiatCurrency, 'BTC', trade.date);
+                const hourBTCData = yield getClosestHourPrice_1.getClosestHourPrice('BTC', fiatCurrency, trade.date);
+                return utils_1.calculateAverageFromArray([dayAvg, utils_1.calculateAvgerageHourPrice(hourBTCData)]);
+            case types_1.FiatRateMethod.DAYAVERAGE:
+                const vwapRate = yield getDayAvgCurrencyRate_1.getDayAvg(fiatCurrency, 'BTC', trade.date);
+                return BTCBasedRate(trade, vwapRate);
+            case types_1.FiatRateMethod.DAYAVERAGEMID:
+                const midRate = yield getDayAvgCurrencyRate_1.getDayAvg(fiatCurrency, 'BTC', trade.date, 'MidHighLow');
+                return BTCBasedRate(trade, midRate);
+            case types_1.FiatRateMethod.DAYAVERAGEVOLUME:
+                const volumeRate = yield getDayAvgCurrencyRate_1.getDayAvg(fiatCurrency, 'BTC', trade.date, 'VolFVolT');
+                return BTCBasedRate(trade, volumeRate);
+            default:
+                const hourData = yield getClosestHourPrice_1.getClosestHourPrice('BTC', fiatCurrency, trade.date);
+                switch (method) {
+                    case types_1.FiatRateMethod.HOURLOW:
+                        return BTCBasedRate(trade, hourData.low);
+                    case types_1.FiatRateMethod.HOURHIGH:
+                        return BTCBasedRate(trade, hourData.high);
+                    case types_1.FiatRateMethod.HOUROPEN:
+                        return BTCBasedRate(trade, hourData.open);
+                    case types_1.FiatRateMethod.HOURCLOSE:
+                        return BTCBasedRate(trade, hourData.close);
+                    default:
+                        return BTCBasedRate(trade, utils_1.calculateAvgerageHourPrice(hourData));
                 }
-                else {
-                    throw new Error('Unknown Response Type');
-                }
-            }
-            catch (ex) {
-                throw new Error('Error parsing JSON');
-            }
-        }
-        else {
-            throw new Error('Invalid Response');
         }
     });
 }
 exports.getBTCFiatRate = getBTCFiatRate;
 
-},{"../../../types":430,"../utils":429,"got":159}],427:[function(require,module,exports){
+},{"../../../types":431,"../getClosestHourPrice":427,"../getDayAvgCurrencyRate":428,"../utils":430}],427:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74371,13 +74362,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const got = require("got");
 const utils_1 = require("../utils");
-function getClosestHourPrices(trade, limit, fiatCurrency) {
+function getClosestHourPrice(currency, fiatCurrency, date) {
     return __awaiter(this, void 0, void 0, function* () {
-        const tradeTime = parseInt((utils_1.roundHour(new Date(trade.date)) / 1000).toFixed(0), 10);
+        const tradeTime = parseInt((utils_1.roundHour(new Date(date)) / 1000).toFixed(0), 10);
         const data = [
-            `fsym=${trade.soldCurrency}`,
+            `fsym=${currency}`,
             `tsym=${fiatCurrency}`,
-            `limit=${limit}`,
+            `limit=1`,
             `toTs=${tradeTime}`,
         ];
         const response = yield got('https://min-api.cryptocompare.com/data/histohour?' + data.join('&'));
@@ -74402,9 +74393,64 @@ function getClosestHourPrices(trade, limit, fiatCurrency) {
         }
     });
 }
-exports.getClosestHourPrices = getClosestHourPrices;
+exports.getClosestHourPrice = getClosestHourPrice;
+function getClosestHourPriceForTrade(trade, fiatCurrency) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return getClosestHourPrice(trade.soldCurrency, fiatCurrency, trade.date);
+    });
+}
+exports.getClosestHourPriceForTrade = getClosestHourPriceForTrade;
 
-},{"../utils":429,"got":159}],428:[function(require,module,exports){
+},{"../utils":430,"got":159}],428:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const got = require("got");
+const utils_1 = require("../utils");
+function getDayAvg(fiatCurrency, currency, date, type = 'HourVWAP') {
+    return __awaiter(this, void 0, void 0, function* () {
+        const tradeTime = parseInt((new Date(date).getTime() / 1000).toFixed(0), 10);
+        const data = [
+            `fsym=${currency}`,
+            `tsym=${fiatCurrency}`,
+            'sign=false',
+            `toTs=${tradeTime}`,
+            'extraParams=cryptotithe',
+            `avgType=${type}`,
+        ];
+        const response = yield got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
+        const rate = utils_1.cryptocompareRateResponse(response);
+        return rate || 0;
+    });
+}
+exports.getDayAvg = getDayAvg;
+function getDayAvgTradeRate(trade, fiatCurrency, type = 'HourVWAP') {
+    return __awaiter(this, void 0, void 0, function* () {
+        const rate = getDayAvg(fiatCurrency, trade.soldCurrency, trade.date);
+        if (rate) {
+            return rate;
+        }
+        else {
+            const backupRate = getDayAvg(fiatCurrency, trade.boughtCurrency, trade.date, type);
+            if (backupRate) {
+                return backupRate;
+            }
+            else {
+                throw new Error('Cant get any USD Rate for trade ' + trade.id);
+            }
+        }
+    });
+}
+exports.getDayAvgTradeRate = getDayAvgTradeRate;
+
+},{"../utils":430,"got":159}],429:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74416,9 +74462,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../../types");
-const getClosestHourPrices_1 = require("./getClosestHourPrices");
 const utils_1 = require("./utils");
 const BTCBasedRate_1 = require("./BTCBasedRate");
+const getDayAvgCurrencyRate_1 = require("./getDayAvgCurrencyRate");
+const getClosestHourPrice_1 = require("./getClosestHourPrice");
 function getFiatRate(trade, fiatCurrency, method) {
     return __awaiter(this, void 0, void 0, function* () {
         if (utils_1.isCurrencyTrade(trade, fiatCurrency)) {
@@ -74432,14 +74479,33 @@ function getFiatRate(trade, fiatCurrency, method) {
             }
             else {
                 switch (method) {
+                    case types_1.FiatRateMethod.DOUBLEAVERAGE:
+                        const dayAvgDouble = yield getDayAvgCurrencyRate_1.getDayAvgTradeRate(trade, fiatCurrency);
+                        const closestHourAvg = yield getClosestHourPrice_1.getClosestHourPriceForTrade(trade, fiatCurrency);
+                        return addRatetoTrade(trade, utils_1.calculateAverageFromArray([dayAvgDouble, utils_1.calculateAvgerageHourPrice(closestHourAvg)]));
+                    case types_1.FiatRateMethod.DAYAVERAGE:
+                        const dayAvg = yield getDayAvgCurrencyRate_1.getDayAvgTradeRate(trade, fiatCurrency);
+                        return addRatetoTrade(trade, dayAvg);
+                    case types_1.FiatRateMethod.DAYAVERAGEMID:
+                        const dayAvgMid = yield getDayAvgCurrencyRate_1.getDayAvgTradeRate(trade, fiatCurrency, 'MidHighLow');
+                        return addRatetoTrade(trade, dayAvgMid);
+                    case types_1.FiatRateMethod.DAYAVERAGEVOLUME:
+                        const dayAvgVolume = yield getDayAvgCurrencyRate_1.getDayAvgTradeRate(trade, fiatCurrency, 'VolFVolT');
+                        return addRatetoTrade(trade, dayAvgVolume);
                     case types_1.FiatRateMethod.HOURLOW:
-                        const lowPrice = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
+                        const lowPrice = yield getClosestHourPrice_1.getClosestHourPriceForTrade(trade, fiatCurrency);
                         return addRatetoTrade(trade, lowPrice.low);
                     case types_1.FiatRateMethod.HOURHIGH:
-                        const highPrice = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
+                        const highPrice = yield getClosestHourPrice_1.getClosestHourPriceForTrade(trade, fiatCurrency);
                         return addRatetoTrade(trade, highPrice.high);
+                    case types_1.FiatRateMethod.HOUROPEN:
+                        const openPrice = yield getClosestHourPrice_1.getClosestHourPriceForTrade(trade, fiatCurrency);
+                        return addRatetoTrade(trade, openPrice.open);
+                    case types_1.FiatRateMethod.HOURCLOSE:
+                        const closePrice = yield getClosestHourPrice_1.getClosestHourPriceForTrade(trade, fiatCurrency);
+                        return addRatetoTrade(trade, closePrice.close);
                     default:
-                        const avg = yield getClosestHourPrices_1.getClosestHourPrices(trade, 1, fiatCurrency);
+                        const avg = yield getClosestHourPrice_1.getClosestHourPriceForTrade(trade, fiatCurrency);
                         return addRatetoTrade(trade, utils_1.calculateAvgerageHourPrice(avg));
                 }
             }
@@ -74473,7 +74539,7 @@ function getUSDTradeRate(trade, fiatCurrency) {
     }
 }
 
-},{"../../types":430,"./BTCBasedRate":426,"./getClosestHourPrices":427,"./utils":429}],429:[function(require,module,exports){
+},{"../../types":431,"./BTCBasedRate":426,"./getClosestHourPrice":427,"./getDayAvgCurrencyRate":428,"./utils":430}],430:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function cryptocompareRateResponse(response) {
@@ -74521,7 +74587,7 @@ function calculateAverageFromArray(avgs) {
 }
 exports.calculateAverageFromArray = calculateAverageFromArray;
 
-},{}],430:[function(require,module,exports){
+},{}],431:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var METHOD;
@@ -74533,13 +74599,14 @@ var METHOD;
 var FiatRateMethod;
 (function (FiatRateMethod) {
     FiatRateMethod["DOUBLEAVERAGE"] = "Double Average";
-    FiatRateMethod["BITCOINAVERAGE"] = "Bitcoin Average";
     FiatRateMethod["HOURAVG"] = "Hour Avg";
     FiatRateMethod["HOURHIGH"] = "Hour High";
     FiatRateMethod["HOURLOW"] = "Hour Low";
     FiatRateMethod["HOURCLOSE"] = "Hour Close";
     FiatRateMethod["HOUROPEN"] = "Hour Open";
     FiatRateMethod["DAYAVERAGE"] = "Day Average";
+    FiatRateMethod["DAYAVERAGEMID"] = "Dav Average Middle";
+    FiatRateMethod["DAYAVERAGEVOLUME"] = "Day Average Volume";
 })(FiatRateMethod = exports.FiatRateMethod || (exports.FiatRateMethod = {}));
 var EXCHANGES;
 (function (EXCHANGES) {

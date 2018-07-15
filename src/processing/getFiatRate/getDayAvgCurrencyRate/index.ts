@@ -2,24 +2,29 @@ import * as got from 'got';
 import { ITrade } from '../../../types';
 import { cryptocompareRateResponse } from '../utils';
 
-export async function getCurrencyRate(trade: ITrade, fiatCurrency: string): Promise<number> {
+export async function getDayAvg(fiatCurrency: string, currency: string, date: number, type: string = 'HourVWAP'): Promise<number> {
+    const tradeTime = parseInt((new Date(date).getTime() / 1000).toFixed(0), 10);
     const data: string[] = [
-        `fsym=${trade.soldCurrency}`,
+        `fsym=${currency}`,
         `tsym=${fiatCurrency}`,
         'sign=false', // change to true for security?
-        `toTs=${new Date(trade.date).getTime() / 1000}`,
-        'extraParams=tApp',
+        `toTs=${tradeTime}`,
+        'extraParams=cryptotithe',
+        `avgType=${type}`,
     ];
     const response: got.Response<any> = await got(
         'https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'),
     );
     const rate = cryptocompareRateResponse(response);
+    return rate || 0
+}
+
+export async function getDayAvgTradeRate(trade: ITrade, fiatCurrency: string, type: string = 'HourVWAP'): Promise<number> {
+    const rate = getDayAvg(fiatCurrency, trade.soldCurrency, trade.date);
     if (rate) {
         return rate;
     } else {
-        data[0] = `fsym=${trade.boughtCurrency}`;
-        const backupResponse = await got('https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'));
-        const backupRate = cryptocompareRateResponse(backupResponse);
+        const backupRate = getDayAvg(fiatCurrency, trade.boughtCurrency, trade.date, type);
         if (backupRate) {
             return backupRate;
         } else {
