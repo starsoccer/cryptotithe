@@ -227,6 +227,7 @@ export interface ICalculateGainsPerHoldings {
     shortTermGain: number;
     shortTermProceeds: number;
     shortTermCostBasis: number;
+    holdings: IHoldings;
 }
 
 export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWithUSDRate[], method: METHOD): ICalculateGainsPerHoldings {
@@ -316,5 +317,6 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
         longTermProceeds,
         shortTermCostBasis,
         longTermCostBasis,
+        holdings: newHoldings,
     };
 }
