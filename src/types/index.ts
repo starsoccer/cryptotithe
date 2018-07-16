@@ -80,7 +80,7 @@ export enum FiatRateMethod {
     HOURCLOSE = 'Hour Close',
     HOUROPEN = 'Hour Open',
     DAYAVERAGE = 'Day Average',
-    DAYAVERAGEMID = 'Dav Average Middle',
+    DAYAVERAGEMID = 'Day Average Middle',
     DAYAVERAGEVOLUME = 'Day Average Volume',
 }
 
