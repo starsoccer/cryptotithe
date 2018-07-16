@@ -74078,6 +74078,30 @@ function getCurrenyHolding(holdings, trade, method) {
                         holdings[trade.soldCurrency].splice(highestCostPosition, 1);
                     }
                     break;
+                case types_1.METHOD.LCFO:
+                    let lowestCostPosition = 0;
+                    for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
+                        const holding = holdings[trade.soldCurrency][index];
+                        if (holding.rateInUSD < holdings[trade.soldCurrency][lowestCostPosition].rateInUSD) {
+                            lowestCostPosition = index;
+                        }
+                    }
+                    const lowestCostHolding = holdings[trade.soldCurrency][lowestCostPosition];
+                    if (lowestCostHolding.amount > amountUsed) {
+                        lowestCostHolding.amount = lowestCostHolding.amount - amountUsed;
+                        currencyHolding.push({
+                            amount: amountUsed,
+                            rateInUSD: lowestCostHolding.rateInUSD,
+                            date: lowestCostHolding.date,
+                        });
+                        amountUsed = 0;
+                    }
+                    else {
+                        amountUsed = amountUsed - lowestCostHolding.amount;
+                        currencyHolding.push(lowestCostHolding);
+                        holdings[trade.soldCurrency].splice(lowestCostPosition, 1);
+                    }
+                    break;
                 case types_1.METHOD.FIFO:
                 default:
                     const firstIn = holdings[trade.soldCurrency][0];
@@ -74595,6 +74619,7 @@ var METHOD;
     METHOD["FIFO"] = "FIFO";
     METHOD["LIFO"] = "LIFO";
     METHOD["HCFO"] = "HCFO";
+    METHOD["LCFO"] = "LCFO";
 })(METHOD = exports.METHOD || (exports.METHOD = {}));
 var FiatRateMethod;
 (function (FiatRateMethod) {

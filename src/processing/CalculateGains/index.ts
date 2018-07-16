@@ -118,6 +118,29 @@ export function getCurrenyHolding(
                         holdings[trade.soldCurrency].splice(highestCostPosition, 1);
                     }
                     break;
+                case METHOD.LCFO:
+                    let lowestCostPosition = 0;
+                    for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
+                        const holding = holdings[trade.soldCurrency][index];
+                        if (holding.rateInUSD < holdings[trade.soldCurrency][lowestCostPosition].rateInUSD) {
+                            lowestCostPosition = index;
+                        }
+                    }
+                    const lowestCostHolding = holdings[trade.soldCurrency][lowestCostPosition];
+                    if (lowestCostHolding.amount > amountUsed) {
+                        lowestCostHolding.amount = lowestCostHolding.amount - amountUsed;
+                        currencyHolding.push({
+                            amount: amountUsed,
+                            rateInUSD: lowestCostHolding.rateInUSD,
+                            date: lowestCostHolding.date,
+                        });
+                        amountUsed = 0;
+                    } else {
+                        amountUsed = amountUsed - lowestCostHolding.amount;
+                        currencyHolding.push(lowestCostHolding);
+                        holdings[trade.soldCurrency].splice(lowestCostPosition, 1);
+                    }
+                    break;
                 case METHOD.FIFO:
                 default:
                     const firstIn: ICurrencyHolding = holdings[trade.soldCurrency][0];

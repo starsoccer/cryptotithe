@@ -69,6 +69,7 @@ export enum METHOD {
     FIFO = 'FIFO',
     LIFO = 'LIFO',
     HCFO = 'HCFO',
+    LCFO = 'LCFO',
 }
 
 export enum FiatRateMethod {
