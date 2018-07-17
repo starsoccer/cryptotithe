@@ -73497,10 +73497,10 @@ function outputForm8949(holdings, trades, method) {
     ];
     csvData = csvData.concat(headers);
     csvData = csvData.concat(result.shortTermTrades.map((trade) => [
-        `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
-        new Date(trade.dateAcquired),
-        new Date(trade.date),
-        (trade.USDRate * trade.amountSold).toFixed(2),
+        `${trade.amountSold} ${trade.soldCurrency}`,
+        new Date(trade.dateAcquired).toLocaleDateString(),
+        new Date(trade.date).toLocaleDateString(),
+        (trade.costBasis + trade.shortTerm).toFixed(2),
         (trade.costBasis).toFixed(2),
         null,
         null,
@@ -73509,10 +73509,10 @@ function outputForm8949(holdings, trades, method) {
     csvData = csvData.concat(['Totals', '', '', result.shortTermProceeds.toFixed(2), result.shortTermCostBasis.toFixed(2), '', 0, result.shortTermGain.toFixed(2)].join(','));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
     csvData = csvData.concat(result.longTermTrades.map((trade) => [
-        `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
-        new Date(trade.dateAcquired),
-        new Date(trade.date),
-        (trade.USDRate * trade.amountSold).toFixed(2),
+        `${trade.amountSold} ${trade.soldCurrency}`,
+        new Date(trade.dateAcquired).toLocaleDateString(),
+        new Date(trade.date).toLocaleDateString(),
+        (trade.costBasis + trade.longTerm).toFixed(2),
         (trade.costBasis).toFixed(2),
         null,
         null,
@@ -74054,6 +74054,74 @@ function getCurrenyHolding(holdings, trade, method) {
                         }
                     }
                     break;
+                case types_1.METHOD.LTFO:
+                    let lowestTaxCostPosition = 0;
+                    if (trade.date - holdings[trade.soldCurrency][0].date < FULL_YEAR_IN_MILLISECONDS) {
+                        let fallBackPosition = 0;
+                        for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
+                            const holding = holdings[trade.soldCurrency][index];
+                            if (holding.rateInUSD > holdings[trade.soldCurrency][fallBackPosition].rateInUSD) {
+                                fallBackPosition = index;
+                            }
+                            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
+                                lowestTaxCostPosition = index;
+                                break;
+                            }
+                        }
+                        if (lowestTaxCostPosition === 0) {
+                            lowestTaxCostPosition = fallBackPosition;
+                        }
+                    }
+                    const lowestTaxCostHolding = holdings[trade.soldCurrency][lowestTaxCostPosition];
+                    if (lowestTaxCostHolding.amount > amountUsed) {
+                        lowestTaxCostHolding.amount = lowestTaxCostHolding.amount - amountUsed;
+                        currencyHolding.push({
+                            amount: amountUsed,
+                            rateInUSD: lowestTaxCostHolding.rateInUSD,
+                            date: lowestTaxCostHolding.date,
+                        });
+                        amountUsed = 0;
+                    }
+                    else {
+                        amountUsed = amountUsed - lowestTaxCostHolding.amount;
+                        currencyHolding.push(lowestTaxCostHolding);
+                        holdings[trade.soldCurrency].splice(lowestTaxCostPosition, 1);
+                    }
+                    break;
+                case types_1.METHOD.HTFO:
+                    let highestTaxCostPosition = 0;
+                    if (trade.date - holdings[trade.soldCurrency][0].date > FULL_YEAR_IN_MILLISECONDS) {
+                        let fallBackPosition = 0;
+                        for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
+                            const holding = holdings[trade.soldCurrency][index];
+                            if (holding.rateInUSD < holdings[trade.soldCurrency][fallBackPosition].rateInUSD) {
+                                fallBackPosition = index;
+                            }
+                            if (trade.date - holding.date < FULL_YEAR_IN_MILLISECONDS) {
+                                highestTaxCostPosition = index;
+                                break;
+                            }
+                        }
+                        if (highestTaxCostPosition === 0) {
+                            highestTaxCostPosition = fallBackPosition;
+                        }
+                    }
+                    const highestTaxCostHolding = holdings[trade.soldCurrency][highestTaxCostPosition];
+                    if (highestTaxCostHolding.amount > amountUsed) {
+                        highestTaxCostHolding.amount = highestTaxCostHolding.amount - amountUsed;
+                        currencyHolding.push({
+                            amount: amountUsed,
+                            rateInUSD: highestTaxCostHolding.rateInUSD,
+                            date: highestTaxCostHolding.date,
+                        });
+                        amountUsed = 0;
+                    }
+                    else {
+                        amountUsed = amountUsed - highestTaxCostHolding.amount;
+                        currencyHolding.push(highestTaxCostHolding);
+                        holdings[trade.soldCurrency].splice(highestTaxCostPosition, 1);
+                    }
+                    break;
                 case types_1.METHOD.HCFO:
                     let highestCostPosition = 0;
                     for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
@@ -74200,9 +74268,23 @@ function calculateGainsPerHoldings(holdings, trades, method) {
             });
         }
         for (const holding of result.deductedHoldings) {
+            const tradeToAdd = {
+                USDRate: trade.USDRate,
+                boughtCurrency: trade.boughtCurrency,
+                soldCurrency: trade.soldCurrency,
+                amountSold: holding.amount,
+                rate: trade.rate,
+                date: trade.date,
+                id: trade.id,
+                exchange: trade.exchange,
+                shortTerm: 0,
+                longTerm: 0,
+                dateAcquired: holding.date,
+                costBasis: parseFloat((holding.rateInUSD * holding.amount).toFixed(2)),
+            };
             const unFixedGain = (trade.USDRate - holding.rateInUSD) * holding.amount;
-            let trueGain = 0;
-            if (parseInt(unFixedGain.toFixed(2), 10) === 0) {
+            let trueGain = parseFloat(unFixedGain.toFixed(2));
+            if (parseFloat(unFixedGain.toFixed(2)) === 0) {
                 if (unFixedGain === 0) {
                     trueGain = 0;
                 }
@@ -74215,38 +74297,19 @@ function calculateGainsPerHoldings(holdings, trades, method) {
                     }
                 }
             }
-            else {
-                trueGain = parseInt(unFixedGain.toFixed(2), 10);
-            }
             const gain = trueGain;
-            let shortTerm = 0;
-            let longTerm = 0;
-            const tradeToAdd = {
-                USDRate: trade.USDRate,
-                boughtCurrency: trade.boughtCurrency,
-                soldCurrency: trade.soldCurrency,
-                amountSold: holding.amount,
-                rate: trade.rate,
-                date: trade.date,
-                id: trade.id,
-                exchange: trade.exchange,
-                shortTerm,
-                longTerm,
-                dateAcquired: holding.date,
-                costBasis: holding.rateInUSD * holding.amount,
-            };
             if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                 longTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
                 longTermCostBasis += tradeToAdd.costBasis;
                 longTermGain += gain;
-                tradeToAdd.longTerm += gain;
+                tradeToAdd.longTerm = gain;
                 longTermTrades.push(tradeToAdd);
             }
             else {
                 shortTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
                 shortTermCostBasis += tradeToAdd.costBasis;
                 shortTermGain += gain;
-                tradeToAdd.shortTerm += gain;
+                tradeToAdd.shortTerm = gain;
                 shortTermTrades.push(tradeToAdd);
             }
         }
@@ -74260,6 +74323,7 @@ function calculateGainsPerHoldings(holdings, trades, method) {
         longTermProceeds,
         shortTermCostBasis,
         longTermCostBasis,
+        holdings: newHoldings,
     };
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
@@ -74620,6 +74684,8 @@ var METHOD;
     METHOD["LIFO"] = "LIFO";
     METHOD["HCFO"] = "HCFO";
     METHOD["LCFO"] = "LCFO";
+    METHOD["LTFO"] = "LTFO";
+    METHOD["HTFO"] = "HTFO";
 })(METHOD = exports.METHOD || (exports.METHOD = {}));
 var FiatRateMethod;
 (function (FiatRateMethod) {
@@ -74630,7 +74696,7 @@ var FiatRateMethod;
     FiatRateMethod["HOURCLOSE"] = "Hour Close";
     FiatRateMethod["HOUROPEN"] = "Hour Open";
     FiatRateMethod["DAYAVERAGE"] = "Day Average";
-    FiatRateMethod["DAYAVERAGEMID"] = "Dav Average Middle";
+    FiatRateMethod["DAYAVERAGEMID"] = "Day Average Middle";
     FiatRateMethod["DAYAVERAGEVOLUME"] = "Day Average Volume";
 })(FiatRateMethod = exports.FiatRateMethod || (exports.FiatRateMethod = {}));
 var EXCHANGES;

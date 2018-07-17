@@ -95,6 +95,72 @@ export function getCurrenyHolding(
                         }
                     }
                     break;
+                case METHOD.LTFO:
+                    let lowestTaxCostPosition = 0;
+                    if (trade.date - holdings[trade.soldCurrency][0].date < FULL_YEAR_IN_MILLISECONDS) {
+                        let fallBackPosition = 0;
+                        for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
+                            const holding = holdings[trade.soldCurrency][index];
+                            if (holding.rateInUSD > holdings[trade.soldCurrency][fallBackPosition].rateInUSD) {
+                                fallBackPosition = index;
+                            }
+                            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
+                                lowestTaxCostPosition = index;
+                                break;
+                            }
+                        }
+                        if (lowestTaxCostPosition === 0) {
+                            lowestTaxCostPosition = fallBackPosition;
+                        }
+                    }
+                    const lowestTaxCostHolding = holdings[trade.soldCurrency][lowestTaxCostPosition];
+                    if (lowestTaxCostHolding.amount > amountUsed) {
+                        lowestTaxCostHolding.amount = lowestTaxCostHolding.amount - amountUsed;
+                        currencyHolding.push({
+                            amount: amountUsed,
+                            rateInUSD: lowestTaxCostHolding.rateInUSD,
+                            date: lowestTaxCostHolding.date,
+                        });
+                        amountUsed = 0;
+                    } else {
+                        amountUsed = amountUsed - lowestTaxCostHolding.amount;
+                        currencyHolding.push(lowestTaxCostHolding);
+                        holdings[trade.soldCurrency].splice(lowestTaxCostPosition, 1);
+                    }
+                break;
+                case METHOD.HTFO:
+                let highestTaxCostPosition = 0;
+                if (trade.date - holdings[trade.soldCurrency][0].date > FULL_YEAR_IN_MILLISECONDS) {
+                    let fallBackPosition = 0;
+                    for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
+                        const holding = holdings[trade.soldCurrency][index];
+                        if (holding.rateInUSD < holdings[trade.soldCurrency][fallBackPosition].rateInUSD) {
+                            fallBackPosition = index;
+                        }
+                        if (trade.date - holding.date < FULL_YEAR_IN_MILLISECONDS) {
+                            highestTaxCostPosition = index;
+                            break;
+                        }
+                    }
+                    if (highestTaxCostPosition === 0) {
+                        highestTaxCostPosition = fallBackPosition;
+                    }
+                }
+                const highestTaxCostHolding = holdings[trade.soldCurrency][highestTaxCostPosition];
+                if (highestTaxCostHolding.amount > amountUsed) {
+                    highestTaxCostHolding.amount = highestTaxCostHolding.amount - amountUsed;
+                    currencyHolding.push({
+                        amount: amountUsed,
+                        rateInUSD: highestTaxCostHolding.rateInUSD,
+                        date: highestTaxCostHolding.date,
+                    });
+                    amountUsed = 0;
+                } else {
+                    amountUsed = amountUsed - highestTaxCostHolding.amount;
+                    currencyHolding.push(highestTaxCostHolding);
+                    holdings[trade.soldCurrency].splice(highestTaxCostPosition, 1);
+                }
+            break;
                 case METHOD.HCFO:
                     let highestCostPosition = 0;
                     for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
