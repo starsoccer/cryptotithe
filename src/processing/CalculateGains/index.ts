@@ -261,24 +261,6 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
             });
         }
         for (const holding of result.deductedHoldings) {
-            const unFixedGain = (trade.USDRate - holding.rateInUSD) * holding.amount;
-            let trueGain = 0;
-            if (parseInt(unFixedGain.toFixed(2), 10) === 0) {
-                if (unFixedGain === 0) {
-                    trueGain = 0;
-                } else {
-                    if (unFixedGain > 0) {
-                        trueGain = 0.01;
-                    } else {
-                        trueGain = -0.01;
-                    }
-                }
-            } else {
-                trueGain = parseInt(unFixedGain.toFixed(2), 10);
-            }
-            const gain: number = trueGain;
-            let shortTerm = 0;
-            let longTerm = 0;
             const tradeToAdd: ITradeWithCostBasis = {
                 USDRate: trade.USDRate,
                 boughtCurrency: trade.boughtCurrency,
@@ -288,22 +270,36 @@ export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWit
                 date: trade.date,
                 id: trade.id,
                 exchange: trade.exchange,
-                shortTerm,
-                longTerm,
+                shortTerm: 0,
+                longTerm: 0,
                 dateAcquired: holding.date,
-                costBasis: holding.rateInUSD * holding.amount,
+                costBasis: parseFloat((holding.rateInUSD * holding.amount).toFixed(2)),
             };
+            const unFixedGain = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            let trueGain = parseFloat(unFixedGain.toFixed(2));
+            if (parseFloat(unFixedGain.toFixed(2)) === 0) {
+                if (unFixedGain === 0) {
+                    trueGain = 0;
+                } else {
+                    if (unFixedGain > 0) {
+                        trueGain = 0.01;
+                    } else {
+                        trueGain = -0.01;
+                    }
+                }
+            }
+            const gain: number = trueGain;
             if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                 longTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
                 longTermCostBasis += tradeToAdd.costBasis;
                 longTermGain += gain;
-                tradeToAdd.longTerm += gain;
+                tradeToAdd.longTerm = gain;
                 longTermTrades.push(tradeToAdd);
             } else {
                 shortTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
                 shortTermCostBasis += tradeToAdd.costBasis;
                 shortTermGain += gain;
-                tradeToAdd.shortTerm += gain;
+                tradeToAdd.shortTerm = gain;
                 shortTermTrades.push(tradeToAdd);
             }
         }

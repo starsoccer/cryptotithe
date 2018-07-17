@@ -21,10 +21,10 @@ export default function outputForm8949(holdings: IHoldings, trades: ITradeWithUS
     ];
     csvData = csvData.concat(headers);
     csvData = csvData.concat(result.shortTermTrades.map((trade) => [
-        `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
-        new Date(trade.dateAcquired),
-        new Date(trade.date),
-        (trade.USDRate * trade.amountSold).toFixed(2),
+        `${trade.amountSold} ${trade.soldCurrency}`,
+        new Date(trade.dateAcquired).toLocaleDateString(),
+        new Date(trade.date).toLocaleDateString(),
+        (trade.costBasis + trade.shortTerm).toFixed(2),
         (trade.costBasis).toFixed(2),
         null,
         null,
@@ -33,10 +33,10 @@ export default function outputForm8949(holdings: IHoldings, trades: ITradeWithUS
     csvData = csvData.concat(['Totals', '', '', result.shortTermProceeds.toFixed(2), result.shortTermCostBasis.toFixed(2), '', 0, result.shortTermGain.toFixed(2)].join(','));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
     csvData = csvData.concat(result.longTermTrades.map((trade) => [
-        `${trade.amountSold} ${trade.soldCurrency} sold for ${trade.amountSold / trade.rate} ${trade.boughtCurrency}`,
-        new Date(trade.dateAcquired),
-        new Date(trade.date),
-        (trade.USDRate * trade.amountSold).toFixed(2),
+        `${trade.amountSold} ${trade.soldCurrency}`,
+        new Date(trade.dateAcquired).toLocaleDateString(),
+        new Date(trade.date).toLocaleDateString(),
+        (trade.costBasis + trade.longTerm).toFixed(2),
         (trade.costBasis).toFixed(2),
         null,
         null,
