@@ -1,3 +1,14 @@
+export interface IDailyBalance {
+    date: Date;
+    holdings: {[key: string]: ISimplifiedHoldingsWithValue};
+    USDValue: number;
+}
+
+export interface ISimplifiedHoldingsWithValue {
+    fiatValue: number;
+    amount: number;
+}
+
 export interface ISavedData extends IPartialSavedData {
     savedDate: Date;
     trades: ITradeWithUSDRate[];
