@@ -1,23 +1,33 @@
 import { FiatRateMethod, ITrade, ITradeWithUSDRate } from '../../types';
-import { isCurrencyTrade, calculateAvgerageHourPrice, calculateAverageFromArray } from './utils';
 import { getBTCFiatRate } from './BTCBasedRate';
-import { getDayAvgTradeRate } from './getDayAvgCurrencyRate';
 import { getClosestHourPriceForTrade } from './getClosestHourPrice';
+import { getDayAvgTradeRate } from './getDayAvgCurrencyRate';
+import { calculateAverageFromArray, calculateAvgerageHourPrice, isCurrencyTrade } from './utils';
 
-export async function getFiatRate(trade: ITrade, fiatCurrency: string, method: FiatRateMethod): Promise<ITradeWithUSDRate> {
+export async function getFiatRate(
+    trade: ITrade,
+    fiatCurrency: string,
+    method: FiatRateMethod,
+): Promise<ITradeWithUSDRate> {
     if (isCurrencyTrade(trade, fiatCurrency)) {
         return addRatetoTrade(trade, getUSDTradeRate(trade, fiatCurrency));
     } else {
         // non fiat currency trade
         if (isCurrencyTrade(trade, 'BTC')) {
             const BTCBasedRate = await getBTCFiatRate(trade, fiatCurrency, method);
-            return addRatetoTrade(trade, BTCBasedRate); 
+            return addRatetoTrade(trade, BTCBasedRate);
         } else {
             switch (method) {
                 case FiatRateMethod.DOUBLEAVERAGE:
                     const dayAvgDouble = await getDayAvgTradeRate(trade, fiatCurrency);
                     const closestHourAvg = await getClosestHourPriceForTrade(trade, fiatCurrency);
-                    return addRatetoTrade(trade, calculateAverageFromArray([dayAvgDouble, calculateAvgerageHourPrice(closestHourAvg)]));
+                    return addRatetoTrade(
+                        trade,
+                        calculateAverageFromArray([
+                            dayAvgDouble,
+                            calculateAvgerageHourPrice(closestHourAvg),
+                        ]),
+                    );
                 case FiatRateMethod.DAYAVERAGE:
                     const dayAvg = await getDayAvgTradeRate(trade, fiatCurrency);
                     return addRatetoTrade(trade, dayAvg);
@@ -40,7 +50,7 @@ export async function getFiatRate(trade: ITrade, fiatCurrency: string, method: F
                     const closePrice = await getClosestHourPriceForTrade(trade, fiatCurrency);
                     return addRatetoTrade(trade, closePrice.close);
                 default:
-                    const avg = await getClosestHourPriceForTrade(trade, fiatCurrency);    
+                    const avg = await getClosestHourPriceForTrade(trade, fiatCurrency);
                     return addRatetoTrade(trade, calculateAvgerageHourPrice(avg));
             }
         }

@@ -1,14 +1,14 @@
 import * as React from 'react';
-import Popup from '../Popup';
+import { FiatRateMethod, IPartialSavedData, ISettings } from '../../src/types';
 import Button from '../Button';
-import { FiatRateMethod, ISettings, IPartialSavedData } from '../../src/types';
+import Popup from '../Popup';
 export interface ISettingsProps {
     settings: ISettings;
     onSettingsSave: (savedData: IPartialSavedData) => Promise<boolean>;
     onClose: () => void;
 }
 
-function valueIfNotUndefined(object: Object, key: string, fallback: string) {
+function valueIfNotUndefined(object: any, key: string, fallback: string) {
     if (object !== undefined) {
         if (key in object) {
             return object[key];
@@ -23,7 +23,7 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
         super(props);
         this.state = {
             fiatRateMethod: valueIfNotUndefined(props.settings, 'fiatRateMethod', Object.keys(FiatRateMethod)[0]),
-        }
+        };
     }
     public onSave = async () => {
         const result = await this.props.onSettingsSave({settings: this.state});
@@ -42,18 +42,18 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
         return (
             <Popup onClose={this.props.onClose}>
                 <div>
-                    <h1 className="mt1 mb1">Settings</h1>
+                    <h1 className='mt1 mb1'>Settings</h1>
                     <hr />
-                    <label className="pr1">Fiat Rate Calculation Method:</label>
+                    <label className='pr1'>Fiat Rate Calculation Method:</label>
                     <select
                         defaultValue={this.state.fiatRateMethod}
                         onChange={this.onChange}>
-                        {Object.keys(FiatRateMethod).map((method) => 
-                            <option key={method} value={method}>{FiatRateMethod[method]}</option>
+                        {Object.keys(FiatRateMethod).map((method) =>
+                            <option key={method} value={method}>{FiatRateMethod[method]}</option>,
                         )}
                     </select>
                     <hr />
-                    <Button label="Save" onClick={this.onSave}/>
+                    <Button label='Save' onClick={this.onSave}/>
                 </div>
             </Popup>
         );

@@ -184,13 +184,13 @@ class AdvancedTab extends React.Component {
             this.setState({ exchange: types_1.EXCHANGES[e.currentTarget.value] });
         });
         this.calculateDailyBalance = () => __awaiter(this, void 0, void 0, function* () {
-            const trades = this.props.savedData.trades.filter(trade => trade.exchange === this.state.exchange);
+            const trades = this.props.savedData.trades.filter((trade) => trade.exchange === this.state.exchange);
             this.setState({
-                dailyBalance: yield CalculateDailyBalance_1.calculateDailyBalance(trades)
+                dailyBalance: yield CalculateDailyBalance_1.calculateDailyBalance(trades),
             });
         });
         this.state = {
-            exchange: types_1.EXCHANGES[Object.keys(types_1.EXCHANGES)[0]]
+            exchange: types_1.EXCHANGES[Object.keys(types_1.EXCHANGES)[0]],
         };
     }
     render() {
@@ -198,7 +198,7 @@ class AdvancedTab extends React.Component {
             React.createElement("div", { className: 'center tc mt2' },
                 React.createElement("label", { htmlFor: 'type', className: 'pr2' }, "Exchange"),
                 React.createElement("select", { name: 'type', id: 'type', onChange: this.onExchangeChange }, Object.keys(types_1.EXCHANGES).map((key) => React.createElement("option", { key: key, value: key }, types_1.EXCHANGES[key]))),
-                React.createElement(Button_1.default, { label: "Calculate Daily Balance", onClick: this.calculateDailyBalance })),
+                React.createElement(Button_1.default, { label: 'Calculate Daily Balance', onClick: this.calculateDailyBalance })),
             this.state.dailyBalance !== undefined &&
                 React.createElement(DailyBalanceTable_1.DailyBalanceTable, { dailyBalance: this.state.dailyBalance })));
     }
@@ -375,7 +375,9 @@ class DailyBalanceTable extends React.Component {
     render() {
         return (React.createElement(Table_1.Table, { headers: ['Date', 'Holdings', 'USD Value'], rows: this.props.dailyBalance.map((balance) => [
                 React.createElement("p", null, balance.date.toUTCString()),
-                React.createElement("div", null, Object.keys(balance.holdings).map(currency => React.createElement("p", null, currency + ' - ' + balance.holdings[currency].amount + ' - ' + balance.holdings[currency].fiatValue))),
+                React.createElement("div", null, Object.keys(balance.holdings).map((currency) => React.createElement("p", null, `
+                            ${currency} - ${balance.holdings[currency].amount} - ${balance.holdings[currency].fiatValue}
+                        `))),
                 React.createElement("p", null, balance.USDValue),
             ]) }));
     }
@@ -574,9 +576,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const Popup_1 = require("../Popup");
-const Button_1 = require("../Button");
 const types_1 = require("../../src/types");
+const Button_1 = require("../Button");
+const Popup_1 = require("../Popup");
 function valueIfNotUndefined(object, key, fallback) {
     if (object !== undefined) {
         if (key in object) {
@@ -607,12 +609,12 @@ class Settings extends React.Component {
     render() {
         return (React.createElement(Popup_1.default, { onClose: this.props.onClose },
             React.createElement("div", null,
-                React.createElement("h1", { className: "mt1 mb1" }, "Settings"),
+                React.createElement("h1", { className: 'mt1 mb1' }, "Settings"),
                 React.createElement("hr", null),
-                React.createElement("label", { className: "pr1" }, "Fiat Rate Calculation Method:"),
+                React.createElement("label", { className: 'pr1' }, "Fiat Rate Calculation Method:"),
                 React.createElement("select", { defaultValue: this.state.fiatRateMethod, onChange: this.onChange }, Object.keys(types_1.FiatRateMethod).map((method) => React.createElement("option", { key: method, value: method }, types_1.FiatRateMethod[method]))),
                 React.createElement("hr", null),
-                React.createElement(Button_1.default, { label: "Save", onClick: this.onSave }))));
+                React.createElement(Button_1.default, { label: 'Save', onClick: this.onSave }))));
     }
 }
 exports.Settings = Settings;
@@ -653,8 +655,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const crypto = require("crypto");
 const React = require("react");
 const validator = require("validator");
-const Button_1 = require("../Button");
 const utils_1 = require("../../src/parsers/utils");
+const Button_1 = require("../Button");
 class TradeDetails extends React.Component {
     constructor(props) {
         super(props);
@@ -858,12 +860,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const types_1 = require("../../src/types");
-const TradesTable_1 = require("../TradesTable");
-const Button_1 = require("../Button");
 const getFiatRate_1 = require("../../src/processing/getFiatRate");
 const SortTrades_1 = require("../../src/processing/SortTrades");
+const types_1 = require("../../src/types");
+const Button_1 = require("../Button");
 const Loader_1 = require("../Loader");
+const TradesTable_1 = require("../TradesTable");
 class ViewTrades extends React.Component {
     constructor(props) {
         super(props);
@@ -883,8 +885,8 @@ class ViewTrades extends React.Component {
         return (React.createElement("div", { className: 'viewTrades' },
             React.createElement("h3", { className: 'tc' }, "Trades"),
             React.createElement("hr", { className: 'center w-50' }),
-            React.createElement("div", { className: "tc center" },
-                React.createElement(Button_1.default, { label: "Refresh Trade Data", onClick: this.refetchUSDRate }),
+            React.createElement("div", { className: 'tc center' },
+                React.createElement(Button_1.default, { label: 'Refresh Trade Data', onClick: this.refetchUSDRate }),
                 this.state.processing ?
                     React.createElement(Loader_1.Loader, null)
                     :
@@ -913,14 +915,14 @@ const classnames = require("classnames");
 const React = require("react");
 const SortTrades_1 = require("../src/processing/SortTrades");
 const AddTrades_1 = require("./AddTrades");
+const AdvancedTab_1 = require("./AdvancedTab");
 const Button_1 = require("./Button");
 const CalculateGains_1 = require("./CalculateGains");
 const FileBrowse_1 = require("./FileBrowse");
 const FileDownload_1 = require("./FileDownload");
 const Popup_1 = require("./Popup");
-const ViewTrades_1 = require("./ViewTrades");
 const Settings_1 = require("./Settings");
-const AdvancedTab_1 = require("./AdvancedTab");
+const ViewTrades_1 = require("./ViewTrades");
 var TABS;
 (function (TABS) {
     TABS["HOME"] = "Home";
@@ -1006,7 +1008,8 @@ class rootElement extends React.Component {
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser || props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
+            loadDataPopup: props.browser ||
+                props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
@@ -1041,7 +1044,7 @@ class rootElement extends React.Component {
             this.state.settingsPopup &&
                 React.createElement(Settings_1.Settings, { settings: this.state.savedData.settings, onSettingsSave: this.saveData, onClose: this.settingsPopup }),
             React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/index.css' }),
-            React.createElement("i", { className: "fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray", onClick: this.settingsPopup }),
+            React.createElement("i", { className: 'fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray', onClick: this.settingsPopup }),
             React.createElement("div", { className: 'flex bg-dark-gray h2' }, Object.keys(TABS).map((key) => React.createElement("h3", { key: key, className: classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {
                     'bg-dark-gray': TABS[key] !== this.state.currentTab,
                     'bg-navy': TABS[key] === this.state.currentTab,
@@ -73516,7 +73519,6 @@ function createEmptySavedData() {
         },
     };
 }
-;
 function render(browser, savedData = createEmptySavedData()) {
     ReactDOM.render(React.createElement(components_1.rootElement, {
         savedData,
@@ -73570,7 +73572,10 @@ function outputForm8949(holdings, trades, method) {
         null,
         (trade.shortTerm).toFixed(2),
     ]));
-    csvData = csvData.concat(['Totals', '', '', result.shortTermProceeds.toFixed(2), result.shortTermCostBasis.toFixed(2), '', 0, result.shortTermGain.toFixed(2)].join(','));
+    csvData = csvData.concat([
+        'Totals', '', '', result.shortTermProceeds.toFixed(2),
+        result.shortTermCostBasis.toFixed(2), '', 0, result.shortTermGain.toFixed(2)
+    ].join(','));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
     csvData = csvData.concat(result.longTermTrades.map((trade) => [
         `${trade.amountSold} ${trade.soldCurrency}`,
@@ -73582,7 +73587,10 @@ function outputForm8949(holdings, trades, method) {
         null,
         (trade.longTerm).toFixed(2),
     ]));
-    csvData = csvData.concat(['Totals', '', '', result.longTermProceeds.toFixed(2), result.longTermCostBasis.toFixed(2), '', 0, result.longTermGain.toFixed(2)].join(','));
+    csvData = csvData.concat([
+        'Totals', '', '', result.longTermProceeds.toFixed(2),
+        result.longTermCostBasis.toFixed(2), '', 0, result.longTermGain.toFixed(2)
+    ].join(','));
     return csvData.join('\n');
 }
 exports.default = outputForm8949;
@@ -73598,10 +73606,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto = require("crypto");
 const __1 = require("../");
 const types_1 = require("../../types");
 const utils_1 = require("../utils");
-const crypto = require("crypto");
 var BinanceOrderType;
 (function (BinanceOrderType) {
     BinanceOrderType["SELL"] = "SELL";
@@ -74001,7 +74009,7 @@ function processData(fileData) {
             const pair = trade.Market.split('/');
             // some trades have 0 cost/value so skip those
             if (garbageTrade(trade)) {
-                console.log('Garbage Trade Skipped - ' + trade['Order Number']);
+                // change to something to warn users ('Garbage Trade Skipped - ' + trade['Order Number']);
                 continue;
             }
             switch (trade.Type) {
@@ -74522,9 +74530,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../../../types");
-const utils_1 = require("../utils");
-const getDayAvgCurrencyRate_1 = require("../getDayAvgCurrencyRate");
 const getClosestHourPrice_1 = require("../getClosestHourPrice");
+const getDayAvgCurrencyRate_1 = require("../getDayAvgCurrencyRate");
+const utils_1 = require("../utils");
 function BTCBasedRate(trade, BTCUSDRate) {
     if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
         return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
@@ -74685,10 +74693,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../../types");
-const utils_1 = require("./utils");
 const BTCBasedRate_1 = require("./BTCBasedRate");
-const getDayAvgCurrencyRate_1 = require("./getDayAvgCurrencyRate");
 const getClosestHourPrice_1 = require("./getClosestHourPrice");
+const getDayAvgCurrencyRate_1 = require("./getDayAvgCurrencyRate");
+const utils_1 = require("./utils");
 function getFiatRate(trade, fiatCurrency, method) {
     return __awaiter(this, void 0, void 0, function* () {
         if (utils_1.isCurrencyTrade(trade, fiatCurrency)) {
@@ -74705,7 +74713,10 @@ function getFiatRate(trade, fiatCurrency, method) {
                     case types_1.FiatRateMethod.DOUBLEAVERAGE:
                         const dayAvgDouble = yield getDayAvgCurrencyRate_1.getDayAvgTradeRate(trade, fiatCurrency);
                         const closestHourAvg = yield getClosestHourPrice_1.getClosestHourPriceForTrade(trade, fiatCurrency);
-                        return addRatetoTrade(trade, utils_1.calculateAverageFromArray([dayAvgDouble, utils_1.calculateAvgerageHourPrice(closestHourAvg)]));
+                        return addRatetoTrade(trade, utils_1.calculateAverageFromArray([
+                            dayAvgDouble,
+                            utils_1.calculateAvgerageHourPrice(closestHourAvg),
+                        ]));
                     case types_1.FiatRateMethod.DAYAVERAGE:
                         const dayAvg = yield getDayAvgCurrencyRate_1.getDayAvgTradeRate(trade, fiatCurrency);
                         return addRatetoTrade(trade, dayAvg);
@@ -74812,7 +74823,11 @@ exports.calculateAverageFromArray = calculateAverageFromArray;
 
 },{}],435:[function(require,module,exports){
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
+__export(require("./trade"));
 var METHOD;
 (function (METHOD) {
     METHOD["FIFO"] = "FIFO";
@@ -74834,6 +74849,10 @@ var FiatRateMethod;
     FiatRateMethod["DAYAVERAGEMID"] = "Day Average Middle";
     FiatRateMethod["DAYAVERAGEVOLUME"] = "Day Average Volume";
 })(FiatRateMethod = exports.FiatRateMethod || (exports.FiatRateMethod = {}));
+
+},{"./trade":436}],436:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var EXCHANGES;
 (function (EXCHANGES) {
     EXCHANGES["BITTREX"] = "Bittrex";

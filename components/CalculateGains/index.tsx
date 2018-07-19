@@ -1,14 +1,14 @@
 import * as React from 'react';
 import generateForm8949 from '../../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../../src/processing/CalculateGains';
-import { IHoldings, ITrade, ITradeWithGains, ITradeWithUSDRate, METHOD, ISavedData } from '../../src/types';
+import { IHoldings, ISavedData, ITrade, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../src/types';
 // import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
 import { FileDownload, IFileDownloadProps } from '../FileDownload';
 import { GainsPerTradeTable } from '../GainsPerTradeTable';
 // import { Loader } from '../Loader';
 export interface ICalculateTradesProp {
-    savedData: ISavedData,
+    savedData: ISavedData;
 }
 
 export interface ICalculateTradesState {
@@ -34,7 +34,13 @@ function getTradeYears(trades: ITrade[]) {
     return years;
 }
 
-function recalculate(holdings: IHoldings, trades: ITradeWithUSDRate[], gainCalculationMethod: METHOD, includePreviousYears: boolean, year: string) {
+function recalculate(
+    holdings: IHoldings,
+    trades: ITradeWithUSDRate[],
+    gainCalculationMethod: METHOD,
+    includePreviousYears: boolean,
+    year: string,
+) {
     if (year !== '----') {
         let newHoldings = holdings;
         if (includePreviousYears) {
@@ -117,7 +123,9 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
         if (this.state.includePreviousYears) {
             const trades = this.props.savedData.trades.filter((trade) =>
                 new Date(trade.date).getFullYear() < this.state.currentYear);
-            holdings = calculateGains(this.props.savedData.holdings, trades, this.state.gainCalculationMethod).newHoldings;
+            holdings = calculateGains(
+                this.props.savedData.holdings, trades, this.state.gainCalculationMethod,
+            ).newHoldings;
         }
         const tradesForThisYear: ITradeWithUSDRate[] = this.props.savedData.trades.filter(
             (trade) => new Date(trade.date).getFullYear() === this.state.currentYear,

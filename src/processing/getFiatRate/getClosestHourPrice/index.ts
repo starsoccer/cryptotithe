@@ -1,8 +1,12 @@
 import * as got from 'got';
 import { ITrade } from '../../../types';
-import { roundHour, IHourlyPriceData } from '../utils';
+import { IHourlyPriceData, roundHour } from '../utils';
 
-export async function getClosestHourPrice(currency: string, fiatCurrency: string, date: number): Promise<IHourlyPriceData> {
+export async function getClosestHourPrice(
+    currency: string,
+    fiatCurrency: string,
+    date: number,
+): Promise<IHourlyPriceData> {
     const tradeTime = parseInt((roundHour(new Date(date)) / 1000).toFixed(0), 10);
     const data = [
         `fsym=${currency}`,

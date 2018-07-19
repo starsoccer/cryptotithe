@@ -1,4 +1,4 @@
-import { IHoldings, ISimplifiedHoldingsWithValue } from "../../types";
+import { IHoldings, ISimplifiedHoldingsWithValue } from '../../types';
 import { getDayAvg } from '../getFiatRate/getDayAvgCurrencyRate';
 
 export interface IHoldingsValue {
@@ -6,7 +6,7 @@ export interface IHoldingsValue {
     total: number;
 }
 
-export async function calculateHoldingsValue (holdings: IHoldings, date: Date = new Date()): Promise<IHoldingsValue> {
+export async function calculateHoldingsValue(holdings: IHoldings, date: Date = new Date()): Promise<IHoldingsValue> {
     const currencies = Object.keys(holdings);
     const holdingsValues: IHoldingsValue = {
         total: 0,
@@ -18,7 +18,7 @@ export async function calculateHoldingsValue (holdings: IHoldings, date: Date = 
         let totalHeld = 0;
         const rate = getDayAvg('USD', currency, date.getTime());
         for (const holding of holdings[currency]) {
-            totalHeld += holding.amount; 
+            totalHeld += holding.amount;
         }
         holdingsValues.currencies[currency] = {
             fiatValue: await rate * totalHeld,

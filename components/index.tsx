@@ -8,14 +8,14 @@ import {
     ITradeWithUSDRate,
 } from '../src/types';
 import { AddTrades } from './AddTrades';
+import { AdvancedTab } from './AdvancedTab';
 import Button from './Button';
 import { CalculateGains } from './CalculateGains';
 import { FileBrowse } from './FileBrowse';
 import { FileDownload, IFileDownloadProps } from './FileDownload';
 import Popup from './Popup';
-import { ViewTrades } from './ViewTrades';
 import { Settings } from './Settings';
-import { AdvancedTab } from './AdvancedTab';
+import { ViewTrades } from './ViewTrades';
 
 export interface IAppProps {
     savedData: ISavedData;
@@ -49,7 +49,8 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser || props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
+            loadDataPopup: props.browser ||
+                props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
@@ -180,7 +181,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                     />
                 }
                 <link rel='stylesheet' type='text/css' href='./components/index.css' />
-                <i className="fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray" onClick={this.settingsPopup}/>
+                <i className='fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray' onClick={this.settingsPopup}/>
                 <div className='flex bg-dark-gray h2'>
                     {Object.keys(TABS).map((key: string) => <h3
                         key={key}

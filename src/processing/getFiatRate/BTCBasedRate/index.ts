@@ -1,7 +1,7 @@
-import { ITrade, FiatRateMethod } from '../../../types';
-import { calculateAvgerageHourPrice, calculateAverageFromArray } from '../utils'; 
-import { getDayAvg } from '../getDayAvgCurrencyRate';
+import { FiatRateMethod, ITrade } from '../../../types';
 import { getClosestHourPrice } from '../getClosestHourPrice';
+import { getDayAvg } from '../getDayAvgCurrencyRate';
+import { calculateAverageFromArray, calculateAvgerageHourPrice } from '../utils';
 
 export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
     if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {

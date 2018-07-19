@@ -1,7 +1,7 @@
+import * as crypto from 'crypto';
 import { getCSVData } from '../';
 import { EXCHANGES, IPartialTrade, ITrade } from '../../types';
 import { createDateAsUTC } from '../utils';
-import * as crypto from 'crypto';
 
 enum BinanceOrderType {
     SELL = 'SELL',
@@ -21,7 +21,7 @@ interface IBinance {
 
 function getPairs(market: string) {
     const pairs = [];
-    if(market.length === 6) {
+    if (market.length === 6) {
         pairs.push(market.substr(0, 3));
         pairs.push(market.substr(3, 3));
     } else {
@@ -58,7 +58,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                 tradeToAdd.exchange = EXCHANGES.BINANCE;
                 if (pair[1].toUpperCase() === trade['Fee Coin']) {
                     tradeToAdd.amountSold = parseFloat(trade.Amount);
-                    tradeToAdd.rate = parseFloat(trade.Amount) / (parseFloat(trade.Total) - parseFloat(trade.Fee))
+                    tradeToAdd.rate = parseFloat(trade.Amount) / (parseFloat(trade.Total) - parseFloat(trade.Fee));
                 } else {
                     tradeToAdd.amountSold = parseFloat(trade.Amount) + parseFloat(trade.Fee);
                     tradeToAdd.rate = tradeToAdd.amountSold / parseFloat(trade.Total);

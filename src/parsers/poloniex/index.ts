@@ -35,8 +35,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
     for (const trade of data) {
         const pair: string[] = trade.Market.split('/');
         // some trades have 0 cost/value so skip those
-        if(garbageTrade(trade))  {
-            console.log('Garbage Trade Skipped - ' + trade['Order Number']);
+        if (garbageTrade(trade))  {
+            // change to something to warn users ('Garbage Trade Skipped - ' + trade['Order Number']);
             continue;
         }
         switch (trade.Type) {

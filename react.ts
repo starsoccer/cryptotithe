@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { rootElement } from './components';
-import { ISavedData, FiatRateMethod } from './src/types';
+import { FiatRateMethod, ISavedData } from './src/types';
 
 function createEmptySavedData(): ISavedData {
     return {
@@ -11,8 +11,8 @@ function createEmptySavedData(): ISavedData {
         settings: {
             fiatRateMethod: Object.keys(FiatRateMethod)[0] as keyof typeof FiatRateMethod,
         },
-    }
-};
+    };
+}
 
 function render(browser: boolean, savedData = createEmptySavedData()) {
     ReactDOM.render(

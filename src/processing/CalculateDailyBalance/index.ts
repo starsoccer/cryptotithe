@@ -1,11 +1,11 @@
-import { ITradeWithUSDRate, IHoldings, IDailyBalance } from '../../types';
+import { IDailyBalance, IHoldings, ITradeWithUSDRate } from '../../types';
 import { calculateGains } from '../CalculateGains';
 import { calculateHoldingsValue } from '../CalculateHoldingsValue';
 import SortTrades from '../SortTrades';
 
-export async function calculateDailyBalance (trades: ITradeWithUSDRate[]): Promise<IDailyBalance[]> {
+export async function calculateDailyBalance(trades: ITradeWithUSDRate[]): Promise<IDailyBalance[]> {
     const dailyBalance: IDailyBalance[] = [];
-    let holdings: IHoldings = {}
+    let holdings: IHoldings = {};
     const sortedTrades = SortTrades(trades) as ITradeWithUSDRate[];
     const endingDate = sortedTrades[sortedTrades.length - 1].date;
     for (let index = sortedTrades[0].date; index < endingDate; index += 86400000) {

@@ -1,9 +1,9 @@
 import * as crypto from 'crypto';
 import * as React from 'react';
 import * as validator from 'validator';
+import { createDateAsUTC } from '../../src/parsers/utils';
 import { EXCHANGES, IPartialTrade, ITrade } from '../../src/types';
 import Button from '../Button';
-import { createDateAsUTC } from '../../src/parsers/utils';
 
 export interface ITradeDetailsProps {
     className?: string;

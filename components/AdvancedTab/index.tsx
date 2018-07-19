@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { calculateDailyBalance } from '../../src/processing/CalculateDailyBalance';
-import { ISavedData, EXCHANGES, IDailyBalance } from '../../src/types';
+import { EXCHANGES, IDailyBalance, ISavedData } from '../../src/types';
 import Button from '../Button';
 import { DailyBalanceTable } from '../DailyBalanceTable';
 export interface IAdvancedTabProp {
@@ -8,7 +8,7 @@ export interface IAdvancedTabProp {
 }
 
 interface IAdvancedTabState {
-    dailyBalance?: IDailyBalance[],
+    dailyBalance?: IDailyBalance[];
     exchange: EXCHANGES;
 }
 
@@ -16,18 +16,18 @@ export class AdvancedTab extends React.Component<IAdvancedTabProp, IAdvancedTabS
     public constructor(props: IAdvancedTabProp) {
         super(props);
         this.state = {
-            exchange: EXCHANGES[Object.keys(EXCHANGES)[0]]
+            exchange: EXCHANGES[Object.keys(EXCHANGES)[0]],
         };
     }
 
     public onExchangeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({exchange: EXCHANGES[e.currentTarget.value]})
+        this.setState({exchange: EXCHANGES[e.currentTarget.value]});
     }
 
     public calculateDailyBalance = async () => {
-        const trades = this.props.savedData.trades.filter(trade => trade.exchange === this.state.exchange);
+        const trades = this.props.savedData.trades.filter((trade) => trade.exchange === this.state.exchange);
         this.setState({
-            dailyBalance: await calculateDailyBalance(trades)
+            dailyBalance: await calculateDailyBalance(trades),
         });
     }
 
@@ -41,7 +41,7 @@ export class AdvancedTab extends React.Component<IAdvancedTabProp, IAdvancedTabS
                             <option key={key} value={key}>{EXCHANGES[key as keyof typeof EXCHANGES]}</option>,
                         )}
                     </select>
-                    <Button label="Calculate Daily Balance" onClick={this.calculateDailyBalance}/>
+                    <Button label='Calculate Daily Balance' onClick={this.calculateDailyBalance}/>
                 </div>
                 { this.state.dailyBalance !== undefined &&
                     <DailyBalanceTable dailyBalance={this.state.dailyBalance}/>

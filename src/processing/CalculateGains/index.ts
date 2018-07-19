@@ -2,11 +2,11 @@ import * as clone from 'clone';
 import {
     ICurrencyHolding,
     IHoldings,
+    ITrade,
     ITradeWithCostBasis,
     ITradeWithGains,
     ITradeWithUSDRate,
     METHOD,
-    ITrade,
 } from '../../types';
 
 const FULL_YEAR_IN_MILLISECONDS = 31536000000;
@@ -78,7 +78,8 @@ export function getCurrenyHolding(
         if (trade.soldCurrency in holdings) {
             switch (method) {
                 case METHOD.LIFO:
-                    const lastIn: ICurrencyHolding = holdings[trade.soldCurrency][holdings[trade.soldCurrency].length - 1];
+                    const lastIn: ICurrencyHolding =
+                    holdings[trade.soldCurrency][holdings[trade.soldCurrency].length - 1];
                     if (lastIn.amount > amountUsed) {
                         lastIn.amount = lastIn.amount - amountUsed;
                         currencyHolding.push({
@@ -127,7 +128,7 @@ export function getCurrenyHolding(
                         currencyHolding.push(lowestTaxCostHolding);
                         holdings[trade.soldCurrency].splice(lowestTaxCostPosition, 1);
                     }
-                break;
+                    break;
                 case METHOD.HTFO:
                 let highestTaxCostPosition = 0;
                 if (trade.date - holdings[trade.soldCurrency][0].date > FULL_YEAR_IN_MILLISECONDS) {
@@ -160,7 +161,7 @@ export function getCurrenyHolding(
                     currencyHolding.push(highestTaxCostHolding);
                     holdings[trade.soldCurrency].splice(highestTaxCostPosition, 1);
                 }
-            break;
+                break;
                 case METHOD.HCFO:
                     let highestCostPosition = 0;
                     for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
@@ -296,7 +297,11 @@ export interface ICalculateGainsPerHoldings {
     holdings: IHoldings;
 }
 
-export function calculateGainsPerHoldings(holdings: IHoldings, trades: ITradeWithUSDRate[], method: METHOD): ICalculateGainsPerHoldings {
+export function calculateGainsPerHoldings(
+    holdings: IHoldings,
+    trades: ITradeWithUSDRate[],
+    method: METHOD,
+): ICalculateGainsPerHoldings {
     let newHoldings: IHoldings = clone(holdings);
     let shortTermGain = 0;
     let shortTermProceeds = 0;
