@@ -52,7 +52,11 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
                         <span>{trade.id}</span>,
                         <span>{trade.amountSold.toFixed(8)}</span>,
                         <span>{trade.soldCurrency}</span>,
-                        <span>{trade.rate.toFixed(8)}</span>,
+                        <div>
+                            {trade.rate.toFixed(8)}<i className='fa fa-arrow-circle-right'/>
+                            <br />
+                            <i className='fa fa-arrow-circle-left'/>{trade.amountSold / trade.rate / trade.amountSold}
+                        </div>,
                         <span>{trade.boughtCurrency}</span>,
                         <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
                         <i className='fa fa-pencil-square' onClick={this.changePopupStatus(trade.id)}/>,
