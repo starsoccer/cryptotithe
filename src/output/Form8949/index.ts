@@ -1,5 +1,5 @@
 import { calculateGainsPerHoldings } from '../../processing/CalculateGains';
-import { IHoldings, ITradeWithUSDRate, METHOD } from '../../types';
+import { IHoldings, ITradeWithCostBasis, ITradeWithUSDRate, METHOD } from '../../types';
 
 const headers = [
     'Description',
@@ -20,32 +20,27 @@ export default function outputForm8949(holdings: IHoldings, trades: ITradeWithUS
         'Part 1 (Short-Term)',
     ];
     csvData = csvData.concat(headers);
-    csvData = csvData.concat(result.shortTermTrades.map((trade) => [
-        `${trade.amountSold} ${trade.soldCurrency}`,
-        new Date(trade.dateAcquired).toLocaleDateString(),
-        new Date(trade.date).toLocaleDateString(),
-        (trade.costBasis + trade.shortTerm).toFixed(2),
-        (trade.costBasis).toFixed(2),
-        null,
-        null,
-        (trade.shortTerm).toFixed(2),
-    ]));
-    csvData = csvData.concat([
-        'Totals', '', '', result.shortTermProceeds.toFixed(2),
-        result.shortTermCostBasis.toFixed(2), '', 0, result.shortTermGain.toFixed(2)].join(','));
+    csvData = csvData.concat(addTrades(result.shortTermTrades));
+    csvData = csvData.concat(addTotal(result.shortTermProceeds, result.shortTermCostBasis, result.shortTermGain));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
-    csvData = csvData.concat(result.longTermTrades.map((trade) => [
+    csvData = csvData.concat(addTrades(result.longTermTrades));
+    csvData = csvData.concat(addTotal(result.longTermProceeds, result.longTermCostBasis, result.longTermGain));
+    return csvData.join('\n');
+}
+
+function addTrades(trades: ITradeWithCostBasis[]) {
+    return trades.map((trade) => [
         `${trade.amountSold} ${trade.soldCurrency}`,
         new Date(trade.dateAcquired).toLocaleDateString(),
         new Date(trade.date).toLocaleDateString(),
-        (trade.costBasis + trade.longTerm).toFixed(2),
+        (trade.costBasis + trade.longTerm + trade.shortTerm).toFixed(2),
         (trade.costBasis).toFixed(2),
         null,
         null,
-        (trade.longTerm).toFixed(2),
-    ]));
-    csvData = csvData.concat([
-        'Totals', '', '', result.longTermProceeds.toFixed(2),
-        result.longTermCostBasis.toFixed(2), '', 0, result.longTermGain.toFixed(2)].join(','));
-    return csvData.join('\n');
+        (trade.longTerm + trade.shortTerm).toFixed(2),
+    ]);
+}
+
+function addTotal(proceeds: number, costBasis: number, gain: number) {
+    return ['Totals', '', '', proceeds.toFixed(2), costBasis.toFixed(2), '', 0, gain.toFixed(2)].join(',');
 }

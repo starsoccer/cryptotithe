@@ -409,9 +409,9 @@ class DuplicateTradesTable extends React.Component {
                 React.createElement("span", null, trade.soldCurrency),
                 React.createElement("div", null,
                     trade.rate.toFixed(8),
-                    React.createElement("i", { className: "fa fa-arrow-circle-right" }),
+                    React.createElement("i", { className: 'fa fa-arrow-circle-right' }),
                     React.createElement("br", null),
-                    React.createElement("i", { className: "fa fa-arrow-circle-left" }),
+                    React.createElement("i", { className: 'fa fa-arrow-circle-left' }),
                     trade.amountSold / trade.rate / trade.amountSold),
                 React.createElement("span", null, trade.boughtCurrency),
                 React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
@@ -528,9 +528,9 @@ class GainsPerTradeTable extends React.Component {
                 React.createElement("span", null, trade.soldCurrency),
                 React.createElement("div", null,
                     trade.rate.toFixed(8),
-                    React.createElement("i", { className: "fa fa-arrow-circle-right" }),
+                    React.createElement("i", { className: 'fa fa-arrow-circle-right' }),
                     React.createElement("br", null),
-                    React.createElement("i", { className: "fa fa-arrow-circle-left" }),
+                    React.createElement("i", { className: 'fa fa-arrow-circle-left' }),
                     trade.amountSold / trade.rate / trade.amountSold),
                 React.createElement("span", null, trade.boughtCurrency),
                 React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
@@ -849,9 +849,9 @@ class TradesTable extends React.Component {
                     React.createElement("span", null, trade.soldCurrency),
                     React.createElement("div", null,
                         trade.rate.toFixed(8),
-                        React.createElement("i", { className: "fa fa-arrow-circle-right" }),
+                        React.createElement("i", { className: 'fa fa-arrow-circle-right' }),
                         React.createElement("br", null),
-                        React.createElement("i", { className: "fa fa-arrow-circle-left" }),
+                        React.createElement("i", { className: 'fa fa-arrow-circle-left' }),
                         trade.amountSold / trade.rate / trade.amountSold),
                     React.createElement("span", null, trade.boughtCurrency),
                     React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
@@ -73577,38 +73577,29 @@ function outputForm8949(holdings, trades, method) {
         'Part 1 (Short-Term)',
     ];
     csvData = csvData.concat(headers);
-    csvData = csvData.concat(result.shortTermTrades.map((trade) => [
-        `${trade.amountSold} ${trade.soldCurrency}`,
-        new Date(trade.dateAcquired).toLocaleDateString(),
-        new Date(trade.date).toLocaleDateString(),
-        (trade.costBasis + trade.shortTerm).toFixed(2),
-        (trade.costBasis).toFixed(2),
-        null,
-        null,
-        (trade.shortTerm).toFixed(2),
-    ]));
-    csvData = csvData.concat([
-        'Totals', '', '', result.shortTermProceeds.toFixed(2),
-        result.shortTermCostBasis.toFixed(2), '', 0, result.shortTermGain.toFixed(2)
-    ].join(','));
+    csvData = csvData.concat(addTrades(result.shortTermTrades));
+    csvData = csvData.concat(addTotal(result.shortTermProceeds, result.shortTermCostBasis, result.shortTermGain));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
-    csvData = csvData.concat(result.longTermTrades.map((trade) => [
-        `${trade.amountSold} ${trade.soldCurrency}`,
-        new Date(trade.dateAcquired).toLocaleDateString(),
-        new Date(trade.date).toLocaleDateString(),
-        (trade.costBasis + trade.longTerm).toFixed(2),
-        (trade.costBasis).toFixed(2),
-        null,
-        null,
-        (trade.longTerm).toFixed(2),
-    ]));
-    csvData = csvData.concat([
-        'Totals', '', '', result.longTermProceeds.toFixed(2),
-        result.longTermCostBasis.toFixed(2), '', 0, result.longTermGain.toFixed(2)
-    ].join(','));
+    csvData = csvData.concat(addTrades(result.longTermTrades));
+    csvData = csvData.concat(addTotal(result.longTermProceeds, result.longTermCostBasis, result.longTermGain));
     return csvData.join('\n');
 }
 exports.default = outputForm8949;
+function addTrades(trades) {
+    return trades.map((trade) => [
+        `${trade.amountSold} ${trade.soldCurrency}`,
+        new Date(trade.dateAcquired).toLocaleDateString(),
+        new Date(trade.date).toLocaleDateString(),
+        (trade.costBasis + trade.longTerm + trade.shortTerm).toFixed(2),
+        (trade.costBasis).toFixed(2),
+        null,
+        null,
+        (trade.longTerm + trade.shortTerm).toFixed(2),
+    ]);
+}
+function addTotal(proceeds, costBasis, gain) {
+    return ['Totals', '', '', proceeds.toFixed(2), costBasis.toFixed(2), '', 0, gain.toFixed(2)].join(',');
+}
 
 },{"../../processing/CalculateGains":426}],418:[function(require,module,exports){
 "use strict";
