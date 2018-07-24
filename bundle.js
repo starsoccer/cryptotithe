@@ -34,9 +34,7 @@ class AddTrades extends React.Component {
                 if (input.current.files[0].name.match('.+(\.csv)$')) {
                     if (fileData !== '') {
                         this.setState({ processing: true });
-                        const exchange = document.getElementById('type')
-                            .value;
-                        const processedData = yield parsers_1.processData(exchange, fileData);
+                        const processedData = yield parsers_1.processData(this.state.exchange, fileData);
                         if (processedData && processedData.length) {
                             const duplicateTrades = DuplicateCheck_1.default(this.state.currentTrades, processedData);
                             if (duplicateTrades.length) {
@@ -118,6 +116,9 @@ class AddTrades extends React.Component {
             this.setState({ processedTrades: trades });
             return true;
         };
+        this.onSelectChange = (e) => {
+            this.setState({ exchange: e.currentTarget.value });
+        };
         this.state = {
             processedTrades: [],
             currentTrades: this.props.savedData.trades,
@@ -127,6 +128,7 @@ class AddTrades extends React.Component {
             alertData: {},
             addTrade: false,
             fileBrowseOpen: false,
+            exchange: '',
         };
     }
     render() {
@@ -135,7 +137,10 @@ class AddTrades extends React.Component {
                 React.createElement(AlertBar_1.AlertBar, Object.assign({ onClick: this.setAlertData }, this.state.alertData)),
             React.createElement("div", { className: 'center tc mt2' },
                 React.createElement("label", { htmlFor: 'type', className: 'pr2' }, "Import Type"),
-                React.createElement("select", { name: 'type', id: 'type' }, Object.keys(types_1.EXCHANGES).map((key) => React.createElement("option", { key: key, value: key }, types_1.EXCHANGES[key])))),
+                React.createElement("select", { name: 'exchange', id: 'exchange', onChange: this.onSelectChange },
+                    React.createElement("option", { key: 'Auto-Detect', value: 'Auto-Detect' }, "Auto-Detect"),
+                    ",",
+                    Object.keys(types_1.EXCHANGES).map((key) => React.createElement("option", { key: key, value: key }, types_1.EXCHANGES[key])))),
             this.state.addTrade &&
                 React.createElement(TradeDetails_1.default, { onSubmit: this.addTrade, className: 'cf' }),
             React.createElement("div", { className: 'flex justify-around pt2' },
@@ -73833,6 +73838,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const csv = require("csvtojson");
+const types_1 = require("../types");
+const crypto = require("crypto");
 function getCSVData(fileData) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
@@ -73869,6 +73876,13 @@ function processData(exchange, fileData) {
                 processExchangeData = require('./binance').processData;
                 break;
             default:
+                const headers = fileData.substr(0, fileData.indexOf('\n'));
+                const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
+                for (const key in types_1.ExchangesHeaders) {
+                    if (types_1.ExchangesHeaders[key] === headersHash) {
+                        return processData(key, fileData);
+                    }
+                }
                 throw new Error(`Unknown Exchange - ${exchange}`);
         }
         if (typeof processExchangeData === 'function') {
@@ -73879,7 +73893,7 @@ function processData(exchange, fileData) {
 }
 exports.processData = processData;
 
-},{"./binance":418,"./bittrex":419,"./gemini":420,"./kraken":422,"./poloniex":423,"csvtojson":85}],422:[function(require,module,exports){
+},{"../types":435,"./binance":418,"./bittrex":419,"./gemini":420,"./kraken":422,"./poloniex":423,"crypto":84,"csvtojson":85}],422:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74867,5 +74881,13 @@ var EXCHANGES;
     EXCHANGES["KRAKEN"] = "Kraken";
     EXCHANGES["BINANCE"] = "Binance";
 })(EXCHANGES = exports.EXCHANGES || (exports.EXCHANGES = {}));
+var ExchangesHeaders;
+(function (ExchangesHeaders) {
+    ExchangesHeaders["BITTREX"] = "07230399aaa8d1f15e88e38bd43a01c5ef1af6c1f9131668d346e196ff090d80";
+    ExchangesHeaders["GEMINI"] = "9d324bebad54408dd639d87a3a99f83291c0ebe1c2656531d1bf2fbee2a6301f";
+    ExchangesHeaders["POLONIEX"] = "d7484d726e014edaa059c0137ac91183a7eaa9ee5d52713aa48bb4104b01afb0";
+    ExchangesHeaders["KRAKEN"] = "85bf27e799cc0a30fe5b201cd6a4724e4a52feb433f41a1e8b046924e3bf8dc5";
+    ExchangesHeaders["BINANCE"] = "4d0d5df894fe488872e513f6148dfa14ff29272e759b7fb3c86d264687a7cf99";
+})(ExchangesHeaders = exports.ExchangesHeaders || (exports.ExchangesHeaders = {}));
 
 },{}]},{},[416]);

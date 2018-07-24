@@ -39,6 +39,7 @@ interface IAddTradesState {
     holdings: IHoldings;
     processedTrades: ITrade[];
     processing: boolean;
+    exchange: keyof typeof EXCHANGES | string;
 }
 
 export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> {
@@ -53,6 +54,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
             alertData: {} as IAlertData,
             addTrade: false,
             fileBrowseOpen: false,
+            exchange: '',
         };
     }
 
@@ -66,9 +68,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
             if (input.current.files[0].name.match('.+(\.csv)$')) {
                 if (fileData !== '') {
                     this.setState({processing: true});
-                    const exchange: keyof typeof EXCHANGES = (document.getElementById('type') as HTMLSelectElement)
-                        .value as keyof typeof EXCHANGES;
-                    const processedData: ITrade[] = await processData(exchange, fileData);
+                    const processedData: ITrade[] = await processData(this.state.exchange, fileData);
                     if (processedData && processedData.length) {
                         const duplicateTrades = duplicateCheck(this.state.currentTrades, processedData);
                         if (duplicateTrades.length) {
@@ -157,6 +157,10 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         return true;
     }
 
+    public onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({exchange: e.currentTarget.value});
+    }
+
     public render() {
         return (
             <div className='addTrades'>
@@ -168,7 +172,8 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
                 }
                 <div className='center tc mt2'>
                     <label htmlFor='type' className='pr2'>Import Type</label>
-                    <select name='type' id='type'>
+                    <select name='exchange' id='exchange' onChange={this.onSelectChange}>
+                        <option key='Auto-Detect' value='Auto-Detect'>Auto-Detect</option>,
                         {Object.keys(EXCHANGES).map((key) =>
                             <option key={key} value={key}>{EXCHANGES[key as keyof typeof EXCHANGES]}</option>,
                         )}

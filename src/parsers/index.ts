@@ -1,5 +1,6 @@
 import * as csv from 'csvtojson';
-import { EXCHANGES, ITrade } from '../types';
+import { EXCHANGES, ITrade, ExchangesHeaders } from '../types';
+import * as crypto from 'crypto';
 
 interface IGetCSVData {
     [key: string]: string;
@@ -19,7 +20,7 @@ export async function getCSVData(fileData: string): Promise<any> {
     });
 }
 
-export async function processData(exchange: keyof typeof EXCHANGES, fileData: string): Promise<ITrade[]> {
+export async function processData(exchange: keyof typeof EXCHANGES | string, fileData: string): Promise<ITrade[]> {
     let processExchangeData: (fileData: string) => ITrade[];
     switch (exchange) {
         case 'BITTREX':
@@ -38,6 +39,13 @@ export async function processData(exchange: keyof typeof EXCHANGES, fileData: st
             processExchangeData = require('./binance').processData;
             break;
         default:
+            const headers = fileData.substr(0, fileData.indexOf('\n'));
+            const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
+            for (const key in ExchangesHeaders) {
+                if (ExchangesHeaders[key] === headersHash) {
+                    return processData(key as keyof typeof EXCHANGES, fileData);
+                }
+            }
             throw new Error(`Unknown Exchange - ${exchange}`);
     }
     if (typeof processExchangeData === 'function') {
