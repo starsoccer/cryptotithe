@@ -7,7 +7,7 @@
         "start": "npm run build && electron .",
         "web": "npm run build && start ./index.html",
         "test": "jest",
-        "build": "tsc -p configs/tsconfig.json && browserify ./react.js -o ./bundle.js -u ./data.json --im",
+        "build": "tsc -p configs/tsconfig.json",
         "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
         "full-build-test": "npm run tslint && npm run test && npm run prod-build",
         "prod-start": "set NODE_ENV=production&& npm run start"
@@ -63,7 +63,11 @@
         "is-electron": "^2.1.0",
         "react": "^16.3.17",
         "react-dom": "^16.0.6",
+        "steal": "^2.0.0",
         "tachyons": "^4.10.0",
         "validator": "^10.3.0"
+    },
+    "steal": {
+
     }
 }
