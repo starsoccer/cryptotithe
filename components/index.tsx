@@ -7,6 +7,7 @@ import {
     ITradeWithDuplicateProbability,
     ITradeWithFiatRate,
 } from '../src/types';
+import savedDataConverter from '../src/savedDataConverter';
 import { AddTrades } from './AddTrades';
 import { AdvancedTab } from './AdvancedTab';
 import Button from './Button';
@@ -45,34 +46,12 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
 
-        if (this.props.savedData.trades.length && 'USDRate' in this.props.savedData.trades[0]) {
-            for (const trade of this.props.savedData.trades) {
-                const oldFormatTrade = trade as any;
-                trade.fiatRate = oldFormatTrade.USDRate;
-                delete oldFormatTrade.USDRate;
-            }
-        }
-
-        if (Object.keys(this.props.savedData.holdings).length) {
-            const keys = Object.keys(this.props.savedData.holdings);
-            for (const currency of keys) {
-                for (const holding of this.props.savedData.holdings[currency]) {
-                    const oldFormatHolding = holding as any;
-                    holding.rateInFiat = oldFormatHolding.rateInUSD;
-                    delete oldFormatHolding.rateInUSD;
-                }
-            }
-        }
-
-        this.saveData(this.props.savedData);
-
         this.state = {
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser ||
-                props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
+            loadDataPopup: props.browser || props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
@@ -81,6 +60,17 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             settingsPopup: false,
             savedData: props.savedData,
         };
+    }
+
+    public componentDidMount () {
+        const savedDataLoaded = this.props.savedData.trades.length + Object.keys(this.props.savedData.holdings).length !== 0;
+        if (savedDataLoaded) {
+            const savedData =  this.props.savedData;
+            const shouldSave = savedDataConverter(savedData);
+            if (shouldSave) {
+                this.saveData(savedData);
+            }
+        }
     }
 
     public saveData = async (data: IPartialSavedData): Promise<boolean> => {
@@ -154,6 +144,10 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         if (data !== '') {
             try {
                 const parsedData: ISavedData = JSON.parse(data);
+                const shouldSave = savedDataConverter(parsedData);
+                if(shouldSave) {
+                    this.saveData(parsedData);
+                }
                 this.setState({
                     savedData: parsedData,
                     loadDataPopup: false,

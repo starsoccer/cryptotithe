@@ -166,7 +166,7 @@ class AddTrades extends React.Component {
 }
 exports.AddTrades = AddTrades;
 
-},{"../../src/parsers":421,"../../src/processing/DuplicateCheck":428,"../../src/processing/SortTrades":429,"../../src/processing/getFiatRate":433,"../../src/types":435,"../AlertBar":3,"../Button":4,"../DuplicateTradesTable":7,"../FileBrowse":8,"../Loader":11,"../TradeDetails":16,"../TradesTable":17,"react":297}],2:[function(require,module,exports){
+},{"../../src/parsers":422,"../../src/processing/DuplicateCheck":429,"../../src/processing/SortTrades":430,"../../src/processing/getFiatRate":434,"../../src/types":438,"../AlertBar":3,"../Button":4,"../DuplicateTradesTable":7,"../FileBrowse":8,"../Loader":11,"../TradeDetails":16,"../TradesTable":17,"react":297}],2:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -210,7 +210,7 @@ class AdvancedTab extends React.Component {
 }
 exports.AdvancedTab = AdvancedTab;
 
-},{"../../src/processing/CalculateDailyBalance":425,"../../src/types":435,"../Button":4,"../DailyBalanceTable":6,"react":297}],3:[function(require,module,exports){
+},{"../../src/processing/CalculateDailyBalance":426,"../../src/types":438,"../Button":4,"../DailyBalanceTable":6,"react":297}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const classNames = require("classNames");
@@ -371,7 +371,7 @@ class CalculateGains extends React.Component {
 }
 exports.CalculateGains = CalculateGains;
 
-},{"../../src/output/Form8949":417,"../../src/processing/CalculateGains":426,"../../src/types":435,"../Button":4,"../FileDownload":9,"../GainsPerTradeTable":10,"react":297}],6:[function(require,module,exports){
+},{"../../src/output/Form8949":418,"../../src/processing/CalculateGains":427,"../../src/types":438,"../Button":4,"../FileDownload":9,"../GainsPerTradeTable":10,"react":297}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -646,7 +646,7 @@ class Settings extends React.Component {
 }
 exports.Settings = Settings;
 
-},{"../../src/types":435,"../Button":4,"../Popup":12,"react":297}],14:[function(require,module,exports){
+},{"../../src/types":438,"../Button":4,"../Popup":12,"react":297}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -814,7 +814,7 @@ class TradeDetails extends React.Component {
 }
 exports.default = TradeDetails;
 
-},{"../../src/parsers/utils":424,"../Button":4,"crypto":84,"react":297,"validator":341}],17:[function(require,module,exports){
+},{"../../src/parsers/utils":425,"../Button":4,"crypto":84,"react":297,"validator":341}],17:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -880,7 +880,7 @@ class TradesTable extends React.Component {
 }
 exports.TradesTable = TradesTable;
 
-},{"../../src/processing/SortTrades":429,"../Popup":12,"../Table":14,"../TradeDetails":16,"react":297}],18:[function(require,module,exports){
+},{"../../src/processing/SortTrades":430,"../Popup":12,"../Table":14,"../TradeDetails":16,"react":297}],18:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -932,7 +932,7 @@ class ViewTrades extends React.Component {
 }
 exports.ViewTrades = ViewTrades;
 
-},{"../../src/processing/SortTrades":429,"../../src/processing/getFiatRate":433,"../../src/types":435,"../Button":4,"../Loader":11,"../TradesTable":17,"react":297}],19:[function(require,module,exports){
+},{"../../src/processing/SortTrades":430,"../../src/processing/getFiatRate":434,"../../src/types":438,"../Button":4,"../Loader":11,"../TradesTable":17,"react":297}],19:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -946,6 +946,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const classnames = require("classnames");
 const React = require("react");
 const SortTrades_1 = require("../src/processing/SortTrades");
+const savedDataConverter_1 = require("../src/savedDataConverter");
 const AddTrades_1 = require("./AddTrades");
 const AdvancedTab_1 = require("./AdvancedTab");
 const Button_1 = require("./Button");
@@ -1019,6 +1020,10 @@ class rootElement extends React.Component {
             if (data !== '') {
                 try {
                     const parsedData = JSON.parse(data);
+                    const shouldSave = savedDataConverter_1.default(parsedData);
+                    if (shouldSave) {
+                        this.saveData(parsedData);
+                    }
                     this.setState({
                         savedData: parsedData,
                         loadDataPopup: false,
@@ -1035,31 +1040,12 @@ class rootElement extends React.Component {
         this.settingsPopup = () => {
             this.setState({ settingsPopup: !this.state.settingsPopup });
         };
-        if (this.props.savedData.trades.length && 'USDRate' in this.props.savedData.trades[0]) {
-            for (const trade of this.props.savedData.trades) {
-                const oldFormatTrade = trade;
-                trade.fiatRate = oldFormatTrade.USDRate;
-                delete oldFormatTrade.USDRate;
-            }
-        }
-        if (Object.keys(this.props.savedData.holdings).length) {
-            const keys = Object.keys(this.props.savedData.holdings);
-            for (const currency of keys) {
-                for (const holding of this.props.savedData.holdings[currency]) {
-                    const oldFormatHolding = holding;
-                    holding.rateInFiat = oldFormatHolding.rateInUSD;
-                    delete oldFormatHolding.rateInUSD;
-                }
-            }
-        }
-        this.saveData(this.props.savedData);
         this.state = {
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser ||
-                props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
+            loadDataPopup: props.browser || props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
@@ -1068,6 +1054,16 @@ class rootElement extends React.Component {
             settingsPopup: false,
             savedData: props.savedData,
         };
+    }
+    componentDidMount() {
+        const savedDataLoaded = this.props.savedData.trades.length + Object.keys(this.props.savedData.holdings).length !== 0;
+        if (savedDataLoaded) {
+            const savedData = this.props.savedData;
+            const shouldSave = savedDataConverter_1.default(savedData);
+            if (shouldSave) {
+                this.saveData(savedData);
+            }
+        }
     }
     componentDidUpdate() {
         if (this.state.downloadProps.download) {
@@ -1104,7 +1100,7 @@ class rootElement extends React.Component {
 }
 exports.rootElement = rootElement;
 
-},{"../src/processing/SortTrades":429,"./AddTrades":1,"./AdvancedTab":2,"./Button":4,"./CalculateGains":5,"./FileBrowse":8,"./FileDownload":9,"./Popup":12,"./Settings":13,"./ViewTrades":18,"classnames":75,"react":297}],20:[function(require,module,exports){
+},{"../src/processing/SortTrades":430,"../src/savedDataConverter":437,"./AddTrades":1,"./AdvancedTab":2,"./Button":4,"./CalculateGains":5,"./FileBrowse":8,"./FileDownload":9,"./Popup":12,"./Settings":13,"./ViewTrades":18,"classnames":75,"react":297}],20:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -73553,6 +73549,77 @@ function extend() {
 }
 
 },{}],416:[function(require,module,exports){
+module.exports={
+    "name": "cryptotithe",
+    "version": "0.2.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "npm run build && electron .",
+        "web": "npm run build && start ./index.html",
+        "test": "jest",
+        "build": "tsc -p configs/tsconfig.json && browserify ./react.js -o ./bundle.js -u ./data.json --im",
+        "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
+        "full-build-test": "npm run tslint && npm run test && npm run prod-build",
+        "prod-start": "set NODE_ENV=production&& npm run start"
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/faker": "^4.1.2",
+        "@types/jest": "^22.2.3",
+        "@types/node": "^10.3.0",
+        "browserify": "^16.2.2",
+        "electron": "^2.0.2",
+        "electron-react-devtools": "^0.5.3",
+        "faker": "^4.1.0",
+        "jest": "^23.0.0",
+        "ts-jest": "^22.4.6",
+        "typescript": "^2.9"
+    },
+    "jest": {
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json",
+            "node"
+        ],
+        "globals": {
+            "ts-jest": {
+                "tsConfigFile": "./configs/tsconfig.json"
+            }
+        }
+    },
+    "dependencies": {
+        "@types/classnames": "^2.2.4",
+        "@types/clone": "^0.1.30",
+        "@types/csv2json": "^1.4.0",
+        "@types/csvtojson": "^1.1.5",
+        "@types/got": "^8.3.1",
+        "@types/react": "^16.3.17",
+        "@types/react-dom": "^16.0.6",
+        "@types/validator": "^9.4.1",
+        "classnames": "^2.2.6",
+        "clone": "^2.1.1",
+        "csv2json": "^1.4.2",
+        "csvtojson": "^1.1.12",
+        "font-awesome": "^4.7.0",
+        "got": "^8.3.1",
+        "is-electron": "^2.1.0",
+        "react": "^16.3.17",
+        "react-dom": "^16.0.6",
+        "tachyons": "^4.10.0",
+        "validator": "^10.3.0"
+    }
+}
+
+},{}],417:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -73560,10 +73627,12 @@ const ReactDOM = require("react-dom");
 const components_1 = require("./components");
 const types_1 = require("./src/types");
 function createEmptySavedData() {
+    const packageData = require('./package.json');
     return {
         trades: [],
         holdings: {},
         savedDate: new Date(),
+        version: packageData.version,
         settings: {
             fiatRateMethod: Object.keys(types_1.FiatRateMethod)[0],
             fiatCurrency: 'USD',
@@ -73591,7 +73660,7 @@ else {
     render(true);
 }
 
-},{"./components":19,"./data":undefined,"./src/types":435,"is-electron":186,"react":297,"react-dom":294}],417:[function(require,module,exports){
+},{"./components":19,"./data":undefined,"./package.json":416,"./src/types":438,"is-electron":186,"react":297,"react-dom":294}],418:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const CalculateGains_1 = require("../../processing/CalculateGains");
@@ -73637,7 +73706,7 @@ function addTotal(proceeds, costBasis, gain) {
     return ['Totals', '', '', proceeds.toFixed(2), costBasis.toFixed(2), '', 0, gain.toFixed(2)].join(',');
 }
 
-},{"../../processing/CalculateGains":426}],418:[function(require,module,exports){
+},{"../../processing/CalculateGains":427}],419:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73716,7 +73785,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":421,"../../types":435,"../utils":424,"crypto":84}],419:[function(require,module,exports){
+},{"../":422,"../../types":438,"../utils":425,"crypto":84}],420:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73773,7 +73842,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":421,"../../types":435,"../utils":424}],420:[function(require,module,exports){
+},{"../":422,"../../types":438,"../utils":425}],421:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73857,7 +73926,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":421,"../../types":435,"../utils":424}],421:[function(require,module,exports){
+},{"../":422,"../../types":438,"../utils":425}],422:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73924,7 +73993,7 @@ function processData(exchange, fileData) {
 }
 exports.processData = processData;
 
-},{"../types":435,"./binance":418,"./bittrex":419,"./gemini":420,"./kraken":422,"./poloniex":423,"crypto":84,"csvtojson":85}],422:[function(require,module,exports){
+},{"../types":438,"./binance":419,"./bittrex":420,"./gemini":421,"./kraken":423,"./poloniex":424,"crypto":84,"csvtojson":85}],423:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74027,7 +74096,7 @@ function processData(filePath) {
 }
 exports.processData = processData;
 
-},{"../":421,"../../types":435,"../utils":424}],423:[function(require,module,exports){
+},{"../":422,"../../types":438,"../utils":425}],424:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74095,7 +74164,7 @@ function processData(fileData) {
 }
 exports.processData = processData;
 
-},{"../":421,"../../types":435,"../utils":424}],424:[function(require,module,exports){
+},{"../":422,"../../types":438,"../utils":425}],425:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function createDateAsUTC(date) {
@@ -74103,7 +74172,7 @@ function createDateAsUTC(date) {
 }
 exports.createDateAsUTC = createDateAsUTC;
 
-},{}],425:[function(require,module,exports){
+},{}],426:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74138,7 +74207,7 @@ function calculateDailyBalance(trades, fiatCurrency) {
 }
 exports.calculateDailyBalance = calculateDailyBalance;
 
-},{"../CalculateGains":426,"../CalculateHoldingsValue":427,"../SortTrades":429}],426:[function(require,module,exports){
+},{"../CalculateGains":427,"../CalculateHoldingsValue":428,"../SortTrades":430}],427:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const clone = require("clone");
@@ -74486,7 +74555,7 @@ function calculateGainsPerHoldings(holdings, trades, fiatCurrency, method) {
 }
 exports.calculateGainsPerHoldings = calculateGainsPerHoldings;
 
-},{"../../types":435,"clone":77}],427:[function(require,module,exports){
+},{"../../types":438,"clone":77}],428:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74522,7 +74591,7 @@ function calculateHoldingsValue(holdings, fiatCurrency, date = new Date()) {
 }
 exports.calculateHoldingsValue = calculateHoldingsValue;
 
-},{"../getFiatRate/getDayAvgCurrencyRate":432}],428:[function(require,module,exports){
+},{"../getFiatRate/getDayAvgCurrencyRate":433}],429:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function duplicateCheck(currentTrades, newTrades) {
@@ -74558,7 +74627,7 @@ function duplicateCheck(currentTrades, newTrades) {
 }
 exports.default = duplicateCheck;
 
-},{}],429:[function(require,module,exports){
+},{}],430:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function sortTrades(trades) {
@@ -74569,7 +74638,7 @@ function sortTradesByDate(trade1, trade2) {
     return new Date(trade1.date).getTime() - new Date(trade2.date).getTime();
 }
 
-},{}],430:[function(require,module,exports){
+},{}],431:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74631,7 +74700,7 @@ function getBTCFiatRate(trade, fiatCurrency, method) {
 }
 exports.getBTCFiatRate = getBTCFiatRate;
 
-},{"../../../types":435,"../getClosestHourPrice":431,"../getDayAvgCurrencyRate":432,"../utils":434}],431:[function(require,module,exports){
+},{"../../../types":438,"../getClosestHourPrice":432,"../getDayAvgCurrencyRate":433,"../utils":435}],432:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74683,7 +74752,7 @@ function getClosestHourPriceForTrade(trade, fiatCurrency) {
 }
 exports.getClosestHourPriceForTrade = getClosestHourPriceForTrade;
 
-},{"../utils":434,"got":161}],432:[function(require,module,exports){
+},{"../utils":435,"got":161}],433:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74732,7 +74801,7 @@ function getDayAvgTradeRate(trade, fiatCurrency, type = 'HourVWAP') {
 }
 exports.getDayAvgTradeRate = getDayAvgTradeRate;
 
-},{"../utils":434,"got":161}],433:[function(require,module,exports){
+},{"../utils":435,"got":161}],434:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -74824,7 +74893,7 @@ function getFiatTradeRate(trade, fiatCurrency) {
     }
 }
 
-},{"../../types":435,"./BTCBasedRate":430,"./getClosestHourPrice":431,"./getDayAvgCurrencyRate":432,"./utils":434}],434:[function(require,module,exports){
+},{"../../types":438,"./BTCBasedRate":431,"./getClosestHourPrice":432,"./getDayAvgCurrencyRate":433,"./utils":435}],435:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function cryptocompareRateResponse(response, fiatCurrency) {
@@ -74872,7 +74941,49 @@ function calculateAverageFromArray(avgs) {
 }
 exports.calculateAverageFromArray = calculateAverageFromArray;
 
-},{}],435:[function(require,module,exports){
+},{}],436:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function converter(savedData) {
+    if (savedData.trades.length && 'USDRate' in savedData.trades[0]) {
+        for (const trade of savedData.trades) {
+            const oldFormatTrade = trade;
+            trade.fiatRate = oldFormatTrade.USDRate;
+            delete oldFormatTrade.USDRate;
+        }
+    }
+    if (Object.keys(savedData.holdings).length) {
+        const keys = Object.keys(savedData.holdings);
+        for (const currency of keys) {
+            for (const holding of savedData.holdings[currency]) {
+                const oldFormatHolding = holding;
+                holding.rateInFiat = oldFormatHolding.rateInUSD;
+                delete oldFormatHolding.rateInUSD;
+            }
+        }
+    }
+}
+exports.default = converter;
+
+},{}],437:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const _0_2_0_1 = require("./0.2.0");
+function onSaveDataLoaded(savedData) {
+    const version = savedData.version || undefined;
+    let oldVersion = false;
+    switch (version) {
+        case undefined: // prior to 0.2.0
+            _0_2_0_1.default(savedData);
+            oldVersion = true;
+            break;
+        default:
+    }
+    return oldVersion;
+}
+exports.default = onSaveDataLoaded;
+
+},{"./0.2.0":436}],438:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -74901,7 +75012,7 @@ var FiatRateMethod;
     FiatRateMethod["DAYAVERAGEVOLUME"] = "Day Average Volume";
 })(FiatRateMethod = exports.FiatRateMethod || (exports.FiatRateMethod = {}));
 
-},{"./trade":436}],436:[function(require,module,exports){
+},{"./trade":439}],439:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var EXCHANGES;
@@ -74921,4 +75032,4 @@ var ExchangesHeaders;
     ExchangesHeaders["BINANCE"] = "4d0d5df894fe488872e513f6148dfa14ff29272e759b7fb3c86d264687a7cf99";
 })(ExchangesHeaders = exports.ExchangesHeaders || (exports.ExchangesHeaders = {}));
 
-},{}]},{},[416]);
+},{}]},{},[417]);

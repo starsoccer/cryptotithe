@@ -4,6 +4,7 @@ import { ITradeWithFiatRate } from './trade';
 
 export interface ISavedData extends IPartialSavedData {
     savedDate: Date;
+    version?: number;
     trades: ITradeWithFiatRate[];
     holdings: IHoldings;
     settings: ISettings;
