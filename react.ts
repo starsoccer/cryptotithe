@@ -10,6 +10,7 @@ function createEmptySavedData(): ISavedData {
         savedDate: new Date(),
         settings: {
             fiatRateMethod: Object.keys(FiatRateMethod)[0] as keyof typeof FiatRateMethod,
+            fiatCurrency: 'USD',
         },
     };
 }

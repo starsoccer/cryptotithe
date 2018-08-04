@@ -23,6 +23,7 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
         super(props);
         this.state = {
             fiatRateMethod: valueIfNotUndefined(props.settings, 'fiatRateMethod', Object.keys(FiatRateMethod)[0]),
+            fiatCurrency: valueIfNotUndefined(props.settings, 'fiatCurrency', 'USD'),
         };
     }
     public onSave = async () => {
@@ -34,8 +35,16 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
         }
     }
 
-    public onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({fiatRateMethod: e.currentTarget.value as keyof typeof FiatRateMethod});
+    public onChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+        switch (key) {
+            case 'fiatRateMethod':
+                this.setState({fiatRateMethod: e.currentTarget.value as keyof typeof FiatRateMethod});
+            break;
+            case 'fiatCurrency':
+                this.setState({fiatCurrency: e.currentTarget.value.toUpperCase()});
+            break;
+        }
+        
     }
 
     public render() {
@@ -44,14 +53,20 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
                 <div>
                     <h1 className='mt1 mb1'>Settings</h1>
                     <hr />
-                    <label className='pr1'>Fiat Rate Calculation Method:</label>
-                    <select
-                        defaultValue={this.state.fiatRateMethod}
-                        onChange={this.onChange}>
-                        {Object.keys(FiatRateMethod).map((method) =>
-                            <option key={method} value={method}>{FiatRateMethod[method]}</option>,
-                        )}
-                    </select>
+                    <div>
+                        <label className='pr1'>Fiat Rate Calculation Method:</label>
+                        <select
+                            defaultValue={this.state.fiatRateMethod}
+                            onChange={this.onChange('fiatRateMethod')}>
+                            {Object.keys(FiatRateMethod).map((method) =>
+                                <option key={method} value={method}>{FiatRateMethod[method]}</option>,
+                            )}
+                        </select>
+                    </div>
+                    <div>
+                        <label className='pr1'>Fiat Rate Calculation Method:</label>
+                        <input type="text" defaultValue={this.state.fiatCurrency} onChange={this.onChange('fiatCurrency')}/>
+                    </div>
                     <hr />
                     <Button label='Save' onClick={this.onSave}/>
                 </div>

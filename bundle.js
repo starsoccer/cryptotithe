@@ -614,11 +614,19 @@ class Settings extends React.Component {
                 alert('Unable to save settings');
             }
         });
-        this.onChange = (e) => {
-            this.setState({ fiatRateMethod: e.currentTarget.value });
+        this.onChange = (key) => (e) => {
+            switch (key) {
+                case 'fiatRateMethod':
+                    this.setState({ fiatRateMethod: e.currentTarget.value });
+                    break;
+                case 'fiatCurrency':
+                    this.setState({ fiatCurrency: e.currentTarget.value });
+                    break;
+            }
         };
         this.state = {
             fiatRateMethod: valueIfNotUndefined(props.settings, 'fiatRateMethod', Object.keys(types_1.FiatRateMethod)[0]),
+            fiatCurrency: valueIfNotUndefined(props.settings, 'fiatCurrency', 'USD'),
         };
     }
     render() {
@@ -626,8 +634,12 @@ class Settings extends React.Component {
             React.createElement("div", null,
                 React.createElement("h1", { className: 'mt1 mb1' }, "Settings"),
                 React.createElement("hr", null),
-                React.createElement("label", { className: 'pr1' }, "Fiat Rate Calculation Method:"),
-                React.createElement("select", { defaultValue: this.state.fiatRateMethod, onChange: this.onChange }, Object.keys(types_1.FiatRateMethod).map((method) => React.createElement("option", { key: method, value: method }, types_1.FiatRateMethod[method]))),
+                React.createElement("div", null,
+                    React.createElement("label", { className: 'pr1' }, "Fiat Rate Calculation Method:"),
+                    React.createElement("select", { defaultValue: this.state.fiatRateMethod, onChange: this.onChange('fiatRateMethod') }, Object.keys(types_1.FiatRateMethod).map((method) => React.createElement("option", { key: method, value: method }, types_1.FiatRateMethod[method])))),
+                React.createElement("div", null,
+                    React.createElement("label", { className: 'pr1' }, "Fiat Rate Calculation Method:"),
+                    React.createElement("input", { type: "text", defaultValue: this.state.fiatCurrency, onChange: this.onChange('fiatCurrency') })),
                 React.createElement("hr", null),
                 React.createElement(Button_1.default, { label: 'Save', onClick: this.onSave }))));
     }
@@ -73536,6 +73548,7 @@ function createEmptySavedData() {
         savedDate: new Date(),
         settings: {
             fiatRateMethod: Object.keys(types_1.FiatRateMethod)[0],
+            fiatCurrency: 'USD',
         },
     };
 }
