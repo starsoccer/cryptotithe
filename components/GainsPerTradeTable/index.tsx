@@ -5,6 +5,7 @@ import { Table } from '../Table';
 export interface IGainsPerTradeTableProps {
     className?: string;
     trades: ITradeWithGains[];
+    fiatCurrency: string;
 }
 
 export class GainsPerTradeTable extends React.Component<IGainsPerTradeTableProps> {
@@ -19,8 +20,8 @@ export class GainsPerTradeTable extends React.Component<IGainsPerTradeTableProps
                     'Rate',
                     'Bought Currency',
                     'Amount Bought',
-                    'USD Rate',
-                    'USD Value',
+                    'Fiat Rate',
+                    'Fiat Value',
                     'Short Term Gain',
                     'Long Term Gain',
                 ]}
@@ -36,10 +37,10 @@ export class GainsPerTradeTable extends React.Component<IGainsPerTradeTableProps
                     </div>,
                     <span>{trade.boughtCurrency}</span>,
                     <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
-                    <span>{trade.USDRate.toFixed(8)}</span>,
-                    <span>{trade.soldCurrency === 'USD' ?
+                    <span>{trade.fiatRate.toFixed(8)}</span>,
+                    <span>{trade.soldCurrency === this.props.fiatCurrency ?
                         trade.amountSold :
-                        (trade.amountSold * trade.USDRate).toFixed(8)
+                        (trade.amountSold * trade.fiatRate).toFixed(8)
                     }</span>,
                     <span>{trade.shortTerm.toFixed(2)}</span>,
                     <span>{trade.longTerm.toFixed(2)}</span>,

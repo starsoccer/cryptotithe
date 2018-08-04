@@ -5,7 +5,7 @@ export * from './savedData';
 export interface IDailyBalance {
     date: Date;
     holdings: {[key: string]: ISimplifiedHoldingsWithValue};
-    USDValue: number;
+    fiatValue: number;
 }
 
 export interface ISimplifiedHoldingsWithValue {

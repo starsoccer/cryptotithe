@@ -1,4 +1,4 @@
-import { FiatRateMethod, ITrade, ITradeWithUSDRate } from '../../types';
+import { FiatRateMethod, ITrade, ITradeWithFiatRate } from '../../types';
 import { getBTCFiatRate } from './BTCBasedRate';
 import { getClosestHourPriceForTrade } from './getClosestHourPrice';
 import { getDayAvgTradeRate } from './getDayAvgCurrencyRate';
@@ -8,9 +8,9 @@ export async function getFiatRate(
     trade: ITrade,
     fiatCurrency: string,
     method: FiatRateMethod,
-): Promise<ITradeWithUSDRate> {
+): Promise<ITradeWithFiatRate> {
     if (isCurrencyTrade(trade, fiatCurrency)) {
-        return addRatetoTrade(trade, getUSDTradeRate(trade, fiatCurrency));
+        return addRatetoTrade(trade, getFiatTradeRate(trade, fiatCurrency));
     } else {
         // non fiat currency trade
         if (isCurrencyTrade(trade, 'BTC')) {
@@ -57,10 +57,10 @@ export async function getFiatRate(
     }
 }
 
-function addRatetoTrade(trade: ITrade, rate: number): ITradeWithUSDRate {
+function addRatetoTrade(trade: ITrade, rate: number): ITradeWithFiatRate {
     return {
         ...trade,
-        USDRate: rate,
+        fiatRate: rate,
     };
 }
 
@@ -68,8 +68,8 @@ export async function addFiatRateToTrades(
     trades: ITrade[],
     fiatCurrency: string,
     method: FiatRateMethod = FiatRateMethod.DOUBLEAVERAGE,
-): Promise<ITradeWithUSDRate[]> {
-    const newTrades: ITradeWithUSDRate[]  = [];
+): Promise<ITradeWithFiatRate[]> {
+    const newTrades: ITradeWithFiatRate[]  = [];
     for (const trade of trades) {
         // cant get some rates without await maybe cryptocompare rate limiting
         newTrades.push(await getFiatRate(trade, fiatCurrency, method));
@@ -77,7 +77,7 @@ export async function addFiatRateToTrades(
     return Promise.all(newTrades);
 }
 
-function getUSDTradeRate(trade: ITrade, fiatCurrency: string) {
+function getFiatTradeRate(trade: ITrade, fiatCurrency: string) {
     if (trade.boughtCurrency === fiatCurrency) {
         return trade.amountSold / trade.rate / trade.amountSold;
     } else if (trade.soldCurrency === fiatCurrency) {

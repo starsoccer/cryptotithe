@@ -12,7 +12,7 @@ export class DailyBalanceTable extends React.Component<IDailyBalanceTable> {
     public render() {
         return (
             <Table
-                headers={['Date', 'Holdings', 'USD Value']}
+                headers={['Date', 'Holdings', 'Fiat Value']}
                 rows={this.props.dailyBalance.map((balance) => [
                     <p>{balance.date.toUTCString()}</p>,
                     <div>{Object.keys(balance.holdings).map((currency) =>
@@ -20,7 +20,7 @@ export class DailyBalanceTable extends React.Component<IDailyBalanceTable> {
                             ${currency} - ${balance.holdings[currency].amount} - ${balance.holdings[currency].fiatValue}
                         `}</p>,
                     )}</div>,
-                    <p>{balance.USDValue}</p>,
+                    <p>{balance.fiatValue}</p>,
                 ])}
             />
         );

@@ -1,17 +1,17 @@
 import { FiatRateMethod } from './';
 import { IHoldings } from './holding';
-import { ITradeWithUSDRate } from './trade';
+import { ITradeWithFiatRate } from './trade';
 
 export interface ISavedData extends IPartialSavedData {
     savedDate: Date;
-    trades: ITradeWithUSDRate[];
+    trades: ITradeWithFiatRate[];
     holdings: IHoldings;
     settings: ISettings;
 }
 
 export interface IPartialSavedData {
     savedDate?: Date;
-    trades?: ITradeWithUSDRate[];
+    trades?: ITradeWithFiatRate[];
     holdings?: IHoldings;
     settings?: ISettings;
 }

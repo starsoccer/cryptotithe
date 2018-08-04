@@ -1,6 +1,6 @@
 import * as React from 'react';
 import sortTrades from '../../src/processing/SortTrades';
-import { ITrade, ITradeWithUSDRate } from '../../src/types';
+import { ITrade, ITradeWithFiatRate } from '../../src/types';
 import Popup from '../Popup';
 import { Table } from '../Table';
 import TradeDetails from '../TradeDetails';
@@ -8,7 +8,7 @@ import TradeDetails from '../TradeDetails';
 export interface ITradeTableProps {
     className?: string;
     trades: ITrade[];
-    save(trades: ITrade[] | ITradeWithUSDRate[]): void;
+    save(trades: ITrade[] | ITradeWithFiatRate[]): void;
 }
 
 export class TradesTable extends React.Component<ITradeTableProps, {popup: string | undefined}> {

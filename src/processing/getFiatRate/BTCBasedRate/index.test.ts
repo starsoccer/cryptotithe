@@ -2,9 +2,9 @@ import * as faker from 'faker';
 import { EXCHANGES, ITrade } from '../../../types';
 import { BTCBasedRate, getBTCFiatRate } from './'
 
-describe('Get USD Rate', () => {
+describe('Get Fiat Rate', () => {
     const date = new Date(1508087399612); // random but fixed date for testing
-    test('add USD rate to BTC Sold trade', () => {
+    test('add Fiat rate to BTC Sold trade', () => {
         const trade: ITrade = {
             boughtCurrency: 'LTC',
             soldCurrency: 'BTC',
@@ -18,7 +18,7 @@ describe('Get USD Rate', () => {
         expect(rate).toBe(1000);
     });
 
-    test('add USD rate to BTC Bought trade', () => {
+    test('add Fiat rate to BTC Bought trade', () => {
         const trade: ITrade = {
             boughtCurrency: 'BTC',
             soldCurrency: 'LTC',

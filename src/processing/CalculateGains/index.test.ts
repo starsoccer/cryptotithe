@@ -1,12 +1,14 @@
-import { mockHoldings, mockTradesWithUSDRate } from '../../mock';
-import { EXCHANGES, IHoldings, ITradeWithUSDRate, METHOD} from '../../types';
+import { mockHoldings, mockTradesWithFiatRate } from '../../mock';
+import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD} from '../../types';
 import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from './';
+
+const fiatCurrency = 'FAKE';
 
 describe('getCurrencyHolding LIFO', () => {
     test('One Holdings', () => {
         const holdings: IHoldings  = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0], METHOD.LIFO);
 
         expect('deductedHoldings' in result).toBeTruthy();
@@ -22,7 +24,7 @@ describe('getCurrencyHolding LIFO', () => {
     test('More then one Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 5);
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
         if (trades[0].amountSold > holdings[currency][0].amount) {
             trades[0].amountSold = holdings[currency][0].amount + 1;
         }
@@ -43,7 +45,7 @@ describe('getCurrencyHolding FIFO', () => {
     test('default to FIFO', () => {
         const holdings: IHoldings = mockHoldings(1, 3);
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0]);
 
         expect('deductedHoldings' in result).toBeTruthy();
@@ -58,7 +60,7 @@ describe('getCurrencyHolding FIFO', () => {
     test('One Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0], METHOD.FIFO);
 
         expect('deductedHoldings' in result).toBeTruthy();
@@ -74,7 +76,7 @@ describe('getCurrencyHolding FIFO', () => {
     test('More then one Holdings', () => {
         const holdings: IHoldings = mockHoldings(1, 5);
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0], METHOD.FIFO);
 
         expect('deductedHoldings' in result).toBeTruthy();
@@ -92,7 +94,7 @@ describe('getCurrencyHolding Overflow', () => {
     test('with one holding', () => {
         const holdings: IHoldings = mockHoldings(1, 1);
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0]);
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
@@ -103,7 +105,7 @@ describe('getCurrencyHolding Overflow', () => {
         expect(totalReduced).toBe(trades[0].amountSold);
         expect(result.deductedHoldings.length).toBe(2);
         expect(result.deductedHoldings[1].amount).toBe(trades[0].amountSold - result.deductedHoldings[0].amount);
-        expect(result.deductedHoldings[1].rateInUSD).toBe(0);
+        expect(result.deductedHoldings[1].rateInFiat).toBe(0);
         expect(result.deductedHoldings[1].date - new Date().getTime()).toBeLessThan(60000);
         expect(Object.keys(result.newHoldings).length).toBe(0);
     });
@@ -115,7 +117,7 @@ describe('getCurrencyHolding Overflow', () => {
         for (const holding of holdings[currency]) {
             totalAmount += holding.amount;
         }
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
         const result: IGetCurrencyHolding = getCurrenyHolding(holdings, trades[0]);
         expect('deductedHoldings' in result).toBeTruthy();
         expect('newHoldings' in result).toBeTruthy();
@@ -126,13 +128,13 @@ describe('getCurrencyHolding Overflow', () => {
         expect(totalReduced).toBe(trades[0].amountSold);
         expect(result.deductedHoldings.length).toBe(4);
         expect(result.deductedHoldings[3].amount).toBe(trades[0].amountSold - result.deductedHoldings[2].amount - result.deductedHoldings[1].amount - result.deductedHoldings[0].amount);
-        expect(result.deductedHoldings[3].rateInUSD).toBe(0);
+        expect(result.deductedHoldings[3].rateInFiat).toBe(0);
         expect(result.deductedHoldings[3].date - new Date().getTime()).toBeLessThan(60000);
         expect(Object.keys(result.newHoldings).length).toBe(0);
     });
 });
 
-function calculateGainsOneAtATime(holdings: IHoldings, trades: ITradeWithUSDRate[]) {
+function calculateGainsOneAtATime(holdings: IHoldings, trades: ITradeWithFiatRate[]) {
     let shortTermGain = 0;
     let longTermGain = 0;
     for (const trade of trades) {
@@ -153,7 +155,7 @@ describe('calculateGains 1 currency manual', () => {
 
     test('structured unchanged', () => {
         const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
         const result: ICalculateGains = calculateGains(holdings, trades);
 
         expect('newHoldings' in result).toBeTruthy();
@@ -165,52 +167,52 @@ describe('calculateGains 1 currency manual', () => {
     test('1 holding, 1 trade, short term, no overflow', () => {
         const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency: string = Object.keys(holdings)[0];
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
         const result: ICalculateGains = calculateGains(holdings, trades);
         expect(result.longTermGain).toBe(0);
-        expect(result.shortTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) * trades[0].amountSold);
+        expect(result.shortTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat) * trades[0].amountSold);
     });
 
     test('1 holding, 1 trade, short term, overflow', () => {
         const holdings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
         expect(result.longTermGain).toBe(0);
-        expect(result.shortTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD)
-            * holdings[currency][0].amount + trades[0].USDRate * (trades[0].amountSold - holdings[currency][0].amount),
+        expect(result.shortTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat)
+            * holdings[currency][0].amount + trades[0].fiatRate * (trades[0].amountSold - holdings[currency][0].amount),
         );
     });
 
     test('1 holding, 1 trade, long term, no overflow', () => {
         const holdings = mockHoldings(1, 1, new Date('1/1/2010'), new Date('1/1/2012'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
         expect(result.shortTermGain).toBe(0);
-        expect(result.longTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) * trades[0].amountSold);
+        expect(result.longTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat) * trades[0].amountSold);
     });
 
     test('1 holding, 1 trade, long term, overflow', () => {
         const holdings = mockHoldings(1, 1, new Date('1/1/2010'), new Date('1/1/2012'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
-        expect(result.shortTermGain).toBe(trades[0].USDRate * (trades[0].amountSold - holdings[currency][0].amount));
-        expect(result.longTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) *
+        expect(result.shortTermGain).toBe(trades[0].fiatRate * (trades[0].amountSold - holdings[currency][0].amount));
+        expect(result.longTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat) *
             holdings[currency][0].amount);
     });
 
     test('1 holding, multiple trades, short term, no overflow', () => {
         const holdings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, false);
+        const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -218,7 +220,7 @@ describe('calculateGains 1 currency manual', () => {
 
         let estimatedGain = 0;
         for (const trade of trades) {
-            estimatedGain += (trade.USDRate - holdings[currency][0].rateInUSD) * trade.amountSold;
+            estimatedGain += (trade.fiatRate - holdings[currency][0].rateInFiat) * trade.amountSold;
         }
 
         expect(result.shortTermGain).toBe(estimatedGain);
@@ -227,7 +229,7 @@ describe('calculateGains 1 currency manual', () => {
     test('1 holding, multiple trades, short term, overflow', () => {
         const holdings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -235,8 +237,8 @@ describe('calculateGains 1 currency manual', () => {
 
         let estimatedGain = 0;
         for (const trade of trades) {
-            estimatedGain += (trade.USDRate - holdings[currency][0].rateInUSD)
-            * holdings[currency][0].amount + trade.USDRate * (trade.amountSold - holdings[currency][0].amount);
+            estimatedGain += (trade.fiatRate - holdings[currency][0].rateInFiat)
+            * holdings[currency][0].amount + trade.fiatRate * (trade.amountSold - holdings[currency][0].amount);
         }
 
         expect(result.shortTermGain).toBe(estimatedGain);
@@ -245,7 +247,7 @@ describe('calculateGains 1 currency manual', () => {
     test('1 holding, multiple trades, long term, no overflow', () => {
         const holdings = mockHoldings(1, 1, new Date('1/1/2010'), new Date('1/1/2012'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -253,7 +255,7 @@ describe('calculateGains 1 currency manual', () => {
 
         let estimatedGain = 0;
         for (const trade of trades) {
-            estimatedGain += (trade.USDRate - holdings[currency][0].rateInUSD) * trade.amountSold;
+            estimatedGain += (trade.fiatRate - holdings[currency][0].rateInFiat) * trade.amountSold;
         }
 
         expect(result.longTermGain).toBe(estimatedGain);
@@ -262,14 +264,14 @@ describe('calculateGains 1 currency manual', () => {
     test('1 holding, multiple trades, long term, overflow', () => {
         const holdings = mockHoldings(1, 1, new Date('1/1/2010'), new Date('1/1/2012'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
         let estimatedGain = 0;
         for (const trade of trades) {
-            estimatedGain += (trade.USDRate - holdings[currency][0].rateInUSD) *
-                holdings[currency][0].amount + trade.USDRate * (trade.amountSold - holdings[currency][0].amount);
+            estimatedGain += (trade.fiatRate - holdings[currency][0].rateInFiat) *
+                holdings[currency][0].amount + trade.fiatRate * (trade.amountSold - holdings[currency][0].amount);
         }
 
         expect(result.longTermGain + result.shortTermGain).toBe(estimatedGain);
@@ -278,7 +280,7 @@ describe('calculateGains 1 currency manual', () => {
     test('multiple holdings, 1 trade, short term, no overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -288,7 +290,7 @@ describe('calculateGains 1 currency manual', () => {
             if (amountLeft > 0) {
                 const amountToDeduct = amountLeft > holding.amount ? holding.amount : amountLeft;
                 amountLeft -= amountToDeduct;
-                estimatedGain += (trades[0].USDRate - holding.rateInUSD) * amountToDeduct;
+                estimatedGain += (trades[0].fiatRate - holding.rateInFiat) * amountToDeduct;
             }
         }
 
@@ -299,7 +301,7 @@ describe('calculateGains 1 currency manual', () => {
     test('multiple holdings, 1 trade, short term, overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -309,18 +311,18 @@ describe('calculateGains 1 currency manual', () => {
             if (amountLeft > 0) {
                 const amountToDeduct = amountLeft > holding.amount ? holding.amount : amountLeft;
                 amountLeft -= amountToDeduct;
-                estimatedGain += (trades[0].USDRate - holding.rateInUSD) * amountToDeduct;
+                estimatedGain += (trades[0].fiatRate - holding.rateInFiat) * amountToDeduct;
             }
         }
 
         expect(result.longTermGain).toBe(0);
-        expect(result.shortTermGain).toBe(estimatedGain + amountLeft * trades[0].USDRate);
+        expect(result.shortTermGain).toBe(estimatedGain + amountLeft * trades[0].fiatRate);
     });
 
     test('multiple holdings, 1 trade, long term, no overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
 
@@ -330,7 +332,7 @@ describe('calculateGains 1 currency manual', () => {
             if (amountLeft > 0) {
                 const amountToDeduct = amountLeft > holding.amount ? holding.amount : amountLeft;
                 amountLeft -= amountToDeduct;
-                estimatedGain += (trades[0].USDRate - holding.rateInUSD) * amountToDeduct;
+                estimatedGain += (trades[0].fiatRate - holding.rateInFiat) * amountToDeduct;
             }
         }
 
@@ -341,7 +343,7 @@ describe('calculateGains 1 currency manual', () => {
     test('multiple holdings, 1 trade, long term, overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
         const currency = Object.keys(holdings)[0];
-        const trades = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, true);
+        const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
 
@@ -351,17 +353,17 @@ describe('calculateGains 1 currency manual', () => {
             if (amountLeft > 0) {
                 const amountToDeduct = amountLeft > holding.amount ? holding.amount : amountLeft;
                 amountLeft -= amountToDeduct;
-                estimatedGain += (trades[0].USDRate - holding.rateInUSD) * amountToDeduct;
+                estimatedGain += (trades[0].fiatRate - holding.rateInFiat) * amountToDeduct;
             }
         }
 
         expect(result.longTermGain).toBe(estimatedGain);
-        expect(result.shortTermGain).toBe(amountLeft * trades[0].USDRate);
+        expect(result.shortTermGain).toBe(amountLeft * trades[0].fiatRate);
     });
 
     test('multiple holdings, multiple trade, short term, no overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
-        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, false);
+        const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
@@ -373,7 +375,7 @@ describe('calculateGains 1 currency manual', () => {
 
     test('multiple holdings, multiple trade, short term, overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
-        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, true);
+        const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
@@ -385,7 +387,7 @@ describe('calculateGains 1 currency manual', () => {
 
     test('multiple holdings, multiple trade, long term, no overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
-        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, false);
+        const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, false);
 
         const result = calculateGains(holdings, trades);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
@@ -397,7 +399,7 @@ describe('calculateGains 1 currency manual', () => {
 
     test('multiple holdings, multiple trade, long term, overflow', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
-        const trades = mockTradesWithUSDRate(5, new Date('2/2/2018'), holdings, true);
+        const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, true);
 
         const result = calculateGains(holdings, trades);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
@@ -431,7 +433,7 @@ describe('calculateGains 1/multiple currencies automated', () => {
                                 (shortTerm ? new Date('1/1/2018') : new Date('1/1/2015')),
                                 (shortTerm ? new Date('1/31/2018') : new Date('1/1/2016')),
                             );
-                            const trades = mockTradesWithUSDRate(
+                            const trades = mockTradesWithFiatRate(
                                 tradeCount, new Date('2/2/2018'), holdings, overflowType,
                             );
 
@@ -451,74 +453,73 @@ describe('calculateGains 1/multiple currencies automated', () => {
 
 describe('calculateGains fiat', () => {
 
-    test('usd holdings', () => {
+    test('fiat holdings', () => {
         const tempHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
-        const holdings: IHoldings = {USD: tempHoldings[Object.keys(tempHoldings)[0]]};
+        const holdings: IHoldings = {[fiatCurrency]: tempHoldings[Object.keys(tempHoldings)[0]]};
 
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
-        const result: ICalculateGains = calculateGains(holdings, trades);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
+        const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency);
 
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe(0);
     });
 
-    test('usd trades', () => {
+    test('fiat trades', () => {
         const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
 
-        const trades: ITradeWithUSDRate[] = mockTradesWithUSDRate(1, new Date('2/2/2018'), holdings, false);
-        trades[0].boughtCurrency = 'USD';
-        const result: ICalculateGains = calculateGains(holdings, trades);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
+        trades[0].boughtCurrency = fiatCurrency;
+        const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency);
         const currency = Object.keys(holdings)[0];
         expect(result.longTermGain).toBe(0);
-        expect(result.shortTermGain).toBe((trades[0].USDRate - holdings[currency][0].rateInUSD) * trades[0].amountSold);
+        expect(result.shortTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat) * trades[0].amountSold);
     });
 
-    test('basic usd buy', () => {
+    test('basic fiat buy', () => {
         const holdings: IHoldings = {};
 
-        const trades: ITradeWithUSDRate[] = [{
+        const trades: ITradeWithFiatRate[] = [{
             boughtCurrency: 'BTC',
-            soldCurrency: 'USD',
+            soldCurrency: fiatCurrency,
             amountSold: 1000,
             rate: 200,
-            USDRate: 200,
+            fiatRate: 200,
             date: new Date().getTime(),
             id: '1',
             exchange: EXCHANGES.GEMINI,
         }];
-        const result: ICalculateGains = calculateGains(holdings, trades);
+        const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency);
 
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe(0);
 
     });
 
-    test('basic usd buy/sell', () => {
+    test('basic fiat buy/sell', () => {
         const holdings: IHoldings = {};
-
-        const trades: ITradeWithUSDRate[] = [
+        const trades: ITradeWithFiatRate[] = [
             {
                 boughtCurrency: 'BTC',
-                soldCurrency: 'USD',
+                soldCurrency: fiatCurrency,
                 amountSold: 1000,
                 rate: 200,
-                USDRate: 200,
+                fiatRate: 200,
                 date: new Date().getTime(),
                 id: '1',
                 exchange: EXCHANGES.GEMINI,
             },
             {
-                boughtCurrency: 'USD',
+                boughtCurrency: fiatCurrency,
                 soldCurrency: 'BTC',
                 amountSold: 1,
                 rate: 0.001,
-                USDRate: 1000,
+                fiatRate: 1000,
                 date: new Date().getTime(),
                 id: '1',
                 exchange: EXCHANGES.GEMINI,
             },
         ];
-        const result: ICalculateGains = calculateGains(holdings, trades);
+        const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency);
 
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe(800);

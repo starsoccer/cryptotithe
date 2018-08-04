@@ -5,7 +5,7 @@ import {
     IPartialSavedData,
     ISavedData,
     ITradeWithDuplicateProbability,
-    ITradeWithUSDRate,
+    ITradeWithFiatRate,
 } from '../src/types';
 import { AddTrades } from './AddTrades';
 import { AdvancedTab } from './AdvancedTab';
@@ -44,6 +44,28 @@ interface IAppState {
 export class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
+
+        if (this.props.savedData.trades.length && 'USDRate' in this.props.savedData.trades[0]) {
+            for (const trade of this.props.savedData.trades) {
+                const oldFormatTrade = trade as any;
+                trade.fiatRate = oldFormatTrade.USDRate;
+                delete oldFormatTrade.USDRate;
+            }
+        }
+
+        if (Object.keys(this.props.savedData.holdings).length) {
+            const keys = Object.keys(this.props.savedData.holdings);
+            for (const currency of keys) {
+                for (const holding of this.props.savedData.holdings[currency]) {
+                    const oldFormatHolding = holding as any;
+                    holding.rateInFiat = oldFormatHolding.rateInUSD;
+                    delete oldFormatHolding.rateInUSD;
+                }
+            }
+        }
+
+        this.saveData(this.props.savedData);
+
         this.state = {
             processing: false,
             duplicateTrades: [],
@@ -68,7 +90,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         try {
             const savedData: ISavedData = {
                 savedDate: new Date(),
-                trades: SortTrades(newTrades) as ITradeWithUSDRate[],
+                trades: SortTrades(newTrades) as ITradeWithFiatRate[],
                 holdings: newHoldings,
                 settings: newSettings,
             };

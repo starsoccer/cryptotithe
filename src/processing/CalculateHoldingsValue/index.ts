@@ -6,7 +6,11 @@ export interface IHoldingsValue {
     total: number;
 }
 
-export async function calculateHoldingsValue(holdings: IHoldings, date: Date = new Date()): Promise<IHoldingsValue> {
+export async function calculateHoldingsValue(
+    holdings: IHoldings,
+    fiatCurrency: string,
+    date: Date = new Date(),
+): Promise<IHoldingsValue> {
     const currencies = Object.keys(holdings);
     const holdingsValues: IHoldingsValue = {
         total: 0,
@@ -16,7 +20,7 @@ export async function calculateHoldingsValue(holdings: IHoldings, date: Date = n
     };
     for (const currency of currencies) {
         let totalHeld = 0;
-        const rate = getDayAvg('USD', currency, date.getTime());
+        const rate = getDayAvg(fiatCurrency, currency, date.getTime());
         for (const holding of holdings[currency]) {
             totalHeld += holding.amount;
         }

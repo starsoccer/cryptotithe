@@ -11,7 +11,7 @@ import {
     ISavedData,
     ITrade,
     ITradeWithDuplicateProbability,
-    ITradeWithUSDRate,
+    ITradeWithFiatRate,
 } from '../../src/types';
 import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
@@ -102,13 +102,15 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         this.setState({processing: true});
         const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
         const tradesToSave = this.state.processedTrades.concat(duplicateToSave);
-        const tradesWithUSDRate: ITradeWithUSDRate[] = await addFiatRateToTrades(
-            tradesToSave, 'USD', FiatRateMethod[this.props.savedData.settings.fiatRateMethod],
+        const tradesWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades(
+            tradesToSave,
+            this.props.savedData.settings.fiatCurrency,
+            FiatRateMethod[this.props.savedData.settings.fiatRateMethod],
         );
 
-        const newTrades: ITradeWithUSDRate[] = sortTrades(
-            this.state.currentTrades.concat(tradesWithUSDRate),
-        ) as ITradeWithUSDRate[];
+        const newTrades: ITradeWithFiatRate[] = sortTrades(
+            this.state.currentTrades.concat(tradesWithFiatRate),
+        ) as ITradeWithFiatRate[];
         if (await this.props.save({trades: newTrades})) {
             this.setState({
                 currentTrades: newTrades,
@@ -152,7 +154,7 @@ export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> 
         this.setState({addTrade: !this.state.addTrade});
     }
 
-    public editedTrade = (trades: ITrade[] | ITradeWithUSDRate[]) => {
+    public editedTrade = (trades: ITrade[] | ITradeWithFiatRate[]) => {
         this.setState({processedTrades: trades});
         return true;
     }

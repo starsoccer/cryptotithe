@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { addFiatRateToTrades } from '../../src/processing/getFiatRate';
 import sortTrades from '../../src/processing/SortTrades';
-import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithUSDRate } from '../../src/types';
+import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../src/types';
 import Button from '../Button';
 import { Loader } from '../Loader';
 import { TradesTable } from '../TradesTable';
@@ -20,17 +20,17 @@ export class ViewTrades extends React.Component<IViewTradesProp, {processing: bo
         };
     }
 
-    public save = (trades: ITrade[] | ITradeWithUSDRate[]) =>
-        this.props.save({trades: trades as ITradeWithUSDRate[]})
+    public save = (trades: ITrade[] | ITradeWithFiatRate[]) =>
+        this.props.save({trades: trades as ITradeWithFiatRate[]})
 
-    public refetchUSDRate = async () => {
+    public refetchFiatRate = async () => {
         this.setState({processing: true});
-        const newTrades: ITradeWithUSDRate[] = await addFiatRateToTrades(
+        const newTrades: ITradeWithFiatRate[] = await addFiatRateToTrades(
             this.props.savedData.trades,
-            'USD',
+            this.props.savedData.settings.fiatCurrency,
             FiatRateMethod[this.props.savedData.settings.fiatRateMethod],
         );
-        const sortedTrades: ITradeWithUSDRate[] = sortTrades(newTrades) as ITradeWithUSDRate[];
+        const sortedTrades: ITradeWithFiatRate[] = sortTrades(newTrades) as ITradeWithFiatRate[];
         this.props.save({trades: sortedTrades});
         this.setState({processing: false});
     }
@@ -41,7 +41,7 @@ export class ViewTrades extends React.Component<IViewTradesProp, {processing: bo
                 <h3 className='tc'>Trades</h3>
                 <hr className='center w-50' />
                 <div className='tc center'>
-                <Button label='Refresh Trade Data' onClick={this.refetchUSDRate}/>
+                <Button label='Refresh Trade Data' onClick={this.refetchFiatRate}/>
                 {this.state.processing ?
                     <Loader />
                 :

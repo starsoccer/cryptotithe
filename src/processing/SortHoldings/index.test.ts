@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import { mockHoldings, mockTradesWithUSDRate } from '../../mock';
+import { mockHoldings } from '../../mock';
 import { IHoldings} from '../../types';
 import sortHoldings from './';
 

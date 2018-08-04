@@ -34,11 +34,11 @@ export interface ITrade extends IPartialTrade {
     exchange: EXCHANGES;
 }
 
-export interface ITradeWithUSDRate extends ITrade {
-    USDRate: number;
+export interface ITradeWithFiatRate extends ITrade {
+    fiatRate: number;
 }
 
-export interface ITradeWithGains extends ITradeWithUSDRate {
+export interface ITradeWithGains extends ITradeWithFiatRate {
     shortTerm: number;
     longTerm: number;
 }

@@ -20,7 +20,7 @@ export async function getDayAvg(
     const response: got.Response<any> = await got(
         'https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'),
     );
-    const rate = cryptocompareRateResponse(response);
+    const rate = cryptocompareRateResponse(response, fiatCurrency);
     return rate || 0;
 }
 
@@ -37,7 +37,7 @@ export async function getDayAvgTradeRate(
         if (backupRate) {
             return backupRate;
         } else {
-            throw new Error('Cant get any USD Rate for trade ' + trade.id);
+            throw new Error('Cant get any fiat Rate for trade ' + trade.id);
         }
     }
 }

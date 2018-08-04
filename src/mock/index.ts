@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithUSDRate } from '../types';
+import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithFiatRate } from '../types';
 
 export function mockHoldings(
     currencies: number,
@@ -14,7 +14,7 @@ export function mockHoldings(
             toBeHoldings.push({
                 amount: faker.random.number(),
                 date: faker.date.between(startingDate, endingDate).getTime(),
-                rateInUSD: faker.random.number(),
+                rateInFiat: faker.random.number(),
             });
         }
         holdings[faker.random.word().toUpperCase()] = toBeHoldings;
@@ -24,8 +24,8 @@ export function mockHoldings(
 
 export function mockTrades(
     amount: number, startingDate: Date, currentHoldings: IHoldings, allowOverflow: boolean,
-): ITradeWithUSDRate[] {
-    const trades: ITradeWithUSDRate[] = [];
+): ITradeWithFiatRate[] {
+    const trades: ITradeWithFiatRate[] = [];
     const currencies: string[] = Object.keys(currentHoldings);
     for (const currency of currencies) {
         let totalHoldings = 0;
@@ -41,7 +41,7 @@ export function mockTrades(
                     totalHoldings + faker.random.number() : (totalHoldings - faker.random.number()) / amount),
                 rate: faker.random.number(),
                 date: faker.date.between(startingDate, new Date()).getTime(),
-                USDRate: faker.random.number(),
+                fiatRate: faker.random.number(),
                 id: faker.random.words(5),
                 exchange: faker.random.objectElement(EXCHANGES) as EXCHANGES,
             });
@@ -51,12 +51,12 @@ export function mockTrades(
     return trades;
 }
 
-export function mockTradesWithUSDRate(
-    amount: number, startingDate: Date, currentHoldings: IHoldings, allowOverflow: boolean): ITradeWithUSDRate[] {
-    const trades: ITradeWithUSDRate[] = mockTrades(
+export function mockTradesWithFiatRate(
+    amount: number, startingDate: Date, currentHoldings: IHoldings, allowOverflow: boolean): ITradeWithFiatRate[] {
+    const trades: ITradeWithFiatRate[] = mockTrades(
         amount, startingDate, currentHoldings, allowOverflow);
     for (const trade of trades) {
-        trade.USDRate = faker.random.number();
+        trade.fiatRate = faker.random.number();
     }
     return trades;
 }

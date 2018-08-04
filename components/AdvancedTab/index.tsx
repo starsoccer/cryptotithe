@@ -27,7 +27,7 @@ export class AdvancedTab extends React.Component<IAdvancedTabProp, IAdvancedTabS
     public calculateDailyBalance = async () => {
         const trades = this.props.savedData.trades.filter((trade) => trade.exchange === this.state.exchange);
         this.setState({
-            dailyBalance: await calculateDailyBalance(trades),
+            dailyBalance: await calculateDailyBalance(trades, this.props.savedData.settings.fiatCurrency),
         });
     }
 

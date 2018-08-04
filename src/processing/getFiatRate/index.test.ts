@@ -1,9 +1,9 @@
 import * as faker from 'faker';
-import { EXCHANGES, IHoldings, ITrade, ITradeWithUSDRate, FiatRateMethod} from '../../types';
+import { EXCHANGES, IHoldings, ITrade, ITradeWithFiatRate, FiatRateMethod} from '../../types';
 import { addFiatRateToTrades } from './';
 
-describe('Add USD Rate to Trade', () => {
-    test('add USD rate to one trade', async () => {
+describe('Add fiat Rate to Trade', () => {
+    test('add fiat rate to one trade', async () => {
         const trade: ITrade = {
             boughtCurrency: 'LTC',
             soldCurrency: 'BTC',
@@ -14,15 +14,15 @@ describe('Add USD Rate to Trade', () => {
             exchange: EXCHANGES.GEMINI,
         };
 
-        const tradeWithUSDRate: ITradeWithUSDRate[] = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.BITCOINAVERAGE);
+        const tradeWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.DOUBLEAVERAGE);
 
-        expect('USDRate' in tradeWithUSDRate[0]).toBeTruthy();
-        expect(typeof tradeWithUSDRate[0].USDRate).toBe('number');
+        expect('fiatRate' in tradeWithFiatRate[0]).toBeTruthy();
+        expect(typeof tradeWithFiatRate[0].fiatRate).toBe('number');
     });
 });
 
-describe('Add USD Rate to Trades', () => {
-    test('add USD rate to 3 trades', async () => {
+describe('Add fiat Rate to Trades', () => {
+    test('add fiat rate to 3 trades', async () => {
         const trades: ITrade[] = [
             {
                 boughtCurrency: 'LTC',
@@ -53,11 +53,11 @@ describe('Add USD Rate to Trades', () => {
             },
         ];
 
-        const tradesWithUSDRate: ITradeWithUSDRate[] = await addFiatRateToTrades(trades, 'USD', FiatRateMethod.BITCOINAVERAGE);
+        const tradesWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades(trades, 'USD', FiatRateMethod.DOUBLEAVERAGE);
 
-        for (const trade of tradesWithUSDRate) {
-            expect('USDRate' in trade).toBeTruthy();
-            expect(typeof trade.USDRate).toBe('number');
+        for (const trade of tradesWithFiatRate) {
+            expect('fiatRate' in trade).toBeTruthy();
+            expect(typeof trade.fiatRate).toBe('number');
         }
     });
 });

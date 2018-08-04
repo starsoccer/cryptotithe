@@ -1,5 +1,5 @@
 import { calculateGainsPerHoldings } from '../../processing/CalculateGains';
-import { IHoldings, ITradeWithCostBasis, ITradeWithUSDRate, METHOD } from '../../types';
+import { IHoldings, ITradeWithCostBasis, ITradeWithFiatRate, METHOD } from '../../types';
 
 const headers = [
     'Description',
@@ -12,8 +12,13 @@ const headers = [
     'Gain or Loss',
 ].join(',');
 
-export default function outputForm8949(holdings: IHoldings, trades: ITradeWithUSDRate[], method: METHOD) {
-    const result = calculateGainsPerHoldings(holdings, trades, method);
+export default function outputForm8949(
+    holdings: IHoldings,
+    trades: ITradeWithFiatRate[],
+    fiatCurrency: string,
+    method: METHOD,
+) {
+    const result = calculateGainsPerHoldings(holdings, trades, fiatCurrency, method);
     let csvData: any[] = [
         'Form 8949 Statement',
         '',

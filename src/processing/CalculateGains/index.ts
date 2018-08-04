@@ -4,8 +4,8 @@ import {
     IHoldings,
     ITrade,
     ITradeWithCostBasis,
+    ITradeWithFiatRate,
     ITradeWithGains,
-    ITradeWithUSDRate,
     METHOD,
 } from '../../types';
 
@@ -19,7 +19,8 @@ export interface ICalculateGains {
 
 export function calculateGains(
     holdings: IHoldings,
-    trades: ITradeWithUSDRate[],
+    trades: ITradeWithFiatRate[],
+    fiatCurrency: string,
     method: METHOD = METHOD.FIFO,
 ): ICalculateGains {
     let shortTermGain = 0;
@@ -27,27 +28,27 @@ export function calculateGains(
     let newHoldings: IHoldings = clone(holdings);
     for (const trade of trades) {
         const result: IGetCurrencyHolding = getCurrenyHolding(
-            newHoldings, trade, method,
+            newHoldings, trade, fiatCurrency, method,
         );
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
         }
-        if (trade.soldCurrency === 'USD') {
+        if (trade.soldCurrency === fiatCurrency) {
             newHoldings[trade.boughtCurrency].push({
                 amount: trade.amountSold / trade.rate,
-                rateInUSD: trade.USDRate,
+                rateInFiat: trade.fiatRate,
                 date: trade.date,
             });
             continue;
         } else {
             newHoldings[trade.boughtCurrency].push({
                 amount: trade.amountSold / trade.rate,
-                rateInUSD: trade.USDRate * trade.rate,
+                rateInFiat: trade.fiatRate * trade.rate,
                 date: trade.date,
             });
             for (const holding of result.deductedHoldings) {
-                const gain: number = (trade.USDRate - holding.rateInUSD) * holding.amount;
+                const gain: number = (trade.fiatRate - holding.rateInFiat) * holding.amount;
                 if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                     longTermGain += gain;
                 } else {
@@ -69,7 +70,10 @@ export interface IGetCurrencyHolding {
 }
 
 export function getCurrenyHolding(
-    holdings: IHoldings, trade: ITrade, method?: METHOD,
+    holdings: IHoldings,
+    trade: ITrade,
+    fiatCurrency: string,
+    method?: METHOD,
 ): IGetCurrencyHolding {
     holdings = clone(holdings);
     const currencyHolding: ICurrencyHolding[] = [];
@@ -84,7 +88,7 @@ export function getCurrenyHolding(
                         lastIn.amount = lastIn.amount - amountUsed;
                         currencyHolding.push({
                             amount: amountUsed,
-                            rateInUSD: lastIn.rateInUSD,
+                            rateInFiat: lastIn.rateInFiat,
                             date: lastIn.date,
                         });
                         amountUsed = 0;
@@ -102,7 +106,7 @@ export function getCurrenyHolding(
                         let fallBackPosition = 0;
                         for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
                             const holding = holdings[trade.soldCurrency][index];
-                            if (holding.rateInUSD > holdings[trade.soldCurrency][fallBackPosition].rateInUSD) {
+                            if (holding.rateInFiat > holdings[trade.soldCurrency][fallBackPosition].rateInFiat) {
                                 fallBackPosition = index;
                             }
                             if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
@@ -119,7 +123,7 @@ export function getCurrenyHolding(
                         lowestTaxCostHolding.amount = lowestTaxCostHolding.amount - amountUsed;
                         currencyHolding.push({
                             amount: amountUsed,
-                            rateInUSD: lowestTaxCostHolding.rateInUSD,
+                            rateInFiat: lowestTaxCostHolding.rateInFiat,
                             date: lowestTaxCostHolding.date,
                         });
                         amountUsed = 0;
@@ -135,7 +139,7 @@ export function getCurrenyHolding(
                     let fallBackPosition = 0;
                     for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
                         const holding = holdings[trade.soldCurrency][index];
-                        if (holding.rateInUSD < holdings[trade.soldCurrency][fallBackPosition].rateInUSD) {
+                        if (holding.rateInFiat < holdings[trade.soldCurrency][fallBackPosition].rateInFiat) {
                             fallBackPosition = index;
                         }
                         if (trade.date - holding.date < FULL_YEAR_IN_MILLISECONDS) {
@@ -152,7 +156,7 @@ export function getCurrenyHolding(
                     highestTaxCostHolding.amount = highestTaxCostHolding.amount - amountUsed;
                     currencyHolding.push({
                         amount: amountUsed,
-                        rateInUSD: highestTaxCostHolding.rateInUSD,
+                        rateInFiat: highestTaxCostHolding.rateInFiat,
                         date: highestTaxCostHolding.date,
                     });
                     amountUsed = 0;
@@ -166,7 +170,7 @@ export function getCurrenyHolding(
                     let highestCostPosition = 0;
                     for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
                         const holding = holdings[trade.soldCurrency][index];
-                        if (holding.rateInUSD > holdings[trade.soldCurrency][highestCostPosition].rateInUSD) {
+                        if (holding.rateInFiat > holdings[trade.soldCurrency][highestCostPosition].rateInFiat) {
                             highestCostPosition = index;
                         }
                     }
@@ -175,7 +179,7 @@ export function getCurrenyHolding(
                         highestCostHolding.amount = highestCostHolding.amount - amountUsed;
                         currencyHolding.push({
                             amount: amountUsed,
-                            rateInUSD: highestCostHolding.rateInUSD,
+                            rateInFiat: highestCostHolding.rateInFiat,
                             date: highestCostHolding.date,
                         });
                         amountUsed = 0;
@@ -189,7 +193,7 @@ export function getCurrenyHolding(
                     let lowestCostPosition = 0;
                     for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
                         const holding = holdings[trade.soldCurrency][index];
-                        if (holding.rateInUSD < holdings[trade.soldCurrency][lowestCostPosition].rateInUSD) {
+                        if (holding.rateInFiat < holdings[trade.soldCurrency][lowestCostPosition].rateInFiat) {
                             lowestCostPosition = index;
                         }
                     }
@@ -198,7 +202,7 @@ export function getCurrenyHolding(
                         lowestCostHolding.amount = lowestCostHolding.amount - amountUsed;
                         currencyHolding.push({
                             amount: amountUsed,
-                            rateInUSD: lowestCostHolding.rateInUSD,
+                            rateInFiat: lowestCostHolding.rateInFiat,
                             date: lowestCostHolding.date,
                         });
                         amountUsed = 0;
@@ -215,7 +219,7 @@ export function getCurrenyHolding(
                         firstIn.amount = firstIn.amount - amountUsed;
                         currencyHolding.push({
                             amount: amountUsed,
-                            rateInUSD: firstIn.rateInUSD,
+                            rateInFiat: firstIn.rateInFiat,
                             date: firstIn.date,
                         });
                         amountUsed = 0;
@@ -230,17 +234,17 @@ export function getCurrenyHolding(
                 delete holdings[trade.soldCurrency];
             }
         } else {
-            if (trade.soldCurrency === 'USD') {
+            if (trade.soldCurrency === fiatCurrency) {
                 currencyHolding.push({
                     amount: amountUsed,
                     date: trade.date,
-                    rateInUSD: 1,
+                    rateInFiat: 1,
                 });
             } else {
                 currencyHolding.push({
                     amount: amountUsed,
                     date: trade.date,
-                    rateInUSD: 0,
+                    rateInFiat: 0,
                 });
             }
             amountUsed = 0;
@@ -260,7 +264,8 @@ export interface ICalculateGainsPerTrade {
 
 export function calculateGainPerTrade(
     holdings: IHoldings,
-    internalFormat: ITradeWithUSDRate[],
+    internalFormat: ITradeWithFiatRate[],
+    fiatCurrency: string,
     method: METHOD,
 ): ICalculateGainsPerTrade {
     let tempHoldings: IHoldings = clone(holdings);
@@ -268,7 +273,7 @@ export function calculateGainPerTrade(
     let longTerm = 0;
     const finalFormat: ITradeWithGains[] = [];
     for (const trade of internalFormat) {
-        const result: ICalculateGains = calculateGains(tempHoldings, [trade], method);
+        const result: ICalculateGains = calculateGains(tempHoldings, [trade], fiatCurrency, method);
         tempHoldings = result.newHoldings;
         shortTerm += result.shortTermGain;
         longTerm += result.longTermGain;
@@ -299,7 +304,8 @@ export interface ICalculateGainsPerHoldings {
 
 export function calculateGainsPerHoldings(
     holdings: IHoldings,
-    trades: ITradeWithUSDRate[],
+    trades: ITradeWithFiatRate[],
+    fiatCurrency: string,
     method: METHOD,
 ): ICalculateGainsPerHoldings {
     let newHoldings: IHoldings = clone(holdings);
@@ -312,28 +318,28 @@ export function calculateGainsPerHoldings(
     const shortTermTrades: ITradeWithCostBasis[] = [];
     const longTermTrades: ITradeWithCostBasis[] = [];
     for (const trade of trades) {
-        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade, method);
+        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade, fiatCurrency, method);
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
         }
-        if (trade.soldCurrency === 'USD') {
+        if (trade.soldCurrency === fiatCurrency) {
             newHoldings[trade.boughtCurrency].push({
                 amount: trade.amountSold / trade.rate,
-                rateInUSD: trade.USDRate,
+                rateInFiat: trade.fiatRate,
                 date: trade.date,
             });
             continue;
         } else {
             newHoldings[trade.boughtCurrency].push({
                 amount: trade.amountSold / trade.rate,
-                rateInUSD: trade.USDRate * trade.rate,
+                rateInFiat: trade.fiatRate * trade.rate,
                 date: trade.date,
             });
         }
         for (const holding of result.deductedHoldings) {
             const tradeToAdd: ITradeWithCostBasis = {
-                USDRate: trade.USDRate,
+                fiatRate: trade.fiatRate,
                 boughtCurrency: trade.boughtCurrency,
                 soldCurrency: trade.soldCurrency,
                 amountSold: holding.amount,
@@ -344,9 +350,9 @@ export function calculateGainsPerHoldings(
                 shortTerm: 0,
                 longTerm: 0,
                 dateAcquired: holding.date,
-                costBasis: parseFloat((holding.rateInUSD * holding.amount).toFixed(2)),
+                costBasis: parseFloat((holding.rateInFiat * holding.amount).toFixed(2)),
             };
-            const unFixedGain = (trade.USDRate - holding.rateInUSD) * holding.amount;
+            const unFixedGain = (trade.fiatRate - holding.rateInFiat) * holding.amount;
             let trueGain = parseFloat(unFixedGain.toFixed(2));
             if (parseFloat(unFixedGain.toFixed(2)) === 0) {
                 if (unFixedGain === 0) {
@@ -361,13 +367,13 @@ export function calculateGainsPerHoldings(
             }
             const gain: number = trueGain;
             if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
-                longTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
+                longTermProceeds += tradeToAdd.fiatRate * tradeToAdd.amountSold;
                 longTermCostBasis += tradeToAdd.costBasis;
                 longTermGain += gain;
                 tradeToAdd.longTerm = gain;
                 longTermTrades.push(tradeToAdd);
             } else {
-                shortTermProceeds += tradeToAdd.USDRate * tradeToAdd.amountSold;
+                shortTermProceeds += tradeToAdd.fiatRate * tradeToAdd.amountSold;
                 shortTermCostBasis += tradeToAdd.costBasis;
                 shortTermGain += gain;
                 tradeToAdd.shortTerm = gain;

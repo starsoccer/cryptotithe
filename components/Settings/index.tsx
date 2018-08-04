@@ -39,12 +39,12 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
         switch (key) {
             case 'fiatRateMethod':
                 this.setState({fiatRateMethod: e.currentTarget.value as keyof typeof FiatRateMethod});
-            break;
+                break;
             case 'fiatCurrency':
                 this.setState({fiatCurrency: e.currentTarget.value.toUpperCase()});
-            break;
+                break;
         }
-        
+
     }
 
     public render() {
@@ -65,7 +65,11 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
                     </div>
                     <div>
                         <label className='pr1'>Fiat Rate Calculation Method:</label>
-                        <input type="text" defaultValue={this.state.fiatCurrency} onChange={this.onChange('fiatCurrency')}/>
+                        <input
+                            type='text'
+                            defaultValue={this.state.fiatCurrency}
+                            onChange={this.onChange('fiatCurrency')}
+                        />
                     </div>
                     <hr />
                     <Button label='Save' onClick={this.onSave}/>

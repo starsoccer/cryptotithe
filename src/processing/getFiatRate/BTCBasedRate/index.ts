@@ -3,11 +3,11 @@ import { getClosestHourPrice } from '../getClosestHourPrice';
 import { getDayAvg } from '../getDayAvgCurrencyRate';
 import { calculateAverageFromArray, calculateAvgerageHourPrice } from '../utils';
 
-export function BTCBasedRate(trade: ITrade, BTCUSDRate: number) {
+export function BTCBasedRate(trade: ITrade, BTCFiatRate: number) {
     if (trade.boughtCurrency === 'BTC' || trade.boughtCurrency === 'XBT') {
-        return BTCUSDRate * (trade.amountSold / trade.rate) / trade.amountSold;
+        return BTCFiatRate * (trade.amountSold / trade.rate) / trade.amountSold;
     } else if (trade.soldCurrency === 'BTC' || trade.soldCurrency === 'XBT') {
-        return BTCUSDRate;
+        return BTCFiatRate;
     } else {
         throw new Error('Not a BTC Trade' + trade.id);
     }

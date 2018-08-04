@@ -1,7 +1,7 @@
 import * as React from 'react';
 import generateForm8949 from '../../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../../src/processing/CalculateGains';
-import { IHoldings, ISavedData, ITrade, ITradeWithGains, ITradeWithUSDRate, METHOD } from '../../src/types';
+import { IHoldings, ISavedData, ITrade, ITradeWithFiatRate, ITradeWithGains, METHOD } from '../../src/types';
 // import { AlertBar, AlertType } from '../AlertBar';
 import Button from '../Button';
 import { FileDownload, IFileDownloadProps } from '../FileDownload';
@@ -36,10 +36,11 @@ function getTradeYears(trades: ITrade[]) {
 
 function recalculate(
     holdings: IHoldings,
-    trades: ITradeWithUSDRate[],
+    trades: ITradeWithFiatRate[],
     gainCalculationMethod: METHOD,
     includePreviousYears: boolean,
     year: string,
+    fiatCurrnecy: string,
 ) {
     if (year !== '----') {
         let newHoldings = holdings;
@@ -47,21 +48,26 @@ function recalculate(
             const pastTrades = trades.filter(
                 (trade) => new Date(trade.date).getFullYear() < parseInt(year, 10),
             );
-            newHoldings = calculateGains(holdings, pastTrades).newHoldings;
+            newHoldings = calculateGains(holdings, pastTrades, fiatCurrnecy).newHoldings;
         }
         const newTrades = trades.filter(
             (trade) => new Date(trade.date).getFullYear().toString() === year,
         );
-        return calculateGainPerTrade(newHoldings, newTrades, gainCalculationMethod);
+        return calculateGainPerTrade(newHoldings, newTrades, fiatCurrnecy, gainCalculationMethod);
     } else {
-        return calculateGainPerTrade(holdings, trades, gainCalculationMethod);
+        return calculateGainPerTrade(holdings, trades, fiatCurrnecy, gainCalculationMethod);
     }
 }
 
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
     public constructor(props: ICalculateTradesProp) {
         super(props);
-        const result = calculateGainPerTrade(props.savedData.holdings, props.savedData.trades, METHOD.FIFO);
+        const result = calculateGainPerTrade(
+            props.savedData.holdings,
+            props.savedData.trades,
+            this.props.savedData.settings.fiatCurrency,
+            METHOD.FIFO
+        );
         this.state = {
             tradeGains: result.trades,
             longTermGains: result.longTerm,
@@ -90,6 +96,7 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
                 this.state.gainCalculationMethod,
                 this.state.includePreviousYears,
                 this.state.currentYear.toString(),
+                this.props.savedData.settings.fiatCurrency,
             );
             this.setState({
                 filteredTradesWithGains: result.trades,
@@ -127,10 +134,15 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
                 this.props.savedData.holdings, trades, this.state.gainCalculationMethod,
             ).newHoldings;
         }
-        const tradesForThisYear: ITradeWithUSDRate[] = this.props.savedData.trades.filter(
+        const tradesForThisYear: ITradeWithFiatRate[] = this.props.savedData.trades.filter(
             (trade) => new Date(trade.date).getFullYear() === this.state.currentYear,
         );
-        const data = generateForm8949(holdings, tradesForThisYear, this.state.gainCalculationMethod);
+        const data = generateForm8949(
+            holdings,
+            tradesForThisYear,
+            this.props.savedData.settings.fiatCurrency,
+            this.state.gainCalculationMethod,
+        );
         this.setState({downloadProps: {
             data,
             fileName: 'Form8949.csv',
@@ -166,11 +178,13 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
                 </div>
                 { this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
                     <GainsPerTradeTable
+                        fiatCurrency={this.props.savedData.settings.fiatCurrency}
                         trades={this.state.filteredTradesWithGains}
                     />
                 :
                 this.state.tradeGains !== undefined &&
                     <GainsPerTradeTable
+                        fiatCurrency={this.props.savedData.settings.fiatCurrency}
                         trades={this.state.tradeGains}
                     />
                 }

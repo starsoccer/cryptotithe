@@ -1,6 +1,6 @@
-import * as csv from 'csvtojson';
-import { EXCHANGES, ITrade, ExchangesHeaders } from '../types';
 import * as crypto from 'crypto';
+import * as csv from 'csvtojson';
+import { EXCHANGES, ExchangesHeaders, ITrade } from '../types';
 
 interface IGetCSVData {
     [key: string]: string;

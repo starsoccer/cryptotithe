@@ -4,6 +4,6 @@ export interface IHoldings {
 
 export interface ICurrencyHolding {
     amount: number;
-    rateInUSD: number;
+    rateInFiat: number;
     date: number;
 }

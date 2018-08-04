@@ -2,15 +2,15 @@ import * as got from 'got';
 import { ITrade } from '../../types';
 
 interface ICryptoCompareResponse {
-    USD: number;
+    [key: string]: number;
 }
 
-export function cryptocompareRateResponse(response: got.Response<any>) {
+export function cryptocompareRateResponse(response: got.Response<any>, fiatCurrency: string) {
     if ('body' in response) {
         try {
             const result: ICryptoCompareResponse = JSON.parse(response.body);
-            if (result.USD !== 0) {
-                return result.USD;
+            if (result[fiatCurrency] !== 0) {
+                return result[fiatCurrency];
             } else {
                 return false;
             }
