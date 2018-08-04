@@ -1,4 +1,4 @@
-import { ISavedData } from "../../types";
+import { ISavedData } from '../../types';
 
 export default function converter(savedData: ISavedData): boolean {
     let changeMade = false;
@@ -10,7 +10,7 @@ export default function converter(savedData: ISavedData): boolean {
             delete oldFormatTrade.USDRate;
         }
     }
-    
+
     if (Object.keys(savedData.holdings).length) {
         const keys = Object.keys(savedData.holdings);
         if ('rateInUSD' in savedData.holdings[keys[0]][0]) {
@@ -24,5 +24,5 @@ export default function converter(savedData: ISavedData): boolean {
             }
         }
     }
-    return true;
+    return changeMade;
 }

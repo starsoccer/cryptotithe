@@ -1,13 +1,13 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
 import SortTrades from '../src/processing/SortTrades';
+import savedDataConverter from '../src/savedDataConverter';
 import {
     IPartialSavedData,
     ISavedData,
     ITradeWithDuplicateProbability,
     ITradeWithFiatRate,
 } from '../src/types';
-import savedDataConverter from '../src/savedDataConverter';
 import { AddTrades } from './AddTrades';
 import { AdvancedTab } from './AdvancedTab';
 import Button from './Button';
@@ -51,7 +51,8 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             duplicateTrades: [],
             currentTab: TABS.HOME,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser || props.savedData.trades.length + Object.keys(props.savedData.holdings).length === 0,
+            loadDataPopup: props.browser || props.savedData.trades.length +
+                Object.keys(props.savedData.holdings).length === 0,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
@@ -62,8 +63,9 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         };
     }
 
-    public componentDidMount () {
-        const savedDataLoaded = this.props.savedData.trades.length + Object.keys(this.props.savedData.holdings).length !== 0;
+    public componentDidMount() {
+        const savedDataLoaded = this.props.savedData.trades.length +
+            Object.keys(this.props.savedData.holdings).length !== 0;
         if (savedDataLoaded) {
             const savedData =  this.props.savedData;
             const shouldSave = savedDataConverter(savedData);
@@ -145,7 +147,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             try {
                 const parsedData: ISavedData = JSON.parse(data);
                 const shouldSave = savedDataConverter(parsedData);
-                if(shouldSave) {
+                if (shouldSave) {
                     this.saveData(parsedData);
                 }
                 this.setState({

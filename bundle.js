@@ -258,6 +258,8 @@ const types_1 = require("../../src/types");
 const Button_1 = require("../Button");
 const FileDownload_1 = require("../FileDownload");
 const GainsPerTradeTable_1 = require("../GainsPerTradeTable");
+// import { Loader } from '../Loader';
+const Popup_1 = require("../Popup");
 function getTradeYears(trades) {
     const years = ['----'];
     trades.forEach((trade) => {
@@ -316,6 +318,9 @@ class CalculateGains extends React.Component {
                     download: true,
                 } });
         };
+        this.customizeModal = () => {
+            this.setState({ showCustomizeModal: !this.state.showCustomizeModal });
+        };
         const result = CalculateGains_1.calculateGainPerTrade(props.savedData.holdings, props.savedData.trades, this.props.savedData.settings.fiatCurrency, types_1.METHOD.FIFO);
         this.state = {
             tradeGains: result.trades,
@@ -330,6 +335,7 @@ class CalculateGains extends React.Component {
             },
             currentYear: 0,
             gainCalculationMethod: types_1.METHOD.FIFO,
+            showCustomizeModal: false,
         };
     }
     componentDidUpdate(_prevProps, prevState) {
@@ -346,6 +352,8 @@ class CalculateGains extends React.Component {
     }
     render() {
         return (React.createElement("div", { className: 'calculategains' },
+            React.createElement("div", { className: 'tc' },
+                React.createElement(Button_1.default, { label: 'Customize', onClick: this.customizeModal })),
             React.createElement("div", { className: 'flex justify-center' },
                 React.createElement("h3", { className: 'pa2' },
                     "Short Term Gains: ",
@@ -353,25 +361,33 @@ class CalculateGains extends React.Component {
                 React.createElement("h3", { className: 'pa2' },
                     "Long Term Gains: ",
                     this.state.longTermGains)),
-            React.createElement("div", { className: 'tc' },
-                React.createElement("label", null, "Year"),
-                React.createElement("select", { className: 'pl2', onChange: this.onChange('year') }, this.state.years.map((year) => React.createElement("option", { key: year, value: year }, year))),
-                React.createElement("label", null, "Calculation Method"),
-                React.createElement("select", { className: 'pl2', onChange: this.onChange('gainCalculationMethod') }, Object.keys(types_1.METHOD).map((method) => React.createElement("option", { key: method, value: types_1.METHOD[method] }, method))),
-                React.createElement("label", null, "Include Previous Years"),
-                React.createElement("input", { type: 'checkbox', onChange: this.onChangeCheckBox(), checked: this.state.includePreviousYears }),
-                React.createElement(Button_1.default, { label: 'Form 8949', onClick: this.generateForm8949 })),
             this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
                 React.createElement(GainsPerTradeTable_1.GainsPerTradeTable, { fiatCurrency: this.props.savedData.settings.fiatCurrency, trades: this.state.filteredTradesWithGains })
                 :
                     this.state.tradeGains !== undefined &&
                         React.createElement(GainsPerTradeTable_1.GainsPerTradeTable, { fiatCurrency: this.props.savedData.settings.fiatCurrency, trades: this.state.tradeGains }),
-            React.createElement(FileDownload_1.FileDownload, { data: this.state.downloadProps.data, fileName: this.state.downloadProps.fileName, download: this.state.downloadProps.download })));
+            React.createElement(FileDownload_1.FileDownload, { data: this.state.downloadProps.data, fileName: this.state.downloadProps.fileName, download: this.state.downloadProps.download }),
+            this.state.showCustomizeModal &&
+                React.createElement(Popup_1.default, { onClose: this.customizeModal },
+                    React.createElement("div", null,
+                        React.createElement("h1", null, "Customize"),
+                        React.createElement("hr", null),
+                        React.createElement("div", null,
+                            React.createElement("div", null,
+                                React.createElement("label", null, "Year"),
+                                React.createElement("select", { className: 'pl2', onChange: this.onChange('year') }, this.state.years.map((year) => React.createElement("option", { key: year, value: year }, year)))),
+                            React.createElement("div", null,
+                                React.createElement("label", null, "Calculation Method"),
+                                React.createElement("select", { className: 'pl2', onChange: this.onChange('gainCalculationMethod') }, Object.keys(types_1.METHOD).map((method) => React.createElement("option", { key: method, value: types_1.METHOD[method] }, method)))),
+                            React.createElement("div", null,
+                                React.createElement("label", null, "Include Previous Years"),
+                                React.createElement("input", { type: 'checkbox', onChange: this.onChangeCheckBox(), checked: this.state.includePreviousYears })),
+                            React.createElement(Button_1.default, { label: 'Form 8949', onClick: this.generateForm8949 }))))));
     }
 }
 exports.CalculateGains = CalculateGains;
 
-},{"../../src/output/Form8949":418,"../../src/processing/CalculateGains":427,"../../src/types":438,"../Button":4,"../FileDownload":9,"../GainsPerTradeTable":10,"react":297}],6:[function(require,module,exports){
+},{"../../src/output/Form8949":418,"../../src/processing/CalculateGains":427,"../../src/types":438,"../Button":4,"../FileDownload":9,"../GainsPerTradeTable":10,"../Popup":12,"react":297}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -74945,7 +74961,9 @@ exports.calculateAverageFromArray = calculateAverageFromArray;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function converter(savedData) {
+    let changeMade = false;
     if (savedData.trades.length && 'USDRate' in savedData.trades[0]) {
+        changeMade = true;
         for (const trade of savedData.trades) {
             const oldFormatTrade = trade;
             trade.fiatRate = oldFormatTrade.USDRate;
@@ -74954,14 +74972,18 @@ function converter(savedData) {
     }
     if (Object.keys(savedData.holdings).length) {
         const keys = Object.keys(savedData.holdings);
-        for (const currency of keys) {
-            for (const holding of savedData.holdings[currency]) {
-                const oldFormatHolding = holding;
-                holding.rateInFiat = oldFormatHolding.rateInUSD;
-                delete oldFormatHolding.rateInUSD;
+        if ('rateInUSD' in savedData.holdings[keys[0]][0]) {
+            changeMade = true;
+            for (const currency of keys) {
+                for (const holding of savedData.holdings[currency]) {
+                    const oldFormatHolding = holding;
+                    holding.rateInFiat = oldFormatHolding.rateInUSD;
+                    delete oldFormatHolding.rateInUSD;
+                }
             }
         }
     }
+    return changeMade;
 }
 exports.default = converter;
 
@@ -74970,20 +74992,24 @@ exports.default = converter;
 Object.defineProperty(exports, "__esModule", { value: true });
 const _0_2_0_1 = require("./0.2.0");
 function onSaveDataLoaded(savedData) {
-    const version = savedData.version || undefined;
-    let oldVersion = false;
+    const version = savedData.version || 0;
+    const packageData = require('./package.json');
+    const currentVersion = packageData.version;
+    let changeMade = false;
     switch (version) {
         case undefined: // prior to 0.2.0
-            _0_2_0_1.default(savedData);
-            oldVersion = true;
+            changeMade = _0_2_0_1.default(savedData);
             break;
         default:
     }
-    return oldVersion;
+    if (changeMade && version === 0 || version < currentVersion) {
+        savedData.version = currentVersion;
+    }
+    return changeMade;
 }
 exports.default = onSaveDataLoaded;
 
-},{"./0.2.0":436}],438:[function(require,module,exports){
+},{"./0.2.0":436,"./package.json":undefined}],438:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
