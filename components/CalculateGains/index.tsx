@@ -7,7 +7,7 @@ import Button from '../Button';
 import { FileDownload, IFileDownloadProps } from '../FileDownload';
 import { GainsPerTradeTable } from '../GainsPerTradeTable';
 // import { Loader } from '../Loader';
-import Customize from './Customize.component';
+import { Customize, IYearCalculationMethod } from './Customize.component';
 export interface ICalculateTradesProp {
     savedData: ISavedData;
 }
@@ -17,15 +17,14 @@ export interface ICalculateTradesState {
     longTermGains?: number;
     shortTermGains?: number;
     years: string[];
+    yearCalculationMethod: IYearCalculationMethod;
     downloadProps: IFileDownloadProps;
-    includePreviousYears: boolean;
     currentYear: number;
-    gainCalculationMethod: METHOD;
     showCustomizeModal: boolean;
 }
 
 function getTradeYears(trades: ITrade[]) {
-    const years: string[] = ['----'];
+    const years: string[] = [];
     trades.forEach((trade) => {
         const year = new Date(trade.date).getFullYear();
         if (years.indexOf(year.toString()) === -1) {
@@ -38,26 +37,32 @@ function getTradeYears(trades: ITrade[]) {
 function recalculate(
     holdings: IHoldings,
     trades: ITradeWithFiatRate[],
-    gainCalculationMethod: METHOD,
-    includePreviousYears: boolean,
-    year: string,
     fiatCurrnecy: string,
+    yearCalculationMethod: IYearCalculationMethod,
 ) {
-    if (year !== '----' && year !== '0') {
-        let newHoldings = holdings;
-        if (includePreviousYears) {
+    const years = Object.keys(yearCalculationMethod);
+    let newHoldings = holdings;
+    if (years.length !== 1) {
+        for (let index = 0; index < years.length - 1; index++) {
             const pastTrades = trades.filter(
-                (trade) => new Date(trade.date).getFullYear() < parseInt(year, 10),
+                (trade) => new Date(trade.date).getFullYear() === parseInt(years[index], 10),
             );
-            newHoldings = calculateGains(holdings, pastTrades, fiatCurrnecy).newHoldings;
+            const result = calculateGains(holdings, pastTrades, fiatCurrnecy, yearCalculationMethod[years[index]]);
+            newHoldings = result.newHoldings;  
         }
-        const newTrades = trades.filter(
-            (trade) => new Date(trade.date).getFullYear().toString() === year,
-        );
-        return calculateGainPerTrade(newHoldings, newTrades, fiatCurrnecy, gainCalculationMethod);
-    } else {
-        return calculateGainPerTrade(holdings, trades, fiatCurrnecy, gainCalculationMethod);
     }
+    const lastYear = years[years.length - 1];
+    let newTrades = trades;
+    if (lastYear !== '----' && lastYear !== '0') {
+        newTrades = trades.filter(
+            (trade) => new Date(trade.date).getFullYear().toString() === lastYear,
+        );
+    }
+    return {
+        holdings: newHoldings,
+        trades: newTrades,
+        gainCalculationMethod: yearCalculationMethod[lastYear],
+    };
 }
 
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
@@ -65,71 +70,65 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
         super(props);
         this.state = {
             years: getTradeYears(props.savedData.trades),
-            includePreviousYears: true,
             downloadProps: {
                 fileName: '',
                 data: '',
                 download: false,
             },
             currentYear: 0,
-            gainCalculationMethod: METHOD.FIFO,
             showCustomizeModal: false,
+            yearCalculationMethod: {},
         };
     }
 
-    public calculateGains = () => {
+    public calculateGains = (yearCalculationMethod: IYearCalculationMethod) => () => {
         const result = recalculate(
             this.props.savedData.holdings,
             this.props.savedData.trades,
-            this.state.gainCalculationMethod,
-            this.state.includePreviousYears,
-            this.state.currentYear.toString(),
             this.props.savedData.settings.fiatCurrency,
+            yearCalculationMethod,
         );
+        const data = calculateGainPerTrade(result.holdings, result.trades, this.props.savedData.settings.fiatCurrency, result.gainCalculationMethod);
         this.setState({
-            filteredTradesWithGains: result.trades,
-            longTermGains: result.longTerm,
-            shortTermGains: result.shortTerm,
+            filteredTradesWithGains: data.trades,
+            longTermGains: data.longTerm,
+            shortTermGains: data.shortTerm,
             showCustomizeModal: false,
+            yearCalculationMethod,
         });
     }
 
-    public onChangeCheckBox = () => (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({includePreviousYears: e.currentTarget.checked});
-    }
-
-    public onChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
+    public onChange = (key: string, extra?: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
         switch (key) {
             case 'year':
                 this.setState({
                     currentYear: parseInt(e.currentTarget.value, 10),
                 });
                 break;
-            case 'gainCalculationMethod':
-                this.setState({
-                    gainCalculationMethod: e.currentTarget.value as METHOD,
-                });
+            case 'yearGainCalculationMethod':
+                if (extra !== undefined) {
+                    const currentYearCalculationMethod = this.state.yearCalculationMethod;
+                    currentYearCalculationMethod[extra] = e.currentTarget.value as METHOD;
+                    this.setState({
+                        yearCalculationMethod: currentYearCalculationMethod,
+                    });
+                }
                 break;
         }
     }
 
     public generateForm8949 = () => {
-        let holdings = this.props.savedData.holdings;
-        if (this.state.includePreviousYears) {
-            const trades = this.props.savedData.trades.filter((trade) =>
-                new Date(trade.date).getFullYear() < this.state.currentYear);
-            holdings = calculateGains(
-                this.props.savedData.holdings, trades, this.state.gainCalculationMethod,
-            ).newHoldings;
-        }
-        const tradesForThisYear: ITradeWithFiatRate[] = this.props.savedData.trades.filter(
-            (trade) => new Date(trade.date).getFullYear() === this.state.currentYear,
+        const result = recalculate(
+            this.props.savedData.holdings,
+            this.props.savedData.trades,
+            this.props.savedData.settings.fiatCurrency,
+            this.state.yearCalculationMethod,
         );
         const data = generateForm8949(
-            holdings,
-            tradesForThisYear,
+            result.holdings,
+            result.trades,
             this.props.savedData.settings.fiatCurrency,
-            this.state.gainCalculationMethod,
+            result.gainCalculationMethod,
         );
         this.setState({downloadProps: {
             data,
@@ -170,13 +169,10 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
                     <Customize
                         onClose={this.customizeModal}
                         onChange={this.onChange}
-                        onChangeCheckbox={this.onChangeCheckBox}
                         onGenerate={this.calculateGains}
                         onForm8949Export={this.generateForm8949}
                         years={this.state.years}
-                        selectedYear={this.state.currentYear}
-                        selectedMethod={this.state.gainCalculationMethod}
-                        includePreviousYears={this.state.includePreviousYears}
+                        yearCalculationMethod={this.state.yearCalculationMethod}
                     />
                 }
             </div>
