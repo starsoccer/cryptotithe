@@ -145803,16 +145803,19 @@ exports.calculateAverageFromArray = calculateAverageFromArray;
 },{}],1487:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const CalculateGains_1 = require("../processing/CalculateGains");
 const SortTrades_1 = require("../processing/SortTrades");
 function save(data, fallback) {
     const packageData = require('../../package.json');
     const newHoldings = data.holdings || fallback.holdings;
     const newTrades = data.trades || fallback.trades;
     const newSettings = data.settings || fallback.settings;
+    const sortedTrades = SortTrades_1.default(newTrades);
+    const currentHoldings = CalculateGains_1.calculateGains(newHoldings, sortedTrades, newSettings.fiatCurrency, newSettings.gainCalculationMethod).newHoldings;
     const savedData = {
         savedDate: new Date(),
-        trades: SortTrades_1.default(newTrades),
-        holdings: newHoldings,
+        trades: sortedTrades,
+        holdings: currentHoldings,
         settings: newSettings,
         version: packageData.version,
     };
@@ -145820,7 +145823,7 @@ function save(data, fallback) {
 }
 exports.default = save;
 
-},{"../../package.json":1466,"../processing/SortTrades":1481}],1488:[function(require,module,exports){
+},{"../../package.json":1466,"../processing/CalculateGains":1478,"../processing/SortTrades":1481}],1488:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function converter(savedData) {
