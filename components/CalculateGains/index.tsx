@@ -13,10 +13,9 @@ export interface ICalculateTradesProp {
 }
 
 export interface ICalculateTradesState {
-    tradeGains: ITradeWithGains[];
     filteredTradesWithGains?: ITradeWithGains[];
-    longTermGains: number;
-    shortTermGains: number;
+    longTermGains?: number;
+    shortTermGains?: number;
     years: string[];
     downloadProps: IFileDownloadProps;
     includePreviousYears: boolean;
@@ -44,7 +43,7 @@ function recalculate(
     year: string,
     fiatCurrnecy: string,
 ) {
-    if (year !== '----') {
+    if (year !== '----' && year !== '0') {
         let newHoldings = holdings;
         if (includePreviousYears) {
             const pastTrades = trades.filter(
@@ -64,16 +63,7 @@ function recalculate(
 export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
     public constructor(props: ICalculateTradesProp) {
         super(props);
-        const result = calculateGainPerTrade(
-            props.savedData.holdings,
-            props.savedData.trades,
-            this.props.savedData.settings.fiatCurrency,
-            METHOD.FIFO,
-        );
         this.state = {
-            tradeGains: result.trades,
-            longTermGains: result.longTerm,
-            shortTermGains: result.shortTerm,
             years: getTradeYears(props.savedData.trades),
             includePreviousYears: true,
             downloadProps: {
@@ -155,24 +145,21 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
     public render() {
         return (
             <div className='calculategains'>
-                <div className='tc'>
+                <div className='tc pt2'>
                     <Button label='Customize' onClick={this.customizeModal}/>
                 </div>
-                <div className='flex justify-center'>
-                    <h3 className='pa2'>Short Term Gains: {this.state.shortTermGains}</h3>
-                    <h3 className='pa2'>Long Term Gains: {this.state.longTermGains}</h3>
-                </div>
-                { this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
-                    <GainsPerTradeTable
-                        fiatCurrency={this.props.savedData.settings.fiatCurrency}
-                        trades={this.state.filteredTradesWithGains}
-                    />
-                :
-                this.state.tradeGains !== undefined &&
-                    <GainsPerTradeTable
-                        fiatCurrency={this.props.savedData.settings.fiatCurrency}
-                        trades={this.state.tradeGains}
-                    />
+                { this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 &&
+                    <div>
+                        <div className='flex justify-center'>
+                            <h3 className='pa2'>Short Term Gains: {this.state.shortTermGains}</h3>
+                            <h3 className='pa2'>Long Term Gains: {this.state.longTermGains}</h3>
+                        </div>
+                        <hr className="pa1 ma1"/>
+                        <GainsPerTradeTable
+                            fiatCurrency={this.props.savedData.settings.fiatCurrency}
+                            trades={this.state.filteredTradesWithGains}
+                        />
+                    </div>
                 }
                 <FileDownload
                     data={this.state.downloadProps.data}

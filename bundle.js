@@ -266,10 +266,10 @@ class Customize extends React.Component {
                 React.createElement("div", null,
                     React.createElement("div", null,
                         React.createElement("label", null, "Year"),
-                        React.createElement("select", { className: 'pl2', onChange: this.props.onChange('year') }, this.props.years.map((year) => React.createElement("option", { key: year, value: year, selected: year === this.props.selectedYear.toString() }, year)))),
+                        React.createElement("select", { className: 'pl2', onChange: this.props.onChange('year'), defaultValue: this.props.selectedYear.toString() }, this.props.years.map((year) => React.createElement("option", { key: year, value: year }, year)))),
                     React.createElement("div", null,
                         React.createElement("label", null, "Calculation Method"),
-                        React.createElement("select", { className: 'pl2', onChange: this.props.onChange('gainCalculationMethod') }, Object.keys(types_1.METHOD).map((method) => React.createElement("option", { key: method, value: types_1.METHOD[method], selected: method === this.props.selectedMethod }, method)))),
+                        React.createElement("select", { className: 'pl2', onChange: this.props.onChange('gainCalculationMethod'), defaultValue: this.props.selectedMethod }, Object.keys(types_1.METHOD).map((method) => React.createElement("option", { key: method, value: types_1.METHOD[method] }, method)))),
                     React.createElement("div", null,
                         React.createElement("label", null, "Include Previous Years"),
                         React.createElement("input", { type: 'checkbox', onChange: this.props.onChangeCheckbox, checked: this.props.includePreviousYears })),
@@ -305,7 +305,7 @@ function getTradeYears(trades) {
     return years;
 }
 function recalculate(holdings, trades, gainCalculationMethod, includePreviousYears, year, fiatCurrnecy) {
-    if (year !== '----') {
+    if (year !== '----' && year !== '0') {
         let newHoldings = holdings;
         if (includePreviousYears) {
             const pastTrades = trades.filter((trade) => new Date(trade.date).getFullYear() < parseInt(year, 10));
@@ -364,11 +364,7 @@ class CalculateGains extends React.Component {
         this.customizeModal = () => {
             this.setState({ showCustomizeModal: !this.state.showCustomizeModal });
         };
-        const result = CalculateGains_1.calculateGainPerTrade(props.savedData.holdings, props.savedData.trades, this.props.savedData.settings.fiatCurrency, types_1.METHOD.FIFO);
         this.state = {
-            tradeGains: result.trades,
-            longTermGains: result.longTerm,
-            shortTermGains: result.shortTerm,
             years: getTradeYears(props.savedData.trades),
             includePreviousYears: true,
             downloadProps: {
@@ -383,20 +379,19 @@ class CalculateGains extends React.Component {
     }
     render() {
         return (React.createElement("div", { className: 'calculategains' },
-            React.createElement("div", { className: 'tc' },
+            React.createElement("div", { className: 'tc pt2' },
                 React.createElement(Button_1.default, { label: 'Customize', onClick: this.customizeModal })),
-            React.createElement("div", { className: 'flex justify-center' },
-                React.createElement("h3", { className: 'pa2' },
-                    "Short Term Gains: ",
-                    this.state.shortTermGains),
-                React.createElement("h3", { className: 'pa2' },
-                    "Long Term Gains: ",
-                    this.state.longTermGains)),
-            this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
-                React.createElement(GainsPerTradeTable_1.GainsPerTradeTable, { fiatCurrency: this.props.savedData.settings.fiatCurrency, trades: this.state.filteredTradesWithGains })
-                :
-                    this.state.tradeGains !== undefined &&
-                        React.createElement(GainsPerTradeTable_1.GainsPerTradeTable, { fiatCurrency: this.props.savedData.settings.fiatCurrency, trades: this.state.tradeGains }),
+            this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 &&
+                React.createElement("div", null,
+                    React.createElement("div", { className: 'flex justify-center' },
+                        React.createElement("h3", { className: 'pa2' },
+                            "Short Term Gains: ",
+                            this.state.shortTermGains),
+                        React.createElement("h3", { className: 'pa2' },
+                            "Long Term Gains: ",
+                            this.state.longTermGains)),
+                    React.createElement("hr", { className: "pa1 ma1" }),
+                    React.createElement(GainsPerTradeTable_1.GainsPerTradeTable, { fiatCurrency: this.props.savedData.settings.fiatCurrency, trades: this.state.filteredTradesWithGains })),
             React.createElement(FileDownload_1.FileDownload, { data: this.state.downloadProps.data, fileName: this.state.downloadProps.fileName, download: this.state.downloadProps.download }),
             this.state.showCustomizeModal &&
                 React.createElement(Customize_component_1.default, { onClose: this.customizeModal, onChange: this.onChange, onChangeCheckbox: this.onChangeCheckBox, onGenerate: this.calculateGains, onForm8949Export: this.generateForm8949, years: this.state.years, selectedYear: this.state.currentYear, selectedMethod: this.state.gainCalculationMethod, includePreviousYears: this.state.includePreviousYears })));

@@ -30,11 +30,12 @@ export default class Customize extends React.Component<ICustomizeProps> {
                     <div>
                         <div>
                             <label>Year</label>
-                            <select className='pl2' onChange={this.props.onChange('year')}>
-                                {this.props.years.map((year) => <option
-                                        key={year}
-                                        value={year}
-                                        selected={year === this.props.selectedYear.toString()}>
+                            <select
+                                className='pl2'
+                                onChange={this.props.onChange('year')}
+                                defaultValue={this.props.selectedYear.toString()}
+                            >
+                                {this.props.years.map((year) => <option key={year} value={year}>
                                         {year}
                                     </option>,
                                 )}
@@ -42,12 +43,15 @@ export default class Customize extends React.Component<ICustomizeProps> {
                         </div>
                         <div>
                             <label>Calculation Method</label>
-                            <select className='pl2' onChange={this.props.onChange('gainCalculationMethod')}>
+                            <select
+                                className='pl2'
+                                onChange={this.props.onChange('gainCalculationMethod')}
+                                defaultValue={this.props.selectedMethod}
+                            >
                                 {Object.keys(METHOD).map((method) =>
                                     <option
                                         key={method}
                                         value={METHOD[method]}
-                                        selected={method === this.props.selectedMethod}
                                     >
                                     {method}
                                     </option>,
