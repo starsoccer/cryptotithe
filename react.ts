@@ -1,21 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { rootElement } from './components';
-import { FiatRateMethod, ISavedData } from './src/types';
-
-function createEmptySavedData(): ISavedData {
-    const packageData = require('./package.json');
-    return {
-        trades: [],
-        holdings: {},
-        savedDate: new Date(),
-        version: packageData.version,
-        settings: {
-            fiatRateMethod: Object.keys(FiatRateMethod)[0] as keyof typeof FiatRateMethod,
-            fiatCurrency: 'USD',
-        },
-    };
-}
+import { ISavedData } from './src/types';
+import { createEmptySavedData } from './src/mock';
 
 function render(browser: boolean, savedData = createEmptySavedData()) {
     ReactDOM.render(

@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { FiatRateMethod, IPartialSavedData, ISettings } from '../../src/types';
+import { FiatRateMethod, IPartialSavedData, ISettings, METHOD } from '../../src/types';
 import Button from '../Button';
 import Popup from '../Popup';
+import CalculationMethodSelect from '../CalculationMethodSelect';
 export interface ISettingsProps {
     settings: ISettings;
     onSettingsSave: (savedData: IPartialSavedData) => Promise<boolean>;
@@ -24,6 +25,7 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
         this.state = {
             fiatRateMethod: valueIfNotUndefined(props.settings, 'fiatRateMethod', Object.keys(FiatRateMethod)[0]),
             fiatCurrency: valueIfNotUndefined(props.settings, 'fiatCurrency', 'USD'),
+            gainCalculationMethod: valueIfNotUndefined(props.settings, 'gainCalculationMethod', METHOD.FIFO),
         };
     }
     public onSave = async () => {
@@ -42,6 +44,9 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
                 break;
             case 'fiatCurrency':
                 this.setState({fiatCurrency: e.currentTarget.value.toUpperCase()});
+                break;
+            case 'gainCalculationMethod':
+                this.setState({gainCalculationMethod: e.currentTarget.value as METHOD});
                 break;
         }
 
@@ -69,6 +74,13 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
                             type='text'
                             defaultValue={this.state.fiatCurrency}
                             onChange={this.onChange('fiatCurrency')}
+                        />
+                    </div>
+                    <div>
+                        <label className='pr1'>Fiat Gain Calculation Method:</label>
+                        <CalculationMethodSelect
+                            onChange={this.onChange('gainCalculationMethod')}
+                            selectedMethod={this.state.gainCalculationMethod}
                         />
                     </div>
                     <hr />

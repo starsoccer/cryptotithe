@@ -1,5 +1,13 @@
 import * as faker from 'faker';
-import { EXCHANGES, ICurrencyHolding, IHoldings, ITradeWithFiatRate } from '../types';
+import {
+    EXCHANGES,
+    ICurrencyHolding,
+    IHoldings,
+    ITradeWithFiatRate,
+    ISavedData,
+    FiatRateMethod,
+    METHOD,
+} from '../types';
 
 export function mockHoldings(
     currencies: number,
@@ -59,4 +67,19 @@ export function mockTradesWithFiatRate(
         trade.fiatRate = faker.random.number();
     }
     return trades;
+}
+
+export function createEmptySavedData(): ISavedData {
+    const packageData = require('../../package.json');
+    return {
+        trades: [],
+        holdings: {},
+        savedDate: new Date(),
+        version: packageData.version,
+        settings: {
+            fiatRateMethod: Object.keys(FiatRateMethod)[0] as keyof typeof FiatRateMethod,
+            fiatCurrency: 'USD',
+            gainCalculationMethod: METHOD.FIFO,
+        },
+    };
 }

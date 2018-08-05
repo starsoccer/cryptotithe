@@ -1,13 +1,12 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
-import SortTrades from '../src/processing/SortTrades';
 import savedDataConverter from '../src/savedDataConverter';
 import {
     IPartialSavedData,
     ISavedData,
     ITradeWithDuplicateProbability,
-    ITradeWithFiatRate,
 } from '../src/types';
+import save from '../src/save';
 import { AddTrades } from './AddTrades';
 import { AdvancedTab } from './AdvancedTab';
 import Button from './Button';
@@ -76,16 +75,8 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
     }
 
     public saveData = async (data: IPartialSavedData): Promise<boolean> => {
-        const newHoldings = data.holdings || this.state.savedData.holdings;
-        const newTrades = data.trades || this.state.savedData.trades;
-        const newSettings = data.settings || this.state.savedData.settings;
+        const savedData = save(data, this.state.savedData);
         try {
-            const savedData: ISavedData = {
-                savedDate: new Date(),
-                trades: SortTrades(newTrades) as ITradeWithFiatRate[],
-                holdings: newHoldings,
-                settings: newSettings,
-            };
             this.setState({
                 downloadProps: {
                     data: JSON.stringify(savedData),
