@@ -7,6 +7,7 @@ import Button from '../Button';
 import { FileDownload, IFileDownloadProps } from '../FileDownload';
 import { GainsPerTradeTable } from '../GainsPerTradeTable';
 // import { Loader } from '../Loader';
+import Customize from './Customize.component';
 export interface ICalculateTradesProp {
     savedData: ISavedData;
 }
@@ -21,6 +22,7 @@ export interface ICalculateTradesState {
     includePreviousYears: boolean;
     currentYear: number;
     gainCalculationMethod: METHOD;
+    showCustomizeModal: boolean;
 }
 
 function getTradeYears(trades: ITrade[]) {
@@ -66,7 +68,7 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
             props.savedData.holdings,
             props.savedData.trades,
             this.props.savedData.settings.fiatCurrency,
-            METHOD.FIFO
+            METHOD.FIFO,
         );
         this.state = {
             tradeGains: result.trades,
@@ -81,29 +83,25 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
             },
             currentYear: 0,
             gainCalculationMethod: METHOD.FIFO,
+            showCustomizeModal: false,
         };
     }
 
-    public componentDidUpdate(_prevProps: ICalculateTradesProp, prevState: ICalculateTradesState)  {
-        if (
-            this.state.currentYear !== prevState.currentYear ||
-            this.state.includePreviousYears !== prevState.includePreviousYears ||
-            this.state.gainCalculationMethod !== prevState.gainCalculationMethod
-        ) {
-            const result = recalculate(
-                this.props.savedData.holdings,
-                this.props.savedData.trades,
-                this.state.gainCalculationMethod,
-                this.state.includePreviousYears,
-                this.state.currentYear.toString(),
-                this.props.savedData.settings.fiatCurrency,
-            );
-            this.setState({
-                filteredTradesWithGains: result.trades,
-                longTermGains: result.longTerm,
-                shortTermGains: result.shortTerm,
-            });
-        }
+    public calculateGains = () => {
+        const result = recalculate(
+            this.props.savedData.holdings,
+            this.props.savedData.trades,
+            this.state.gainCalculationMethod,
+            this.state.includePreviousYears,
+            this.state.currentYear.toString(),
+            this.props.savedData.settings.fiatCurrency,
+        );
+        this.setState({
+            filteredTradesWithGains: result.trades,
+            longTermGains: result.longTerm,
+            shortTermGains: result.shortTerm,
+            showCustomizeModal: false,
+        });
     }
 
     public onChangeCheckBox = () => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,31 +148,19 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
         }});
     }
 
+    public customizeModal = () => {
+        this.setState({showCustomizeModal: !this.state.showCustomizeModal});
+    }
+
     public render() {
         return (
             <div className='calculategains'>
+                <div className='tc'>
+                    <Button label='Customize' onClick={this.customizeModal}/>
+                </div>
                 <div className='flex justify-center'>
                     <h3 className='pa2'>Short Term Gains: {this.state.shortTermGains}</h3>
                     <h3 className='pa2'>Long Term Gains: {this.state.longTermGains}</h3>
-                </div>
-                <div className='tc'>
-                    <label>Year</label>
-                    <select className='pl2' onChange={this.onChange('year')}>
-                        {this.state.years.map((year) => <option key={year} value={year}>{year}</option>)}
-                    </select>
-                    <label>Calculation Method</label>
-                    <select className='pl2' onChange={this.onChange('gainCalculationMethod')}>
-                        {Object.keys(METHOD).map((method) =>
-                            <option key={method} value={METHOD[method]}>{method}</option>,
-                        )}
-                    </select>
-                    <label>Include Previous Years</label>
-                    <input
-                        type='checkbox'
-                        onChange={this.onChangeCheckBox()}
-                        checked={this.state.includePreviousYears}
-                    />
-                    <Button label='Form 8949' onClick={this.generateForm8949}/>
                 </div>
                 { this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 ?
                     <GainsPerTradeTable
@@ -193,6 +179,19 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
                     fileName={this.state.downloadProps.fileName}
                     download={this.state.downloadProps.download}
                 />
+                {this.state.showCustomizeModal &&
+                    <Customize
+                        onClose={this.customizeModal}
+                        onChange={this.onChange}
+                        onChangeCheckbox={this.onChangeCheckBox}
+                        onGenerate={this.calculateGains}
+                        onForm8949Export={this.generateForm8949}
+                        years={this.state.years}
+                        selectedYear={this.state.currentYear}
+                        selectedMethod={this.state.gainCalculationMethod}
+                        includePreviousYears={this.state.includePreviousYears}
+                    />
+                }
             </div>
         );
     }
