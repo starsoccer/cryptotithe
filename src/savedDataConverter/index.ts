@@ -12,7 +12,7 @@ export default function onSaveDataLoaded(savedData: ISavedData): boolean {
             changeMade = zeroTwoZeroConverter(savedData);
         case '0.2.0': // 0.2.0
             changeMade = changeMade || zeroThreeZeroConverter(savedData);
-        break;
+            break;
         default:
 
     }

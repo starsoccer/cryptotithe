@@ -1,21 +1,21 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
+import save from '../src/save';
 import savedDataConverter from '../src/savedDataConverter';
 import {
     IPartialSavedData,
     ISavedData,
     ITradeWithDuplicateProbability,
 } from '../src/types';
-import save from '../src/save';
-import { AddTrades } from './AddTrades';
-import { AdvancedTab } from './AdvancedTab';
 import Button from './Button';
-import { CalculateGains } from './CalculateGains';
 import { FileBrowse } from './FileBrowse';
 import { FileDownload, IFileDownloadProps } from './FileDownload';
 import Popup from './Popup';
-import { Settings } from './Settings';
-import { ViewTrades } from './ViewTrades';
+import { AddTradesTab } from './Tabs/AddTradesTab';
+import { AdvancedTab } from './Tabs/AdvancedTab';
+import { CalculateGainsTab } from './Tabs/CalculateGainsTab';
+import { Settings } from './Tabs/Settings';
+import { ViewTradesTab } from './Tabs/ViewTradesTab';
 
 export interface IAppProps {
     savedData: ISavedData;
@@ -107,14 +107,14 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
     public showCurrentTab = (currentTab: TABS) => {
         switch (currentTab) {
             case TABS.ADD_TRADES:
-                return <AddTrades
+                return <AddTradesTab
                     savedData={this.state.savedData}
                     save={this.saveData}
                 />;
             case TABS.VIEW_TRADES:
-                return <ViewTrades savedData={this.state.savedData} save={this.saveData}/>;
+                return <ViewTradesTab savedData={this.state.savedData} save={this.saveData}/>;
             case TABS.CALCULATE_GAINS:
-                return <CalculateGains savedData={this.state.savedData}/>;
+                return <CalculateGainsTab savedData={this.state.savedData}/>;
             case TABS.ADVANCED:
                 return <AdvancedTab savedData={this.state.savedData}/>;
             case TABS.HOME:

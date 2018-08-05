@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { FiatRateMethod, IPartialSavedData, ISettings, METHOD } from '../../src/types';
-import Button from '../Button';
-import Popup from '../Popup';
-import CalculationMethodSelect from '../CalculationMethodSelect';
+import { FiatRateMethod, IPartialSavedData, ISettings, METHOD } from '../../../src/types';
+import Button from '../../Button';
+import CalculationMethodSelect from '../../CalculationMethodSelect';
+import Popup from '../../Popup';
 export interface ISettingsProps {
     settings: ISettings;
     onSettingsSave: (savedData: IPartialSavedData) => Promise<boolean>;

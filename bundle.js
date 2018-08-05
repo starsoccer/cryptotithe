@@ -1,5 +1,110 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const classNames = require("classNames");
+const React = require("react");
+var AlertType;
+(function (AlertType) {
+    AlertType[AlertType["WARNING"] = 0] = "WARNING";
+    AlertType[AlertType["ERROR"] = 1] = "ERROR";
+    AlertType[AlertType["INFO"] = 2] = "INFO";
+    AlertType[AlertType["SUCCESS"] = 3] = "SUCCESS";
+})(AlertType = exports.AlertType || (exports.AlertType = {}));
+class AlertBar extends React.Component {
+    render() {
+        return (React.createElement("div", { className: classNames('alertbar lh-solid', {
+                'bg-red': this.props.type === AlertType.ERROR,
+                'bg-orange': this.props.type === AlertType.WARNING,
+                'bg-blue': this.props.type === AlertType.INFO,
+                'bg-green': this.props.type === AlertType.SUCCESS,
+            }) },
+            React.createElement("h2", { className: 'dib pl2 mb1 mt1 pb1 pt1 pre overflow-hidden' }, this.props.message),
+            React.createElement("i", { className: 'fr pt1 pl2 pr2 fa fa-times-circle fa-2x grow', onClick: this.props.onClick })));
+    }
+}
+exports.AlertBar = AlertBar;
+
+},{"classNames":76,"react":1347}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+class Button extends React.Component {
+    render() {
+        return (React.createElement("button", { className: 'bg-blue white bg-animate hover-bg-dark-blue', onClick: this.props.onClick }, this.props.label));
+    }
+}
+exports.default = Button;
+
+},{"react":1347}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const types_1 = require("../../src/types");
+class CalculationMethodSelect extends React.Component {
+    render() {
+        return (React.createElement("select", { className: 'pl2', onChange: this.props.onChange, defaultValue: this.props.selectedMethod }, Object.keys(types_1.METHOD).map((method) => React.createElement("option", { key: method, value: types_1.METHOD[method] }, method))));
+    }
+}
+exports.default = CalculationMethodSelect;
+
+},{"../../src/types":1491,"react":1347}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const Table_1 = require("../Table");
+class DailyBalanceTable extends React.Component {
+    render() {
+        return (React.createElement(Table_1.Table, { headers: ['Date', 'Holdings', 'Fiat Value'], rows: this.props.dailyBalance.map((balance) => [
+                React.createElement("p", null, balance.date.toUTCString()),
+                React.createElement("div", null, Object.keys(balance.holdings).map((currency) => React.createElement("p", null, `
+                            ${currency} - ${balance.holdings[currency].amount} - ${balance.holdings[currency].fiatValue}
+                        `))),
+                React.createElement("p", null, balance.fiatValue),
+            ]) }));
+    }
+}
+exports.DailyBalanceTable = DailyBalanceTable;
+
+},{"../Table":11,"react":1347}],5:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const Table_1 = require("../Table");
+const Toggle_1 = require("../Toggle");
+class DuplicateTradesTable extends React.Component {
+    render() {
+        return (React.createElement(Table_1.Table, { headers: [
+                'Date',
+                'ID',
+                'Amount Sold',
+                'Sold Currency',
+                'Rate',
+                'Bought Currency',
+                'Amount Bought',
+                'Duplicate Probability',
+                'Duplicate',
+            ], rows: this.props.trades.map((trade) => [
+                React.createElement("span", null, new Date(trade.date).toUTCString()),
+                React.createElement("span", null, trade.id),
+                React.createElement("span", null, trade.amountSold.toFixed(8)),
+                React.createElement("span", null, trade.soldCurrency),
+                React.createElement("div", null,
+                    trade.rate.toFixed(8),
+                    React.createElement("i", { className: 'fa fa-arrow-circle-right' }),
+                    React.createElement("br", null),
+                    React.createElement("i", { className: 'fa fa-arrow-circle-left' }),
+                    trade.amountSold / trade.rate / trade.amountSold),
+                React.createElement("span", null, trade.boughtCurrency),
+                React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
+                React.createElement("span", null, trade.probability),
+                React.createElement(Toggle_1.Toggle, { onChange: this.props.duplicateChange(trade.id), defaultValue: trade.duplicate }),
+            ]) }));
+    }
+}
+exports.DuplicateTradesTable = DuplicateTradesTable;
+
+},{"../Table":11,"../Toggle":18,"react":1347}],6:[function(require,module,exports){
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -10,19 +115,187 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const parsers_1 = require("../../src/parsers");
-const DuplicateCheck_1 = require("../../src/processing/DuplicateCheck");
-const getFiatRate_1 = require("../../src/processing/getFiatRate");
-const SortTrades_1 = require("../../src/processing/SortTrades");
-const types_1 = require("../../src/types");
-const AlertBar_1 = require("../AlertBar");
-const Button_1 = require("../Button");
-const DuplicateTradesTable_1 = require("../DuplicateTradesTable");
-const FileBrowse_1 = require("../FileBrowse");
-const Loader_1 = require("../Loader");
-const TradeDetails_1 = require("../TradeDetails");
-const TradesTable_1 = require("../TradesTable");
-class AddTrades extends React.Component {
+class FileBrowse extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onetime = true;
+        this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
+            const reader = new FileReader();
+            reader.onload = () => this.props.onLoaded(reader.result, this.fileInput, reader);
+            if (this.fileInput.current !== null) {
+                if (this.fileInput.current.files !== null) {
+                    yield reader.readAsText(this.fileInput.current.files[0]);
+                }
+            }
+        });
+        this.fileInput = React.createRef();
+    }
+    componentDidUpdate(prevProps) {
+        // complicated 3 boolean logic to stop some browsers(firefox/edge) from causing 2 popup windows
+        if (this.props.browse) {
+            if (!prevProps.browse || this.onetime) {
+                if (!this.onetime && prevProps.browse) {
+                    this.onetime = !this.onetime;
+                }
+                if (this.fileInput.current !== null) {
+                    this.fileInput.current.click();
+                }
+                else {
+                    alert('error clickng file input');
+                }
+            }
+            else {
+                if (this.onetime && !prevProps.browse) {
+                    this.props.onLoaded('');
+                }
+                this.onetime = !this.onetime;
+            }
+        } // this set state valid once
+    }
+    render() {
+        return (React.createElement("input", { type: 'file', className: 'FileBrowse dn', ref: this.fileInput, onChange: this.onSubmit }));
+    }
+}
+exports.FileBrowse = FileBrowse;
+
+},{"react":1347}],7:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+class FileDownload extends React.Component {
+    constructor(props) {
+        super(props);
+        this.downloadLink = React.createRef();
+    }
+    componentDidUpdate() {
+        if (this.props.download) {
+            if (this.downloadLink.current !== null) {
+                this.downloadLink.current.click();
+            }
+            else {
+                alert('error clickng file input');
+            }
+        }
+    }
+    render() {
+        return (React.createElement("a", { download: this.props.fileName, href: `data:text/plain;charset=utf-8,${encodeURIComponent(this.props.data)}`, ref: this.downloadLink, className: 'dn' }));
+    }
+}
+exports.FileDownload = FileDownload;
+
+},{"react":1347}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const Table_1 = require("../Table");
+class GainsPerTradeTable extends React.Component {
+    render() {
+        return (React.createElement(Table_1.Table, { headers: [
+                'Date',
+                'ID',
+                'Amount Sold',
+                'Sold Currency',
+                'Rate',
+                'Bought Currency',
+                'Amount Bought',
+                'Fiat Rate',
+                'Fiat Value',
+                'Short Term Gain',
+                'Long Term Gain',
+            ], rows: this.props.trades.map((trade) => [
+                React.createElement("span", null, new Date(trade.date).toUTCString()),
+                React.createElement("span", null, trade.id),
+                React.createElement("span", null, trade.amountSold.toFixed(8)),
+                React.createElement("span", null, trade.soldCurrency),
+                React.createElement("div", null,
+                    trade.rate.toFixed(8),
+                    React.createElement("i", { className: 'fa fa-arrow-circle-right' }),
+                    React.createElement("br", null),
+                    React.createElement("i", { className: 'fa fa-arrow-circle-left' }),
+                    trade.amountSold / trade.rate / trade.amountSold),
+                React.createElement("span", null, trade.boughtCurrency),
+                React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
+                React.createElement("span", null, trade.fiatRate.toFixed(8)),
+                React.createElement("span", null, trade.soldCurrency === this.props.fiatCurrency ?
+                    trade.amountSold :
+                    (trade.amountSold * trade.fiatRate).toFixed(8)),
+                React.createElement("span", null, trade.shortTerm.toFixed(2)),
+                React.createElement("span", null, trade.longTerm.toFixed(2)),
+            ]) }));
+    }
+}
+exports.GainsPerTradeTable = GainsPerTradeTable;
+
+},{"../Table":11,"react":1347}],9:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+// const React = require('react');
+const React = require("react");
+class Loader extends React.Component {
+    render() {
+        return (React.createElement("div", { className: 'center mt5 loader' },
+            React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/Loader/index.css' })));
+    }
+}
+exports.Loader = Loader;
+
+},{"react":1347}],10:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+class Popup extends React.Component {
+    render() {
+        return (React.createElement("div", { className: 'popup' },
+            React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/Popup/index.css' }),
+            React.createElement("div", { className: 'fixed w-100 h-100 top-0 right-0 left-0 bottom-0 bg-black o-70' }),
+            React.createElement("div", { className: `dialog absolute w-50 ba b--black bw2 bg-white pa2 ${this.props.className}` },
+                React.createElement("i", { className: 'fr fa fa-times fa-2x', onClick: this.props.onClose }),
+                this.props.children)));
+    }
+}
+exports.default = Popup;
+
+},{"react":1347}],11:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+class Table extends React.Component {
+    render() {
+        return (React.createElement("div", { className: 'tradesTable pa4' },
+            React.createElement("div", { className: 'overflow-auto' },
+                React.createElement("table", { className: 'f6 w-100 mw8 center' },
+                    React.createElement("thead", null,
+                        React.createElement("tr", { className: 'stripe-dark' }, this.props.headers.map((header) => React.createElement("th", { key: header, className: 'fw6 tl pa3 bg-white' }, header)))),
+                    React.createElement("tbody", { className: 'lh-copy' }, this.props.rows.map((row, index) => React.createElement("tr", { className: 'stripe-dark', key: index }, row.map((col, colindex) => React.createElement("td", { key: `${index}-${colindex}`, className: 'pa2 mw4 break-word' }, col)))))))));
+    }
+}
+exports.Table = Table;
+
+},{"react":1347}],12:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const parsers_1 = require("../../../src/parsers");
+const DuplicateCheck_1 = require("../../../src/processing/DuplicateCheck");
+const getFiatRate_1 = require("../../../src/processing/getFiatRate");
+const SortTrades_1 = require("../../../src/processing/SortTrades");
+const types_1 = require("../../../src/types");
+const AlertBar_1 = require("../../AlertBar");
+const Button_1 = require("../../Button");
+const DuplicateTradesTable_1 = require("../../DuplicateTradesTable");
+const FileBrowse_1 = require("../../FileBrowse");
+const Loader_1 = require("../../Loader");
+const TradeDetails_1 = require("../../TradeDetails");
+const TradesTable_1 = require("../../TradesTable");
+class AddTradesTab extends React.Component {
     constructor(props) {
         super(props);
         this.openFileBrowser = () => __awaiter(this, void 0, void 0, function* () {
@@ -164,9 +437,9 @@ class AddTrades extends React.Component {
                                 React.createElement(TradesTable_1.TradesTable, { trades: this.state.processedTrades, save: this.editedTrade })))));
     }
 }
-exports.AddTrades = AddTrades;
+exports.AddTradesTab = AddTradesTab;
 
-},{"../../src/parsers":1473,"../../src/processing/DuplicateCheck":1480,"../../src/processing/SortTrades":1481,"../../src/processing/getFiatRate":1485,"../../src/types":1491,"../AlertBar":3,"../Button":4,"../DuplicateTradesTable":9,"../FileBrowse":10,"../Loader":13,"../TradeDetails":18,"../TradesTable":19,"react":1347}],2:[function(require,module,exports){
+},{"../../../src/parsers":1473,"../../../src/processing/DuplicateCheck":1480,"../../../src/processing/SortTrades":1481,"../../../src/processing/getFiatRate":1485,"../../../src/types":1491,"../../AlertBar":1,"../../Button":2,"../../DuplicateTradesTable":5,"../../FileBrowse":6,"../../Loader":9,"../../TradeDetails":19,"../../TradesTable":20,"react":1347}],13:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -178,10 +451,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const CalculateDailyBalance_1 = require("../../src/processing/CalculateDailyBalance");
-const types_1 = require("../../src/types");
-const Button_1 = require("../Button");
-const DailyBalanceTable_1 = require("../DailyBalanceTable");
+const CalculateDailyBalance_1 = require("../../../src/processing/CalculateDailyBalance");
+const types_1 = require("../../../src/types");
+const Button_1 = require("../../Button");
+const DailyBalanceTable_1 = require("../../DailyBalanceTable");
 class AdvancedTab extends React.Component {
     constructor(props) {
         super(props);
@@ -210,52 +483,15 @@ class AdvancedTab extends React.Component {
 }
 exports.AdvancedTab = AdvancedTab;
 
-},{"../../src/processing/CalculateDailyBalance":1477,"../../src/types":1491,"../Button":4,"../DailyBalanceTable":8,"react":1347}],3:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const classNames = require("classNames");
-const React = require("react");
-var AlertType;
-(function (AlertType) {
-    AlertType[AlertType["WARNING"] = 0] = "WARNING";
-    AlertType[AlertType["ERROR"] = 1] = "ERROR";
-    AlertType[AlertType["INFO"] = 2] = "INFO";
-    AlertType[AlertType["SUCCESS"] = 3] = "SUCCESS";
-})(AlertType = exports.AlertType || (exports.AlertType = {}));
-class AlertBar extends React.Component {
-    render() {
-        return (React.createElement("div", { className: classNames('alertbar lh-solid', {
-                'bg-red': this.props.type === AlertType.ERROR,
-                'bg-orange': this.props.type === AlertType.WARNING,
-                'bg-blue': this.props.type === AlertType.INFO,
-                'bg-green': this.props.type === AlertType.SUCCESS,
-            }) },
-            React.createElement("h2", { className: 'dib pl2 mb1 mt1 pb1 pt1 pre overflow-hidden' }, this.props.message),
-            React.createElement("i", { className: 'fr pt1 pl2 pr2 fa fa-times-circle fa-2x grow', onClick: this.props.onClick })));
-    }
-}
-exports.AlertBar = AlertBar;
-
-},{"classNames":76,"react":1347}],4:[function(require,module,exports){
+},{"../../../src/processing/CalculateDailyBalance":1477,"../../../src/types":1491,"../../Button":2,"../../DailyBalanceTable":4,"react":1347}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-class Button extends React.Component {
-    render() {
-        return (React.createElement("button", { className: 'bg-blue white bg-animate hover-bg-dark-blue', onClick: this.props.onClick }, this.props.label));
-    }
-}
-exports.default = Button;
-
-},{"react":1347}],5:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const Button_1 = require("../Button");
-const Popup_1 = require("../Popup");
-const Table_1 = require("../Table");
-const CalculationMethodSelect_1 = require("../CalculationMethodSelect");
-const types_1 = require("../../src/types");
+const Button_1 = require("../../Button");
+const Popup_1 = require("../../Popup");
+const Table_1 = require("../../Table");
+const CalculationMethodSelect_1 = require("../../CalculationMethodSelect");
+const types_1 = require("../../../src/types");
 function getLastYear(years) {
     return years[years.length - 1];
 }
@@ -385,17 +621,15 @@ class Customize extends React.Component {
 }
 exports.Customize = Customize;
 
-},{"../../src/types":1491,"../Button":4,"../CalculationMethodSelect":7,"../Popup":14,"../Table":16,"react":1347}],6:[function(require,module,exports){
+},{"../../../src/types":1491,"../../Button":2,"../../CalculationMethodSelect":3,"../../Popup":10,"../../Table":11,"react":1347}],15:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-const Form8949_1 = require("../../src/output/Form8949");
-const CalculateGains_1 = require("../../src/processing/CalculateGains");
-// import { AlertBar, AlertType } from '../AlertBar';
-const Button_1 = require("../Button");
-const FileDownload_1 = require("../FileDownload");
-const GainsPerTradeTable_1 = require("../GainsPerTradeTable");
-// import { Loader } from '../Loader';
+const Form8949_1 = require("../../../src/output/Form8949");
+const CalculateGains_1 = require("../../../src/processing/CalculateGains");
+const Button_1 = require("../../Button");
+const FileDownload_1 = require("../../FileDownload");
+const GainsPerTradeTable_1 = require("../../GainsPerTradeTable");
 const Customize_component_1 = require("./Customize.component");
 function getTradeYears(trades) {
     const years = [];
@@ -428,7 +662,7 @@ function recalculate(holdings, trades, fiatCurrnecy, yearCalculationMethod) {
         gainCalculationMethod: yearCalculationMethod[lastYear],
     };
 }
-class CalculateGains extends React.Component {
+class CalculateGainsTab extends React.Component {
     constructor(props) {
         super(props);
         this.calculateGains = (yearCalculationMethod) => () => {
@@ -504,77 +738,9 @@ class CalculateGains extends React.Component {
                 React.createElement(Customize_component_1.Customize, { onClose: this.customizeModal, onChange: this.onChange, onGenerate: this.calculateGains, onForm8949Export: this.generateForm8949, years: this.state.years, yearCalculationMethod: this.state.yearCalculationMethod })));
     }
 }
-exports.CalculateGains = CalculateGains;
+exports.CalculateGainsTab = CalculateGainsTab;
 
-},{"../../src/output/Form8949":1469,"../../src/processing/CalculateGains":1478,"../Button":4,"../FileDownload":11,"../GainsPerTradeTable":12,"./Customize.component":5,"react":1347}],7:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const types_1 = require("../../src/types");
-class CalculationMethodSelect extends React.Component {
-    render() {
-        return (React.createElement("select", { className: 'pl2', onChange: this.props.onChange, defaultValue: this.props.selectedMethod }, Object.keys(types_1.METHOD).map((method) => React.createElement("option", { key: method, value: types_1.METHOD[method] }, method))));
-    }
-}
-exports.default = CalculationMethodSelect;
-
-},{"../../src/types":1491,"react":1347}],8:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const Table_1 = require("../Table");
-class DailyBalanceTable extends React.Component {
-    render() {
-        return (React.createElement(Table_1.Table, { headers: ['Date', 'Holdings', 'Fiat Value'], rows: this.props.dailyBalance.map((balance) => [
-                React.createElement("p", null, balance.date.toUTCString()),
-                React.createElement("div", null, Object.keys(balance.holdings).map((currency) => React.createElement("p", null, `
-                            ${currency} - ${balance.holdings[currency].amount} - ${balance.holdings[currency].fiatValue}
-                        `))),
-                React.createElement("p", null, balance.fiatValue),
-            ]) }));
-    }
-}
-exports.DailyBalanceTable = DailyBalanceTable;
-
-},{"../Table":16,"react":1347}],9:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const Table_1 = require("../Table");
-const Toggle_1 = require("../Toggle");
-class DuplicateTradesTable extends React.Component {
-    render() {
-        return (React.createElement(Table_1.Table, { headers: [
-                'Date',
-                'ID',
-                'Amount Sold',
-                'Sold Currency',
-                'Rate',
-                'Bought Currency',
-                'Amount Bought',
-                'Duplicate Probability',
-                'Duplicate',
-            ], rows: this.props.trades.map((trade) => [
-                React.createElement("span", null, new Date(trade.date).toUTCString()),
-                React.createElement("span", null, trade.id),
-                React.createElement("span", null, trade.amountSold.toFixed(8)),
-                React.createElement("span", null, trade.soldCurrency),
-                React.createElement("div", null,
-                    trade.rate.toFixed(8),
-                    React.createElement("i", { className: 'fa fa-arrow-circle-right' }),
-                    React.createElement("br", null),
-                    React.createElement("i", { className: 'fa fa-arrow-circle-left' }),
-                    trade.amountSold / trade.rate / trade.amountSold),
-                React.createElement("span", null, trade.boughtCurrency),
-                React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
-                React.createElement("span", null, trade.probability),
-                React.createElement(Toggle_1.Toggle, { onChange: this.props.duplicateChange(trade.id), defaultValue: trade.duplicate }),
-            ]) }));
-    }
-}
-exports.DuplicateTradesTable = DuplicateTradesTable;
-
-},{"../Table":16,"../Toggle":17,"react":1347}],10:[function(require,module,exports){
+},{"../../../src/output/Form8949":1469,"../../../src/processing/CalculateGains":1478,"../../Button":2,"../../FileDownload":7,"../../GainsPerTradeTable":8,"./Customize.component":14,"react":1347}],16:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -586,162 +752,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-class FileBrowse extends React.Component {
-    constructor(props) {
-        super(props);
-        this.onetime = true;
-        this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
-            const reader = new FileReader();
-            reader.onload = () => this.props.onLoaded(reader.result, this.fileInput, reader);
-            if (this.fileInput.current !== null) {
-                if (this.fileInput.current.files !== null) {
-                    yield reader.readAsText(this.fileInput.current.files[0]);
-                }
-            }
-        });
-        this.fileInput = React.createRef();
-    }
-    componentDidUpdate(prevProps) {
-        // complicated 3 boolean logic to stop some browsers(firefox/edge) from causing 2 popup windows
-        if (this.props.browse) {
-            if (!prevProps.browse || this.onetime) {
-                if (!this.onetime && prevProps.browse) {
-                    this.onetime = !this.onetime;
-                }
-                if (this.fileInput.current !== null) {
-                    this.fileInput.current.click();
-                }
-                else {
-                    alert('error clickng file input');
-                }
-            }
-            else {
-                if (this.onetime && !prevProps.browse) {
-                    this.props.onLoaded('');
-                }
-                this.onetime = !this.onetime;
-            }
-        } // this set state valid once
-    }
-    render() {
-        return (React.createElement("input", { type: 'file', className: 'FileBrowse dn', ref: this.fileInput, onChange: this.onSubmit }));
-    }
-}
-exports.FileBrowse = FileBrowse;
-
-},{"react":1347}],11:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-class FileDownload extends React.Component {
-    constructor(props) {
-        super(props);
-        this.downloadLink = React.createRef();
-    }
-    componentDidUpdate() {
-        if (this.props.download) {
-            if (this.downloadLink.current !== null) {
-                this.downloadLink.current.click();
-            }
-            else {
-                alert('error clickng file input');
-            }
-        }
-    }
-    render() {
-        return (React.createElement("a", { download: this.props.fileName, href: `data:text/plain;charset=utf-8,${encodeURIComponent(this.props.data)}`, ref: this.downloadLink, className: 'dn' }));
-    }
-}
-exports.FileDownload = FileDownload;
-
-},{"react":1347}],12:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const Table_1 = require("../Table");
-class GainsPerTradeTable extends React.Component {
-    render() {
-        return (React.createElement(Table_1.Table, { headers: [
-                'Date',
-                'ID',
-                'Amount Sold',
-                'Sold Currency',
-                'Rate',
-                'Bought Currency',
-                'Amount Bought',
-                'Fiat Rate',
-                'Fiat Value',
-                'Short Term Gain',
-                'Long Term Gain',
-            ], rows: this.props.trades.map((trade) => [
-                React.createElement("span", null, new Date(trade.date).toUTCString()),
-                React.createElement("span", null, trade.id),
-                React.createElement("span", null, trade.amountSold.toFixed(8)),
-                React.createElement("span", null, trade.soldCurrency),
-                React.createElement("div", null,
-                    trade.rate.toFixed(8),
-                    React.createElement("i", { className: 'fa fa-arrow-circle-right' }),
-                    React.createElement("br", null),
-                    React.createElement("i", { className: 'fa fa-arrow-circle-left' }),
-                    trade.amountSold / trade.rate / trade.amountSold),
-                React.createElement("span", null, trade.boughtCurrency),
-                React.createElement("span", null, (trade.amountSold / trade.rate).toFixed(8)),
-                React.createElement("span", null, trade.fiatRate.toFixed(8)),
-                React.createElement("span", null, trade.soldCurrency === this.props.fiatCurrency ?
-                    trade.amountSold :
-                    (trade.amountSold * trade.fiatRate).toFixed(8)),
-                React.createElement("span", null, trade.shortTerm.toFixed(2)),
-                React.createElement("span", null, trade.longTerm.toFixed(2)),
-            ]) }));
-    }
-}
-exports.GainsPerTradeTable = GainsPerTradeTable;
-
-},{"../Table":16,"react":1347}],13:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-// const React = require('react');
-const React = require("react");
-class Loader extends React.Component {
-    render() {
-        return (React.createElement("div", { className: 'center mt5 loader' },
-            React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/Loader/index.css' })));
-    }
-}
-exports.Loader = Loader;
-
-},{"react":1347}],14:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-class Popup extends React.Component {
-    render() {
-        return (React.createElement("div", { className: 'popup' },
-            React.createElement("link", { rel: 'stylesheet', type: 'text/css', href: './components/Popup/index.css' }),
-            React.createElement("div", { className: 'fixed w-100 h-100 top-0 right-0 left-0 bottom-0 bg-black o-70' }),
-            React.createElement("div", { className: `dialog absolute w-50 ba b--black bw2 bg-white pa2 ${this.props.className}` },
-                React.createElement("i", { className: 'fr fa fa-times fa-2x', onClick: this.props.onClose }),
-                this.props.children)));
-    }
-}
-exports.default = Popup;
-
-},{"react":1347}],15:[function(require,module,exports){
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const types_1 = require("../../src/types");
-const Button_1 = require("../Button");
-const Popup_1 = require("../Popup");
-const CalculationMethodSelect_1 = require("../CalculationMethodSelect");
+const types_1 = require("../../../src/types");
+const Button_1 = require("../../Button");
+const Popup_1 = require("../../Popup");
+const CalculationMethodSelect_1 = require("../../CalculationMethodSelect");
 function valueIfNotUndefined(object, key, fallback) {
     if (object !== undefined) {
         if (key in object) {
@@ -801,23 +815,59 @@ class Settings extends React.Component {
 }
 exports.Settings = Settings;
 
-},{"../../src/types":1491,"../Button":4,"../CalculationMethodSelect":7,"../Popup":14,"react":1347}],16:[function(require,module,exports){
+},{"../../../src/types":1491,"../../Button":2,"../../CalculationMethodSelect":3,"../../Popup":10,"react":1347}],17:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
-class Table extends React.Component {
+const getFiatRate_1 = require("../../../src/processing/getFiatRate");
+const SortTrades_1 = require("../../../src/processing/SortTrades");
+const types_1 = require("../../../src/types");
+const Button_1 = require("../../Button");
+const Loader_1 = require("../../Loader");
+const TradesTable_1 = require("../../TradesTable");
+class ViewTradesTab extends React.Component {
+    constructor(props) {
+        super(props);
+        this.save = (trades) => this.props.save({ trades: trades });
+        this.refetchFiatRate = () => __awaiter(this, void 0, void 0, function* () {
+            this.setState({ processing: true });
+            const newTrades = yield getFiatRate_1.addFiatRateToTrades(this.props.savedData.trades, this.props.savedData.settings.fiatCurrency, types_1.FiatRateMethod[this.props.savedData.settings.fiatRateMethod]);
+            const sortedTrades = SortTrades_1.default(newTrades);
+            this.props.save({ trades: sortedTrades });
+            this.setState({ processing: false });
+        });
+        this.state = {
+            processing: false,
+        };
+    }
     render() {
-        return (React.createElement("div", { className: 'tradesTable pa4' },
-            React.createElement("div", { className: 'overflow-auto' },
-                React.createElement("table", { className: 'f6 w-100 mw8 center' },
-                    React.createElement("thead", null,
-                        React.createElement("tr", { className: 'stripe-dark' }, this.props.headers.map((header) => React.createElement("th", { key: header, className: 'fw6 tl pa3 bg-white' }, header)))),
-                    React.createElement("tbody", { className: 'lh-copy' }, this.props.rows.map((row, index) => React.createElement("tr", { className: 'stripe-dark', key: index }, row.map((col, colindex) => React.createElement("td", { key: `${index}-${colindex}`, className: 'pa2 mw4 break-word' }, col)))))))));
+        return (React.createElement("div", { className: 'viewTrades' },
+            React.createElement("h3", { className: 'tc' }, "Trades"),
+            React.createElement("hr", { className: 'center w-50' }),
+            React.createElement("div", { className: 'tc center' },
+                React.createElement(Button_1.default, { label: 'Refresh Trade Data', onClick: this.refetchFiatRate }),
+                this.state.processing ?
+                    React.createElement(Loader_1.Loader, null)
+                    :
+                        this.props.savedData.trades.length > 0 ?
+                            React.createElement(TradesTable_1.TradesTable, { trades: this.props.savedData.trades, save: this.save })
+                            :
+                                React.createElement("h3", { className: 'tc' },
+                                    "No Trades ",
+                                    React.createElement("i", { className: 'fa fa-frown-o' })))));
     }
 }
-exports.Table = Table;
+exports.ViewTradesTab = ViewTradesTab;
 
-},{"react":1347}],17:[function(require,module,exports){
+},{"../../../src/processing/SortTrades":1481,"../../../src/processing/getFiatRate":1485,"../../../src/types":1491,"../../Button":2,"../../Loader":9,"../../TradesTable":20,"react":1347}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
@@ -831,7 +881,7 @@ class Toggle extends React.Component {
 }
 exports.Toggle = Toggle;
 
-},{"react":1347}],18:[function(require,module,exports){
+},{"react":1347}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto = require("crypto");
@@ -969,7 +1019,7 @@ class TradeDetails extends React.Component {
 }
 exports.default = TradeDetails;
 
-},{"../../src/parsers/utils":1476,"../Button":4,"crypto":86,"react":1347,"validator":1391}],19:[function(require,module,exports){
+},{"../../src/parsers/utils":1476,"../Button":2,"crypto":86,"react":1347,"validator":1391}],20:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -1035,59 +1085,7 @@ class TradesTable extends React.Component {
 }
 exports.TradesTable = TradesTable;
 
-},{"../../src/processing/SortTrades":1481,"../Popup":14,"../Table":16,"../TradeDetails":18,"react":1347}],20:[function(require,module,exports){
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const getFiatRate_1 = require("../../src/processing/getFiatRate");
-const SortTrades_1 = require("../../src/processing/SortTrades");
-const types_1 = require("../../src/types");
-const Button_1 = require("../Button");
-const Loader_1 = require("../Loader");
-const TradesTable_1 = require("../TradesTable");
-class ViewTrades extends React.Component {
-    constructor(props) {
-        super(props);
-        this.save = (trades) => this.props.save({ trades: trades });
-        this.refetchFiatRate = () => __awaiter(this, void 0, void 0, function* () {
-            this.setState({ processing: true });
-            const newTrades = yield getFiatRate_1.addFiatRateToTrades(this.props.savedData.trades, this.props.savedData.settings.fiatCurrency, types_1.FiatRateMethod[this.props.savedData.settings.fiatRateMethod]);
-            const sortedTrades = SortTrades_1.default(newTrades);
-            this.props.save({ trades: sortedTrades });
-            this.setState({ processing: false });
-        });
-        this.state = {
-            processing: false,
-        };
-    }
-    render() {
-        return (React.createElement("div", { className: 'viewTrades' },
-            React.createElement("h3", { className: 'tc' }, "Trades"),
-            React.createElement("hr", { className: 'center w-50' }),
-            React.createElement("div", { className: 'tc center' },
-                React.createElement(Button_1.default, { label: 'Refresh Trade Data', onClick: this.refetchFiatRate }),
-                this.state.processing ?
-                    React.createElement(Loader_1.Loader, null)
-                    :
-                        this.props.savedData.trades.length > 0 ?
-                            React.createElement(TradesTable_1.TradesTable, { trades: this.props.savedData.trades, save: this.save })
-                            :
-                                React.createElement("h3", { className: 'tc' },
-                                    "No Trades ",
-                                    React.createElement("i", { className: 'fa fa-frown-o' })))));
-    }
-}
-exports.ViewTrades = ViewTrades;
-
-},{"../../src/processing/SortTrades":1481,"../../src/processing/getFiatRate":1485,"../../src/types":1491,"../Button":4,"../Loader":13,"../TradesTable":19,"react":1347}],21:[function(require,module,exports){
+},{"../../src/processing/SortTrades":1481,"../Popup":10,"../Table":11,"../TradeDetails":19,"react":1347}],21:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -1102,15 +1100,15 @@ const classnames = require("classnames");
 const React = require("react");
 const savedDataConverter_1 = require("../src/savedDataConverter");
 const save_1 = require("../src/save");
-const AddTrades_1 = require("./AddTrades");
-const AdvancedTab_1 = require("./AdvancedTab");
+const AddTradesTab_1 = require("./Tabs/AddTradesTab");
+const AdvancedTab_1 = require("./Tabs/AdvancedTab");
 const Button_1 = require("./Button");
-const CalculateGains_1 = require("./CalculateGains");
+const CalculateGainsTab_1 = require("./Tabs/CalculateGainsTab");
 const FileBrowse_1 = require("./FileBrowse");
 const FileDownload_1 = require("./FileDownload");
 const Popup_1 = require("./Popup");
-const Settings_1 = require("./Settings");
-const ViewTrades_1 = require("./ViewTrades");
+const Settings_1 = require("./Tabs/Settings");
+const ViewTradesTab_1 = require("./Tabs/ViewTradesTab");
 var TABS;
 (function (TABS) {
     TABS["HOME"] = "Home";
@@ -1143,11 +1141,11 @@ class rootElement extends React.Component {
         this.showCurrentTab = (currentTab) => {
             switch (currentTab) {
                 case TABS.ADD_TRADES:
-                    return React.createElement(AddTrades_1.AddTrades, { savedData: this.state.savedData, save: this.saveData });
+                    return React.createElement(AddTradesTab_1.AddTradesTab, { savedData: this.state.savedData, save: this.saveData });
                 case TABS.VIEW_TRADES:
-                    return React.createElement(ViewTrades_1.ViewTrades, { savedData: this.state.savedData, save: this.saveData });
+                    return React.createElement(ViewTradesTab_1.ViewTradesTab, { savedData: this.state.savedData, save: this.saveData });
                 case TABS.CALCULATE_GAINS:
-                    return React.createElement(CalculateGains_1.CalculateGains, { savedData: this.state.savedData });
+                    return React.createElement(CalculateGainsTab_1.CalculateGainsTab, { savedData: this.state.savedData });
                 case TABS.ADVANCED:
                     return React.createElement(AdvancedTab_1.AdvancedTab, { savedData: this.state.savedData });
                 case TABS.HOME:
@@ -1249,7 +1247,7 @@ class rootElement extends React.Component {
 }
 exports.rootElement = rootElement;
 
-},{"../src/save":1487,"../src/savedDataConverter":1490,"./AddTrades":1,"./AdvancedTab":2,"./Button":4,"./CalculateGains":6,"./FileBrowse":10,"./FileDownload":11,"./Popup":14,"./Settings":15,"./ViewTrades":20,"classnames":77,"react":1347}],22:[function(require,module,exports){
+},{"../src/save":1487,"../src/savedDataConverter":1490,"./Button":2,"./FileBrowse":6,"./FileDownload":7,"./Popup":10,"./Tabs/AddTradesTab":12,"./Tabs/AdvancedTab":13,"./Tabs/CalculateGainsTab":15,"./Tabs/Settings":16,"./Tabs/ViewTradesTab":17,"classnames":77,"react":1347}],22:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

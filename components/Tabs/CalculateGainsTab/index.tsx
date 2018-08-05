@@ -1,18 +1,16 @@
 import * as React from 'react';
-import generateForm8949 from '../../src/output/Form8949';
-import { calculateGainPerTrade, calculateGains } from '../../src/processing/CalculateGains';
-import { IHoldings, ISavedData, ITrade, ITradeWithFiatRate, ITradeWithGains, METHOD } from '../../src/types';
-// import { AlertBar, AlertType } from '../AlertBar';
-import Button from '../Button';
-import { FileDownload, IFileDownloadProps } from '../FileDownload';
-import { GainsPerTradeTable } from '../GainsPerTradeTable';
-// import { Loader } from '../Loader';
+import generateForm8949 from '../../../src/output/Form8949';
+import { calculateGainPerTrade, calculateGains } from '../../../src/processing/CalculateGains';
+import { IHoldings, ISavedData, ITrade, ITradeWithFiatRate, ITradeWithGains, METHOD } from '../../../src/types';
+import Button from '../../Button';
+import { FileDownload, IFileDownloadProps } from '../../FileDownload';
+import { GainsPerTradeTable } from '../../GainsPerTradeTable';
 import { Customize, IYearCalculationMethod } from './Customize.component';
-export interface ICalculateTradesProp {
+export interface ICalculateTradesTabProp {
     savedData: ISavedData;
 }
 
-export interface ICalculateTradesState {
+export interface ICalculateTradesTabState {
     filteredTradesWithGains?: ITradeWithGains[];
     longTermGains?: number;
     shortTermGains?: number;
@@ -48,7 +46,7 @@ function recalculate(
                 (trade) => new Date(trade.date).getFullYear() === parseInt(years[index], 10),
             );
             const result = calculateGains(holdings, pastTrades, fiatCurrnecy, yearCalculationMethod[years[index]]);
-            newHoldings = result.newHoldings;  
+            newHoldings = result.newHoldings;
         }
     }
     const lastYear = years[years.length - 1];
@@ -65,8 +63,8 @@ function recalculate(
     };
 }
 
-export class CalculateGains extends React.Component<ICalculateTradesProp, ICalculateTradesState> {
-    public constructor(props: ICalculateTradesProp) {
+export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, ICalculateTradesTabState> {
+    public constructor(props: ICalculateTradesTabProp) {
         super(props);
         this.state = {
             years: getTradeYears(props.savedData.trades),
@@ -88,7 +86,12 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
             this.props.savedData.settings.fiatCurrency,
             yearCalculationMethod,
         );
-        const data = calculateGainPerTrade(result.holdings, result.trades, this.props.savedData.settings.fiatCurrency, result.gainCalculationMethod);
+        const data = calculateGainPerTrade(
+            result.holdings,
+            result.trades,
+            this.props.savedData.settings.fiatCurrency,
+            result.gainCalculationMethod,
+        );
         this.setState({
             filteredTradesWithGains: data.trades,
             longTermGains: data.longTerm,
@@ -153,7 +156,7 @@ export class CalculateGains extends React.Component<ICalculateTradesProp, ICalcu
                             <h3 className='pa2'>Short Term Gains: {this.state.shortTermGains}</h3>
                             <h3 className='pa2'>Long Term Gains: {this.state.longTermGains}</h3>
                         </div>
-                        <hr className="pa1 ma1"/>
+                        <hr className='pa1 ma1'/>
                         <GainsPerTradeTable
                             fiatCurrency={this.props.savedData.settings.fiatCurrency}
                             trades={this.state.filteredTradesWithGains}

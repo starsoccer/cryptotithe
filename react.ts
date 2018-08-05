@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { rootElement } from './components';
-import { ISavedData } from './src/types';
 import { createEmptySavedData } from './src/mock';
+import { ISavedData } from './src/types';
 
 function render(browser: boolean, savedData = createEmptySavedData()) {
     ReactDOM.render(

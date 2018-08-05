@@ -6,6 +6,6 @@ export default function converter(savedData: ISavedData): boolean {
         changeMade = true;
         savedData.settings.gainCalculationMethod = METHOD.FIFO;
     }
-    
+
     return changeMade;
 }

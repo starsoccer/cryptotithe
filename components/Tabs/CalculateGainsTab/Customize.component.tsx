@@ -1,9 +1,9 @@
 import * as React from 'react';
-import Button from '../Button';
-import Popup from '../Popup';
-import { Table } from '../Table';
-import CalculationMethodSelect from '../CalculationMethodSelect';
-import { METHOD } from '../../src/types';
+import { METHOD } from '../../../src/types';
+import Button from '../../Button';
+import CalculationMethodSelect from '../../CalculationMethodSelect';
+import Popup from '../../Popup';
+import { Table } from '../../Table';
 export interface ICustomizeProps {
     onClose: () => void;
     onChange: (key: string, extra?: string) => (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -34,7 +34,7 @@ function createYearCalculationMethod(
     years: string[],
     selectedYear: string,
     includePreviousYears: boolean,
-    gainCalculationMethod: METHOD
+    gainCalculationMethod: METHOD,
 ) {
     const yearCalculationMethod = {};
     for (const year of years) {
@@ -50,20 +50,26 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
         super(props);
         const yearCalculationMethods = Object.keys(props.yearCalculationMethod);
         if (yearCalculationMethods.length) {
-            const allGainMethodsIdentical = yearCalculationMethods.every((val) => props.yearCalculationMethod[val] === props.yearCalculationMethod[yearCalculationMethods[0]] );
+            const allGainMethodsIdentical = yearCalculationMethods.every((val) =>
+                props.yearCalculationMethod[val] === props.yearCalculationMethod[yearCalculationMethods[0]],
+            );
             let noGapYears = true;
             for (
                 let index = parseInt(yearCalculationMethods[0], 10);
                 index <= parseInt(yearCalculationMethods[yearCalculationMethods.length - 1], 10);
                 index++
             ) {
-                if (yearCalculationMethods.indexOf(index.toString()) === -1 && props.years.indexOf(index.toString()) !== -1) {
+                if (
+                    yearCalculationMethods.indexOf(index.toString()) === -1 &&
+                    props.years.indexOf(index.toString()) !== -1
+                ) {
                     noGapYears = false;
                     break;
                 }
             }
 
-            const showPerYearCalcutionMethod = (allGainMethodsIdentical && !noGapYears) || (!allGainMethodsIdentical && noGapYears);
+            const showPerYearCalcutionMethod = (allGainMethodsIdentical && !noGapYears) ||
+                (!allGainMethodsIdentical && noGapYears);
             this.state = {
                 showPerYearCalcutionMethod,
                 includePreviousYears: !showPerYearCalcutionMethod,
@@ -72,8 +78,8 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                     yearCalculationMethods[0] :
                     yearCalculationMethods[yearCalculationMethods.length - 1]
                 ),
-                yearCalculationMethod: props.yearCalculationMethod
-            }   
+                yearCalculationMethod: props.yearCalculationMethod,
+            };
         } else {
             this.state = {
                 showPerYearCalcutionMethod: false,
@@ -82,13 +88,13 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                 year: '0',
                 yearCalculationMethod: {
                     0: METHOD.FIFO,
-                }
-            }   
+                },
+            };
         }
     }
 
     public onSelectChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
-        switch(key) {
+        switch (key) {
             case 'year':
                 const year = e.currentTarget.value;
                 this.setState({
@@ -142,7 +148,7 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
             yearCalculationMethod[key] = e.currentTarget.value as METHOD;
         } else {
             delete yearCalculationMethod[key];
-        }      
+        }
         this.setState({
             yearCalculationMethod,
         });
@@ -159,11 +165,19 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                     <div>
                         <div>
                             <label>Customize Calcution Method Per Year</label>
-                            <input type="checkbox" defaultChecked={this.state.showPerYearCalcutionMethod} onChange={this.onCheckBoxChange('showPerYearCalcutionMethod')}/>
+                            <input
+                                type='checkbox'
+                                defaultChecked={this.state.showPerYearCalcutionMethod}
+                                onChange={this.onCheckBoxChange('showPerYearCalcutionMethod')}
+                            />
                         </div>
                         <div>
                             <label>Include Previous Years</label>
-                            <input type="checkbox" defaultChecked={this.state.includePreviousYears} onChange={this.onCheckBoxChange('includePreviousYears')}/>
+                            <input
+                                type='checkbox'
+                                defaultChecked={this.state.includePreviousYears}
+                                onChange={this.onCheckBoxChange('includePreviousYears')}
+                            />
                         </div>
                         {this.state.showPerYearCalcutionMethod ?
                             <div>
@@ -176,7 +190,11 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                                             onChange={this.onYearGainChange(year)}
                                             selectedMethod={this.state.yearCalculationMethod[year]}
                                         />,
-                                        <input type="checkbox" checked={year in this.state.yearCalculationMethod} onChange={this.onAddOrRemoveYear(year)} />
+                                        <input
+                                            type='checkbox'
+                                            checked={year in this.state.yearCalculationMethod}
+                                            onChange={this.onAddOrRemoveYear(year)}
+                                        />,
                                     ])}
                                 />
                             </div>
@@ -189,7 +207,7 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                                         onChange={this.onSelectChange('year')}
                                         defaultValue={getLastYear(Object.keys(this.props.yearCalculationMethod))}
                                     >
-                                        <option key="----" value="0">----</option>
+                                        <option key='----' value='0'>----</option>
                                         {this.props.years.map((year) => <option key={year} value={year}>
                                                 {year}
                                             </option>,
@@ -200,14 +218,19 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                                     <label>Calculation Method</label>
                                     <CalculationMethodSelect
                                         onChange={this.onSelectChange('gainCalculationMethod')}
-                                        selectedMethod={this.props.yearCalculationMethod[getLastYear(Object.keys(this.props.yearCalculationMethod))]}
+                                        selectedMethod={this.props.yearCalculationMethod[
+                                            getLastYear(Object.keys(this.props.yearCalculationMethod))
+                                        ]}
                                     />
                                 </div>
                             </div>
                         }
                         <hr />
-                        <div className="flex justify-around">
-                            <Button label='Recalculate' onClick={this.props.onGenerate(this.state.yearCalculationMethod)}/>
+                        <div className='flex justify-around'>
+                            <Button
+                                label='Recalculate'
+                                onClick={this.props.onGenerate(this.state.yearCalculationMethod)}
+                            />
                             <Button label='Form 8949' onClick={this.props.onForm8949Export}/>
                         </div>
                     </div>

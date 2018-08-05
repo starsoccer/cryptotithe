@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { addFiatRateToTrades } from '../../src/processing/getFiatRate';
-import sortTrades from '../../src/processing/SortTrades';
-import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../src/types';
-import Button from '../Button';
-import { Loader } from '../Loader';
-import { TradesTable } from '../TradesTable';
+import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
+import sortTrades from '../../../src/processing/SortTrades';
+import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
+import Button from '../../Button';
+import { Loader } from '../../Loader';
+import { TradesTable } from '../../TradesTable';
 
-export interface IViewTradesProp {
+export interface IViewTradesTabProp {
     savedData: ISavedData;
     save(data: IPartialSavedData): Promise<boolean>;
 }
 
-export class ViewTrades extends React.Component<IViewTradesProp, {processing: boolean}> {
+export class ViewTradesTab extends React.Component<IViewTradesTabProp, {processing: boolean}> {
 
-    public constructor(props: IViewTradesProp) {
+    public constructor(props: IViewTradesTabProp) {
         super(props);
         this.state = {
             processing: false,

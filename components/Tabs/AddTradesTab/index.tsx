@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { processData } from '../../src/parsers';
-import duplicateCheck from '../../src/processing/DuplicateCheck';
-import { addFiatRateToTrades } from '../../src/processing/getFiatRate';
-import sortTrades from '../../src/processing/SortTrades';
+import { processData } from '../../../src/parsers';
+import duplicateCheck from '../../../src/processing/DuplicateCheck';
+import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
+import sortTrades from '../../../src/processing/SortTrades';
 import {
     EXCHANGES,
     FiatRateMethod,
@@ -12,15 +12,15 @@ import {
     ITrade,
     ITradeWithDuplicateProbability,
     ITradeWithFiatRate,
-} from '../../src/types';
-import { AlertBar, AlertType } from '../AlertBar';
-import Button from '../Button';
-import { DuplicateTradesTable } from '../DuplicateTradesTable';
-import { FileBrowse } from '../FileBrowse';
-import { Loader } from '../Loader';
-import TradeDetails from '../TradeDetails';
-import { TradesTable } from '../TradesTable';
-export interface IAddTradesProp {
+} from '../../../src/types';
+import { AlertBar, AlertType } from '../../AlertBar';
+import Button from '../../Button';
+import { DuplicateTradesTable } from '../../DuplicateTradesTable';
+import { FileBrowse } from '../../FileBrowse';
+import { Loader } from '../../Loader';
+import TradeDetails from '../../TradeDetails';
+import { TradesTable } from '../../TradesTable';
+export interface IAddTradesTabProp {
     savedData: ISavedData;
     save(data: IPartialSavedData): Promise<boolean>;
 }
@@ -30,7 +30,7 @@ interface IAlertData {
     type: AlertType;
 }
 
-interface IAddTradesState {
+interface IAddTradesTabState {
     addTrade: boolean;
     alertData: IAlertData;
     currentTrades: ITrade[];
@@ -42,8 +42,8 @@ interface IAddTradesState {
     exchange: keyof typeof EXCHANGES | string;
 }
 
-export class AddTrades extends React.Component<IAddTradesProp, IAddTradesState> {
-    public constructor(props: IAddTradesProp) {
+export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesTabState> {
+    public constructor(props: IAddTradesTabProp) {
         super(props);
         this.state = {
             processedTrades: [],

@@ -1,11 +1,11 @@
 import * as faker from 'faker';
 import {
     EXCHANGES,
+    FiatRateMethod,
     ICurrencyHolding,
     IHoldings,
-    ITradeWithFiatRate,
     ISavedData,
-    FiatRateMethod,
+    ITradeWithFiatRate,
     METHOD,
 } from '../types';
 
