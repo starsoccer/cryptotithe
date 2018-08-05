@@ -3,6 +3,7 @@ import { calculateHoldingsValue } from '../../../src/processing/CalculateHolding
 import { ISavedData, IHoldingsValue } from '../../../src/types';
 import { Loader } from '../../Loader';
 import { PortfolioTable } from '../../PortfolioTable';
+import { Chart } from '../../Chart';
 
 export interface IPortfolioTabProp {
     savedData: ISavedData;
@@ -10,6 +11,8 @@ export interface IPortfolioTabProp {
 
 export interface IPortfolioTabState {
     holdingsValue?: IHoldingsValue;
+    series: number[];
+    currencies: string[]
 }
 
 export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioTabState> {
@@ -19,11 +22,20 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
     }
 
     public async componentDidMount() {
+        const holdingsValue = await calculateHoldingsValue(
+            this.props.savedData.holdings,
+            this.props.savedData.settings.fiatCurrency
+        );
+        const series = [];
+        const currencies = Object.keys(holdingsValue.currencies);
+        for (const currency of currencies) {
+            series.push(holdingsValue.currencies[currency].fiatValue);
+        }
+
         this.setState({
-            holdingsValue: await calculateHoldingsValue(
-                this.props.savedData.holdings,
-                this.props.savedData.settings.fiatCurrency
-            ),
+            holdingsValue,
+            series: series,
+            currencies,
         });
     }
 
@@ -34,9 +46,28 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
                 <hr className='center w-50' />
                 <div className='tc center'>
                     {this.state && this.state.holdingsValue !== undefined ?
-                        <PortfolioTable
-                            holdingsValue={this.state.holdingsValue}
-                        />
+                        <div>
+                            <h4>Total Value: {this.state.holdingsValue.total}</h4>
+                            <Chart
+                                data={{
+                                    chart: {
+                                        type: 'pie',
+                                    },
+                                    series: this.state.series,
+                                    labels: this.state.currencies,
+                                    legend: {
+                                        show: false,
+                                    },
+                                    annotations: {
+                                        position: 'front',
+                                    },
+                                }}
+                                className="w-50 center mw9"
+                            />
+                            <PortfolioTable
+                                holdingsValue={this.state.holdingsValue}
+                            />
+                        </div>
                     :
                         <Loader />
                     }
