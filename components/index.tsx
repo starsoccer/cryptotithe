@@ -16,6 +16,7 @@ import { AdvancedTab } from './Tabs/AdvancedTab';
 import { CalculateGainsTab } from './Tabs/CalculateGainsTab';
 import { Settings } from './Tabs/Settings';
 import { ViewTradesTab } from './Tabs/ViewTradesTab';
+import { PortfolioTab } from './Tabs/PortfolioTab';
 
 export interface IAppProps {
     savedData: ISavedData;
@@ -118,9 +119,8 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             case TABS.ADVANCED:
                 return <AdvancedTab savedData={this.state.savedData}/>;
             case TABS.HOME:
-                return ;
             default:
-                return ;
+                return <PortfolioTab savedData={this.state.savedData}/>;
         }
     }
 

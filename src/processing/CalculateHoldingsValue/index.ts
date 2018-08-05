@@ -1,10 +1,5 @@
-import { IHoldings, ISimplifiedHoldingsWithValue } from '../../types';
+import { IHoldings, IHoldingsValue } from '../../types';
 import { getDayAvg } from '../getFiatRate/getDayAvgCurrencyRate';
-
-export interface IHoldingsValue {
-    currencies: {[key: string]: ISimplifiedHoldingsWithValue};
-    total: number;
-}
 
 export async function calculateHoldingsValue(
     holdings: IHoldings,
