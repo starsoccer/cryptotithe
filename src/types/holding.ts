@@ -16,3 +16,21 @@ export interface IHoldingsValue {
     };
     total: number;
 }
+
+export interface IHoldingsValueComplex {
+    currencies: {
+        [key: string]: IComplexHoldingsWithValue
+    };
+    fiatTotal: number;
+    BTCTotal: number;
+}
+
+export interface IComplexHoldingsWithValue {
+    fiatValue: number;
+    BTCValue: number;
+    BTCRate: number;
+    fiatRate: number;
+    BTCChange: number;
+    fiatChange: number;
+    amount: number;
+}

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { calculateHoldingsValue } from '../../../src/processing/CalculateHoldingsValue';
-import { ISavedData, IHoldingsValue } from '../../../src/types';
+import { calculateInDepthHoldingsValueCurrently } from '../../../src/processing/CalculateHoldingsValue';
+import { ISavedData, IHoldingsValueComplex } from '../../../src/types';
 import { Loader } from '../../Loader';
 import { PortfolioTable } from '../../PortfolioTable';
 import { Chart } from '../../Chart';
@@ -10,7 +10,7 @@ export interface IPortfolioTabProp {
 }
 
 export interface IPortfolioTabState {
-    holdingsValue?: IHoldingsValue;
+    holdingsValue?: IHoldingsValueComplex;
     series: number[];
     currencies: string[]
 }
@@ -22,7 +22,7 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
     }
 
     public async componentDidMount() {
-        const holdingsValue = await calculateHoldingsValue(
+        const holdingsValue = await calculateInDepthHoldingsValueCurrently(
             this.props.savedData.holdings,
             this.props.savedData.settings.fiatCurrency
         );
@@ -47,7 +47,8 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
                 <div className='tc center'>
                     {this.state && this.state.holdingsValue !== undefined ?
                         <div>
-                            <h4>Total Value: {this.state.holdingsValue.total}</h4>
+                            <h4>Total BTC Value: {this.state.holdingsValue.BTCTotal}</h4>
+                            <h4>Total {this.props.savedData.settings.fiatCurrency} Value: {this.state.holdingsValue.fiatTotal}</h4>
                             <Chart
                                 data={{
                                     chart: {
