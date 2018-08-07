@@ -201,9 +201,11 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                         onClick={this.updateTab(TABS[key])}
                     >{TABS[key]}</h3>)}
                 </div>
-                <div className='openTab'>
-                    {this.showCurrentTab(this.state.currentTab)}
-                </div>
+                {!this.state.loadDataPopup &&
+                    <div className='openTab'>
+                        {this.showCurrentTab(this.state.currentTab)}
+                    </div>
+                }
             </div>
         );
     }
