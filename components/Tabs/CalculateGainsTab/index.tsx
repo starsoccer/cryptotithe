@@ -1,7 +1,7 @@
 import * as React from 'react';
 import generateForm8949 from '../../../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../../../src/processing/CalculateGains';
-import { IHoldings, ISavedData, ITrade, ITradeWithFiatRate, ITradeWithGains, METHOD } from '../../../src/types';
+import { ISavedData, ITrade, ITradeWithFiatRate, ITradeWithGains, METHOD } from '../../../src/types';
 import Button from '../../Button';
 import { FileDownload, IFileDownloadProps } from '../../FileDownload';
 import { GainsPerTradeTable } from '../../GainsPerTradeTable';
@@ -33,19 +33,18 @@ function getTradeYears(trades: ITrade[]) {
 }
 
 function recalculate(
-    holdings: IHoldings,
     trades: ITradeWithFiatRate[],
     fiatCurrnecy: string,
     yearCalculationMethod: IYearCalculationMethod,
 ) {
     const years = Object.keys(yearCalculationMethod);
-    let newHoldings = holdings;
+    let newHoldings = {};
     if (years.length !== 1) {
         for (let index = 0; index < years.length - 1; index++) {
             const pastTrades = trades.filter(
                 (trade) => new Date(trade.date).getFullYear() === parseInt(years[index], 10),
             );
-            const result = calculateGains(holdings, pastTrades, fiatCurrnecy, yearCalculationMethod[years[index]]);
+            const result = calculateGains(newHoldings, pastTrades, fiatCurrnecy, yearCalculationMethod[years[index]]);
             newHoldings = result.newHoldings;
         }
     }
@@ -81,7 +80,6 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
 
     public calculateGains = (yearCalculationMethod: IYearCalculationMethod) => () => {
         const result = recalculate(
-            this.props.savedData.holdings,
             this.props.savedData.trades,
             this.props.savedData.settings.fiatCurrency,
             yearCalculationMethod,
@@ -122,7 +120,6 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
 
     public generateForm8949 = () => {
         const result = recalculate(
-            this.props.savedData.holdings,
             this.props.savedData.trades,
             this.props.savedData.settings.fiatCurrency,
             this.state.yearCalculationMethod,
