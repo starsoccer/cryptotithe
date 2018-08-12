@@ -5,7 +5,7 @@ export interface IButtonProps {
     onClick?(): void;
 }
 
-export default class Button extends React.Component<IButtonProps> {
+export default class Button extends React.PureComponent<IButtonProps> {
     public render() {
         return (
             <button className='bg-blue white bg-animate hover-bg-dark-blue' onClick={this.props.onClick}>

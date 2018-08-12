@@ -5,7 +5,7 @@ export interface IToggleProps {
     onChange(event: React.ChangeEvent<HTMLInputElement>): void;
 }
 
-export class Toggle extends React.Component<IToggleProps> {
+export class Toggle extends React.PureComponent<IToggleProps> {
     public render() {
         return (
             <label className='toggle'>

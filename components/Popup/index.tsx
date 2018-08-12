@@ -5,7 +5,7 @@ export interface IPopupProps {
     onClose(): void;
 }
 
-export default class Popup extends React.Component<IPopupProps> {
+export default class Popup extends React.PureComponent<IPopupProps> {
     public render() {
         return (
             <div className='popup'>

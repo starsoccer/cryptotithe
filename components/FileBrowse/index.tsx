@@ -4,7 +4,7 @@ export interface IFileBrowseProps {
     browse: boolean;
 }
 
-export class FileBrowse extends React.Component<IFileBrowseProps> {
+export class FileBrowse extends React.PureComponent<IFileBrowseProps> {
     private readonly fileInput: React.RefObject<HTMLInputElement>;
     private onetime = true;
     public constructor(props: IFileBrowseProps) {

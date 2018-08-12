@@ -5,7 +5,7 @@ export interface IFileDownloadProps {
     download: boolean;
 }
 
-export class FileDownload extends React.Component<IFileDownloadProps> {
+export class FileDownload extends React.PureComponent<IFileDownloadProps> {
     private readonly downloadLink: React.RefObject<HTMLAnchorElement>;
 
     public constructor(props: IFileDownloadProps) {

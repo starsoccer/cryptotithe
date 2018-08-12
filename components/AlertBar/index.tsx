@@ -15,7 +15,7 @@ export interface IAlertBarProps {
     type: AlertType;
 }
 
-export class AlertBar extends React.Component<IAlertBarProps> {
+export class AlertBar extends React.PureComponent<IAlertBarProps> {
     public render() {
         return (
             <div className={

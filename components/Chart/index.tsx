@@ -23,7 +23,7 @@ export interface IChartProp {
     className?: string;
 }
 
-export class Chart extends React.Component<IChartProp> {
+export class Chart extends React.PureComponent<IChartProp> {
 
     public async componentDidMount() {
         const ApexCharts = require('apexcharts');

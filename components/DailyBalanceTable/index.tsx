@@ -8,7 +8,7 @@ export interface IDailyBalanceTable {
     dailyBalance: IDailyBalance[];
 }
 
-export class DailyBalanceTable extends React.Component<IDailyBalanceTable> {
+export class DailyBalanceTable extends React.PureComponent<IDailyBalanceTable> {
     public render() {
         return (
             <Table

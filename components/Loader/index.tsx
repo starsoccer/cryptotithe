@@ -4,7 +4,7 @@ export interface ILoaderProps {
     className?: string;
 }
 
-export class Loader extends React.Component<ILoaderProps> {
+export class Loader extends React.PureComponent<ILoaderProps> {
     public render() {
         return (
             <div className='center mt5 loader'>

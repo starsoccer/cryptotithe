@@ -5,7 +5,7 @@ export interface ICalculationMethodSelectProps {
     selectedMethod: METHOD;
 }
 
-export default class CalculationMethodSelect extends React.Component<ICalculationMethodSelectProps> {
+export default class CalculationMethodSelect extends React.PureComponent<ICalculationMethodSelectProps> {
     public render() {
         return (
             <select

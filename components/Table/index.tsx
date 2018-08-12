@@ -6,7 +6,7 @@ export interface ITableProps {
     rows: JSX.Element[][];
 }
 
-export class Table extends React.Component<ITableProps> {
+export class Table extends React.PureComponent<ITableProps> {
     public render() {
         return (
             <div className='tradesTable pa4'>

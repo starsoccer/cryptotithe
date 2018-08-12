@@ -9,7 +9,7 @@ export interface IDuplicateTradesTableProps {
     duplicateChange(tradeID: string): (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export class DuplicateTradesTable extends React.Component<IDuplicateTradesTableProps> {
+export class DuplicateTradesTable extends React.PureComponent<IDuplicateTradesTableProps> {
     public render() {
         return (
             <Table

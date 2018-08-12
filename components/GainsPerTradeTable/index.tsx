@@ -8,7 +8,7 @@ export interface IGainsPerTradeTableProps {
     fiatCurrency: string;
 }
 
-export class GainsPerTradeTable extends React.Component<IGainsPerTradeTableProps> {
+export class GainsPerTradeTable extends React.PureComponent<IGainsPerTradeTableProps> {
     public render() {
         return (
             <Table

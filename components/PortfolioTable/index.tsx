@@ -19,7 +19,7 @@ function makeColorFul(number: number) {
     }
 }
 
-export class PortfolioTable extends React.Component<IPortfolioTableProps> {
+export class PortfolioTable extends React.PureComponent<IPortfolioTableProps> {
 
     public render() {
         return (
