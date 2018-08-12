@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as crypto from 'crypto';
 
 export interface ITableProps {
     className?: string;
@@ -21,17 +20,17 @@ export class Table extends React.PureComponent<ITableProps> {
                             </tr>
                         </thead>
                         <tbody className='lh-copy'>{
-                            this.props.rows.map((row) => {
-                                const keyHash = crypto.createHash('sha256').update(row.toString()).digest('hex');
-                                return <tr className='stripe-dark' key={keyHash}>{
-                                    row.map((col) => {
-                                        const cellHash = crypto.createHash('sha256').update(col.toString()).digest('hex');
-                                        <td key={`${keyHash}-${cellHash}`} className='pa2 mw4 break-word'>
-                                            {col}
-                                        </td>
-                                    })
-                                }</tr>;
-                            })
+                            this.props.rows.map((row) => { 
+                                const keyHash = crypto.createHash('sha256').update(row.toString()).digest('hex'); 
+                                return <tr className='stripe-dark' key={keyHash}>{ 
+                                    row.map((col) => { 
+                                        const cellHash = crypto.createHash('sha256').update(col.toString()).digest('hex'); 
+                                        <td key={`${keyHash}-${cellHash}`} className='pa2 mw4 break-word'> 
+                                            {col} 
+                                        </td> 
+                                    }) 
+                                }</tr>; 
+                            }) 
                         }</tbody>
                     </table>
                 </div>
