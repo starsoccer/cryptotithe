@@ -11,6 +11,18 @@ export default function converter(savedData: ISavedData): boolean {
                 delete (trade as any).id;
                 trade.ID = createTradeID(trade);
             }
+            // confirm no duplicates
+            for(const trade of savedData.trades) {
+                const duplicateIDs = savedData.trades.filter((filteredTrade) => filteredTrade.ID === trade.ID);
+                if (duplicateIDs.length !== 0) {
+                    for(const matchedIDTrade of duplicateIDs) {
+                        while (createTradeID(matchedIDTrade) === trade.ID) {
+                            
+                        }
+                        matchedIDTrade.ID = createTradeID(matchedIDTrade);
+                    }
+                }
+            }
         }
     }
 
