@@ -4,8 +4,8 @@ import sortTrades from '../../../src/processing/SortTrades';
 import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
 import Button from '../../Button';
 import { Loader } from '../../Loader';
-import { TradesTable } from '../../TradesTable';
 import { Timeline } from '../../Timeline';
+import { TradesTable } from '../../TradesTable';
 
 export interface IViewTradesTabProp {
     savedData: ISavedData;
@@ -16,7 +16,6 @@ export interface IViewTradesTabState {
     processing: boolean;
     tradeTable: boolean;
 }
-
 
 export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTradesTabState> {
 
@@ -58,7 +57,7 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                     <Button label='Refresh Trade Data' onClick={this.refetchFiatRate}/>
                     <Button label='Trade Table' onClick={this.tradeTable}/>
                 </div>
-                <div className="tc center">
+                <div className='tc center'>
                     {this.state.processing ?
                         <Loader />
                     :

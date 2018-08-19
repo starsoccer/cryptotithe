@@ -24,7 +24,7 @@ export interface ITrade {
     date: number;
     exchangeID: string;
     exchange: EXCHANGES;
-    ID: string
+    ID: string;
 }
 
 export interface ITradeWithFiatRate extends ITrade {

@@ -1,5 +1,5 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITrade, IPartialTrade } from '../../types';
+import { EXCHANGES, IPartialTrade, ITrade } from '../../types';
 import { createDateAsUTC, createTradeID } from '../utils';
 
 enum PoloniexOrderType {
@@ -49,14 +49,16 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                 partialTrade.boughtCurrency = pair[0].toUpperCase();
                 partialTrade.soldCurrency = pair[1].toUpperCase();
                 partialTrade.amountSold = parseNumber(trade['Base Total Less Fee']);
-                partialTrade.rate = parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']);
+                partialTrade.rate =
+                    parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']);
                 break;
             case PoloniexOrderType.SELL:
                     partialTrade.boughtCurrency = pair[1].toUpperCase();
                     partialTrade.soldCurrency = pair[0].toUpperCase();
                     partialTrade.amountSold = parseNumber(trade['Quote Total Less Fee']);
-                    partialTrade.rate = parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']);
-                break;
+                    partialTrade.rate =
+                        parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']);
+                    break;
             default:
                 throw new Error('Unknown Order Type - ' + trade['Order Number']);
         }

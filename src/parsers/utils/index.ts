@@ -1,5 +1,5 @@
-import { IPartialTrade } from "../../types";
 import * as crypto from 'crypto';
+import { IPartialTrade } from '../../types';
 
 export function createDateAsUTC(date: Date) {
     return new Date(Date.UTC(

@@ -14,9 +14,9 @@ import Popup from './Popup';
 import { AddTradesTab } from './Tabs/AddTradesTab';
 import { AdvancedTab } from './Tabs/AdvancedTab';
 import { CalculateGainsTab } from './Tabs/CalculateGainsTab';
+import { PortfolioTab } from './Tabs/PortfolioTab';
 import { Settings } from './Tabs/Settings';
 import { ViewTradesTab } from './Tabs/ViewTradesTab';
-import { PortfolioTab } from './Tabs/PortfolioTab';
 
 export interface IAppProps {
     savedData: ISavedData;

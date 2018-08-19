@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ITrade } from '../../src/types';
 export interface ITimelineProp {
-    trades: ITrade[]
+    trades: ITrade[];
 }
 
 export class Timeline extends React.PureComponent<ITimelineProp> {
@@ -17,7 +17,7 @@ export class Timeline extends React.PureComponent<ITimelineProp> {
                             <p>{trade.rate.toFixed(8)} rate on {trade.exchange || 'Unknown'}</p>
                             <h6>{new Date(trade.date).toUTCString()}</h6>
                         </div>
-                    </div>
+                    </div>,
                 )}
             </div>
         );

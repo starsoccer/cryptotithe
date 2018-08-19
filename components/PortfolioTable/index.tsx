@@ -8,11 +8,11 @@ export interface IPortfolioTableProps {
     fiatCurrency: string;
 }
 
-function makeColorFul(number: number) {
-    if(number === 0) {
-        return ''
+function makeColorFul(amount: number) {
+    if (amount === 0) {
+        return '';
     }
-    if (Math.abs(number) === number) {
+    if (Math.abs(amount) === amount) {
         return 'green';
     } else {
         return 'red';
@@ -37,28 +37,36 @@ export class PortfolioTable extends React.PureComponent<IPortfolioTableProps> {
                         <p className={
                             makeColorFul(this.props.holdingsValue.currencies[currency].BTCChange)
                         }>
-                            <span className="ph1">{this.props.holdingsValue.currencies[currency].BTCRate.toFixed(8)}</span>
-                            <span className="ph1">({this.props.holdingsValue.currencies[currency].BTCChange.toFixed(2)}%)</span>
-                            <span className="pl1">BTC</span>
+                            <span className='ph1'>
+                                {this.props.holdingsValue.currencies[currency].BTCRate.toFixed(8)}
+                            </span>
+                            <span className='ph1'>
+                                ({this.props.holdingsValue.currencies[currency].BTCChange.toFixed(2)}%)
+                            </span>
+                            <span className='pl1'>BTC</span>
                         </p>
                         <hr />
                         <p className={
                             makeColorFul(this.props.holdingsValue.currencies[currency].fiatChange)
                         }>
-                            <span className="ph1">{this.props.holdingsValue.currencies[currency].fiatRate.toFixed(2)}</span>
-                            <span className="ph1">({this.props.holdingsValue.currencies[currency].fiatChange.toFixed(2)}%)</span>
-                            <span className="ph1">{this.props.fiatCurrency}</span>
+                            <span className='ph1'>{
+                                this.props.holdingsValue.currencies[currency].fiatRate.toFixed(2)
+                            }</span>
+                            <span className='ph1'>
+                                ({this.props.holdingsValue.currencies[currency].fiatChange.toFixed(2)}%)
+                            </span>
+                            <span className='ph1'>{this.props.fiatCurrency}</span>
                         </p>
                     </div>,
                     <div>
                         <p>
                             {this.props.holdingsValue.currencies[currency].BTCValue.toFixed(8)}
-                            <span className="pl1">BTC</span>
+                            <span className='pl1'>BTC</span>
                         </p>
                         <hr />
                         <p>
                             {this.props.holdingsValue.currencies[currency].fiatValue.toFixed(2)}
-                            <span className="pl2">{this.props.fiatCurrency}</span>
+                            <span className='pl2'>{this.props.fiatCurrency}</span>
                         </p>
                     </div>,
                 ])}

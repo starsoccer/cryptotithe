@@ -5,8 +5,8 @@ export interface ICryptoComparePriceMultiFull {
 
 export interface ICryptoCompareCurrencyPriceMultiFull {
     [key: string]: {
-        [key: string]: ICryptoComparePriceFull
-    }
+        [key: string]: ICryptoComparePriceFull,
+    };
 }
 
 export interface ICryptoComparePriceFull {
@@ -43,10 +43,14 @@ export interface ICryptoComparePriceFull {
 
 export default async function getCurrentRates(
     currencies: string[],
-    fiatCurrency: string
+    fiatCurrency: string,
 ): Promise<ICryptoComparePriceMultiFull> {
     const got = require('got');
-    const result = await got(`https://min-api.cryptocompare.com/data/pricemultifull?tsyms=BTC,${fiatCurrency}&fsyms=`+currencies.join(','));
+    const params = [
+        `tsyms=BTC,${fiatCurrency}`,
+        `fsyms=${currencies.join(',')}`,
+    ];
+    const result = await got(`https://min-api.cryptocompare.com/data/pricemultifull?${params.join('&')}`);
     try {
         if (result.statusCode === 200) {
             return JSON.parse(result.body);

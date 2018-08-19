@@ -1,5 +1,5 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITrade, IPartialTrade } from '../../types';
+import { EXCHANGES, IPartialTrade, ITrade } from '../../types';
 import { createDateAsUTC, createTradeID } from '../utils';
 
 enum BittrexOrderType {

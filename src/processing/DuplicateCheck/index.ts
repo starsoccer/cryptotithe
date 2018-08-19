@@ -4,7 +4,9 @@ export default function duplicateCheck(currentTrades: ITrade[], newTrades: ITrad
     const duplicateTrades: ITradeWithDuplicateProbability[] = [];
 
     for (const newTrade of newTrades) {
-        const IDMatchedTrades = currentTrades.filter((trade) => newTrade.ID === trade.ID || newTrade.exchangeID === trade.exchangeID); // check both ids
+        const IDMatchedTrades = currentTrades.filter((trade) =>
+            newTrade.ID === trade.ID || newTrade.exchangeID === trade.exchangeID,
+        );
         if (IDMatchedTrades.length) {
             duplicateTrades.push({
                 ...newTrade,

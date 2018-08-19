@@ -1,5 +1,5 @@
-import * as React from 'react';
 import * as crypto from 'crypto';
+import * as React from 'react';
 
 export interface ITableProps {
     className?: string;
@@ -8,12 +8,12 @@ export interface ITableProps {
 }
 
 export function createHash(htmlElement: JSX.Element) {
-    if(typeof htmlElement !== 'object') {
+    if (typeof htmlElement !== 'object') {
         return crypto.createHash('sha256').update(htmlElement).digest('hex');
     } else {
-        if(typeof htmlElement.props.children === 'object') {
+        if (typeof htmlElement.props.children === 'object') {
             return crypto.createHash('sha256').update(
-                htmlElement.props.children.map((data: JSX.Element) => createHash(data)).toString()
+                htmlElement.props.children.map((data: JSX.Element) => createHash(data)).toString(),
             ).digest('hex');
         } else {
             return crypto.createHash('sha256').update(htmlElement.props.children + htmlElement.type).digest('hex');
@@ -40,13 +40,15 @@ export class Table extends React.PureComponent<ITableProps> {
                                 const rowData = row.map((col, colIndex) => {
                                     const cellHash = createHash(col);
                                     rowHashs.push(cellHash);
-                                    return <td key={cellHash+colIndex} className='pa2 mw4 break-word'> 
+                                    return <td key={cellHash + colIndex} className='pa2 mw4 break-word'>
                                         {col}
-                                    </td>
+                                    </td>;
                                 });
-                                const hash = crypto.createHash('sha256').update(rowHashs.join('-')+index).digest('hex');
-                                return <tr className='stripe-dark' key={hash}>{rowData}</tr>; 
-                            }) 
+                                const hash = crypto.createHash('sha256').update(
+                                    rowHashs.join('-') + index,
+                                ).digest('hex');
+                                return <tr className='stripe-dark' key={hash}>{rowData}</tr>;
+                            })
                         }</tbody>
                     </table>
                 </div>

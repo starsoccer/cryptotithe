@@ -1,20 +1,20 @@
 import * as React from 'react';
 
 export interface IApexChartsSeries {
-    data: number[] | number[][]
+    data: number[] | number[][];
 }
 
 export interface IApexChartsData {
     chart: {
         type: string;
         width?: number;
-    },
+    };
     series: IApexChartsSeries[] | number[];
     xaxis?: any;
     labels?: string[];
     legend?: {
         show: boolean;
-    }
+    };
     annotations?: any;
 }
 
@@ -27,13 +27,13 @@ export class Chart extends React.PureComponent<IChartProp> {
 
     public async componentDidMount() {
         const ApexCharts = require('apexcharts');
-        const chart = new ApexCharts(document.querySelector("#charts"), this.props.data);
+        const chart = new ApexCharts(document.querySelector('#charts'), this.props.data);
         chart.render();
     }
 
     public render() {
         return (
-            <div id="charts" className={`charts ${this.props.className}`} />
+            <div id='charts' className={`charts ${this.props.className}`} />
         );
     }
 }

@@ -12,14 +12,14 @@ export interface ICurrencyHolding {
 
 export interface IHoldingsValue {
     currencies: {
-        [key: string]: ISimplifiedHoldingsWithValue
+        [key: string]: ISimplifiedHoldingsWithValue,
     };
     total: number;
 }
 
 export interface IHoldingsValueComplex {
     currencies: {
-        [key: string]: IComplexHoldingsWithValue
+        [key: string]: IComplexHoldingsWithValue,
     };
     fiatTotal: number;
     BTCTotal: number;

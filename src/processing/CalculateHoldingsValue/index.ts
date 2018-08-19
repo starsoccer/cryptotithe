@@ -1,6 +1,6 @@
 import { IHoldings, IHoldingsValue, IHoldingsValueComplex } from '../../types';
-import { getDayAvg } from '../getFiatRate/getDayAvgCurrencyRate';
 import getCurrentRates from '../getCurrentRates';
+import { getDayAvg } from '../getFiatRate/getDayAvgCurrencyRate';
 
 export async function calculateHoldingsValue(
     holdings: IHoldings,
@@ -29,7 +29,7 @@ export async function calculateHoldingsValue(
     return holdingsValues;
 }
 
-export async function calculateInDepthHoldingsValueCurrently (
+export async function calculateInDepthHoldingsValueCurrently(
     holdings: IHoldings,
     fiatCurrency: string,
 ): Promise<IHoldingsValueComplex> {
@@ -54,21 +54,21 @@ export async function calculateInDepthHoldingsValueCurrently (
                 BTCChange: 0,
                 fiatChange: 0,
                 amount: totalHeld,
-            }
+            };
             if (currency in result) {
                 const BTCValue = result[currency].BTC.PRICE * totalHeld;
                 const fiatValue = result[currency][fiatCurrency].PRICE * totalHeld;
                 holdingsValues.BTCTotal += BTCValue;
                 holdingsValues.fiatTotal += fiatValue;
                 holdingsValues.currencies[currency] = {
-                    fiatValue: fiatValue,
-                    BTCValue: BTCValue,
+                    fiatValue,
+                    BTCValue,
                     BTCRate: result[currency].BTC.PRICE,
                     fiatRate: result[currency][fiatCurrency].PRICE,
                     BTCChange: result[currency].BTC.CHANGEPCT24HOUR,
                     fiatChange: result[currency][fiatCurrency].CHANGEPCT24HOUR,
                     amount: totalHeld,
-                }
+                };
             }
         }
     }
