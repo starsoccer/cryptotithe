@@ -20,6 +20,7 @@ export interface ITradeDetailsState {
     date: Date;
     exchange: EXCHANGES | string;
     id: string;
+    exchangeID: string;
     [key: string]: string | EXCHANGES | Date;
 }
 
@@ -36,6 +37,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 date: new Date(props.trade.date),
                 exchange: props.trade.exchange,
                 id: props.trade.ID,
+                exchangeID: props.trade.exchangeID,
             };
         } else {
             this.state = {
@@ -47,6 +49,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 date: new Date(),
                 exchange: '',
                 id: '',
+                exchangeID: '',
             };
         }
     }
@@ -112,11 +115,16 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 rate: parseFloat(this.state.rate),
                 exchange: this.state.exchange as EXCHANGES,
             };
-            let ID = this.state.id;
-            if (ID === '') {
-                ID = crypto.createHash('sha256').update(JSON.stringify(trade) + new Date().getTime()).digest('hex');
+            if (this.state.id === '') {
+                trade.ID = crypto.createHash('sha256').update(JSON.stringify(trade) + new Date().getTime()).digest('hex');
+            } else {
+                trade.ID = this.state.id;
             }
-            trade.ID = ID;
+            if (this.state.exchangeID === '') {
+                trade.exchangeID = trade.ID;
+            } else {
+                trade.exchangeID = this.state.exchangeID;
+            }
             this.props.onSubmit(trade as ITrade);
         }
     }
@@ -134,11 +142,18 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 </div>
                 <div className='fl w-100 pa1'>
                     <h4 className='pb0 mb0 pt0 mt0 tc'>ID</h4>
-                    <p className='pb0 mb0 pt0 mt0 tc'>will default to a hash of all trade data</p>
                     <input
                         className='w-100 tc'
                         value={this.state.id}
-                        onChange={this.onChange('id')}
+                        disabled
+                    />
+                </div>
+                <div className='fl w-100 pa1'>
+                    <h4 className='pb0 mb0 pt0 mt0 tc'>Exchange ID</h4>
+                    <input
+                        className='w-100 tc'
+                        value={this.state.exchangeID}
+                        onChange={this.onChange('exchangeID')}
                     />
                 </div>
                 <div className='fl w-100 pa1'>
