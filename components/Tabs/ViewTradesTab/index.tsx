@@ -4,7 +4,7 @@ import sortTrades from '../../../src/processing/SortTrades';
 import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
 import Button from '../../Button';
 import { Loader } from '../../Loader';
-import { Timeline } from '../../Timeline';
+import TradeTimeline from '../../TradeTimeline';
 import { TradesTable } from '../../TradesTable';
 
 export interface IViewTradesTabProp {
@@ -70,7 +70,7 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                             :
                                 <h3 className='tc'>No Trades <i className='fa fa-frown-o'></i></h3>
                         :
-                            <Timeline trades={this.props.savedData.trades.reverse()}/>
+                            <TradeTimeline trades={this.props.savedData.trades.reverse()}/>
                     }
                 </div>
             </div>
