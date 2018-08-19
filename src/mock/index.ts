@@ -50,7 +50,8 @@ export function mockTrades(
                 rate: faker.random.number(),
                 date: faker.date.between(startingDate, new Date()).getTime(),
                 fiatRate: faker.random.number(),
-                id: faker.random.words(5),
+                exchangeID: faker.random.words(5),
+                ID: faker.random.words(5),
                 exchange: faker.random.objectElement(EXCHANGES) as EXCHANGES,
             });
         }

@@ -1,7 +1,6 @@
-import * as crypto from 'crypto';
 import { getCSVData } from '../';
 import { EXCHANGES, IPartialTrade, ITrade } from '../../types';
-import { createDateAsUTC } from '../utils';
+import { createDateAsUTC, createTradeID } from '../utils';
 
 enum BinanceOrderType {
     SELL = 'SELL',
@@ -67,7 +66,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
             default:
                 throw new Error('Unknown Order Type - ' + trade['Date(UTC)']);
         }
-        tradeToAdd.id = crypto.createHash('sha256').update(JSON.stringify(tradeToAdd)).digest('hex');
+        tradeToAdd.ID = createTradeID(tradeToAdd);
+        tradeToAdd.exchangeID = tradeToAdd.ID;
         internalFormat.push(tradeToAdd as ITrade);
     }
     return internalFormat;

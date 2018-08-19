@@ -37,7 +37,7 @@ export async function getDayAvgTradeRate(
         if (backupRate) {
             return backupRate;
         } else {
-            throw new Error('Cant get any fiat Rate for trade ' + trade.id);
+            throw new Error('Cant get any fiat Rate for trade ' + trade.ID);
         }
     }
 }

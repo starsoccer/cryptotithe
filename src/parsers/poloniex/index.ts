@@ -1,6 +1,6 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITrade } from '../../types';
-import { createDateAsUTC } from '../utils';
+import { EXCHANGES, ITrade, IPartialTrade } from '../../types';
+import { createDateAsUTC, createTradeID } from '../utils';
 
 enum PoloniexOrderType {
     BUY = 'Buy',
@@ -39,32 +39,29 @@ export async function processData(fileData: string): Promise<ITrade[]> {
             // change to something to warn users ('Garbage Trade Skipped - ' + trade['Order Number']);
             continue;
         }
+        const partialTrade: IPartialTrade = {
+            date: createDateAsUTC(new Date(trade.Date)).getTime(),
+            exchangeID: trade['Order Number'],
+            exchange: EXCHANGES.POLONIEX,
+        };
         switch (trade.Type) {
             case PoloniexOrderType.BUY:
-                internalFormat.push({
-                    boughtCurrency: pair[0].toUpperCase(),
-                    soldCurrency: pair[1].toUpperCase(),
-                    amountSold: parseNumber(trade['Base Total Less Fee']),
-                    rate: parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']),
-                    date: createDateAsUTC(new Date(trade.Date)).getTime(),
-                    id: trade['Order Number'],
-                    exchange: EXCHANGES.POLONIEX,
-                });
+                partialTrade.boughtCurrency = pair[0].toUpperCase();
+                partialTrade.soldCurrency = pair[1].toUpperCase();
+                partialTrade.amountSold = parseNumber(trade['Base Total Less Fee']);
+                partialTrade.rate = parseNumber(trade['Base Total Less Fee']) / parseNumber(trade['Quote Total Less Fee']);
                 break;
             case PoloniexOrderType.SELL:
-                internalFormat.push({
-                    boughtCurrency: pair[1].toUpperCase(),
-                    soldCurrency: pair[0].toUpperCase(),
-                    amountSold: parseNumber(trade['Quote Total Less Fee']),
-                    rate: parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']),
-                    date: createDateAsUTC(new Date(trade.Date)).getTime(),
-                    id: trade['Order Number'],
-                    exchange: EXCHANGES.POLONIEX,
-                });
+                    partialTrade.boughtCurrency = pair[1].toUpperCase();
+                    partialTrade.soldCurrency = pair[0].toUpperCase();
+                    partialTrade.amountSold = parseNumber(trade['Quote Total Less Fee']);
+                    partialTrade.rate = parseNumber(trade['Quote Total Less Fee']) / parseNumber(trade['Base Total Less Fee']);
                 break;
             default:
                 throw new Error('Unknown Order Type - ' + trade['Order Number']);
         }
+        partialTrade.ID = createTradeID(partialTrade);
+        internalFormat.push(partialTrade as ITrade);
     }
     return internalFormat;
 }

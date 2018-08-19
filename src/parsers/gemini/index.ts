@@ -1,6 +1,6 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITrade } from '../../types';
-import { createDateAsUTC } from '../utils';
+import { EXCHANGES, ITrade, IPartialTrade } from '../../types';
+import { createDateAsUTC, createTradeID } from '../utils';
 
 enum GeminiOrderType {
     Sell = 'Sell',
@@ -85,15 +85,17 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                     const amountSoldFee = parseNumber(trade[`Trading Fee (${pair.sold})`]);
                     const amountBought = parseNumber(trade[`${pair.bought} Amount`]);
                     const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought})`]);
-                    internalFormat.push({
+                    const partialTrade: IPartialTrade = {
                         boughtCurrency: pair.bought.toUpperCase(),
                         soldCurrency: pair.sold.toUpperCase(),
                         amountSold: amountSold + amountSoldFee,
                         rate: (amountSold + amountSoldFee) / (amountBought - amountBoughtFee),
                         date: createDateAsUTC(new Date(`${trade['Order Date']} ${trade['Order Time']}`)).getTime(),
-                        id: trade['Trade ID'],
+                        exchangeID: trade['Trade ID'],
                         exchange: EXCHANGES.GEMINI,
-                    });
+                    };
+                    partialTrade.ID = createTradeID(partialTrade);
+                    internalFormat.push(partialTrade as ITrade);
                     break;
                 case GeminiOrderType.Credit:
                 case GeminiOrderType.Debit:

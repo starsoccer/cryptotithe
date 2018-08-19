@@ -138,7 +138,7 @@ export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesT
     }
 
     public duplicateStatusChange = (tradeID: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const id = this.state.duplicateTrades.findIndex((trade) => trade.id === tradeID);
+        const id = this.state.duplicateTrades.findIndex((trade) => trade.ID === tradeID);
         const newDuplicateTrades = this.state.duplicateTrades;
         newDuplicateTrades[id].duplicate = e.currentTarget.checked;
         this.setState({duplicateTrades: newDuplicateTrades});

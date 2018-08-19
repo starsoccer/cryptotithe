@@ -14,24 +14,17 @@ export enum ExchangesHeaders {
     BINANCE = '4d0d5df894fe488872e513f6148dfa14ff29272e759b7fb3c86d264687a7cf99',
 }
 
-export interface IPartialTrade {
-    boughtCurrency?: string;
-    soldCurrency?: string;
-    amountSold?: number;
-    rate?: number;
-    date?: number;
-    id?: string;
-    exchange?: EXCHANGES;
-}
+export type IPartialTrade = Partial<ITrade>;
 
-export interface ITrade extends IPartialTrade {
+export interface ITrade {
     boughtCurrency: string;
     soldCurrency: string;
     amountSold: number;
     rate: number;
     date: number;
-    id: string;
+    exchangeID: string;
     exchange: EXCHANGES;
+    ID: string
 }
 
 export interface ITradeWithFiatRate extends ITrade {

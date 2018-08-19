@@ -35,7 +35,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 rate: props.trade.rate.toString(),
                 date: new Date(props.trade.date),
                 exchange: props.trade.exchange,
-                id: props.trade.id,
+                id: props.trade.ID,
             };
         } else {
             this.state = {
@@ -112,11 +112,11 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 rate: parseFloat(this.state.rate),
                 exchange: this.state.exchange as EXCHANGES,
             };
-            let id = this.state.id;
-            if (id === '') {
-                id = crypto.createHash('sha256').update(JSON.stringify(trade)).digest('hex');
+            let ID = this.state.id;
+            if (ID === '') {
+                ID = crypto.createHash('sha256').update(JSON.stringify(trade) + new Date().getTime()).digest('hex');
             }
-            trade.id = id;
+            trade.ID = ID;
             this.props.onSubmit(trade as ITrade);
         }
     }

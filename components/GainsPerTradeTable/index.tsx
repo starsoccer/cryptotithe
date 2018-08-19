@@ -27,7 +27,7 @@ export class GainsPerTradeTable extends React.PureComponent<IGainsPerTradeTableP
                 ]}
                 rows={this.props.trades.map((trade) => [
                     <span>{new Date(trade.date).toUTCString()}</span>,
-                    <span>{trade.id}</span>,
+                    <span>{trade.exchangeID}</span>,
                     <span>{trade.amountSold.toFixed(8)}</span>,
                     <span>{trade.soldCurrency}</span>,
                     <div>

@@ -26,7 +26,7 @@ export class DuplicateTradesTable extends React.PureComponent<IDuplicateTradesTa
                 ]}
                 rows={this.props.trades.map((trade) => [
                     <span>{new Date(trade.date).toUTCString()}</span>,
-                    <span>{trade.id}</span>,
+                    <span>{trade.exchangeID}</span>,
                     <span>{trade.amountSold.toFixed(8)}</span>,
                     <span>{trade.soldCurrency}</span>,
                     <div>
@@ -38,7 +38,7 @@ export class DuplicateTradesTable extends React.PureComponent<IDuplicateTradesTa
                     <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
                     <span>{trade.probability}</span>,
                     <Toggle
-                        onChange={this.props.duplicateChange(trade.id)}
+                        onChange={this.props.duplicateChange(trade.ID)}
                         defaultValue={trade.duplicate}
                     />,
                 ])}

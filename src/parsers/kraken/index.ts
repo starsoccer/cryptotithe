@@ -1,6 +1,6 @@
 import { getCSVData } from '../';
-import { EXCHANGES, ITrade } from '../../types';
-import { createDateAsUTC } from '../utils';
+import { EXCHANGES, ITrade, IPartialTrade } from '../../types';
+import { createDateAsUTC, createTradeID } from '../utils';
 
 enum KrakenType {
     BUY = 'buy',
@@ -76,32 +76,29 @@ export async function processData(filePath: string): Promise<ITrade[]> {
     const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pairs: string[] = getRealTradedPairs(trade.pair);
+        const partialTrade: IPartialTrade = {
+            exchange: EXCHANGES.KRAKEN,
+            exchangeID: trade.txid,
+            date: createDateAsUTC(new Date(trade.time)).getTime(),
+        };
         switch (trade.type) {
             case KrakenType.BUY:
-                internalFormat.push({
-                    boughtCurrency: pairs[0].toUpperCase(),
-                    soldCurrency: pairs[1].toUpperCase(),
-                    amountSold: parseFloat(trade.cost),
-                    rate: (parseFloat(trade.cost) + parseFloat(trade.fee)) / (parseFloat(trade.vol)),
-                    date: createDateAsUTC(new Date(trade.time)).getTime(),
-                    id: trade.txid,
-                    exchange: EXCHANGES.KRAKEN,
-                });
+                partialTrade.boughtCurrency = pairs[0].toUpperCase();
+                partialTrade.soldCurrency = pairs[1].toUpperCase();
+                partialTrade.amountSold = parseFloat(trade.cost);
+                partialTrade.rate = (parseFloat(trade.cost) + parseFloat(trade.fee)) / (parseFloat(trade.vol));
                 break;
             case KrakenType.SELL:
-                internalFormat.push({
-                    boughtCurrency: pairs[1].toUpperCase(),
-                    soldCurrency: pairs[0].toUpperCase(),
-                    amountSold: parseFloat(trade.vol),
-                    rate: parseFloat(trade.vol) / (parseFloat(trade.cost) - parseFloat(trade.fee)),
-                    date: createDateAsUTC(new Date(trade.time)).getTime(),
-                    id: trade.txid,
-                    exchange: EXCHANGES.KRAKEN,
-                });
+                partialTrade.boughtCurrency = pairs[1].toUpperCase();
+                partialTrade.soldCurrency = pairs[0].toUpperCase();
+                partialTrade.amountSold = parseFloat(trade.vol);
+                partialTrade.rate = parseFloat(trade.vol) / (parseFloat(trade.cost) - parseFloat(trade.fee));
                 break;
             default:
                 throw new Error('Unknown Order Type - ' + trade['Order Number']);
         }
+        partialTrade.ID = createTradeID(partialTrade);
+        internalFormat.push(partialTrade as ITrade);
     }
     return internalFormat;
 }
