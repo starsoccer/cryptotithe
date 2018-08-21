@@ -70,7 +70,7 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                             :
                                 <h3 className='tc'>No Trades <i className='fa fa-frown-o'></i></h3>
                         :
-                            <TradeTimeline trades={this.props.savedData.trades.reverse()}/>
+                            <TradeTimeline trades={this.props.savedData.trades.slice(0).reverse()}/>
                     }
                 </div>
             </div>

@@ -33,7 +33,7 @@ export class GainsPerTradeTable extends React.PureComponent<IGainsPerTradeTableP
                     <div>
                         {trade.rate.toFixed(8)}<i className='fa fa-arrow-circle-right'/>
                         <br />
-                        <i className='fa fa-arrow-circle-left'/>{trade.amountSold / trade.rate / trade.amountSold}
+                        <i className='fa fa-arrow-circle-left'/>{(trade.amountSold / trade.rate / trade.amountSold).toFixed(8)}
                     </div>,
                     <span>{trade.boughtCurrency}</span>,
                     <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,

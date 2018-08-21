@@ -18,7 +18,7 @@ export async function getBTCFiatRate(trade: ITrade, fiatCurrency: string, method
         case FiatRateMethod.DOUBLEAVERAGE:
             const dayAvg = await getDayAvg(fiatCurrency, 'BTC', trade.date);
             const hourBTCData = await getClosestHourPrice('BTC', fiatCurrency, trade.date);
-            return calculateAverageFromArray([dayAvg, calculateAvgerageHourPrice(hourBTCData)]);
+            return BTCBasedRate(trade, calculateAverageFromArray([dayAvg, calculateAvgerageHourPrice(hourBTCData)]));
         case FiatRateMethod.DAYAVERAGE:
             const vwapRate = await getDayAvg(fiatCurrency, 'BTC', trade.date);
             return BTCBasedRate(trade, vwapRate);

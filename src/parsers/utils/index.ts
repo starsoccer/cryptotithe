@@ -14,5 +14,5 @@ export function createDateAsUTC(date: Date) {
 }
 
 export function createTradeID(trade: IPartialTrade) {
-    return crypto.createHash('sha256').update(JSON.stringify(trade) + new Date().getTime()).digest('hex');
+    return crypto.createHash('sha256').update(JSON.stringify(trade) + new Date().getTime() + Math.random()).digest('hex');
 }
