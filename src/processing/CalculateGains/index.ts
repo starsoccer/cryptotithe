@@ -1,13 +1,12 @@
 import * as clone from 'clone';
 import {
-    ICurrencyHolding,
     IHoldings,
-    ITrade,
     ITradeWithCostBasis,
     ITradeWithFiatRate,
     ITradeWithGains,
     METHOD,
 } from '../../types';
+import holdingSelection from '../HoldingSelection';
 
 const FULL_YEAR_IN_MILLISECONDS = 31536000000;
 
@@ -27,7 +26,7 @@ export function calculateGains(
     let longTermGain = 0;
     let newHoldings: IHoldings = clone(holdings);
     for (const trade of trades) {
-        const result: IGetCurrencyHolding = getCurrenyHolding(
+        const result = holdingSelection(
             newHoldings, trade, fiatCurrency, method,
         );
         newHoldings = result.newHoldings;
@@ -61,198 +60,6 @@ export function calculateGains(
         newHoldings,
         longTermGain,
         shortTermGain,
-    };
-}
-
-export interface IGetCurrencyHolding {
-    deductedHoldings: ICurrencyHolding[];
-    newHoldings: IHoldings;
-}
-
-export function getCurrenyHolding(
-    holdings: IHoldings,
-    trade: ITrade,
-    fiatCurrency: string,
-    method?: METHOD,
-): IGetCurrencyHolding {
-    holdings = clone(holdings);
-    const currencyHolding: ICurrencyHolding[] = [];
-    let amountUsed: number = trade.amountSold;
-    while (amountUsed !== 0) {
-        if (trade.soldCurrency in holdings) {
-            switch (method) {
-                case METHOD.LIFO:
-                    const lastIn: ICurrencyHolding =
-                    holdings[trade.soldCurrency][holdings[trade.soldCurrency].length - 1];
-                    if (lastIn.amount > amountUsed) {
-                        lastIn.amount = lastIn.amount - amountUsed;
-                        currencyHolding.push({
-                            amount: amountUsed,
-                            rateInFiat: lastIn.rateInFiat,
-                            date: lastIn.date,
-                        });
-                        amountUsed = 0;
-                    } else {
-                        amountUsed = amountUsed - lastIn.amount;
-                        const popped = holdings[trade.soldCurrency].pop();
-                        if (popped !== undefined) {
-                            currencyHolding.push(popped);
-                        }
-                    }
-                    break;
-                case METHOD.LTFO:
-                    let lowestTaxCostPosition = 0;
-                    if (trade.date - holdings[trade.soldCurrency][0].date < FULL_YEAR_IN_MILLISECONDS) {
-                        let fallBackPosition = 0;
-                        for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
-                            const holding = holdings[trade.soldCurrency][index];
-                            if (holding.rateInFiat > holdings[trade.soldCurrency][fallBackPosition].rateInFiat) {
-                                fallBackPosition = index;
-                            }
-                            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
-                                lowestTaxCostPosition = index;
-                                break;
-                            }
-                        }
-                        if (lowestTaxCostPosition === 0) {
-                            lowestTaxCostPosition = fallBackPosition;
-                        }
-                    }
-                    const lowestTaxCostHolding = holdings[trade.soldCurrency][lowestTaxCostPosition];
-                    if (lowestTaxCostHolding.amount > amountUsed) {
-                        lowestTaxCostHolding.amount = lowestTaxCostHolding.amount - amountUsed;
-                        currencyHolding.push({
-                            amount: amountUsed,
-                            rateInFiat: lowestTaxCostHolding.rateInFiat,
-                            date: lowestTaxCostHolding.date,
-                        });
-                        amountUsed = 0;
-                    } else {
-                        amountUsed = amountUsed - lowestTaxCostHolding.amount;
-                        currencyHolding.push(lowestTaxCostHolding);
-                        holdings[trade.soldCurrency].splice(lowestTaxCostPosition, 1);
-                    }
-                    break;
-                case METHOD.HTFO:
-                let highestTaxCostPosition = 0;
-                if (trade.date - holdings[trade.soldCurrency][0].date > FULL_YEAR_IN_MILLISECONDS) {
-                    let fallBackPosition = 0;
-                    for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
-                        const holding = holdings[trade.soldCurrency][index];
-                        if (holding.rateInFiat < holdings[trade.soldCurrency][fallBackPosition].rateInFiat) {
-                            fallBackPosition = index;
-                        }
-                        if (trade.date - holding.date < FULL_YEAR_IN_MILLISECONDS) {
-                            highestTaxCostPosition = index;
-                            break;
-                        }
-                    }
-                    if (highestTaxCostPosition === 0) {
-                        highestTaxCostPosition = fallBackPosition;
-                    }
-                }
-                const highestTaxCostHolding = holdings[trade.soldCurrency][highestTaxCostPosition];
-                if (highestTaxCostHolding.amount > amountUsed) {
-                    highestTaxCostHolding.amount = highestTaxCostHolding.amount - amountUsed;
-                    currencyHolding.push({
-                        amount: amountUsed,
-                        rateInFiat: highestTaxCostHolding.rateInFiat,
-                        date: highestTaxCostHolding.date,
-                    });
-                    amountUsed = 0;
-                } else {
-                    amountUsed = amountUsed - highestTaxCostHolding.amount;
-                    currencyHolding.push(highestTaxCostHolding);
-                    holdings[trade.soldCurrency].splice(highestTaxCostPosition, 1);
-                }
-                break;
-                case METHOD.HCFO:
-                    let highestCostPosition = 0;
-                    for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
-                        const holding = holdings[trade.soldCurrency][index];
-                        if (holding.rateInFiat > holdings[trade.soldCurrency][highestCostPosition].rateInFiat) {
-                            highestCostPosition = index;
-                        }
-                    }
-                    const highestCostHolding = holdings[trade.soldCurrency][highestCostPosition];
-                    if (highestCostHolding.amount > amountUsed) {
-                        highestCostHolding.amount = highestCostHolding.amount - amountUsed;
-                        currencyHolding.push({
-                            amount: amountUsed,
-                            rateInFiat: highestCostHolding.rateInFiat,
-                            date: highestCostHolding.date,
-                        });
-                        amountUsed = 0;
-                    } else {
-                        amountUsed = amountUsed - highestCostHolding.amount;
-                        currencyHolding.push(highestCostHolding);
-                        holdings[trade.soldCurrency].splice(highestCostPosition, 1);
-                    }
-                    break;
-                case METHOD.LCFO:
-                    let lowestCostPosition = 0;
-                    for (let index = 1; index < holdings[trade.soldCurrency].length; index++) {
-                        const holding = holdings[trade.soldCurrency][index];
-                        if (holding.rateInFiat < holdings[trade.soldCurrency][lowestCostPosition].rateInFiat) {
-                            lowestCostPosition = index;
-                        }
-                    }
-                    const lowestCostHolding = holdings[trade.soldCurrency][lowestCostPosition];
-                    if (lowestCostHolding.amount > amountUsed) {
-                        lowestCostHolding.amount = lowestCostHolding.amount - amountUsed;
-                        currencyHolding.push({
-                            amount: amountUsed,
-                            rateInFiat: lowestCostHolding.rateInFiat,
-                            date: lowestCostHolding.date,
-                        });
-                        amountUsed = 0;
-                    } else {
-                        amountUsed = amountUsed - lowestCostHolding.amount;
-                        currencyHolding.push(lowestCostHolding);
-                        holdings[trade.soldCurrency].splice(lowestCostPosition, 1);
-                    }
-                    break;
-                case METHOD.FIFO:
-                default:
-                    const firstIn: ICurrencyHolding = holdings[trade.soldCurrency][0];
-                    if (firstIn.amount > amountUsed) {
-                        firstIn.amount = firstIn.amount - amountUsed;
-                        currencyHolding.push({
-                            amount: amountUsed,
-                            rateInFiat: firstIn.rateInFiat,
-                            date: firstIn.date,
-                        });
-                        amountUsed = 0;
-                    } else {
-                        amountUsed = amountUsed - firstIn.amount;
-                        currencyHolding.push(holdings[trade.soldCurrency][0]);
-                        holdings[trade.soldCurrency].splice(0, 1);
-                    }
-                    break;
-            }
-            if (!holdings[trade.soldCurrency].length) {
-                delete holdings[trade.soldCurrency];
-            }
-        } else {
-            if (trade.soldCurrency === fiatCurrency) {
-                currencyHolding.push({
-                    amount: amountUsed,
-                    date: trade.date,
-                    rateInFiat: 1,
-                });
-            } else {
-                currencyHolding.push({
-                    amount: amountUsed,
-                    date: trade.date,
-                    rateInFiat: 0,
-                });
-            }
-            amountUsed = 0;
-        }
-    }
-    return {
-        deductedHoldings: currencyHolding,
-        newHoldings: holdings,
     };
 }
 
@@ -318,7 +125,7 @@ export function calculateGainsPerHoldings(
     const shortTermTrades: ITradeWithCostBasis[] = [];
     const longTermTrades: ITradeWithCostBasis[] = [];
     for (const trade of trades) {
-        const result: IGetCurrencyHolding = getCurrenyHolding(newHoldings, trade, fiatCurrency, method);
+        const result = holdingSelection(newHoldings, trade, fiatCurrency, method);
         newHoldings = result.newHoldings;
         if (!(trade.boughtCurrency in newHoldings)) {
             newHoldings[trade.boughtCurrency] = [];
