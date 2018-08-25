@@ -29,7 +29,9 @@ export default function holdingSelection(
             if (result.amountRemaining === 0) {
                 selectedCurrencyHolding.holding.amount = selectedCurrencyHolding.holding.amount - amountUsed;
             } else {
-                holdings[trade.soldCurrency].splice(selectedCurrencyHolding.startingIndex, selectedCurrencyHolding.endingIndex);
+                holdings[trade.soldCurrency].splice(
+                    selectedCurrencyHolding.startingIndex, selectedCurrencyHolding.endingIndex,
+                );
             }
             amountUsed = result.amountRemaining;
 
@@ -88,4 +90,3 @@ function checkCurrencyHoldingAmount(
         };
     }
 }
-

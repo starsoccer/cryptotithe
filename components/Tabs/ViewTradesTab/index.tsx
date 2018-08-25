@@ -4,8 +4,8 @@ import sortTrades from '../../../src/processing/SortTrades';
 import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
 import Button from '../../Button';
 import { Loader } from '../../Loader';
-import TradeTimeline from '../../TradeTimeline';
 import { TradesTable } from '../../TradesTable';
+import TradeTimeline from '../../TradeTimeline';
 
 export interface IViewTradesTabProp {
     savedData: ISavedData;

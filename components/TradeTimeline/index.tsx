@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ITrade } from '../../src/types';
 import * as InfiniteScroll from 'react-infinite-scroller';
+import { ITrade } from '../../src/types';
 import { Loader } from '../Loader';
 
 export interface ITradeTimelineProp {
@@ -18,10 +18,10 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
         super(props);
         this.state = {
             page: 0,
-        }
+        };
     }
 
-    moreTrades = (page: number) => {
+    public moreTrades = (page: number) => {
         this.setState({
             page,
         });

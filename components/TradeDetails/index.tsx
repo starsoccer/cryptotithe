@@ -116,7 +116,9 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 exchange: this.state.exchange as EXCHANGES,
             };
             if (this.state.id === '') {
-                trade.ID = crypto.createHash('sha256').update(JSON.stringify(trade) + new Date().getTime()).digest('hex');
+                trade.ID = crypto.createHash('sha256').update(
+                    JSON.stringify(trade) + new Date().getTime(),
+                ).digest('hex');
             } else {
                 trade.ID = this.state.id;
             }

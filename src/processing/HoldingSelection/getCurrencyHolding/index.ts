@@ -12,7 +12,8 @@ export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, 
     switch (method) {
         case METHOD.LTFO:
             let lowestTaxHoldingIndex = 0;
-            const lowestTaxHolding = holdings[trade.soldCurrency].reduce((lowestTax, currentCurrencyHolding, currentIndex) => {
+            const lowestTaxHolding = holdings[trade.soldCurrency].reduce(
+                (lowestTax, currentCurrencyHolding, currentIndex) => {
                 if (trade.date - currentCurrencyHolding.date >= FULL_YEAR_IN_MILLISECONDS) {
                     // long term gain
                     if (trade.date - lowestTax.date >= FULL_YEAR_IN_MILLISECONDS) {
@@ -44,7 +45,8 @@ export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, 
             };
         case METHOD.HTFO:
             let highestTaxHoldingIndex = 0;
-            const highestTaxHolding = holdings[trade.soldCurrency].reduce((highestTax, currentCurrencyHolding, currentIndex) => {
+            const highestTaxHolding = holdings[trade.soldCurrency].reduce(
+                (highestTax, currentCurrencyHolding, currentIndex) => {
                 if (trade.date - currentCurrencyHolding.date >= FULL_YEAR_IN_MILLISECONDS) {
                     // long term gain
                     if (trade.date - highestTax.date >= FULL_YEAR_IN_MILLISECONDS) {
@@ -74,7 +76,8 @@ export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, 
             };
         case METHOD.LCFO:
             let lowestCostHoldingIndex = 0;
-            const lowestCostHolding = holdings[trade.soldCurrency].reduce((lowestCost, currentCurrencyHolding, currentIndex) => {
+            const lowestCostHolding = holdings[trade.soldCurrency].reduce(
+                (lowestCost, currentCurrencyHolding, currentIndex) => {
                 if (lowestCost.rateInFiat < currentCurrencyHolding.rateInFiat) {
                     return lowestCost;
                 } else {
@@ -89,7 +92,8 @@ export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, 
             };
         case METHOD.HCFO:
             let highestCostHoldingIndex = 0;
-            const highestCostHolding = holdings[trade.soldCurrency].reduce((highestCost, currentCurrencyHolding, currentIndex) => {
+            const highestCostHolding = holdings[trade.soldCurrency].reduce(
+                (highestCost, currentCurrencyHolding, currentIndex) => {
                 if (highestCost.rateInFiat > currentCurrencyHolding.rateInFiat) {
                     return highestCost;
                 } else {
