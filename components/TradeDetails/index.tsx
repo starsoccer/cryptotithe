@@ -55,14 +55,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
     }
 
     public onChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        let rate = this.state.rate;
-        if (key === 'amountBought' && this.state.amountSold !== '' && this.state.amountSold !== '0') {
-            rate = (parseFloat(this.state.amountSold) / parseFloat(e.currentTarget.value)).toString();
-        }
-        if (key === 'amountSold'  && this.state.amountBought !== '' && this.state.amountBought !== '0') {
-            rate = (parseFloat(e.currentTarget.value) / parseFloat(this.state.amountBought)).toString();
-        }
-        this.setState({ [key]: e.currentTarget.value, rate });
+        this.setState({ [key]: e.currentTarget.value });
     }
 
     public onSubmit = () => {
@@ -131,10 +124,22 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
         }
     }
 
+    public calculateRate = (boughtTimesSold: boolean) => {
+        if (this.state.amountBought && this.state.amountSold && this.state.amountBought !== '0' && this.state.amountSold !== '0') {
+            if (boughtTimesSold) {
+                return (parseFloat(this.state.amountSold) / parseFloat(this.state.amountBought)).toString();
+            } else {
+                return (parseFloat(this.state.amountBought) / parseFloat(this.state.amountSold)).toString();
+            }
+        } else {
+            return 0;
+        }
+    }
+
     public render() {
         return (
             <div className={`TradeDetails w-70 center tc ${this.props.className}`}>
-                <div className='fl w-100 pa1'>
+                <div className='w-100 pa1'>
                     <h4 className='pb0 mb0 pt0 mt0 tc'>Exchange</h4>
                     <input
                         className='w-100 tc'
@@ -142,7 +147,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                         onChange={this.onChange('exchange')}
                     />
                 </div>
-                <div className='fl w-100 pa1'>
+                <div className='w-100 pa1'>
                     <h4 className='pb0 mb0 pt0 mt0 tc'>ID</h4>
                     <input
                         className='w-100 tc'
@@ -150,7 +155,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                         disabled
                     />
                 </div>
-                <div className='fl w-100 pa1'>
+                <div className='w-100 pa1'>
                     <h4 className='pb0 mb0 pt0 mt0 tc'>Exchange ID</h4>
                     <input
                         className='w-100 tc'
@@ -158,7 +163,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                         onChange={this.onChange('exchangeID')}
                     />
                 </div>
-                <div className='fl w-100 pa1'>
+                <div className='w-100 pa1'>
                     <h4 className='pb0 mb0 pt0 mt0 tc'>Date</h4>
                     <input
                         className='w-100 tc'
@@ -166,45 +171,54 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                         onChange={this.onChange('date')}
                     />
                 </div>
-                <div className='fl w-50 pa1'>
-                    <h4 className='pb0 mb0 pt0 mt0 tc'>Bought Currency</h4>
-                    <input
-                        className='w-100 tc'
-                        value={this.state.boughtCurrency}
-                        onChange={this.onChange('boughtCurrency')}
-                    />
+                <div className='flex w-100 pa1'>
+                    <div className="w-50 pa1">
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Bought Currency</h4>
+                        <input
+                            className='w-100 tc'
+                            value={this.state.boughtCurrency}
+                            onChange={this.onChange('boughtCurrency')}
+                        />
+                    </div>
+                    <div className="w-50 pa1">
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Sold Currency</h4>
+                        <input
+                            className='w-100 tc'
+                            value={this.state.soldCurrency}
+                            onChange={this.onChange('soldCurrency')}
+                        />
+                    </div>
                 </div>
-                <div className='fl w-50 pa1'>
-                    <h4 className='pb0 mb0 pt0 mt0 tc'>Sold Currency</h4>
-                    <input
-                        className='w-100 tc'
-                        value={this.state.soldCurrency}
-                        onChange={this.onChange('soldCurrency')}
-                    />
-                </div>
-                <div className='fl w-third  pa1'>
-                    <h4 className='pb0 mb0 pt0 mt0 tc'>Bought Amount</h4>
-                    <input
-                        className='w-100 tc'
-                        value={this.state.amountBought}
-                        onChange={this.onChange('amountBought')}
-                    />
-                </div>
-                <div className='fl w-third  pa1'>
-                    <h4 className='pb0 mb0 pt0 mt0 tc'>Rate</h4>
-                    <input
-                        className='w-100 tc'
-                        value={this.state.rate}
-                        readOnly={true}
-                    />
-                </div>
-                <div className='fl w-third  pa1'>
-                    <h4 className='pb0 mb0 pt0 mt0 tc'>Sold Amount</h4>
-                    <input
-                        className='w-100 tc'
-                        value={this.state.amountSold}
-                        onChange={this.onChange('amountSold')}
-                    />
+                <div className='flex w-100 pa1'>
+                    <div className="w-third pa1 pt3 mt1">
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Bought Amount</h4>
+                        <input
+                            className='w-100 tc'
+                            value={this.state.amountBought}
+                            onChange={this.onChange('amountBought')}
+                        />
+                    </div>
+                    <div className='w-third pa1'>
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Rate</h4>
+                        <input
+                            className='w-100 tc mv1'
+                            value={this.calculateRate(true)}
+                            readOnly={true}
+                        />
+                        <input
+                            className='w-100 tc mv1'
+                            value={this.calculateRate(false)}
+                            readOnly={true}
+                        />
+                    </div>
+                    <div className='w-third pa1 pt3 mt1'>
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Sold Amount</h4>
+                        <input
+                            className='w-100 tc'
+                            value={this.state.amountSold}
+                            onChange={this.onChange('amountSold')}
+                        />
+                    </div>
                 </div>
                 <div className='fl w-100'>
                     <Button className='center' label='Add Trade' onClick={this.onSubmit}/>
