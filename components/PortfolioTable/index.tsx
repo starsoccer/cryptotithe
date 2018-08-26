@@ -74,9 +74,10 @@ export class PortfolioTable extends React.PureComponent<IPortfolioTableProps> {
                             <span className='pl2'>{this.props.fiatCurrency}</span>
                         </p>
                     </div>,
-                    <div>
-                        {(this.props.holdingsValue.currencies[currency].fiatValue - this.props.holdingsValue.currencies[currency].fiatCost).toFixed(2)}
-                    </div>,
+                    <div>{
+                        (this.props.holdingsValue.currencies[currency].fiatValue -
+                        this.props.holdingsValue.currencies[currency].fiatCost).toFixed(2)
+                    }</div>,
                 ])}
             />
         );

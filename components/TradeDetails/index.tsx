@@ -125,7 +125,10 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
     }
 
     public calculateRate = (boughtTimesSold: boolean) => {
-        if (this.state.amountBought && this.state.amountSold && this.state.amountBought !== '0' && this.state.amountSold !== '0') {
+        if (
+            this.state.amountBought && this.state.amountSold &&
+            this.state.amountBought !== '0' && this.state.amountSold !== '0'
+        ) {
             if (boughtTimesSold) {
                 return (parseFloat(this.state.amountSold) / parseFloat(this.state.amountBought)).toString();
             } else {
@@ -172,7 +175,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                     />
                 </div>
                 <div className='flex w-100 pa1'>
-                    <div className="w-50 pa1">
+                    <div className='w-50 pa1'>
                         <h4 className='pb0 mb0 pt0 mt0 tc'>Bought Currency</h4>
                         <input
                             className='w-100 tc'
@@ -180,7 +183,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                             onChange={this.onChange('boughtCurrency')}
                         />
                     </div>
-                    <div className="w-50 pa1">
+                    <div className='w-50 pa1'>
                         <h4 className='pb0 mb0 pt0 mt0 tc'>Sold Currency</h4>
                         <input
                             className='w-100 tc'
@@ -190,7 +193,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                     </div>
                 </div>
                 <div className='flex w-100 pa1'>
-                    <div className="w-third pa1 pt3 mt1">
+                    <div className='w-third pa1 pt3 mt1'>
                         <h4 className='pb0 mb0 pt0 mt0 tc'>Bought Amount</h4>
                         <input
                             className='w-100 tc'

@@ -1,14 +1,22 @@
 import * as React from 'react';
 import generateForm8949 from '../../../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../../../src/processing/CalculateGains';
-import { ISavedData, ITrade, ITradeWithFiatRate, ITradeWithGains, METHOD, IHoldings, FiatRateMethod } from '../../../src/types';
+import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
+import {
+    FiatRateMethod,
+    IHoldings,
+    ISavedData,
+    ITrade,
+    ITradeWithFiatRate,
+    ITradeWithGains,
+    METHOD,
+} from '../../../src/types';
 import Button from '../../Button';
 import { FileDownload, IFileDownloadProps } from '../../FileDownload';
 import { GainsPerTradeTable } from '../../GainsPerTradeTable';
-import { Customize, IYearCalculationMethod } from './Customize.component';
 import Popup from '../../Popup';
 import TradeDetails from '../../TradeDetails';
-import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
+import { Customize, IYearCalculationMethod } from './Customize.component';
 export interface ICalculateTradesTabProp {
     savedData: ISavedData;
 }
@@ -183,7 +191,7 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
                         <div>
                             <TradeDetails onSubmit={this.calculateWhatIfTrade}/>
                             { this.state.whatIfTrade &&
-                                <div className="tc">
+                                <div className='tc'>
                                     <h3>Short Term: {this.state.whatIfTrade.shortTerm}</h3>
                                     <h3>Long Term: {this.state.whatIfTrade.longTerm}</h3>
                                 </div>
