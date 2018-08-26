@@ -43,9 +43,12 @@ export async function calculateInDepthHoldingsValueCurrently(
     for (const currency of currencies) {
         if (currency !== fiatCurrency) {
             let totalHeld = 0;
+            let totalCost = 0;
             for (const holding of holdings[currency]) {
                 totalHeld += holding.amount;
+                totalCost += holding.rateInFiat * holding.amount;
             }
+
             holdingsValues.currencies[currency] = {
                 fiatValue: 0,
                 BTCValue: 0,
@@ -54,6 +57,7 @@ export async function calculateInDepthHoldingsValueCurrently(
                 BTCChange: 0,
                 fiatChange: 0,
                 amount: totalHeld,
+                fiatCost: totalCost,
             };
             if (currency in result) {
                 const BTCValue = result[currency].BTC.PRICE * totalHeld;
@@ -68,6 +72,7 @@ export async function calculateInDepthHoldingsValueCurrently(
                     BTCChange: result[currency].BTC.CHANGEPCT24HOUR,
                     fiatChange: result[currency][fiatCurrency].CHANGEPCT24HOUR,
                     amount: totalHeld,
+                    fiatCost: totalCost,
                 };
             }
         }

@@ -33,4 +33,5 @@ export interface IComplexHoldingsWithValue {
     BTCChange: number;
     fiatChange: number;
     amount: number;
+    fiatCost: number;
 }

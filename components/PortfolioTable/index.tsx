@@ -27,12 +27,17 @@ export class PortfolioTable extends React.PureComponent<IPortfolioTableProps> {
                 headers={[
                     'Currency',
                     'Amount',
+                    'Cost',
                     'Rate',
                     'Value',
+                    'Fiat Gain',
                 ]}
                 rows={Object.keys(this.props.holdingsValue.currencies).map((currency) => [
                     <span>{currency}</span>,
-                    <span>{this.props.holdingsValue.currencies[currency].amount}</span>,
+                    <span>{this.props.holdingsValue.currencies[currency].amount.toFixed(8)}</span>,
+                    <div>
+                        {this.props.holdingsValue.currencies[currency].fiatCost.toFixed(2)}
+                    </div>,
                     <div>
                         <p className={
                             makeColorFul(this.props.holdingsValue.currencies[currency].BTCChange)
@@ -68,6 +73,9 @@ export class PortfolioTable extends React.PureComponent<IPortfolioTableProps> {
                             {this.props.holdingsValue.currencies[currency].fiatValue.toFixed(2)}
                             <span className='pl2'>{this.props.fiatCurrency}</span>
                         </p>
+                    </div>,
+                    <div>
+                        {(this.props.holdingsValue.currencies[currency].fiatValue - this.props.holdingsValue.currencies[currency].fiatCost).toFixed(2)}
                     </div>,
                 ])}
             />
