@@ -12,7 +12,7 @@ import { FileBrowse } from './FileBrowse';
 import { FileDownload, IFileDownloadProps } from './FileDownload';
 import Popup from './Popup';
 import { AddTradesTab } from './Tabs/AddTradesTab';
-import { AdvancedTab } from './Tabs/AdvancedTab';
+import { UtilityTab } from './Tabs/UtilityTab';
 import { CalculateGainsTab } from './Tabs/CalculateGainsTab';
 import { PortfolioTab } from './Tabs/PortfolioTab';
 import { Settings } from './Tabs/Settings';
@@ -28,7 +28,7 @@ enum TABS {
     VIEW_TRADES = 'View Trades',
     ADD_TRADES = 'Add Trades',
     CALCULATE_GAINS = 'Calculate Gains',
-    ADVANCED = 'Advanced',
+    UTILITY = 'Utility',
 }
 
 interface IAppState {
@@ -116,8 +116,8 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                 return <ViewTradesTab savedData={this.state.savedData} save={this.saveData}/>;
             case TABS.CALCULATE_GAINS:
                 return <CalculateGainsTab savedData={this.state.savedData}/>;
-            case TABS.ADVANCED:
-                return <AdvancedTab savedData={this.state.savedData}/>;
+            case TABS.UTILITY:
+                return <UtilityTab savedData={this.state.savedData}/>;
             case TABS.HOME:
             default:
                 return <PortfolioTab savedData={this.state.savedData}/>;
