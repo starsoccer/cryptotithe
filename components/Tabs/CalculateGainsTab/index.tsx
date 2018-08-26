@@ -1,17 +1,21 @@
 import * as React from 'react';
 import generateForm8949 from '../../../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../../../src/processing/CalculateGains';
-import { ISavedData, ITrade, ITradeWithFiatRate, ITradeWithGains, METHOD } from '../../../src/types';
+import { ISavedData, ITrade, ITradeWithFiatRate, ITradeWithGains, METHOD, IHoldings, FiatRateMethod } from '../../../src/types';
 import Button from '../../Button';
 import { FileDownload, IFileDownloadProps } from '../../FileDownload';
 import { GainsPerTradeTable } from '../../GainsPerTradeTable';
 import { Customize, IYearCalculationMethod } from './Customize.component';
+import Popup from '../../Popup';
+import TradeDetails from '../../TradeDetails';
+import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
 export interface ICalculateTradesTabProp {
     savedData: ISavedData;
 }
 
 export interface ICalculateTradesTabState {
     filteredTradesWithGains?: ITradeWithGains[];
+    holdings: IHoldings;
     longTermGains?: number;
     shortTermGains?: number;
     years: string[];
@@ -19,6 +23,8 @@ export interface ICalculateTradesTabState {
     downloadProps: IFileDownloadProps;
     currentYear: number;
     showCustomizeModal: boolean;
+    whatIfTrade?: ITradeWithGains;
+    whatIfTradeVisible: boolean;
 }
 
 function getTradeYears(trades: ITrade[]) {
@@ -74,7 +80,9 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
             },
             currentYear: 0,
             showCustomizeModal: false,
+            whatIfTradeVisible: false,
             yearCalculationMethod: {},
+            holdings: props.savedData.holdings,
         };
     }
 
@@ -94,6 +102,7 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
             filteredTradesWithGains: data.trades,
             longTermGains: data.longTerm,
             shortTermGains: data.shortTerm,
+            holdings: data.holdings,
             showCustomizeModal: false,
             yearCalculationMethod,
         });
@@ -141,12 +150,47 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
         this.setState({showCustomizeModal: !this.state.showCustomizeModal});
     }
 
+    public whatIfTrade = () => {
+        this.setState({whatIfTradeVisible: !this.state.whatIfTradeVisible});
+    }
+
+    public calculateWhatIfTrade = async (trade: ITrade) => {
+        const tradeWithFiatRate = await addFiatRateToTrades(
+            [trade],
+            this.props.savedData.settings.fiatCurrency,
+            FiatRateMethod[this.props.savedData.settings.fiatRateMethod],
+        );
+        const data = calculateGainPerTrade(
+            this.state.holdings,
+            tradeWithFiatRate,
+            this.props.savedData.settings.fiatCurrency,
+            this.state.yearCalculationMethod[this.state.years[this.state.years.length - 1]],
+        );
+        this.setState({
+            whatIfTrade: data.trades[0],
+        });
+    }
+
     public render() {
         return (
             <div className='calculategains'>
                 <div className='tc pt2'>
                     <Button label='Customize' onClick={this.customizeModal}/>
+                    <Button label='What If Trade' onClick={this.whatIfTrade}/>
                 </div>
+                { this.state.whatIfTradeVisible &&
+                    <Popup onClose={this.whatIfTrade}>
+                        <div>
+                            <TradeDetails onSubmit={this.calculateWhatIfTrade}/>
+                            { this.state.whatIfTrade &&
+                                <div className="tc">
+                                    <h3>Short Term: {this.state.whatIfTrade.shortTerm}</h3>
+                                    <h3>Long Term: {this.state.whatIfTrade.longTerm}</h3>
+                                </div>
+                            }
+                        </div>
+                    </Popup>
+                }
                 { this.state.filteredTradesWithGains !== undefined && this.state.filteredTradesWithGains.length > 0 &&
                     <div>
                         <div className='flex justify-center'>

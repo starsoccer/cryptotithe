@@ -65,6 +65,7 @@ export function calculateGains(
 
 export interface ICalculateGainsPerTrade {
     trades: ITradeWithGains[];
+    holdings: IHoldings;
     shortTerm: number;
     longTerm: number;
 }
@@ -92,6 +93,7 @@ export function calculateGainPerTrade(
     }
     return {
         trades: finalFormat,
+        holdings: tempHoldings,
         shortTerm,
         longTerm,
     };
