@@ -1,5 +1,7 @@
 import * as crypto from 'crypto';
 import * as React from 'react';
+import * as InfiniteScroll from 'react-infinite-scroller';
+import { Loader } from '../Loader';
 
 export interface ITableProps {
     className?: string;
@@ -21,11 +23,31 @@ export function createHash(htmlElement: JSX.Element) {
     }
 }
 
-export class Table extends React.PureComponent<ITableProps> {
+const itemsPerPage = 100;
+
+export class Table extends React.Component<ITableProps, {page: number}> {
+    public constructor(props: ITableProps) {
+        super(props);
+        this.state = {
+            page: 0,
+        };
+    }
+
+    public moreTrades = (page: number) => {
+        this.setState({
+            page,
+        });
+    }
+
     public render() {
         return (
-            <div className='tradesTable pa4'>
-                <div className='overflow-auto'>
+            <div className='tradesTable pa4 overflow-hidden'>
+                <InfiniteScroll
+                    pageStart={this.state.page}
+                    loadMore={this.moreTrades}
+                    hasMore={this.state.page * itemsPerPage <= this.props.rows.length}
+                    loader={<Loader key={this.state.page}/>}
+                >
                     <table className='f6 w-100 mw8 center'>
                         <thead>
                             <tr className='stripe-dark'>
@@ -35,7 +57,7 @@ export class Table extends React.PureComponent<ITableProps> {
                             </tr>
                         </thead>
                         <tbody className='lh-copy'>{
-                            this.props.rows.map((row, index) => {
+                            this.props.rows.slice(0, this.state.page * itemsPerPage).map((row, index) => {
                                 const rowHashs: string[] = [];
                                 const rowData = row.map((col, colIndex) => {
                                     const cellHash = createHash(col);
@@ -51,7 +73,7 @@ export class Table extends React.PureComponent<ITableProps> {
                             })
                         }</tbody>
                     </table>
-                </div>
+                </InfiniteScroll>
             </div>
         );
     }

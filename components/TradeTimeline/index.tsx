@@ -36,7 +36,6 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                     loadMore={this.moreTrades}
                     hasMore={this.state.page * tradesPerPage <= this.props.trades.length}
                     loader={<Loader key={this.state.page}/>}
-
                 >
                     {this.props.trades.slice(0, this.state.page * tradesPerPage).map((trade, index) =>
                         <div className={`container ${index % 2 === 0 ? 'left' : 'right'}`} key={trade.ID}>
