@@ -19,7 +19,7 @@
         "@types/jest": "^22.2.3",
         "@types/node": "^10.3.0",
         "browserify": "^16.2.2",
-        "electron": "^2.0.2",
+        "electron": "^2.0.8",
         "electron-react-devtools": "^0.5.3",
         "faker": "^4.1.0",
         "jest": "^23.0.0",
