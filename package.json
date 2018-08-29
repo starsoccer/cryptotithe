@@ -9,7 +9,7 @@
         "test": "jest",
         "build": "tsc -p configs/tsconfig.json && browserify ./react.js -o ./bundle.js -u ./data.json --im",
         "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
-        "full-build-test": "npm run tslint && npm run test && npm run prod-build",
+        "full-build-test": "npm run lint && npm run test && npm run build",
         "prod-start": "set NODE_ENV=production&& npm run start"
     },
     "author": "",
@@ -24,6 +24,7 @@
         "faker": "^4.1.0",
         "jest": "^23.5.0",
         "ts-jest": "^22.4.6",
+        "tslint": "^5.11.0",
         "typescript": "^2.9.2"
     },
     "jest": {
