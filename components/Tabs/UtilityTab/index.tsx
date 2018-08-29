@@ -14,7 +14,7 @@ export enum Utilities {
 }
 
 export class UtilityTab extends React.Component<IUtilityTabProp, IUtilityTabState> {
-    
+
     public constructor(props: IUtilityTabProp) {
         super(props);
         this.state = {
@@ -33,14 +33,16 @@ export class UtilityTab extends React.Component<IUtilityTabProp, IUtilityTabStat
     public render() {
         return (
             <div className='UtilityTab'>
-                <div className="tc center">
+                <div className='tc center'>
                     <h3>Utilities</h3>
                     <label>Select Utility</label>
                     <select>
-                        {Object.keys(Utilities).map((item) => <option key={item} value={item}>{Utilities[item]}</option>)}
+                        {Object.keys(Utilities).map(
+                            (item) => <option key={item} value={item}>{Utilities[item]}</option>,
+                        )}
                     </select>
                 </div>
-                <hr className="center w-50"/>
+                <hr className='center w-50'/>
                 {this.showUtility(this.state.utility)}
             </div>
         );

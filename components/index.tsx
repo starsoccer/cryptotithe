@@ -12,10 +12,10 @@ import { FileBrowse } from './FileBrowse';
 import { FileDownload, IFileDownloadProps } from './FileDownload';
 import Popup from './Popup';
 import { AddTradesTab } from './Tabs/AddTradesTab';
-import { UtilityTab } from './Tabs/UtilityTab';
 import { CalculateGainsTab } from './Tabs/CalculateGainsTab';
 import { PortfolioTab } from './Tabs/PortfolioTab';
 import { Settings } from './Tabs/Settings';
+import { UtilityTab } from './Tabs/UtilityTab';
 import { ViewTradesTab } from './Tabs/ViewTradesTab';
 
 export interface IAppProps {

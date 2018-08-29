@@ -2,8 +2,8 @@ import * as React from 'react';
 import { calculateDailyBalance } from '../../../../../src/processing/CalculateDailyBalance';
 import { EXCHANGES, IDailyBalance, ISavedData } from '../../../../../src/types';
 import Button from '../../../../Button';
-import { DailyBalanceTable } from './DailyBalanceTable';
 import { Loader } from '../../../../Loader';
+import { DailyBalanceTable } from './DailyBalanceTable';
 export interface IDailyBalanceProp {
     savedData: ISavedData;
 }

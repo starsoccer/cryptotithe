@@ -1,4 +1,4 @@
-import * as classNames from 'classNames';
+import * as classNames from 'classnames';
 import * as React from 'react';
 
 export enum AlertType {
