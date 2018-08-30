@@ -2,4 +2,4 @@ language: node_js
 node_js:
   - "lts/*"
 script:
-  - npm run full-build-test
+  - npm run full-build-test-ci
