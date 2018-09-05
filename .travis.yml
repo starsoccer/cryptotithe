@@ -3,3 +3,19 @@ node_js:
   - "lts/*"
 script:
   - npm run full-build-test-ci
+cache:
+  directories:
+    - "node_modules"
+before_deploy: npm install now --no-save
+deploy:
+  - provider: script
+    script: now --name cryptotithe --public --team cryptotithe --token $NOW_TOKEN
+    skip_cleanup: true
+    on:
+      all_branches: true
+      master: false
+  - provider: script
+    script: now --name cryptotithe --public --team cryptotithe --token $NOW_TOKEN && now alias --token $NOW_TOKEN cryptotithe
+    skip_cleanup: true
+    on:
+      master: true

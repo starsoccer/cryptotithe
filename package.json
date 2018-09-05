@@ -11,7 +11,8 @@
         "build": "tsc -p configs/tsconfig.json && browserify ./react.js -o ./bundle.js -u ./data.json --im",
         "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
         "full-build-test-ci": "npm run lint && npm run test-coveralls && npm run build",
-        "prod-start": "set NODE_ENV=production&& npm run start"
+        "prod-start": "set NODE_ENV=production&& npm run start",
+        "now-start": "npm install serve && serve"
     },
     "author": "",
     "license": "MIT",
