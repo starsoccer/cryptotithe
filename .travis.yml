@@ -8,16 +8,12 @@ script:
 cache:
   directories:
     - "node_modules"
-before_deploy: npm install now --no-save
+before_deploy:
+  - npm install now --no-save
+  - now remove cryptotithe --safe --yes --team cryptotithe --token $NOW_TOKEN || true
 deploy:
   - provider: script
-    script: now --name cryptotithe --public --team cryptotithe --token $NOW_TOKEN
-    skip_cleanup: true
-    on:
-      all_branches: true
-      master: false
-  - provider: script
-    script: now --name cryptotithe --public --team cryptotithe --token $NOW_TOKEN && now alias --token $NOW_TOKEN cryptotithe
+    script: now --name cryptotithe --public --team cryptotithe --token $NOW_TOKEN && now alias cryptotithe --team cryptotithe --token $NOW_TOKEN
     skip_cleanup: true
     on:
       master: true
