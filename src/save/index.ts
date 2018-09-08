@@ -4,13 +4,12 @@ import { IPartialSavedData, ISavedData, ITradeWithFiatRate } from '../types';
 
 export default function save(data: IPartialSavedData, fallback: ISavedData): ISavedData {
     const packageData = require('../../package.json');
-    const newHoldings = data.holdings || fallback.holdings;
     const newTrades = data.trades || fallback.trades;
     const newSettings = data.settings || fallback.settings;
 
     const sortedTrades = SortTrades(newTrades) as ITradeWithFiatRate[];
     const currentHoldings = calculateGains(
-        newHoldings,
+        {},
         sortedTrades,
         newSettings.fiatCurrency,
         newSettings.gainCalculationMethod,
