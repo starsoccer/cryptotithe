@@ -1,23 +1,14 @@
 import { mockHoldings, mockTradesWithFiatRate } from '../../mock';
-import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD} from '../../types';
-import { calculateGains, getCurrenyHolding, ICalculateGains, IGetCurrencyHolding } from './';
+import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD, ICurrencyHolding} from '../../types';
+import { calculateGains, calculateGainPerTrade, ICalculateGains, calculateGainsPerHoldings } from './';
 
 const fiatCurrency = 'FAKE';
 
 function calculateGainsOneAtATime(holdings: IHoldings, trades: ITradeWithFiatRate[]) {
-    let shortTermGain = 0;
-    let longTermGain = 0;
-    for (const trade of trades) {
-        // Since we know 1 trade at a time returns the right result this checks that doing
-        // each one manually equals the same thing as putting them all in at once.
-        const output = calculateGains(holdings, [trade]);
-        holdings = output.newHoldings;
-        shortTermGain += output.shortTermGain;
-        longTermGain += output.longTermGain;
-    }
+    const result = calculateGainPerTrade(holdings, trades, fiatCurrency, METHOD.FIFO);
     return {
-        shortTerm: shortTermGain,
-        longTerm: longTermGain,
+        shortTerm: result.shortTerm,
+        longTerm: result.longTerm,
     };
 }
 
@@ -26,7 +17,7 @@ describe('calculateGains 1 currency manual', () => {
     test('structured unchanged', () => {
         const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
         const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
-        const result: ICalculateGains = calculateGains(holdings, trades);
+        const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         expect('newHoldings' in result).toBeTruthy();
         expect('shortTermGain' in result).toBeTruthy();
@@ -38,7 +29,7 @@ describe('calculateGains 1 currency manual', () => {
         const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
         const currency: string = Object.keys(holdings)[0];
         const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
-        const result: ICalculateGains = calculateGains(holdings, trades);
+        const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat) * trades[0].amountSold);
     });
@@ -48,7 +39,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat)
@@ -61,7 +52,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         expect(result.shortTermGain).toBe(0);
         expect(result.longTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat) * trades[0].amountSold);
@@ -72,7 +63,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         expect(result.shortTermGain).toBe(trades[0].fiatRate * (trades[0].amountSold - holdings[currency][0].amount));
         expect(result.longTermGain).toBe((trades[0].fiatRate - holdings[currency][0].rateInFiat) *
@@ -84,7 +75,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, false);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         expect(result.longTermGain).toBe(0);
 
@@ -101,7 +92,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         expect(result.longTermGain).toBe(0);
 
@@ -119,7 +110,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         expect(result.shortTermGain).toBe(0);
 
@@ -136,7 +127,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         let estimatedGain = 0;
         for (const trade of trades) {
@@ -152,7 +143,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         let estimatedGain = 0;
         let amountLeft = trades[0].amountSold;
@@ -173,7 +164,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         let estimatedGain = 0;
         let amountLeft = trades[0].amountSold;
@@ -194,7 +185,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         let estimatedGain = 0;
         let amountLeft = trades[0].amountSold;
@@ -215,7 +206,7 @@ describe('calculateGains 1 currency manual', () => {
         const currency = Object.keys(holdings)[0];
         const trades = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, true);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
 
         let estimatedGain = 0;
         let amountLeft = trades[0].amountSold;
@@ -235,7 +226,7 @@ describe('calculateGains 1 currency manual', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
         const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, false);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
 
         expect(result.longTermGain).toBe(0);
@@ -247,7 +238,7 @@ describe('calculateGains 1 currency manual', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2018'));
         const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, true);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
 
         expect(result.longTermGain).toBe(0);
@@ -259,7 +250,7 @@ describe('calculateGains 1 currency manual', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
         const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, false);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
 
         // rounding needed to avoid weird float issues
@@ -271,7 +262,7 @@ describe('calculateGains 1 currency manual', () => {
         const holdings = mockHoldings(1, 5, new Date('1/1/2015'), new Date('1/1/2016'));
         const trades = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, true);
 
-        const result = calculateGains(holdings, trades);
+        const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
         const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
 
         // rounding needed to avoid weird float issues
@@ -307,7 +298,7 @@ describe('calculateGains 1/multiple currencies automated', () => {
                                 tradeCount, new Date('2/2/2018'), holdings, overflowType,
                             );
 
-                            const result = calculateGains(holdings, trades);
+                            const result = calculateGains(holdings, trades, fiatCurrency, METHOD.FIFO);
                             const oneAtATimeGains = calculateGainsOneAtATime(holdings, trades);
 
                             // rounding needed to avoid weird float issues
@@ -355,7 +346,8 @@ describe('calculateGains fiat', () => {
             rate: 200,
             fiatRate: 200,
             date: new Date().getTime(),
-            id: '1',
+            ID: '1',
+            exchangeID: '1',
             exchange: EXCHANGES.GEMINI,
         }];
         const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency);
@@ -375,7 +367,8 @@ describe('calculateGains fiat', () => {
                 rate: 200,
                 fiatRate: 200,
                 date: new Date().getTime(),
-                id: '1',
+                ID: '1',
+                exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
             },
             {
@@ -385,7 +378,8 @@ describe('calculateGains fiat', () => {
                 rate: 0.001,
                 fiatRate: 1000,
                 date: new Date().getTime(),
-                id: '1',
+                ID: '1',
+                exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
             },
         ];
@@ -395,4 +389,49 @@ describe('calculateGains fiat', () => {
         expect(result.shortTermGain).toBe(800);
 
     });
+});
+
+describe('calculateGainsPerHoldings', () => {
+
+    test('structure unchanges', () => {
+        const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
+        const currency: string = Object.keys(holdings)[0];
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
+        const result = calculateGainsPerHoldings(holdings, trades, fiatCurrency, METHOD.FIFO);
+
+        expect('shortTermTrades' in result).toBeTruthy();
+        expect('longTermTrades' in result).toBeTruthy();
+        expect('longTermGain' in result).toBeTruthy();
+        expect('longTermProceeds' in result).toBeTruthy();
+        expect('longTermCostBasis' in result).toBeTruthy();
+        expect('shortTermGain' in result).toBeTruthy();
+        expect('shortTermProceeds' in result).toBeTruthy();
+        expect('shortTermCostBasis' in result).toBeTruthy();
+        expect('holdings' in result).toBeTruthy();
+    });
+
+    test('check long/short term totals', () => {
+        const holdings: IHoldings = mockHoldings(1, 5, new Date('1/1/2016'));
+        const currency: string = Object.keys(holdings)[0];
+        holdings[currency][0].date = new Date('2/1/2018').getTime();
+        holdings[currency][1].date = new Date('2/1/2015').getTime();
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(5, new Date('2/2/2018'), holdings, false);
+        const result = calculateGainsPerHoldings(holdings, trades, fiatCurrency, METHOD.FIFO);
+
+        expect(result.shortTermTrades.length).toBeGreaterThan(0);
+        expect(result.longTermTrades.length).toBeGreaterThan(0);
+        
+        let totalCostBasis = 0;
+        for (const holding of  holdings[currency]) {
+            totalCostBasis += holding.amount * holding.rateInFiat;
+        }
+        expect(result.shortTermCostBasis + result.longTermCostBasis).toBeLessThan(totalCostBasis);
+
+        let totalProceeds = 0;
+        for (const trade of trades) {
+            totalProceeds += trade.amountSold * trade.fiatRate;
+        }
+        expect(result.shortTermProceeds + result.longTermProceeds).toBeCloseTo(totalProceeds)
+    });
+
 });

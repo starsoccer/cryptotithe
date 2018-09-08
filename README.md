@@ -6,7 +6,7 @@ In the desktop(electron) version, The only external requests made are to `crypto
 
 In the web version linked below, besides for requests to `cryptocompare.com`, requests are also made to `unpkg.com` for some css and icons.
 
-[Demo](https://starsoccer.github.io/cryptotithe/)
+[Demo](https://cryptotithe.now.sh/)
 
 ## How to Get Started(desktop)
   1. Clone the repo or download as a zip
