@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ISavedData, IPartialSavedData } from '../../../src/types';
-import DailyBalance from './Utilities/DailyBalance';
+import { IPartialSavedData, ISavedData } from '../../../src/types';
 import CurrencyRename from './Utilities/CurrencyRename';
+import DailyBalance from './Utilities/DailyBalance';
 export interface IUtilityTabProp {
     savedData: ISavedData;
     save(data: IPartialSavedData): Promise<boolean>;
@@ -36,7 +36,7 @@ export class UtilityTab extends React.Component<IUtilityTabProp, IUtilityTabStat
     }
 
     public setUtility = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({utility: Utilities[e.currentTarget.value]})
+        this.setState({utility: Utilities[e.currentTarget.value]});
     }
 
     public render() {
