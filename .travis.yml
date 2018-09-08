@@ -2,6 +2,8 @@ language: node_js
 node_js:
   - "lts/*"
 script:
+  - npm install coveralls -g
+  - npm install browserify -g
   - npm run full-build-test-ci
 cache:
   directories:

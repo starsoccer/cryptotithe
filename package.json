@@ -7,7 +7,7 @@
         "start": "npm run build && electron .",
         "web": "npm run build && start ./index.html",
         "test": "jest",
-        "test-coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
+        "test-coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
         "build": "tsc -p configs/tsconfig.json && browserify ./react.js -o ./bundle.js -u ./data.json --im",
         "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
         "full-build-test-ci": "npm run lint && npm run test-coveralls && npm run build",
