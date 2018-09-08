@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { ISavedData } from '../../../src/types';
+import { ISavedData, IPartialSavedData } from '../../../src/types';
 import DailyBalance from './Utilities/DailyBalance';
+import CurrencyRename from './Utilities/CurrencyRename';
 export interface IUtilityTabProp {
     savedData: ISavedData;
+    save(data: IPartialSavedData): Promise<boolean>;
 }
 
 export interface IUtilityTabState {
@@ -11,6 +13,7 @@ export interface IUtilityTabState {
 
 export enum Utilities {
     DailyBalance = 'Daily Balance',
+    CurrencyRename = 'Currency Rename',
 }
 
 export class UtilityTab extends React.Component<IUtilityTabProp, IUtilityTabState> {
@@ -24,10 +27,16 @@ export class UtilityTab extends React.Component<IUtilityTabProp, IUtilityTabStat
 
     public showUtility = (utility: Utilities) => {
         switch (utility) {
+            case Utilities.CurrencyRename:
+                return <CurrencyRename savedData={this.props.savedData} save={this.props.save}/>;
             case Utilities.DailyBalance:
             default:
                 return <DailyBalance savedData={this.props.savedData}/>;
         }
+    }
+
+    public setUtility = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({utility: Utilities[e.currentTarget.value]})
     }
 
     public render() {
@@ -36,7 +45,7 @@ export class UtilityTab extends React.Component<IUtilityTabProp, IUtilityTabStat
                 <div className='tc center'>
                     <h3>Utilities</h3>
                     <label>Select Utility</label>
-                    <select>
+                    <select onChange={this.setUtility}>
                         {Object.keys(Utilities).map(
                             (item) => <option key={item} value={item}>{Utilities[item]}</option>,
                         )}
