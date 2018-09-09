@@ -17,7 +17,7 @@ export interface IViewTradesTabState {
     processing: boolean;
     tradeTable: boolean;
     options: ITradeFilterOptions;
-    trades: ITrade[];
+    trades: ITradeWithFiatRate[];
 }
 
 export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTradesTabState> {
@@ -118,7 +118,11 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                             :
                                 <h3 className='tc'>No Trades <i className='fa fa-frown-o'></i></h3>
                         :
-                            <TradeTimeline trades={this.state.trades.slice(0).reverse()}/> // make this a clone or something
+                            <TradeTimeline
+                                trades={this.state.trades}
+                                fiatCurrency={this.props.savedData.settings.fiatCurrency}
+                                gainCalculationMethod={this.props.savedData.settings.gainCalculationMethod}
+                            /> // make this a clone or something
                     }
                 </div>
             </div>
