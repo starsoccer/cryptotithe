@@ -48,32 +48,33 @@ export async function calculateInDepthHoldingsValueCurrently(
                 totalHeld += holding.amount;
                 totalCost += holding.rateInFiat * holding.amount;
             }
-
-            holdingsValues.currencies[currency] = {
-                fiatValue: 0,
-                BTCValue: 0,
-                BTCRate: 0,
-                fiatRate: 0,
-                BTCChange: 0,
-                fiatChange: 0,
-                amount: totalHeld,
-                fiatCost: totalCost,
-            };
-            if (currency in result) {
-                const BTCValue = result[currency].BTC.PRICE * totalHeld;
-                const fiatValue = result[currency][fiatCurrency].PRICE * totalHeld;
-                holdingsValues.BTCTotal += BTCValue;
-                holdingsValues.fiatTotal += fiatValue;
+            if (totalHeld) {
                 holdingsValues.currencies[currency] = {
-                    fiatValue,
-                    BTCValue,
-                    BTCRate: result[currency].BTC.PRICE,
-                    fiatRate: result[currency][fiatCurrency].PRICE,
-                    BTCChange: result[currency].BTC.CHANGEPCT24HOUR,
-                    fiatChange: result[currency][fiatCurrency].CHANGEPCT24HOUR,
+                    fiatValue: 0,
+                    BTCValue: 0,
+                    BTCRate: 0,
+                    fiatRate: 0,
+                    BTCChange: 0,
+                    fiatChange: 0,
                     amount: totalHeld,
                     fiatCost: totalCost,
                 };
+                if (currency in result) {
+                    const BTCValue = result[currency].BTC.PRICE * totalHeld;
+                    const fiatValue = result[currency][fiatCurrency].PRICE * totalHeld;
+                    holdingsValues.BTCTotal += BTCValue;
+                    holdingsValues.fiatTotal += fiatValue;
+                    holdingsValues.currencies[currency] = {
+                        fiatValue,
+                        BTCValue,
+                        BTCRate: result[currency].BTC.PRICE,
+                        fiatRate: result[currency][fiatCurrency].PRICE,
+                        BTCChange: result[currency].BTC.CHANGEPCT24HOUR,
+                        fiatChange: result[currency][fiatCurrency].CHANGEPCT24HOUR,
+                        amount: totalHeld,
+                        fiatCost: totalCost,
+                    };
+                }
             }
         }
     }
