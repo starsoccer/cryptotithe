@@ -120,7 +120,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                 return <UtilityTab savedData={this.state.savedData} save={this.saveData}/>;
             case TABS.HOME:
             default:
-                return <PortfolioTab savedData={this.state.savedData}/>;
+                return <PortfolioTab savedData={this.state.savedData} save={this.saveData}/>;
         }
     }
 

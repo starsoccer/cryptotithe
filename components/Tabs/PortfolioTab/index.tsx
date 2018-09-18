@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { calculateInDepthHoldingsValueCurrently } from '../../../src/processing/CalculateHoldingsValue';
-import { IHoldingsValueComplex, ISavedData } from '../../../src/types';
+import { IHoldingsValueComplex, ISavedData, IPartialSavedData } from '../../../src/types';
 import { Chart } from '../../Chart';
 import { Loader } from '../../Loader';
 import { PortfolioTable } from '../../PortfolioTable';
+import Button from '../../Button';
+import { calculateGains } from '../../../src/processing/CalculateGains';
 
 export interface IPortfolioTabProp {
     savedData: ISavedData;
+    save: (data: IPartialSavedData) => Promise<boolean>
 }
 
 export interface IPortfolioTabState {
@@ -16,10 +19,6 @@ export interface IPortfolioTabState {
 }
 
 export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioTabState> {
-
-    public constructor(props: IPortfolioTabProp) {
-        super(props);
-    }
 
     public async componentDidMount() {
         const holdingsValue = await calculateInDepthHoldingsValueCurrently(
@@ -39,12 +38,25 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
         });
     }
 
+    public recalculateHoldings = () => {
+        const holdings = calculateGains(
+            {},
+            this.props.savedData.trades,
+            this.props.savedData.settings.fiatCurrency,
+            this.props.savedData.settings.gainCalculationMethod,
+        ).newHoldings;
+        this.props.save({
+            holdings,
+        });
+    }
+
     public render() {
         return (
             <div className='portfolio'>
                 <h3 className='tc'>Portfolio</h3>
                 <hr className='center w-50' />
                 <div className='tc center'>
+                    <Button label="Recalculate Holdings" onClick={this.recalculateHoldings}/>
                     {this.state && this.state.holdingsValue !== undefined ?
                         <div>
                             <h4>Total BTC Value: {this.state.holdingsValue.BTCTotal}</h4>
