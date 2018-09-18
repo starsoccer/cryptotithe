@@ -61,7 +61,7 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
                         <div>
                             <h4>Total BTC Value: {this.state.holdingsValue.BTCTotal}</h4>
                             <h4>
-                                Total {this.props.savedData.settings.fiatCurrency}
+                                Total {this.props.savedData.settings.fiatCurrency} 
                                 Value: {this.state.holdingsValue.fiatTotal}
                             </h4>
                             <Chart
