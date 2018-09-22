@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { calculateGains } from '../../../src/processing/CalculateGains';
 import { calculateInDepthHoldingsValueCurrently } from '../../../src/processing/CalculateHoldingsValue';
-import { IHoldingsValueComplex, ISavedData, IPartialSavedData } from '../../../src/types';
+import { IHoldingsValueComplex, IPartialSavedData, ISavedData } from '../../../src/types';
+import Button from '../../Button';
 import { Chart } from '../../Chart';
 import { Loader } from '../../Loader';
 import { PortfolioTable } from '../../PortfolioTable';
-import Button from '../../Button';
-import { calculateGains } from '../../../src/processing/CalculateGains';
 
 export interface IPortfolioTabProp {
     savedData: ISavedData;
-    save: (data: IPartialSavedData) => Promise<boolean>
+    save: (data: IPartialSavedData) => Promise<boolean>;
 }
 
 export interface IPortfolioTabState {
@@ -56,12 +56,12 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
                 <h3 className='tc'>Portfolio</h3>
                 <hr className='center w-50' />
                 <div className='tc center'>
-                    <Button label="Recalculate Holdings" onClick={this.recalculateHoldings}/>
+                    <Button label='Recalculate Holdings' onClick={this.recalculateHoldings}/>
                     {this.state && this.state.holdingsValue !== undefined ?
                         <div>
                             <h4>Total BTC Value: {this.state.holdingsValue.BTCTotal}</h4>
                             <h4>
-                                Total {this.props.savedData.settings.fiatCurrency} 
+                                Total {this.props.savedData.settings.fiatCurrency}
                                 Value: {this.state.holdingsValue.fiatTotal}
                             </h4>
                             <Chart

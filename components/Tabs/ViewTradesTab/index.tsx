@@ -4,9 +4,9 @@ import sortTrades from '../../../src/processing/SortTrades';
 import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
 import Button from '../../Button';
 import { Loader } from '../../Loader';
+import { ALL_EXCHANGES, getCurrenciesByExchange, ITradeFilterOptions, TradeFilter } from '../../TradeFilter';
 import { TradesTable } from '../../TradesTable';
 import TradeTimeline from '../../TradeTimeline';
-import { TradeFilter, ITradeFilterOptions, ALL_EXCHANGES, getCurrenciesByExchange } from '../../TradeFilter';
 
 export interface IViewTradesTabProp {
     savedData: ISavedData;
@@ -64,9 +64,15 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
         this.setState({
             processing: true,
         });
-        const filteredTrades = this.props.savedData.trades.filter((trade) => 
-            (this.state.options.exchange === ALL_EXCHANGES || trade.exchange === this.state.options.exchange) &&
-            (trade.boughtCurrency === this.state.options.currency || trade.soldCurrency === this.state.options.currency)
+        const filteredTrades = this.props.savedData.trades.filter((trade) =>
+            (
+                this.state.options.exchange === ALL_EXCHANGES ||
+                trade.exchange === this.state.options.exchange
+            ) &&
+            (
+                trade.boughtCurrency === this.state.options.currency ||
+                trade.soldCurrency === this.state.options.currency
+            ),
         );
         this.setState({
             trades: filteredTrades,
@@ -93,18 +99,18 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                     <Button label='Refresh Trade Data' onClick={this.refetchFiatRate}/>
                     <Button label='Trade Table' onClick={this.tradeTable}/>
                 </div>
-                <hr className="w-50"/>
-                <div className="tc center">
+                <hr className='w-50'/>
+                <div className='tc center'>
                     <TradeFilter
                         trades={this.props.savedData.trades}
                         options={this.state.options}
                         onChange={this.onChange}
                     />
                     <br />
-                    <Button label="Filter Trades" onClick={this.filterTrades}/>
-                    <Button label="Reset Filter" onClick={this.clearFilter}/>
+                    <Button label='Filter Trades' onClick={this.filterTrades}/>
+                    <Button label='Reset Filter' onClick={this.clearFilter}/>
                 </div>
-                <hr className="w-50"/>
+                <hr className='w-50'/>
                 <div className='tc center'>
                     {this.state.processing ?
                         <Loader />

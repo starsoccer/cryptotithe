@@ -35,7 +35,7 @@ export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
                         EXCHANGES[e.currentTarget.value] : ALL_EXCHANGES
                     ),
                     currency: getCurrenciesByExchange(this.props.trades, EXCHANGES[e.currentTarget.value])[0],
-                })
+                });
                 break;
             case 'currency':
                 this.props.onChange({

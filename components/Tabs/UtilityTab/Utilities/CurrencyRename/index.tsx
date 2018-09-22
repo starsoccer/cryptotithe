@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IPartialSavedData, ISavedData } from '../../../../../src/types';
 import Button from '../../../../Button';
 import { Loader } from '../../../../Loader';
-import { TradeFilter, getCurrenciesByExchange, ALL_EXCHANGES, ITradeFilterOptions } from '../../../../TradeFilter';
+import { ALL_EXCHANGES, getCurrenciesByExchange, ITradeFilterOptions, TradeFilter } from '../../../../TradeFilter';
 
 export interface ICurrencyRenameProp {
     savedData: ISavedData;
