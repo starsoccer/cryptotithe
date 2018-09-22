@@ -47,7 +47,8 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
             this.props.fiatCurrency,
             this.props.gainCalculationMethod,
         ).newHoldings;
-        return this.props.trades.slice(0, this.state.page * tradesPerPage).map((trade, index) => {
+        const trades = Array.from(this.props.trades);
+        return trades.reverse().slice(0, this.state.page * tradesPerPage).map((trade, index) => {
             holdings = calculateGains(
                 holdings,
                 [trade],
@@ -71,7 +72,7 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                     <h6>{new Date(trade.date).toUTCString()}</h6>
                 </div>
             </div>;
-        }).reverse();
+        });
     }
 
     public render() {
