@@ -65,7 +65,7 @@
         "csv2json": "^1.4.2",
         "csvtojson": "^1.1.12",
         "font-awesome": "^4.7.0",
-        "got": "^8.3.2",
+        "got": "^9.2.2",
         "is-electron": "^2.1.0",
         "react": "^16.5.2",
         "react-dom": "^16.5.2",
