@@ -16,13 +16,7 @@ function createWindow(): void {
     mainWindow.loadFile('index.html');
     if (process.env.NODE_ENV !== 'production') {
         mainWindow.webContents.executeJavaScript('require(\'electron-react-devtools\').install();');
-        mainWindow.once('ready-to-show', () => {
-            mainWindow.reload();
-            mainWindow.once('ready-to-show', () => {
-                mainWindow.show();
-                mainWindow.webContents.openDevTools();
-            });
-        });
+        checkReactDevTools();
     } else {
         mainWindow.once('ready-to-show', () => {
             mainWindow.show();
@@ -45,6 +39,18 @@ function createWindow(): void {
                     break;
             }
     });
+}
+
+function checkReactDevTools() {
+    if (BrowserWindow.getDevToolsExtensions().hasOwnProperty('React Developer Tools')) {
+        mainWindow.reload();
+        mainWindow.once('ready-to-show', () => {
+            mainWindow.show();
+            mainWindow.webContents.openDevTools();
+        });
+    } else {
+        setTimeout(checkReactDevTools, 150);
+    }
 }
 
 // this method will be called when Electron has finished
