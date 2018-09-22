@@ -16,7 +16,6 @@ export interface ITradeDetailsState {
     soldCurrency: string;
     amountBought: string;
     amountSold: string;
-    rate: string;
     date: Date;
     exchange: EXCHANGES | string;
     id: string;
@@ -33,7 +32,6 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 soldCurrency: props.trade.soldCurrency,
                 amountBought: (props.trade.amountSold / props.trade.rate).toString(),
                 amountSold: props.trade.amountSold.toString(),
-                rate: props.trade.rate.toString(),
                 date: new Date(props.trade.date),
                 exchange: props.trade.exchange,
                 id: props.trade.ID,
@@ -45,7 +43,6 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 soldCurrency: '',
                 amountSold: '',
                 amountBought: '',
-                rate: '',
                 date: new Date(),
                 exchange: '',
                 id: '',
@@ -105,7 +102,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                 amountSold: parseFloat(this.state.amountSold),
                 boughtCurrency: this.state.boughtCurrency.toUpperCase(),
                 soldCurrency: this.state.soldCurrency.toUpperCase(),
-                rate: parseFloat(this.state.rate),
+                rate: this.calculateRate(true),
                 exchange: this.state.exchange as EXCHANGES,
             };
             if (this.state.id === '') {
@@ -130,9 +127,9 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
             this.state.amountBought !== '0' && this.state.amountSold !== '0'
         ) {
             if (boughtTimesSold) {
-                return (parseFloat(this.state.amountSold) / parseFloat(this.state.amountBought)).toString();
+                return parseFloat(this.state.amountSold) / parseFloat(this.state.amountBought);
             } else {
-                return (parseFloat(this.state.amountBought) / parseFloat(this.state.amountSold)).toString();
+                return parseFloat(this.state.amountBought) / parseFloat(this.state.amountSold);
             }
         } else {
             return 0;
