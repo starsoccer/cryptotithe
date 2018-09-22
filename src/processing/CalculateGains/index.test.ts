@@ -1,5 +1,5 @@
 import { mockHoldings, mockTradesWithFiatRate } from '../../mock';
-import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD, ICurrencyHolding} from '../../types';
+import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD } from '../../types';
 import { calculateGains, calculateGainPerTrade, ICalculateGains, calculateGainsPerHoldings } from './';
 
 const fiatCurrency = 'FAKE';
@@ -395,7 +395,6 @@ describe('calculateGainsPerHoldings', () => {
 
     test('structure unchanges', () => {
         const holdings: IHoldings = mockHoldings(1, 1, new Date('1/1/2018'));
-        const currency: string = Object.keys(holdings)[0];
         const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
         const result = calculateGainsPerHoldings(holdings, trades, fiatCurrency, METHOD.FIFO);
 

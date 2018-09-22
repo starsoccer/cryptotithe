@@ -1,5 +1,5 @@
 import { mockHoldings } from '../../../mock';
-import { IHoldings, METHOD, ITrade, EXCHANGES, ICurrencyHolding} from '../../../types';
+import { IHoldings, METHOD, ITrade, EXCHANGES } from '../../../types';
 import * as faker from 'faker';
 import getCurrencyHolding from './';
 const FULL_YEAR_IN_MILLISECONDS = 31536000000;

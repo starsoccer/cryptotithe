@@ -35,7 +35,7 @@ export class FileBrowse extends React.PureComponent<IFileBrowseProps> {
 
     public onSubmit = async (): Promise<void> => {
         const reader = new FileReader();
-        reader.onload = () => this.props.onLoaded(reader.result, this.fileInput, reader);
+        reader.onload = () => this.props.onLoaded(reader.result as string, this.fileInput, reader);
         if (this.fileInput.current !== null) {
             if (this.fileInput.current.files !== null) {
                 await reader.readAsText(this.fileInput.current.files[0]);

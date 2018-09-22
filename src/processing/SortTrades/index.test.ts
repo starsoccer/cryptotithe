@@ -1,6 +1,6 @@
 import * as faker from 'faker';
 import { mockHoldings, mockTradesWithFiatRate } from '../../mock';
-import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD} from '../../types';
+import { ITradeWithFiatRate } from '../../types';
 import sortTrades from './';
 
 describe('Sort Trades', () => {
@@ -43,7 +43,7 @@ describe('Sort Trades', () => {
         );
 
         const randomizedTrades: ITradeWithFiatRate[] = [];
-        for (const trade of trades) {
+        for (const _trade of trades) {
             randomizedTrades.push(faker.helpers.randomize(trades));
         }
 

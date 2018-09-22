@@ -1,5 +1,5 @@
 import { mockHoldings, mockTradesWithFiatRate } from '../../mock';
-import { IHoldings, ITradeWithFiatRate, METHOD, ICurrencyHolding} from '../../types';
+import { IHoldings, ITradeWithFiatRate, ICurrencyHolding} from '../../types';
 import holdingSelection from './';
 
 const fiatCurrency = 'FAKE';

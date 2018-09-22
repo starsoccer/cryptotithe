@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import { EXCHANGES, IHoldings, ITrade, ITradeWithFiatRate, FiatRateMethod} from '../../types';
+import { EXCHANGES, ITrade, ITradeWithFiatRate, FiatRateMethod} from '../../types';
 import { addFiatRateToTrades } from './';
 
 describe('Add fiat Rate', () => {
