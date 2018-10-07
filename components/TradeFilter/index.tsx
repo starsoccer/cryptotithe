@@ -25,6 +25,7 @@ export function getCurrenciesByExchange(trades: ITrade[], exchange: EXCHANGES | 
 }
 
 export const ALL_EXCHANGES = 'ALL';
+export const ALL_CURRENCIES = 'ALL';
 
 export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
     public onSelectChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -34,7 +35,7 @@ export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
                     exchange: (e.currentTarget.value !== ALL_EXCHANGES ?
                         EXCHANGES[e.currentTarget.value] : ALL_EXCHANGES
                     ),
-                    currency: getCurrenciesByExchange(this.props.trades, EXCHANGES[e.currentTarget.value])[0],
+                    currency: ALL_CURRENCIES,
                 });
                 break;
             case 'currency':
@@ -59,6 +60,7 @@ export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
                 <br />
                 <label htmlFor='type' className='pr2 pt2 pb2'>Currency</label>
                 <select name='type' id='type' onChange={this.onSelectChange('currency')}>
+                    <option key='ALL' value='ALL'>All</option>,
                     {getCurrenciesByExchange(this.props.trades, this.props.options.exchange).map(
                         (currency: string) =>
                             <option key={currency} value={currency} selected={currency === this.props.options.currency}>

@@ -4,7 +4,7 @@ import sortTrades from '../../../src/processing/SortTrades';
 import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
 import Button from '../../Button';
 import { Loader } from '../../Loader';
-import { ALL_EXCHANGES, getCurrenciesByExchange, ITradeFilterOptions, TradeFilter } from '../../TradeFilter';
+import { ALL_EXCHANGES, ITradeFilterOptions, TradeFilter, ALL_CURRENCIES } from '../../TradeFilter';
 import { TradesTable } from '../../TradesTable';
 import TradeTimeline from '../../TradeTimeline';
 
@@ -17,7 +17,6 @@ export interface IViewTradesTabState {
     processing: boolean;
     tradeTable: boolean;
     options: ITradeFilterOptions;
-    trades: ITradeWithFiatRate[];
 }
 
 export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTradesTabState> {
@@ -27,10 +26,9 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
         this.state = {
             processing: false,
             tradeTable: false,
-            trades: props.savedData.trades,
             options: {
                 exchange: ALL_EXCHANGES,
-                currency: getCurrenciesByExchange(props.savedData.trades, ALL_EXCHANGES)[0],
+                currency: ALL_CURRENCIES,
             },
         };
     }
@@ -60,44 +58,38 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
         this.setState({ options });
     }
 
-    public filterTrades = () => {
+    public clearFilter = () => {
         this.setState({
-            processing: true,
+            options: {
+                exchange: ALL_EXCHANGES,
+                currency: ALL_CURRENCIES,
+            },
         });
+    }
+
+    public render() {
         const filteredTrades = this.props.savedData.trades.filter((trade) =>
             (
                 this.state.options.exchange === ALL_EXCHANGES ||
                 trade.exchange === this.state.options.exchange
             ) &&
             (
+                this.state.options.currency === ALL_CURRENCIES ||
                 trade.boughtCurrency === this.state.options.currency ||
                 trade.soldCurrency === this.state.options.currency
             ),
         );
-        this.setState({
-            trades: filteredTrades,
-            processing: false,
-        });
-    }
 
-    public clearFilter = () => {
-        this.setState({
-            trades: this.props.savedData.trades,
-            options: {
-                exchange: ALL_EXCHANGES,
-                currency: getCurrenciesByExchange(this.props.savedData.trades, ALL_EXCHANGES)[0],
-            },
-        });
-    }
-
-    public render() {
         return (
             <div className='viewTrades'>
                 <h3 className='tc'>Trades</h3>
                 <hr className='center w-50' />
                 <div className='tc center pb2'>
                     <Button label='Refresh Trade Data' onClick={this.refetchFiatRate}/>
-                    <Button label='Trade Table' onClick={this.tradeTable}/>
+                    <Button
+                        label={this.state.tradeTable ? 'Trade Timeline' : 'Trade Table'}
+                        onClick={this.tradeTable}
+                    />
                 </div>
                 <hr className='w-50'/>
                 <div className='tc center'>
@@ -107,7 +99,6 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                         onChange={this.onChange}
                     />
                     <br />
-                    <Button label='Filter Trades' onClick={this.filterTrades}/>
                     <Button label='Reset Filter' onClick={this.clearFilter}/>
                 </div>
                 <hr className='w-50'/>
@@ -116,16 +107,16 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                         <Loader />
                     :
                         this.state.tradeTable ?
-                            this.state.trades.length > 0 ?
+                            filteredTrades.length > 0 ?
                                 <TradesTable
-                                    trades={this.state.trades}
+                                    trades={filteredTrades}
                                     save={this.save}
                                 />
                             :
                                 <h3 className='tc'>No Trades <i className='fa fa-frown-o'></i></h3>
                         :
                             <TradeTimeline
-                                trades={this.state.trades}
+                                trades={filteredTrades}
                                 fiatCurrency={this.props.savedData.settings.fiatCurrency}
                                 gainCalculationMethod={this.props.savedData.settings.gainCalculationMethod}
                             /> // make this a clone or something
