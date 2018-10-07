@@ -1,6 +1,8 @@
 // modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron');
 const EXCHANGES: any = require('./src/types').EXCHANGES;
+const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+
 // keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: any;
@@ -15,8 +17,14 @@ function createWindow(): void {
     // progressbar https://electronjs.org/docs/tutorial/progress-bar
     mainWindow.loadFile('index.html');
     if (process.env.NODE_ENV !== 'production') {
-        mainWindow.webContents.executeJavaScript('require(\'electron-react-devtools\').install();');
-        checkReactDevTools();
+        installExtension(REACT_DEVELOPER_TOOLS)
+            .then(() => {
+                mainWindow.show();
+                mainWindow.webContents.openDevTools();
+            })
+            .catch((err: Error) => {
+                throw err;
+            });
     } else {
         mainWindow.once('ready-to-show', () => {
             mainWindow.show();
@@ -39,18 +47,6 @@ function createWindow(): void {
                     break;
             }
     });
-}
-
-function checkReactDevTools() {
-    if (BrowserWindow.getDevToolsExtensions().hasOwnProperty('React Developer Tools')) {
-        mainWindow.reload();
-        mainWindow.once('ready-to-show', () => {
-            mainWindow.show();
-            mainWindow.webContents.openDevTools();
-        });
-    } else {
-        setTimeout(checkReactDevTools, 150);
-    }
 }
 
 // this method will be called when Electron has finished
