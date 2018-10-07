@@ -220,7 +220,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
                         />
                     </div>
                 </div>
-                <div className='fl w-100'>
+                <div className='w-100'>
                     <Button className='center' label='Add Trade' onClick={this.onSubmit}/>
                 </div>
             </div>
