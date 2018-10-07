@@ -75,11 +75,16 @@ export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
                 </select>
                 <br />
                 <label htmlFor='type' className='pr2 pt2 pb2'>Currency</label>
-                <select name='type' id='type' onChange={this.onSelectChange('currency')}>
+                <select
+                    name='type'
+                    id='type'
+                    onChange={this.onSelectChange('currency')}
+                    value={this.props.options.currency}
+                >
                     <option key='ALL' value='ALL'>All</option>,
                     {getCurrenciesByExchange(this.props.trades, this.props.options.exchange).map(
                         (currency: string) =>
-                            <option key={currency} value={currency} selected={currency === this.props.options.currency}>
+                            <option key={currency} value={currency}>
                                 {currency}
                             </option>,
                     )}
