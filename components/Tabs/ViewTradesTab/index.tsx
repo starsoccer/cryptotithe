@@ -4,7 +4,7 @@ import sortTrades from '../../../src/processing/SortTrades';
 import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
 import Button from '../../Button';
 import { Loader } from '../../Loader';
-import { ALL_EXCHANGES, ITradeFilterOptions, TradeFilter, ALL_CURRENCIES } from '../../TradeFilter';
+import { ALL_CURRENCIES, ALL_EXCHANGES, filterTrades, ITradeFilterOptions, TradeFilter } from '../../TradeFilter';
 import { TradesTable } from '../../TradesTable';
 import TradeTimeline from '../../TradeTimeline';
 
@@ -68,16 +68,8 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
     }
 
     public render() {
-        const filteredTrades = this.props.savedData.trades.filter((trade) =>
-            (
-                this.state.options.exchange === ALL_EXCHANGES ||
-                trade.exchange === this.state.options.exchange
-            ) &&
-            (
-                this.state.options.currency === ALL_CURRENCIES ||
-                trade.boughtCurrency === this.state.options.currency ||
-                trade.soldCurrency === this.state.options.currency
-            ),
+        const filteredTrades = filterTrades(
+            this.props.savedData.trades, this.state.options.exchange, this.state.options.currency,
         );
 
         return (

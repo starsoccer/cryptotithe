@@ -24,6 +24,22 @@ export function getCurrenciesByExchange(trades: ITrade[], exchange: EXCHANGES | 
     return Array.from(currencies);
 }
 
+export function filterTrades<TradeType extends ITrade>(
+    trades: TradeType[], exchange: EXCHANGES | string, currency: string,
+): TradeType[] {
+    return trades.filter((trade: TradeType) =>
+        (
+            ALL_EXCHANGES === exchange ||
+            trade.exchange === exchange
+        ) &&
+        (
+            ALL_CURRENCIES === currency ||
+            trade.boughtCurrency === currency ||
+            trade.soldCurrency === currency
+        ),
+    );
+}
+
 export const ALL_EXCHANGES = 'ALL';
 export const ALL_CURRENCIES = 'ALL';
 
