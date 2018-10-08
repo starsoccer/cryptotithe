@@ -2,13 +2,13 @@ import * as crypto from 'crypto';
 import * as React from 'react';
 import * as validator from 'validator';
 import { createDateAsUTC } from '../../src/parsers/utils';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../src/types';
+import { EXCHANGES, ITrade } from '../../src/types';
 import Button from '../Button';
 
-export interface ITradeDetailsProps {
+export interface ITradeDetailsProps<TradeType extends ITrade> {
     className?: string;
-    trade?: ITrade;
-    onSubmit(trade: ITrade): void;
+    trade?: TradeType;
+    onSubmit(trade: TradeType): void;
 }
 
 export interface ITradeDetailsState {
@@ -23,8 +23,9 @@ export interface ITradeDetailsState {
     [key: string]: string | EXCHANGES | Date;
 }
 
-export default class TradeDetails extends React.Component<ITradeDetailsProps, ITradeDetailsState> {
-    public constructor(props: ITradeDetailsProps) {
+export default class TradeDetails<TradeType extends ITrade> extends
+    React.Component<ITradeDetailsProps<TradeType>, ITradeDetailsState> {
+    public constructor(props: ITradeDetailsProps<TradeType>) {
         super(props);
         if ('trade' in props && props.trade !== undefined) {
             this.state = {
@@ -97,14 +98,13 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
         if (errors.length) {
             alert(errors.join('\n'));
         } else {
-            const trade: IPartialTrade = {
-                date: createDateAsUTC(new Date(this.state.date)).getTime(),
-                amountSold: parseFloat(this.state.amountSold),
-                boughtCurrency: this.state.boughtCurrency.toUpperCase(),
-                soldCurrency: this.state.soldCurrency.toUpperCase(),
-                rate: this.calculateRate(true),
-                exchange: this.state.exchange as EXCHANGES,
-            };
+            const trade = Object.assign({}, this.props.trade);
+            trade.date = createDateAsUTC(new Date(this.state.date)).getTime();
+            trade.amountSold = parseFloat(this.state.amountSold);
+            trade.boughtCurrency = this.state.boughtCurrency.toUpperCase();
+            trade.soldCurrency = this.state.soldCurrency.toUpperCase();
+            trade.rate = this.calculateRate(true);
+            trade.exchange = this.state.exchange as EXCHANGES;
             if (this.state.id === '') {
                 trade.ID = crypto.createHash('sha256').update(
                     JSON.stringify(trade) + new Date().getTime(),
@@ -117,7 +117,7 @@ export default class TradeDetails extends React.Component<ITradeDetailsProps, IT
             } else {
                 trade.exchangeID = this.state.exchangeID;
             }
-            this.props.onSubmit(trade as ITrade);
+            this.props.onSubmit(trade as TradeType);
         }
     }
 

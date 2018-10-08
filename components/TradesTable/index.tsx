@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { addFiatRateToTrades } from '../../src/processing/getFiatRate';
 import sortTrades from '../../src/processing/SortTrades';
-import { ITrade, ITradeWithFiatRate } from '../../src/types';
+import { FiatRateMethod, ISettings, ITrade, ITradeWithFiatRate } from '../../src/types';
 import Popup from '../Popup';
 import { Table } from '../Table';
 import TradeDetails from '../TradeDetails';
@@ -8,6 +9,7 @@ import TradeDetails from '../TradeDetails';
 export interface ITradeTableProps {
     className?: string;
     trades: ITrade[];
+    settings: ISettings;
     save(trades: ITrade[] | ITradeWithFiatRate[]): void;
 }
 
@@ -26,7 +28,14 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
 
     public editTrade = (originalID: string) => async (editedTrade: ITrade) => {
         const newTrades = this.props.trades.filter((trade) => trade.ID !== originalID);
-        newTrades.push(editedTrade);
+        if ('fiatRate' in editedTrade) {
+            const editedTradeWithFiatRate = await addFiatRateToTrades(
+                [editedTrade], this.props.settings.fiatCurrency, FiatRateMethod[this.props.settings.fiatRateMethod],
+            );
+            newTrades.push(editedTradeWithFiatRate[0]);
+        } else {
+            newTrades.push(editedTrade);
+        }
         const sortedTrades = sortTrades(newTrades);
         if (await this.props.save(sortedTrades)) {
             this.setState({popup: undefined});

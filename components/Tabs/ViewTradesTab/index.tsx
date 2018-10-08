@@ -103,6 +103,7 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                                 <TradesTable
                                     trades={filteredTrades}
                                     save={this.save}
+                                    settings={this.props.savedData.settings}
                                 />
                             :
                                 <h3 className='tc'>No Trades <i className='fa fa-frown-o'></i></h3>

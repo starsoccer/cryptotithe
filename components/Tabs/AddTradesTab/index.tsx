@@ -216,6 +216,7 @@ export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesT
                         <TradesTable
                             trades={this.state.processedTrades}
                             save={this.editedTrade}
+                            settings={this.props.savedData.settings}
                         />
                     </div>
                     }
