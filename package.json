@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "npm run build && electron .",
-        "web": "npm run build && start ./index.html",
+        "web": "npm run build && opn ./index.html",
         "test": "jest",
         "test-coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
         "build": "tsc -p configs/tsconfig.json && browserify ./react.js -o ./bundle.js -u ./data.json --im",
@@ -35,6 +35,7 @@
         "electron-devtools-installer": "^2.2.4",
         "faker": "^4.1.0",
         "jest": "^23.6.0",
+        "opn-cli": "^3.1.0",
         "ts-jest": "^23.10.1",
         "tslint": "^5.11.0",
         "typescript": "^3.0.3"
