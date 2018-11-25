@@ -41,14 +41,25 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
     }
 
     public createTimeLine = () => {
-        let holdings = calculateGains(
-            {},
-            this.props.trades.slice(this.state.page * tradesPerPage),
-            this.props.fiatCurrency,
-            this.props.gainCalculationMethod,
-        ).newHoldings;
-        const trades = Array.from(this.props.trades);
-        return trades.reverse().slice(0, this.state.page * tradesPerPage).map((trade, index) => {
+        let holdings = {};
+        let trades =  Array.from(this.props.trades);
+        const maxPages = Math.ceil(this.props.trades.length / tradesPerPage);
+        if (maxPages > this.state.page + 1) {
+            holdings = calculateGains(
+                {},
+                this.props.trades.slice(0,
+                    this.props.trades.length - (this.state.page + 1) * tradesPerPage,
+                ),
+                this.props.fiatCurrency,
+                this.props.gainCalculationMethod,
+            ).newHoldings;
+        }
+
+        if (maxPages > this.state.page) {
+            trades = trades.slice(this.props.trades.length - this.state.page * tradesPerPage);
+        }
+
+        return (trades.map((trade, index) => {
             holdings = calculateGains(
                 holdings,
                 [trade],
@@ -72,7 +83,7 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                     <h6>{new Date(trade.date).toUTCString()}</h6>
                 </div>
             </div>;
-        });
+        })).reverse();
     }
 
     public render() {
