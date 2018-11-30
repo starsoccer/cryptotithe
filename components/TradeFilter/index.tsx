@@ -21,7 +21,7 @@ export function getCurrenciesByExchange(trades: ITrade[], exchange: EXCHANGES | 
         currencies.add(trade.boughtCurrency);
         currencies.add(trade.soldCurrency);
     }
-    return Array.from(currencies);
+    return Array.from(currencies).sort();
 }
 
 export function filterTrades<TradeType extends ITrade>(
@@ -69,7 +69,7 @@ export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
                 <label htmlFor='type' className='pr2'>Exchange</label>
                 <select name='type' id='type' onChange={this.onSelectChange('exchange')}>
                     <option key='ALL' value='ALL'>All</option>,
-                    {Object.keys(EXCHANGES).map((key) =>
+                    {Object.keys(EXCHANGES).sort().map((key) =>
                         <option key={key} value={key}>{EXCHANGES[key as keyof typeof EXCHANGES]}</option>,
                     )}
                 </select>

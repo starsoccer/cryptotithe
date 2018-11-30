@@ -32,7 +32,7 @@ export class PortfolioTable extends React.PureComponent<IPortfolioTableProps> {
                     'Value',
                     'Fiat Gain',
                 ]}
-                rows={Object.keys(this.props.holdingsValue.currencies).map((currency) => [
+                rows={Object.keys(this.props.holdingsValue.currencies).sort().map((currency) => [
                     <span>{currency}</span>,
                     <span>{this.props.holdingsValue.currencies[currency].amount.toFixed(8)}</span>,
                     <div>
