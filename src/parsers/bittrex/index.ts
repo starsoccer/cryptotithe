@@ -28,6 +28,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
             date: createDateAsUTC(new Date(trade.Closed)).getTime(),
             exchangeID: trade.OrderUuid,
             exchange: EXCHANGES.BITTREX,
+            transactionFee: 0,
         };
         switch (trade.Type) {
             case BittrexOrderType.LIMIT_BUY:
@@ -46,6 +47,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                 throw new Error('Unknown Order Type - ' + trade.OrderUuid);
         }
         partialTrade.ID = createTradeID(partialTrade);
+        partialTrade.transactionFeeCurrency = partialTrade.boughtCurrency;
         internalFormat.push(partialTrade as ITrade);
     }
     return internalFormat;

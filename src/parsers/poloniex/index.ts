@@ -43,6 +43,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
             date: createDateAsUTC(new Date(trade.Date)).getTime(),
             exchangeID: trade['Order Number'],
             exchange: EXCHANGES.POLONIEX,
+            transactionFee: 0,
         };
         switch (trade.Type) {
             case PoloniexOrderType.BUY:
@@ -63,6 +64,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                 throw new Error('Unknown Order Type - ' + trade['Order Number']);
         }
         partialTrade.ID = createTradeID(partialTrade);
+        partialTrade.transactionFeeCurrency = partialTrade.boughtCurrency;
         internalFormat.push(partialTrade as ITrade);
     }
     return internalFormat;

@@ -68,6 +68,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
         }
         tradeToAdd.ID = createTradeID(tradeToAdd);
         tradeToAdd.exchangeID = tradeToAdd.ID;
+        tradeToAdd.transactionFeeCurrency = tradeToAdd.boughtCurrency;
+        tradeToAdd.transactionFee = 0;
         internalFormat.push(tradeToAdd as ITrade);
     }
     return internalFormat;

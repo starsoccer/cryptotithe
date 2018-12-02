@@ -93,6 +93,8 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                         date: createDateAsUTC(new Date(`${trade['Order Date']} ${trade['Order Time']}`)).getTime(),
                         exchangeID: trade['Trade ID'],
                         exchange: EXCHANGES.GEMINI,
+                        transactionFeeCurrency: pair.bought.toUpperCase(),
+                        transactionFee: 0,
                     };
                     partialTrade.ID = createTradeID(partialTrade);
                     internalFormat.push(partialTrade as ITrade);

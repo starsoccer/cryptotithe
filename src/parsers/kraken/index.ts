@@ -80,6 +80,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
             exchange: EXCHANGES.KRAKEN,
             exchangeID: trade.txid,
             date: createDateAsUTC(new Date(trade.time)).getTime(),
+            transactionFee: 0,
         };
         switch (trade.type) {
             case KrakenType.BUY:
@@ -97,6 +98,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
             default:
                 throw new Error('Unknown Order Type - ' + trade['Order Number']);
         }
+        partialTrade.transactionFeeCurrency = partialTrade.boughtCurrency;
         partialTrade.ID = createTradeID(partialTrade);
         internalFormat.push(partialTrade as ITrade);
     }
