@@ -25,6 +25,8 @@ export interface ITrade {
     exchangeID: string;
     exchange: EXCHANGES;
     ID: string;
+    transactionFee: number;
+    transactionFeeCurrency: string;
 }
 
 export interface ITradeWithFiatRate extends ITrade {
