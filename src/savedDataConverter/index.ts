@@ -2,6 +2,7 @@ import { ISavedData } from '../types';
 import zeroTwoZeroConverter from './0.2.0';
 import zeroThreeZeroConverter from './0.3.0';
 import zeroFourZeroConverter from './0.4.0';
+import zeroFiveZeroConverter from './0.5.0';
 
 export default function onSaveDataLoaded(savedData: ISavedData): boolean {
     const version = savedData.version || 0;
@@ -15,6 +16,9 @@ export default function onSaveDataLoaded(savedData: ISavedData): boolean {
             changeMade = changeMade || zeroThreeZeroConverter(savedData);
         case '0.3.0': // 0.3.0
             changeMade = changeMade || zeroFourZeroConverter(savedData);
+            break;
+        case '0.4.0': // 0.4.0
+            changeMade = changeMade || zeroFiveZeroConverter(savedData);
             break;
         default:
 
