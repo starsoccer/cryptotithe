@@ -42,8 +42,9 @@ export function mockTrades(
         }
 
         for (let i = 0; i < amount; i++) {
+            const boughtCurrency = faker.random.word().toUpperCase();
             trades.push({
-                boughtCurrency: faker.random.word().toUpperCase(),
+                boughtCurrency,
                 soldCurrency: faker.random.arrayElement(currencies),
                 amountSold: (allowOverflow ?
                     totalHoldings + faker.random.number() : (totalHoldings - faker.random.number()) / amount),
@@ -53,6 +54,8 @@ export function mockTrades(
                 exchangeID: faker.random.words(5),
                 ID: faker.random.words(5),
                 exchange: faker.random.objectElement(EXCHANGES) as EXCHANGES,
+                transactionFee: 0,
+                transactionFeeCurrency: boughtCurrency,
             });
         }
     }

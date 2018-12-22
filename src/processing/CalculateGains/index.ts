@@ -157,6 +157,8 @@ export function calculateGainsPerHoldings(
                 ID: trade.ID,
                 exchangeID: trade.exchangeID,
                 exchange: trade.exchange,
+                transactionFee: trade.transactionFee,
+                transactionFeeCurrency: trade.transactionFeeCurrency,
                 shortTerm: 0,
                 longTerm: 0,
                 dateAcquired: holding.date,
