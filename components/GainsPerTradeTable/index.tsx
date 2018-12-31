@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ITradeWithGains } from '../../src/types';
 import { Table } from '../Table';
+import { TradeRate } from '../TradeRate';
 
 export interface IGainsPerTradeTableProps {
     className?: string;
@@ -20,6 +21,7 @@ export class GainsPerTradeTable extends React.PureComponent<IGainsPerTradeTableP
                     'Rate',
                     'Bought Currency',
                     'Amount Bought',
+                    'Transaction Fee',
                     'Fiat Rate',
                     'Fiat Value',
                     'Short Term Gain',
@@ -30,14 +32,10 @@ export class GainsPerTradeTable extends React.PureComponent<IGainsPerTradeTableP
                     <span>{trade.exchangeID}</span>,
                     <span>{trade.amountSold.toFixed(8)}</span>,
                     <span>{trade.soldCurrency}</span>,
-                    <div>
-                        {trade.rate.toFixed(8)}<i className='fa fa-arrow-circle-right'/>
-                        <br />
-                        <i className='fa fa-arrow-circle-left'/>
-                        {(trade.amountSold / trade.rate / trade.amountSold).toFixed(8)}
-                    </div>,
+                    <TradeRate rate={trade.rate} amountSold={trade.amountSold}/>,
                     <span>{trade.boughtCurrency}</span>,
                     <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
+                    <span>{`${trade.transactionFee} ${trade.transactionFeeCurrency}`}</span>,
                     <span>{trade.fiatRate.toFixed(8)}</span>,
                     <span>{trade.soldCurrency === this.props.fiatCurrency ?
                         trade.amountSold :

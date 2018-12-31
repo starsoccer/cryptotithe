@@ -20,6 +20,8 @@ export interface ITradeDetailsState {
     exchange: EXCHANGES | string;
     id: string;
     exchangeID: string;
+    transactionFee: string;
+    transactionFeeCurrency: string;
     [key: string]: string | EXCHANGES | Date;
 }
 
@@ -37,6 +39,8 @@ export default class TradeDetails<TradeType extends ITrade> extends
                 exchange: props.trade.exchange,
                 id: props.trade.ID,
                 exchangeID: props.trade.exchangeID,
+                transactionFee: props.trade.transactionFee.toString(),
+                transactionFeeCurrency: props.trade.transactionFeeCurrency,
             };
         } else {
             this.state = {
@@ -48,6 +52,8 @@ export default class TradeDetails<TradeType extends ITrade> extends
                 exchange: '',
                 id: '',
                 exchangeID: '',
+                transactionFee: '',
+                transactionFeeCurrency: '',
             };
         }
     }
@@ -93,6 +99,13 @@ export default class TradeDetails<TradeType extends ITrade> extends
                         break;
                     }
                     break;
+                case 'transactionFee':
+                    if (
+                        !validator.isEmpty(this.state[key]) && !validator.isNumeric(this.state[key].toString())
+                    ) {
+                        errors.push(`${key} must be numerical and greater then 0.00000001`);
+                    }
+                    break;
             }
         }
         if (errors.length) {
@@ -105,6 +118,7 @@ export default class TradeDetails<TradeType extends ITrade> extends
             trade.soldCurrency = this.state.soldCurrency.toUpperCase();
             trade.rate = this.calculateRate(true);
             trade.exchange = this.state.exchange as EXCHANGES;
+            trade.transactionFee = (this.state.transactionFee === '' ? 0 : parseFloat(this.state.transactionFee));
             if (this.state.id === '') {
                 trade.ID = crypto.createHash('sha256').update(
                     JSON.stringify(trade) + new Date().getTime(),
@@ -112,11 +126,13 @@ export default class TradeDetails<TradeType extends ITrade> extends
             } else {
                 trade.ID = this.state.id;
             }
-            if (this.state.exchangeID === '') {
-                trade.exchangeID = trade.ID;
-            } else {
-                trade.exchangeID = this.state.exchangeID;
-            }
+
+            trade.exchangeID = (this.state.exchangeID === '' ? trade.ID : this.state.exchangeID);
+
+            trade.transactionFeeCurrency = (
+                this.state.transactionFeeCurrency === '' ? trade.boughtCurrency : this.state.transactionFeeCurrency
+            );
+
             this.props.onSubmit(trade as TradeType);
         }
     }
@@ -217,6 +233,24 @@ export default class TradeDetails<TradeType extends ITrade> extends
                             className='w-100 tc'
                             value={this.state.amountSold}
                             onChange={this.onChange('amountSold')}
+                        />
+                    </div>
+                </div>
+                <div className='flex w-100 pa1'>
+                    <div className='w-30 pa1'>
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Transaction Fee Currency</h4>
+                        <input
+                            className='w-100 tc'
+                            value={this.state.transactionFeeCurrency}
+                            onChange={this.onChange('transactionFeeCurrency')}
+                        />
+                    </div>
+                    <div className='w-70 pa1'>
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Transaction Fee</h4>
+                        <input
+                            className='w-100 tc'
+                            value={this.state.transactionFee}
+                            onChange={this.onChange('transactionFee')}
                         />
                     </div>
                 </div>

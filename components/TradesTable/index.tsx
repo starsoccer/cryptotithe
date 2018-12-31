@@ -5,6 +5,7 @@ import { FiatRateMethod, ISettings, ITrade, ITradeWithFiatRate } from '../../src
 import Popup from '../Popup';
 import { Table } from '../Table';
 import TradeDetails from '../TradeDetails';
+import { TradeRate } from '../TradeRate';
 
 export interface ITradeTableProps {
     className?: string;
@@ -54,6 +55,7 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
                         'Rate',
                         'Bought Currency',
                         'Amount Bought',
+                        'Transaction Fee',
                         '',
                     ]}
                     rows={this.props.trades.map((trade) => [
@@ -61,14 +63,10 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
                         <span>{trade.exchangeID}</span>,
                         <span>{trade.amountSold.toFixed(8)}</span>,
                         <span>{trade.soldCurrency}</span>,
-                        <div>
-                            {trade.rate.toFixed(8)}<i className='fa fa-arrow-circle-right'/>
-                            <br />
-                            <i className='fa fa-arrow-circle-left'/>
-                            {(trade.amountSold / trade.rate / trade.amountSold).toFixed(8)}
-                        </div>,
+                        <TradeRate rate={trade.rate} amountSold={trade.amountSold}/>,
                         <span>{trade.boughtCurrency}</span>,
                         <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
+                        <span>{`${trade.transactionFee} ${trade.transactionFeeCurrency}`}</span>,
                         <i className='fa fa-pencil-square' onClick={this.changePopupStatus(trade.ID)}/>,
                     ])}
                 />
