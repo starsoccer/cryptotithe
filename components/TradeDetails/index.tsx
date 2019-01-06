@@ -106,6 +106,19 @@ export default class TradeDetails<TradeType extends ITrade> extends
                         errors.push(`${key} must be numerical and greater then 0.00000001`);
                     }
                     break;
+                case 'transactionFeeCurrency':
+                    const boughtCurrency = this.state.boughtCurrency.toUpperCase();
+                    const soldCurrency = this.state.soldCurrency.toUpperCase();
+                    const feeCurrency =  this.state.transactionFeeCurrency.toUpperCase();
+                    if (
+                        !validator.isEmpty(this.state[key]) && (
+                            feeCurrency !== boughtCurrency && feeCurrency !== soldCurrency
+                        )
+                    ) {
+                        errors.push(`${key} must be either ${boughtCurrency} or ${soldCurrency}`,
+                        );
+                    }
+                    break;
             }
         }
         if (errors.length) {
@@ -129,8 +142,8 @@ export default class TradeDetails<TradeType extends ITrade> extends
 
             trade.exchangeID = (this.state.exchangeID === '' ? trade.ID : this.state.exchangeID);
 
-            trade.transactionFeeCurrency = (
-                this.state.transactionFeeCurrency === '' ? trade.boughtCurrency : this.state.transactionFeeCurrency
+            trade.transactionFeeCurrency = (this.state.transactionFeeCurrency === '' ?
+                trade.boughtCurrency : this.state.transactionFeeCurrency.toUpperCase()
             );
 
             this.props.onSubmit(trade as TradeType);

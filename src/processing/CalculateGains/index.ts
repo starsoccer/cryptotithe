@@ -41,13 +41,29 @@ export function calculateGains(
             });
             continue;
         } else {
+            let gain = 0;
+            let amountToAdd = trade.amountSold / trade.rate;
+            switch (trade.transactionFeeCurrency) {
+                case trade.boughtCurrency:
+                    gain -= trade.transactionFee * trade.rate * trade.fiatRate;
+                    amountToAdd -= trade.transactionFee;
+                    break;
+                case trade.soldCurrency:
+                    gain -= trade.transactionFee * trade.fiatRate;
+                    amountToAdd -= trade.transactionFee / trade.rate;
+                    break;
+                default:
+            }
+
             newHoldings[trade.boughtCurrency].push({
-                amount: trade.amountSold / trade.rate,
+                amount: amountToAdd,
                 rateInFiat: trade.fiatRate * trade.rate,
                 date: trade.date,
             });
+
             for (const holding of result.deductedHoldings) {
-                const gain: number = (trade.fiatRate - holding.rateInFiat) * holding.amount;
+                gain += (trade.fiatRate - holding.rateInFiat) * holding.amount;
+
                 if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                     longTermGain += gain;
                 } else {
