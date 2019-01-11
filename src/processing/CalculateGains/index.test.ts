@@ -1,6 +1,7 @@
 import { mockHoldings, mockTradesWithFiatRate } from '../../mock';
 import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD } from '../../types';
 import { calculateGains, calculateGainPerTrade, ICalculateGains, calculateGainsPerHoldings } from './';
+import * as faker from 'faker';
 
 const fiatCurrency = 'FAKE';
 
@@ -349,6 +350,8 @@ describe('calculateGains fiat', () => {
             ID: '1',
             exchangeID: '1',
             exchange: EXCHANGES.GEMINI,
+            transactionFee: 0,
+            transactionFeeCurrency: 'BTC',
         }];
         const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency);
 
@@ -370,6 +373,8 @@ describe('calculateGains fiat', () => {
                 ID: '1',
                 exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
+                transactionFee: 0,
+                transactionFeeCurrency: 'BTC',
             },
             {
                 boughtCurrency: fiatCurrency,
@@ -381,6 +386,8 @@ describe('calculateGains fiat', () => {
                 ID: '1',
                 exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
+                transactionFee: 0,
+                transactionFeeCurrency: fiatCurrency,
             },
         ];
         const result: ICalculateGains = calculateGains(holdings, trades, fiatCurrency);
@@ -388,6 +395,88 @@ describe('calculateGains fiat', () => {
         expect(result.longTermGain).toBe(0);
         expect(result.shortTermGain).toBe(800);
 
+    });
+});
+
+describe('gains with Transaction Fee', () => {
+    test('1 trade with fee effecting short term gain', () => {
+        const holdings: IHoldings = mockHoldings(1, 1, new Date());
+        const currency = Object.keys(holdings)[0];
+        const trades = mockTradesWithFiatRate(1, new Date(), holdings, false);
+        trades[0].transactionFee = faker.random.number();
+
+        const result = calculateGainsPerHoldings(holdings, trades, fiatCurrency, METHOD.FIFO);
+
+        expect(
+            result.shortTermProceeds - result.shortTermGain - holdings[currency][0].rateInFiat * trades[0].amountSold,
+        ).toBe(
+            trades[0].transactionFee * trades[0].rate * trades[0].fiatRate,
+        );
+    });
+
+    test('trade with fee effecting short term gain', () => {
+        const holdings: IHoldings = mockHoldings(1, 3, new Date());
+        const trades = mockTradesWithFiatRate(1, new Date(), holdings, false);
+
+        const resultWithoutFee = calculateGains(holdings, trades, fiatCurrency);
+
+        const fee = faker.random.number();
+        trades[0].transactionFee = fee;
+
+        const resultWithFee = calculateGains(holdings, trades, fiatCurrency);
+
+        expect(
+            Math.abs(
+                resultWithoutFee.shortTermGain - resultWithFee.shortTermGain,
+            ).toFixed(2),
+        ).toBe(
+            (fee * trades[0].rate * trades[0].fiatRate).toFixed(2),
+        );
+
+    });
+
+    test('trade with fee effecting long term gain', () => {
+        const holdings: IHoldings = mockHoldings(1, 3, new Date('1990/1/1'), new Date('2000/1/1'));
+        const trades = mockTradesWithFiatRate(1, new Date(), holdings, false);
+
+        const resultWithoutFee = calculateGains(holdings, trades, fiatCurrency);
+
+        const fee = faker.random.number();
+        trades[0].transactionFee = fee;
+
+        const resultWithFee = calculateGains(holdings, trades, fiatCurrency);
+
+        expect(
+            Math.abs(
+                resultWithoutFee.longTermGain - resultWithFee.longTermGain,
+            ).toFixed(2),
+        ).toBe(
+            (fee * trades[0].rate * trades[0].fiatRate).toFixed(2),
+        );
+
+    });
+
+    test('trade with fee split between short/long term gain', () => {
+        const holdings: IHoldings = mockHoldings(1, 3, new Date());
+        const currency: string = Object.keys(holdings)[0];
+        holdings[currency][0].date = new Date('1990/1/1').getTime();
+        const trades = mockTradesWithFiatRate(1, new Date(), holdings, false);
+
+        const resultWithoutFee = calculateGains(holdings, trades, fiatCurrency);
+
+        const fee = faker.random.number();
+        trades[0].transactionFee = fee;
+
+        const resultWithFee = calculateGains(holdings, trades, fiatCurrency);
+
+        expect(
+            Math.abs(
+                (resultWithoutFee.shortTermGain - resultWithFee.shortTermGain) +
+                (resultWithoutFee.longTermGain - resultWithFee.longTermGain),
+            ),
+        ).toBeCloseTo(
+            (fee * trades[0].rate * trades[0].fiatRate),
+        );
     });
 });
 

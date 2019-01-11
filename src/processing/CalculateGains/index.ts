@@ -6,9 +6,7 @@ import {
     ITradeWithGains,
     METHOD,
 } from '../../types';
-import holdingSelection from '../HoldingSelection';
-
-const FULL_YEAR_IN_MILLISECONDS = 31536000000;
+import { processTrade } from '../ProcessTrade';
 
 export interface ICalculateGains {
     newHoldings: IHoldings;
@@ -24,53 +22,12 @@ export function calculateGains(
 ): ICalculateGains {
     let shortTermGain = 0;
     let longTermGain = 0;
-    let newHoldings: IHoldings = clone(holdings);
+    let newHoldings: IHoldings = holdings;
     for (const trade of trades) {
-        const result = holdingSelection(
-            newHoldings, trade, fiatCurrency, method,
-        );
-        newHoldings = result.newHoldings;
-        if (!(trade.boughtCurrency in newHoldings)) {
-            newHoldings[trade.boughtCurrency] = [];
-        }
-        if (trade.soldCurrency === fiatCurrency) {
-            newHoldings[trade.boughtCurrency].push({
-                amount: trade.amountSold / trade.rate,
-                rateInFiat: trade.fiatRate,
-                date: trade.date,
-            });
-            continue;
-        } else {
-            let gain = 0;
-            let amountToAdd = trade.amountSold / trade.rate;
-            switch (trade.transactionFeeCurrency) {
-                case trade.boughtCurrency:
-                    gain -= trade.transactionFee * trade.rate * trade.fiatRate;
-                    amountToAdd -= trade.transactionFee;
-                    break;
-                case trade.soldCurrency:
-                    gain -= trade.transactionFee * trade.fiatRate;
-                    amountToAdd -= trade.transactionFee / trade.rate;
-                    break;
-                default:
-            }
-
-            newHoldings[trade.boughtCurrency].push({
-                amount: amountToAdd,
-                rateInFiat: trade.fiatRate * trade.rate,
-                date: trade.date,
-            });
-
-            for (const holding of result.deductedHoldings) {
-                gain += (trade.fiatRate - holding.rateInFiat) * holding.amount;
-
-                if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
-                    longTermGain += gain;
-                } else {
-                    shortTermGain += gain;
-                }
-            }
-        }
+        const result = processTrade(newHoldings, trade, fiatCurrency, method);
+        shortTermGain += result.shortTermGain;
+        longTermGain += result.longTermGain;
+        newHoldings = result.holdings;
     }
     return {
         newHoldings,
@@ -133,7 +90,7 @@ export function calculateGainsPerHoldings(
     fiatCurrency: string,
     method: METHOD,
 ): ICalculateGainsPerHoldings {
-    let newHoldings: IHoldings = clone(holdings);
+    let newHoldings: IHoldings = holdings;
     let shortTermGain = 0;
     let shortTermProceeds = 0;
     let shortTermCostBasis = 0;
@@ -143,71 +100,22 @@ export function calculateGainsPerHoldings(
     const shortTermTrades: ITradeWithCostBasis[] = [];
     const longTermTrades: ITradeWithCostBasis[] = [];
     for (const trade of trades) {
-        const result = holdingSelection(newHoldings, trade, fiatCurrency, method);
-        newHoldings = result.newHoldings;
-        if (!(trade.boughtCurrency in newHoldings)) {
-            newHoldings[trade.boughtCurrency] = [];
-        }
-        if (trade.soldCurrency === fiatCurrency) {
-            newHoldings[trade.boughtCurrency].push({
-                amount: trade.amountSold / trade.rate,
-                rateInFiat: trade.fiatRate,
-                date: trade.date,
-            });
-            continue;
-        } else {
-            newHoldings[trade.boughtCurrency].push({
-                amount: trade.amountSold / trade.rate,
-                rateInFiat: trade.fiatRate * trade.rate,
-                date: trade.date,
-            });
-        }
-        for (const holding of result.deductedHoldings) {
-            const tradeToAdd: ITradeWithCostBasis = {
-                fiatRate: trade.fiatRate,
-                boughtCurrency: trade.boughtCurrency,
-                soldCurrency: trade.soldCurrency,
-                amountSold: holding.amount,
-                rate: trade.rate,
-                date: trade.date,
-                ID: trade.ID,
-                exchangeID: trade.exchangeID,
-                exchange: trade.exchange,
-                transactionFee: trade.transactionFee,
-                transactionFeeCurrency: trade.transactionFeeCurrency,
-                shortTerm: 0,
-                longTerm: 0,
-                dateAcquired: holding.date,
-                costBasis: parseFloat((holding.rateInFiat * holding.amount).toFixed(2)),
-            };
-            const unFixedGain = (trade.fiatRate - holding.rateInFiat) * holding.amount;
-            let trueGain = parseFloat(unFixedGain.toFixed(2));
-            if (parseFloat(unFixedGain.toFixed(2)) === 0) {
-                if (unFixedGain === 0) {
-                    trueGain = 0;
-                } else {
-                    if (unFixedGain > 0) {
-                        trueGain = 0.01;
-                    } else {
-                        trueGain = -0.01;
-                    }
-                }
-            }
-            const gain: number = trueGain;
-            if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
-                longTermProceeds += tradeToAdd.fiatRate * tradeToAdd.amountSold;
-                longTermCostBasis += tradeToAdd.costBasis;
-                longTermGain += gain;
-                tradeToAdd.longTerm = gain;
-                longTermTrades.push(tradeToAdd);
+        const result = processTrade(newHoldings, trade, fiatCurrency, method);
+        shortTermGain += result.shortTermGain;
+        longTermGain += result.longTermGain;
+        longTermProceeds += result.longTermProceeds;
+        longTermCostBasis += result.longTermCostBasis;
+        shortTermProceeds += result.shortTermProceeds;
+        shortTermCostBasis += result.shortTermCostBasis;
+        newHoldings = result.holdings;
+
+        result.costBasisTrades.forEach((costBasisTrade) => {
+            if (costBasisTrade.longtermTrade) {
+                longTermTrades.push(costBasisTrade);
             } else {
-                shortTermProceeds += tradeToAdd.fiatRate * tradeToAdd.amountSold;
-                shortTermCostBasis += tradeToAdd.costBasis;
-                shortTermGain += gain;
-                tradeToAdd.shortTerm = gain;
-                shortTermTrades.push(tradeToAdd);
+                shortTermTrades.push(costBasisTrade);
             }
-        }
+        });
     }
     return {
         shortTermTrades,
