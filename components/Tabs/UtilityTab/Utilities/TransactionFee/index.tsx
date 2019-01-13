@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ISavedData, IPartialSavedData } from '../../../../../src/types';
-import { Table } from '../../../../Table';
+import { IPartialSavedData, ISavedData } from '../../../../../src/types';
 import Button from '../../../../Button';
+import { Table } from '../../../../Table';
 
 export interface ITransactionFeeProp {
     savedData: ISavedData;
