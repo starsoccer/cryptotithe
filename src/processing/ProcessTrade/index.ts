@@ -1,6 +1,6 @@
 import * as clone from 'clone';
-import { ITradeWithFiatRate, IHoldings, METHOD, ITradeWithCostBasis } from './../../types';
 import holdingSelection from '../HoldingSelection';
+import { IHoldings, ITradeWithCostBasis, ITradeWithFiatRate, METHOD } from './../../types';
 
 const FULL_YEAR_IN_MILLISECONDS = 31536000000;
 
@@ -65,7 +65,6 @@ export function processTrade(
             }
         }
 
-
         if (amountToAdd > 0) {
             newHoldings[trade.boughtCurrency].push({
                 amount: amountToAdd,
@@ -127,4 +126,4 @@ export function processTrade(
         shortTermProceeds,
         longTermProceeds,
     };
-};
+}

@@ -26,10 +26,10 @@ export default function outputForm8949(
     ];
     csvData = csvData.concat(headers);
     csvData = csvData.concat(addTrades(result.shortTermTrades));
-    //csvData = csvData.concat(addTotal(result.shortTermProceeds, result.shortTermCostBasis, result.shortTermGain));
+    // csvData = csvData.concat(addTotal(result.shortTermProceeds, result.shortTermCostBasis, result.shortTermGain));
     csvData = csvData.concat(['', 'Part 2 (Long Term)']).concat(headers);
     csvData = csvData.concat(addTrades(result.longTermTrades));
-    //csvData = csvData.concat(addTotal(result.longTermProceeds, result.longTermCostBasis, result.longTermGain));
+    // csvData = csvData.concat(addTotal(result.longTermProceeds, result.longTermCostBasis, result.longTermGain));
     return csvData.join('\n');
 }
 
@@ -74,7 +74,9 @@ function addTrades(trades: ITradeWithCostBasis[]) {
             gain -= 0.01;
         }
 
-        if ((fiatCurrencyDecimal(proceeds) - fiatCurrencyDecimal(costbasis)).toFixed(2) !== fiatCurrencyDecimal(gain).toFixed(2)) {
+        if ((fiatCurrencyDecimal(proceeds) - fiatCurrencyDecimal(costbasis)).toFixed(2)
+            !== fiatCurrencyDecimal(gain).toFixed(2)
+        ) {
             gain = parseFloat((fiatCurrencyDecimal(proceeds) - fiatCurrencyDecimal(costbasis)).toFixed(2));
         }
 
@@ -91,6 +93,8 @@ function addTrades(trades: ITradeWithCostBasis[]) {
     });
 
     return temp.concat([[
-        'Totals', '', '', roundedProceeds.toFixed(2), roundedCostbasis.toFixed(2), '', '0', (roundedProceeds - roundedCostbasis).toFixed(2)
+        'Totals', '', '',
+        roundedProceeds.toFixed(2), roundedCostbasis.toFixed(2), '',
+        '0', (roundedProceeds - roundedCostbasis).toFixed(2),
     ]]);
 }
