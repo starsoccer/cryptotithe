@@ -50,17 +50,21 @@ export function processTrade(
     } else {
         let feeFiatCost = 0;
         let amountToAdd = trade.amountSold / trade.rate;
-        switch (trade.transactionFeeCurrency) {
-            case trade.boughtCurrency:
-                feeFiatCost += trade.transactionFee * trade.rate * trade.fiatRate;
-                amountToAdd -= trade.transactionFee;
-                break;
-            case trade.soldCurrency:
-                feeFiatCost += trade.transactionFee * trade.fiatRate;
-                amountToAdd -= trade.transactionFee / trade.rate;
-                break;
-            default:
+
+        if (trade.transactionFee) {
+            switch (trade.transactionFeeCurrency) {
+                case trade.boughtCurrency:
+                    feeFiatCost += trade.transactionFee * trade.rate * trade.fiatRate;
+                    amountToAdd -= trade.transactionFee;
+                    break;
+                case trade.soldCurrency:
+                    feeFiatCost += trade.transactionFee * trade.fiatRate;
+                    amountToAdd -= trade.transactionFee / trade.rate;
+                    break;
+                default:
+            }
         }
+
 
         if (amountToAdd > 0) {
             newHoldings[trade.boughtCurrency].push({
@@ -73,19 +77,9 @@ export function processTrade(
         for (const holding of result.deductedHoldings) {
             let gain = (trade.fiatRate - holding.rateInFiat) * holding.amount;
 
-            const feeCost = holding.amount / trade.amountSold * feeFiatCost;
-
-            gain -= feeCost;
-
-            const fixedGain = parseFloat(gain.toFixed(2));
-            if (fixedGain === 0) {
-                if (gain !== 0) {
-                    if (gain > 0) {
-                        gain = 0.01;
-                    } else {
-                        gain = -0.01;
-                    }
-                }
+            if (feeFiatCost) {
+                const feeCost = holding.amount / trade.amountSold * feeFiatCost;
+                gain -= feeCost;
             }
 
             const tradeToAdd: ITradeWithCostBasis = {
@@ -103,9 +97,10 @@ export function processTrade(
                 shortTerm: 0,
                 longTerm: 0,
                 dateAcquired: holding.date,
-                costBasis: parseFloat((holding.rateInFiat * holding.amount).toFixed(2)),
+                costBasis: holding.rateInFiat * holding.amount,
                 longtermTrade: false,
             };
+
             if (trade.date - holding.date > FULL_YEAR_IN_MILLISECONDS) {
                 tradeToAdd.longtermTrade = true;
                 longTermGain += gain;

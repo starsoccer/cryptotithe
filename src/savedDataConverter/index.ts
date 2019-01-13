@@ -5,24 +5,26 @@ import zeroFourZeroConverter from './0.4.0';
 import zeroFiveZeroConverter from './0.5.0';
 
 export default function onSaveDataLoaded(savedData: ISavedData): boolean {
-    const version = savedData.version || 0;
+    const version = parseInt(savedData.version, 10);
     const packageData = require('./package.json');
     const currentVersion = packageData.version;
     let changeMade = false;
-    switch (version) {
-        case undefined: // prior to 0.2.0
-            changeMade = zeroTwoZeroConverter(savedData);
-        case '0.2.0': // 0.2.0
-            changeMade = changeMade || zeroThreeZeroConverter(savedData);
-        case '0.3.0': // 0.3.0
-            changeMade = changeMade || zeroFourZeroConverter(savedData);
-            break;
-        case '0.4.0': // 0.4.0
-            changeMade = changeMade || zeroFiveZeroConverter(savedData);
-            break;
-        default:
 
+    if (!version || version <= 0.2) {
+        changeMade = zeroTwoZeroConverter(savedData);
     }
+    if (!version || version <= 0.3) {
+        changeMade = changeMade || zeroThreeZeroConverter(savedData);
+    }
+
+    if (!version || version <= 0.4) {
+        changeMade = changeMade || zeroFourZeroConverter(savedData);
+    }
+
+    if (!version || version <= 0.5) {
+        changeMade = changeMade || zeroFiveZeroConverter(savedData);
+    }
+
     if (changeMade && version === 0 || version < currentVersion) {
         savedData.version = currentVersion;
     }
