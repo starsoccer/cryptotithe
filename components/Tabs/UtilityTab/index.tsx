@@ -2,6 +2,7 @@ import * as React from 'react';
 import { IPartialSavedData, ISavedData } from '../../../src/types';
 import CurrencyRename from './Utilities/CurrencyRename';
 import DailyBalance from './Utilities/DailyBalance';
+import TransactionFee from './Utilities/TransactionFee';
 export interface IUtilityTabProp {
     savedData: ISavedData;
     save(data: IPartialSavedData): Promise<boolean>;
@@ -14,6 +15,7 @@ export interface IUtilityTabState {
 export enum Utilities {
     DailyBalance = 'Daily Balance',
     CurrencyRename = 'Currency Rename',
+    TransactionFee = 'Transaction Fee',
 }
 
 export class UtilityTab extends React.Component<IUtilityTabProp, IUtilityTabState> {
@@ -29,6 +31,8 @@ export class UtilityTab extends React.Component<IUtilityTabProp, IUtilityTabStat
         switch (utility) {
             case Utilities.CurrencyRename:
                 return <CurrencyRename savedData={this.props.savedData} save={this.props.save}/>;
+            case Utilities.TransactionFee:
+                return <TransactionFee savedData={this.props.savedData} save={this.props.save} />;
             case Utilities.DailyBalance:
             default:
                 return <DailyBalance savedData={this.props.savedData}/>;
