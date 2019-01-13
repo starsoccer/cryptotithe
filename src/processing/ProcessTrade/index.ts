@@ -65,7 +65,7 @@ export function processTrade(
             }
         }
 
-        if (amountToAdd > 0) {
+        if (amountToAdd > 0.000000001) {
             newHoldings[trade.boughtCurrency].push({
                 amount: amountToAdd,
                 rateInFiat: trade.fiatRate * trade.rate,
