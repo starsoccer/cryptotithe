@@ -1,5 +1,6 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
+import { calculateGains } from '../src/processing/CalculateGains';
 import save from '../src/save';
 import savedDataConverter from '../src/savedDataConverter';
 import {
@@ -70,6 +71,12 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             const savedData =  this.props.savedData;
             const shouldSave = savedDataConverter(savedData);
             if (shouldSave) {
+                savedData.holdings = calculateGains(
+                    {},
+                    this.props.savedData.trades,
+                    this.props.savedData.settings.fiatCurrency,
+                    this.props.savedData.settings.gainCalculationMethod,
+                ).newHoldings;
                 this.saveData(savedData);
             }
         }
