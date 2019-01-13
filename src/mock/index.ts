@@ -43,11 +43,17 @@ export function mockTrades(
 
         for (let i = 0; i < amount; i++) {
             const boughtCurrency = faker.random.word().toUpperCase();
+            let amountSold = 0;
+            if (allowOverflow) {
+                amountSold = totalHoldings + faker.random.number();
+            } else {
+                amountSold = faker.random.number(totalHoldings / amount);
+            }
+
             trades.push({
                 boughtCurrency,
                 soldCurrency: faker.random.arrayElement(currencies),
-                amountSold: (allowOverflow ?
-                    totalHoldings + faker.random.number() : (totalHoldings - faker.random.number()) / amount),
+                amountSold,
                 rate: faker.random.number(),
                 date: faker.date.between(startingDate, new Date()).getTime(),
                 fiatRate: faker.random.number(),
