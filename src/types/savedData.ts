@@ -14,7 +14,7 @@ export interface IPartialSavedData {
     savedDate?: Date;
     trades?: ITradeWithFiatRate[];
     holdings?: IHoldings;
-    settings?: ISettings;
+    settings?: Partial<ISettings>;
 }
 
 export interface ISettings {

@@ -1,8 +1,8 @@
-import { ISavedData } from '../../types';
+import { IPartialSavedData, FiatRateMethod } from '../../types';
 
-export default function converter(savedData: ISavedData): boolean {
+export default function converter(savedData: IPartialSavedData): boolean {
     let changeMade = false;
-    if (savedData.trades.length && 'USDRate' in savedData.trades[0]) {
+    if (savedData.trades !== undefined && savedData.trades.length && 'USDRate' in savedData.trades[0]) {
         changeMade = true;
         for (const trade of savedData.trades) {
             const oldFormatTrade = trade as any;
@@ -11,7 +11,7 @@ export default function converter(savedData: ISavedData): boolean {
         }
     }
 
-    if (Object.keys(savedData.holdings).length) {
+    if (savedData.holdings !== undefined && Object.keys(savedData.holdings).length) {
         const keys = Object.keys(savedData.holdings);
         if ('rateInUSD' in savedData.holdings[keys[0]][0]) {
             changeMade = true;
@@ -24,5 +24,18 @@ export default function converter(savedData: ISavedData): boolean {
             }
         }
     }
+
+    if ('settings' in savedData === false || savedData.settings === undefined) {
+        savedData.settings = {};
+    }
+
+    if ('fiatCurrency' in savedData === false) {
+        savedData.settings.fiatCurrency = 'USD';
+    }
+
+    if ('fiatRateMethod' in savedData === false) {
+        savedData.settings.fiatRateMethod = Object.keys(FiatRateMethod)[0] as keyof typeof FiatRateMethod;
+    }
+
     return changeMade;
 }

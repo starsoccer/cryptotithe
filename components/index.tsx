@@ -34,6 +34,7 @@ enum TABS {
 
 interface IAppState {
     savedData: ISavedData;
+    savedDataUpdated: boolean;
     processing: boolean;
     duplicateTrades: ITradeWithDuplicateProbability[];
     currentTab: TABS;
@@ -46,6 +47,22 @@ interface IAppState {
 export class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
+
+        let savedData = this.props.savedData;
+        let savedDataUpdated = false;
+        const savedDataLoaded = savedData.trades.length + Object.keys(savedData.holdings).length !== 0;
+        if (savedDataLoaded) {
+            const shouldSave = savedDataConverter(savedData);
+            if (shouldSave) {
+                savedData.holdings = calculateGains(
+                    {},
+                    this.props.savedData.trades,
+                    this.props.savedData.settings.fiatCurrency,
+                    this.props.savedData.settings.gainCalculationMethod,
+                ).newHoldings;
+                savedDataUpdated = true;
+            }
+        }
 
         this.state = {
             processing: false,
@@ -60,25 +77,15 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                 download: false,
             },
             settingsPopup: false,
-            savedData: props.savedData,
+            savedData,
+            savedDataUpdated,
         };
     }
 
     public componentDidMount() {
-        const savedDataLoaded = this.props.savedData.trades.length +
-            Object.keys(this.props.savedData.holdings).length !== 0;
-        if (savedDataLoaded) {
-            const savedData =  this.props.savedData;
-            const shouldSave = savedDataConverter(savedData);
-            if (shouldSave) {
-                savedData.holdings = calculateGains(
-                    {},
-                    this.props.savedData.trades,
-                    this.props.savedData.settings.fiatCurrency,
-                    this.props.savedData.settings.gainCalculationMethod,
-                ).newHoldings;
-                this.saveData(savedData);
-            }
+        if (this.state.savedDataUpdated) {
+            this.saveData(this.state.savedData);
+            this.setState({savedDataUpdated: false});
         }
     }
 

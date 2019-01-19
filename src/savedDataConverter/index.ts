@@ -13,19 +13,20 @@ export default function onSaveDataLoaded(savedData: ISavedData): boolean {
     if (!version || version <= 0.2) {
         changeMade = zeroTwoZeroConverter(savedData);
     }
+
     if (!version || version <= 0.3) {
-        changeMade = changeMade || zeroThreeZeroConverter(savedData);
+        changeMade = zeroThreeZeroConverter(savedData) || changeMade;
     }
 
     if (!version || version <= 0.4) {
-        changeMade = changeMade || zeroFourZeroConverter(savedData);
+        changeMade = zeroFourZeroConverter(savedData) || changeMade;
     }
 
     if (!version || version <= 0.5) {
-        changeMade = changeMade || zeroFiveZeroConverter(savedData);
+        changeMade = zeroFiveZeroConverter(savedData) || changeMade;
     }
 
-    if (changeMade && version === 0 || version < currentVersion) {
+    if (changeMade && !version || version < currentVersion) {
         savedData.version = currentVersion;
     }
 
