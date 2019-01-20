@@ -100,7 +100,7 @@ export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesT
 
     public processTrades = async (): Promise<void> => {
         this.setState({processing: true});
-        const duplicateToSave = this.state.duplicateTrades.filter((trade) => trade.duplicate);
+        const duplicateToSave = this.state.duplicateTrades.filter((trade) => !trade.duplicate);
         const tradesToSave = this.state.processedTrades.concat(duplicateToSave);
         const tradesWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades(
             tradesToSave,

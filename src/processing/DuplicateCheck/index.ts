@@ -3,7 +3,7 @@ import { ITrade, ITradeWithDuplicateProbability } from '../../types';
 export default function duplicateCheck(currentTrades: ITrade[], newTrades: ITrade[]): ITradeWithDuplicateProbability[] {
     const duplicateTrades: ITradeWithDuplicateProbability[] = [];
 
-    for (const newTrade of newTrades) {
+    nextTrade: for (const newTrade of newTrades) {
         const IDMatchedTrades = currentTrades.filter((trade) =>
             newTrade.ID === trade.ID || newTrade.exchangeID === trade.exchangeID,
         );
@@ -38,9 +38,15 @@ export default function duplicateCheck(currentTrades: ITrade[], newTrades: ITrad
                         probability,
                         duplicate: probability > 50,
                     });
+                    continue nextTrade;
                 }
             }
         }
+        duplicateTrades.push({
+            ...newTrade,
+            probability: 0,
+            duplicate: false,
+        });
     }
     return duplicateTrades;
 }
