@@ -46,7 +46,8 @@ export async function processData(exchange: keyof typeof EXCHANGES | string, fil
                     return processData(key as keyof typeof EXCHANGES, fileData);
                 }
             }
-            throw new Error(`Unknown Exchange - ${exchange}`);
+            throw new Error(`Unknown Exchange - ${exchange} - ${headersHash}`);
+            return [];
     }
     if (typeof processExchangeData === 'function') {
         return processExchangeData(fileData);

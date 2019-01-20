@@ -8,27 +8,32 @@ enum GeminiOrderType {
     Credit = 'Credit',
     Debit = 'Debit',
 }
-
 interface IGemini {
     Date: string;
-    Time: string;
+    'Time (UTC)': string;
     Type: GeminiOrderType;
     Symbol: string;
     Specification: string;
-    Liquidity: string;
-    'Trading Fee': string;
-    'USD Amount': string;
-    'Trading Fee (USD)': string;
-    'USD Balance': string;
-    'BTC Amount': string;
-    'Trading Fee (BTC)': string;
-    'BTC Balance': string;
-    'ETH Amount': string;
-    'Trading Fee (ETH)': string;
-    'ETH Balance': string;
-    'ZEC Amount': string;
-    'Trading Fee (ZEC)': string;
-    'ZEC Balance': string;
+    'Liquidity Indicator': string;
+    'Trading Fee Rate (bps)': string;
+    'USD Amount USD': string;
+    'Trading Fee (USD) USD': string;
+    'USD Balance USD': string;
+    'BTC Amount BTC': string;
+    'Trading Fee (BTC) BTC': string;
+    'BTC Balance BTC': string;
+    'ETH Amount ETH': string;
+    'Trading Fee (ETH) ETH': string;
+    'ETH Balance ETH': string;
+    'ZEC Amount ZEC': string;
+    'Trading Fee (ZEC) ZEC': string;
+    'ZEC Balance ZEC': string;
+    'BCH Amount BCH': string;
+    'Trading Fee (BCH) BCH': string;
+    'BCH Balance BCH': string;
+    'LTC Amount LTC': string;
+    'Trading Fee (LTC) LTC': string;
+    'LTC Balance LTC': string;
     'Trade ID': string;
     'Order ID': string;
     'Order Date': string;
@@ -67,8 +72,8 @@ function parseNumber(amount: string): number {
     if (!amount || amount === null || amount === '') {
         return 0;
     }
-    const amountSold = amount.replace(/[($-,)]/g, '');
-    return parseFloat(amountSold.split(' ')[0]);
+    const realAmount = amount.replace(/[($-,)]/g, '');
+    return parseFloat(realAmount.split(' ')[0]);
 }
 
 export async function processData(fileData: string): Promise<ITrade[]> {
@@ -81,10 +86,10 @@ export async function processData(fileData: string): Promise<ITrade[]> {
             switch (trade.Type) {
                 case GeminiOrderType.Buy:
                 case GeminiOrderType.Sell:
-                    const amountSold = parseNumber(trade[`${pair.sold} Amount`]);
-                    const amountSoldFee = parseNumber(trade[`Trading Fee (${pair.sold})`]);
-                    const amountBought = parseNumber(trade[`${pair.bought} Amount`]);
-                    const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought})`]);
+                    const amountSold = parseNumber(trade[`${pair.sold} Amount ${pair.sold}`]);
+                    const amountSoldFee = parseNumber(trade[`Trading Fee (${pair.sold}) ${pair.sold}`]);
+                    const amountBought = parseNumber(trade[`${pair.bought} Amount ${pair.bought}`]);
+                    const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought}) ${pair.bought}`]);
                     const partialTrade: IPartialTrade = {
                         boughtCurrency: pair.bought.toUpperCase(),
                         soldCurrency: pair.sold.toUpperCase(),
