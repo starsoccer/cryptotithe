@@ -48,7 +48,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
 
-        let savedData = this.props.savedData;
+        const savedData = this.props.savedData;
         let savedDataUpdated = false;
         const savedDataLoaded = savedData.trades.length + Object.keys(savedData.holdings).length !== 0;
         if (savedDataLoaded) {

@@ -1,6 +1,6 @@
 import { calculateGains } from '../processing/CalculateGains';
 import SortTrades from '../processing/SortTrades';
-import { IPartialSavedData, ISavedData, ITradeWithFiatRate, ISettings } from '../types';
+import { IPartialSavedData, ISavedData, ISettings, ITradeWithFiatRate } from '../types';
 
 export default function save(data: IPartialSavedData, fallback: ISavedData): ISavedData {
     const packageData = require('../../package.json');

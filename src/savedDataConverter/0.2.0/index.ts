@@ -1,4 +1,4 @@
-import { IPartialSavedData, FiatRateMethod } from '../../types';
+import { FiatRateMethod, IPartialSavedData } from '../../types';
 
 export default function converter(savedData: IPartialSavedData): boolean {
     let changeMade = false;
