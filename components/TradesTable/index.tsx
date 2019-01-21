@@ -38,9 +38,8 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
             newTrades.push(editedTrade);
         }
         const sortedTrades = sortTrades(newTrades);
-        if (await this.props.save(sortedTrades)) {
-            this.setState({popup: undefined});
-        }
+        await this.props.save(sortedTrades);
+        this.setState({popup: undefined});
     }
 
     public render() {
