@@ -33,9 +33,13 @@ data\.json
 
 *.map
 
-*.js
+/src/**/*.js
+/components/**/*.js
+index.js
+react.js
 
 !bundle.js
 backup\.json
 
 bundle\.js
+\dist

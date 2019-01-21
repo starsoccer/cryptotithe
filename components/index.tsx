@@ -203,7 +203,6 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                         onClose={this.settingsPopup}
                     />
                 }
-                <link rel='stylesheet' type='text/css' href='./components/index.css' />
                 <i className='fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray' onClick={this.settingsPopup}/>
                 <div className='flex bg-dark-gray h2'>
                     {Object.keys(TABS).map((key: string) => <h3

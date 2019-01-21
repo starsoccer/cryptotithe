@@ -7,9 +7,7 @@ export interface ILoaderProps {
 export class Loader extends React.PureComponent<ILoaderProps> {
     public render() {
         return (
-            <div className='center mt5 loader'>
-                <link rel='stylesheet' type='text/css' href='./components/Loader/index.css' />
-            </div>
+            <div className='center mt5 loader' />
         );
     }
 }
