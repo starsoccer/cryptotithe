@@ -17,6 +17,8 @@ const trade: ITrade = {
     exchangeID: faker.random.uuid(),
     ID: faker.random.uuid(),
     exchange: faker.random.word() as EXCHANGES,
+    transactionFee: 0,
+    transactionFeeCurrency: 'FAKE',
 };
 
 describe('getCurrencyHolding basic', () => {

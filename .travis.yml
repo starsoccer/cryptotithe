@@ -2,14 +2,14 @@ language: node_js
 node_js:
   - "lts/*"
 script:
-  - yarn install coveralls -g
-  - yarn install browserify -g
+  - yarn global add coveralls
+  - yarn global add browserify
   - yarn run full-build-test-ci
 cache:
   directories:
     - "node_modules"
 before_deploy:
-  - yarn install now --no-save
+  - yarn global add now
   - now remove cryptotithe --safe --yes --team cryptotithe --token $NOW_TOKEN || true
 deploy:
   - provider: script

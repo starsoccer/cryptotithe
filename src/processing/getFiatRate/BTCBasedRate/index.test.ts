@@ -13,6 +13,8 @@ describe('Get Fiat Rate', () => {
             ID: '1',
             exchangeID: '1',
             exchange: EXCHANGES.GEMINI,
+            transactionFee: 0,
+            transactionFeeCurrency: 'LTC',
         };
         const rate = BTCBasedRate(trade, 1000);
         expect(rate).toBe(1000);
@@ -28,6 +30,8 @@ describe('Get Fiat Rate', () => {
             ID: '1',
             exchangeID: '1',
             exchange: EXCHANGES.GEMINI,
+            transactionFee: 0,
+            transactionFeeCurrency: 'BTC',
         };
         const rate = BTCBasedRate(trade, 1000);
         expect(rate).toBe(1000 * (trade.amountSold / trade.rate) / trade.amountSold);

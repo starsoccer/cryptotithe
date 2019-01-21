@@ -13,6 +13,8 @@ describe('Add fiat Rate', () => {
             ID: '1',
             exchangeID: '1',
             exchange: EXCHANGES.GEMINI,
+            transactionFee: 0,
+            transactionFeeCurrency: 'LTC',
         };
 
         const tradeWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.DOUBLEAVERAGE);
@@ -32,6 +34,8 @@ describe('Add fiat Rate', () => {
                 ID: '1',
                 exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
+                transactionFee: 0,
+                transactionFeeCurrency: 'LTC',
             },
             {
                 boughtCurrency: 'LTC',
@@ -42,6 +46,8 @@ describe('Add fiat Rate', () => {
                 ID: '1',
                 exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
+                transactionFee: 0,
+                transactionFeeCurrency: 'LTC',
             },
             {
                 boughtCurrency: 'BTC',
@@ -52,6 +58,8 @@ describe('Add fiat Rate', () => {
                 ID: '1',
                 exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
+                transactionFee: 0,
+                transactionFeeCurrency: 'BTC',
             },
         ];
 
@@ -77,6 +85,8 @@ describe('Add fiat Rate', () => {
                 ID: '1',
                 exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
+                transactionFee: 0,
+                transactionFeeCurrency: fiatCurrency,
             },
             {
                 boughtCurrency: fiatCurrency,
@@ -87,7 +97,9 @@ describe('Add fiat Rate', () => {
                 ID: '1',
                 exchangeID: '1',
                 exchange: EXCHANGES.GEMINI,
-            }
+                transactionFee: 0,
+                transactionFeeCurrency: fiatCurrency,
+            },
         ];
 
         const tradeWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades(trades, fiatCurrency, FiatRateMethod.DOUBLEAVERAGE);
@@ -108,6 +120,8 @@ describe('Add fiat Rate', () => {
             ID: '1',
             exchangeID: '1',
             exchange: EXCHANGES.GEMINI,
+            transactionFee: 0,
+            transactionFeeCurrency: 'LTC',
         };
 
         const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURLOW);
@@ -139,6 +153,8 @@ describe('Add fiat Rate', () => {
             ID: '1',
             exchangeID: '1',
             exchange: EXCHANGES.GEMINI,
+            transactionFee: 0,
+            transactionFeeCurrency: 'LTC',
         };
 
         const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURLOW);
