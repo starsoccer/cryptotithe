@@ -1,0 +1,9 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "index.html", "use": "@now/html-minifier" },
+      { "src": "bundle.js", "use": "@now/static" },
+      { "src": "*.css", "use": "@now/static" }
+    ]
+  }
+  
