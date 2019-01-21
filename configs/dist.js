@@ -7,9 +7,10 @@ async function build() {
         asar: true,
         out: './dist/',
         ignore: [
-            /(?:.(tsx|ts|js\.map))/,
+            /(?:\.(ts|tsx|js\.map)$)/,
             /^(?!.*(package)).*(\.json).*/,
             '.vscode',
+            'components',
             'src',
             'configs',
             '.gitignore',

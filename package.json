@@ -10,14 +10,14 @@
         "test-coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
         "build": "tsc -p configs/tsconfig.json && npm run browserify",
         "build-prod": "tsc -p configs/tsconfig.json && npm run browserify-prod",
-        "browserify": "browserify ./react.js -o ./bundle.js -u ./data.json --im -g [ envify --NODE_ENV production ] -g uglifyify | uglifyjs --compress --mangle",
+        "browserify": "browserify ./react.js -o ./bundle.js -u ./data.json --im",
         "browserify-prod": "browserify ./react.js -o ./bundle.js -u ./data.json --im -g [ envify --NODE_ENV production ] -g uglifyify | uglifyjs --compress --mangle",
         "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
         "full-build-test-ci": "npm run lint && npm run test-coveralls && npm run build-prod",
         "prod-start": "set NODE_ENV=production&& npm run start",
         "now-start": "npm install serve && serve",
         "dist": "node ./configs/dist.js",
-        "release": "npm run build && npm run dist"
+        "release": "npm run build-prod && npm run dist"
     },
     "author": "",
     "license": "MIT",
