@@ -89,7 +89,6 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
     public render() {
         return (
             <div className='trade-timeline relative center'>
-            <link rel='stylesheet' type='text/css' href='./components/TradeTimeline/index.css' />
                 <InfiniteScroll
                     pageStart={this.state.page}
                     loadMore={this.moreTrades}

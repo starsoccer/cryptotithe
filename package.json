@@ -1,6 +1,6 @@
 {
     "name": "cryptotithe",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -15,7 +15,9 @@
         "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
         "full-build-test-ci": "npm run lint && npm run test-coveralls && npm run build-prod",
         "prod-start": "set NODE_ENV=production&& npm run start",
-        "now-start": "npm install serve && serve"
+        "now-start": "npm install serve && serve",
+        "dist": "node ./configs/dist.js",
+        "release": "npm run build && npm run dist"
     },
     "author": "",
     "license": "MIT",
@@ -36,6 +38,7 @@
         "coveralls": "^3.0.2",
         "electron": "^4.0.1",
         "electron-devtools-installer": "^2.2.4",
+        "electron-packager": "^13.0.1",
         "envify": "^4.1.0",
         "faker": "^4.1.0",
         "jest": "^23.6.0",
