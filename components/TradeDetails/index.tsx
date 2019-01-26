@@ -4,6 +4,7 @@ import * as validator from 'validator';
 import { createDateAsUTC } from '../../src/parsers/utils';
 import { EXCHANGES, ITrade } from '../../src/types';
 import Button from '../Button';
+import { Select } from '../Select';
 
 export interface ITradeDetailsProps<TradeType extends ITrade> {
     className?: string;
@@ -60,6 +61,10 @@ export default class TradeDetails<TradeType extends ITrade> extends
 
     public onChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ [key]: e.currentTarget.value });
+    }
+
+    public onSelectChange = (key: string) => (value: string) => {
+        this.setState({ [key]: value });
     }
 
     public onSubmit = () => {
@@ -168,21 +173,24 @@ export default class TradeDetails<TradeType extends ITrade> extends
     public render() {
         return (
             <div className={`TradeDetails w-70 center tc ${this.props.className}`}>
-                <div className='w-100 pa1'>
-                    <h4 className='pb0 mb0 pt0 mt0 tc'>Exchange</h4>
-                    <input
-                        className='w-100 tc'
-                        value={this.state.exchange}
-                        onChange={this.onChange('exchange')}
-                    />
-                </div>
-                <div className='w-100 pa1'>
-                    <h4 className='pb0 mb0 pt0 mt0 tc'>ID</h4>
-                    <input
-                        className='w-100 tc'
-                        value={this.state.id}
-                        disabled
-                    />
+                <div className='flex w-100 pa1'>
+                    <div className='w-30 pa1'>
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Exchange</h4>
+                        <Select
+                            className='w-100 tc'
+                            onChange={this.onSelectChange('exchange')}
+                            options={Object.assign(EXCHANGES)}
+                            inputFallback={true}
+                        />
+                    </div>
+                    <div className='w-70 pa1'>
+                        <h4 className='pb0 mb0 pt0 mt0 tc'>Date</h4>
+                        <input
+                            className='w-100 tc'
+                            value={this.state.date.toString()}
+                            onChange={this.onChange('date')}
+                        />
+                    </div>
                 </div>
                 <div className='w-100 pa1'>
                     <h4 className='pb0 mb0 pt0 mt0 tc'>Exchange ID</h4>
@@ -190,14 +198,6 @@ export default class TradeDetails<TradeType extends ITrade> extends
                         className='w-100 tc'
                         value={this.state.exchangeID}
                         onChange={this.onChange('exchangeID')}
-                    />
-                </div>
-                <div className='w-100 pa1'>
-                    <h4 className='pb0 mb0 pt0 mt0 tc'>Date</h4>
-                    <input
-                        className='w-100 tc'
-                        value={this.state.date.toString()}
-                        onChange={this.onChange('date')}
                     />
                 </div>
                 <div className='flex w-100 pa1'>
