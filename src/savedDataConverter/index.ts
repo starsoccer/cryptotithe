@@ -6,32 +6,26 @@ import zeroFiveZeroConverter from './0.5.0';
 import zeroSixZeroConverter from './0.6.0';
 
 export default function onSaveDataLoaded(savedData: ISavedData): boolean {
-    const version = parseInt(savedData.version, 10);
+    const savedVersion = isNaN(parseFloat(savedData.version)) ? 0 : parseFloat(savedData.version);
     const packageData = require('../../package.json');
     const currentVersion = packageData.version;
     let changeMade = false;
 
-    if (!version || version <= 0.2) {
-        changeMade = zeroTwoZeroConverter(savedData);
+    const versionUpgraders: {[key: number]: (data: ISavedData) => boolean} = {
+        [0.2]: zeroTwoZeroConverter,
+        [0.3]: zeroThreeZeroConverter,
+        [0.4]: zeroFourZeroConverter,
+        [0.5]: zeroFiveZeroConverter,
+        [0.6]: zeroSixZeroConverter,
+    };
+    const versions = Object.keys(versionUpgraders);
+    for (const version of versions) {
+        if (savedVersion < parseFloat(version)) {
+            changeMade = versionUpgraders[version](savedData) || changeMade;
+        }
     }
 
-    if (!version || version <= 0.3) {
-        changeMade = zeroThreeZeroConverter(savedData) || changeMade;
-    }
-
-    if (!version || version <= 0.4) {
-        changeMade = zeroFourZeroConverter(savedData) || changeMade;
-    }
-
-    if (!version || version <= 0.5) {
-        changeMade = zeroFiveZeroConverter(savedData) || changeMade;
-    }
-
-    if (!version || version <= 0.6) {
-        changeMade = zeroSixZeroConverter(savedData) || changeMade;
-    }
-
-    if (changeMade && !version || version < currentVersion) {
+    if (changeMade && !savedVersion || savedVersion < currentVersion) {
         savedData.version = currentVersion;
     }
 
