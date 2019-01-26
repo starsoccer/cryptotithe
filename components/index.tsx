@@ -1,7 +1,8 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
-import { calculateGains } from '../src/processing/CalculateGains';
+import integrityCheck from '../src/utils/integrityCheck';
 import save from '../src/save';
+import { createEmptySavedData } from '../src/mock';
 import savedDataConverter from '../src/savedDataConverter';
 import {
     IPartialSavedData,
@@ -34,7 +35,6 @@ enum TABS {
 
 interface IAppState {
     savedData: ISavedData;
-    savedDataUpdated: boolean;
     processing: boolean;
     duplicateTrades: ITradeWithDuplicateProbability[];
     currentTab: TABS;
@@ -44,48 +44,30 @@ interface IAppState {
     settingsPopup: boolean;
 }
 
+const isSavedDataLoaded = (data: ISavedData) => data.trades.length + Object.keys(data.holdings).length > 0;
+
 export class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
-
-        const savedData = this.props.savedData;
-        let savedDataUpdated = false;
-        const savedDataLoaded = savedData.trades.length + Object.keys(savedData.holdings).length !== 0;
-        if (savedDataLoaded) {
-            const shouldSave = savedDataConverter(savedData);
-            if (shouldSave) {
-                savedData.holdings = calculateGains(
-                    {},
-                    this.props.savedData.trades,
-                    this.props.savedData.settings.fiatCurrency,
-                    this.props.savedData.settings.gainCalculationMethod,
-                ).newHoldings;
-                savedDataUpdated = true;
-            }
-        }
-
         this.state = {
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.Home,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser || props.savedData.trades.length +
-                Object.keys(props.savedData.holdings).length === 0,
+            loadDataPopup: props.browser || isSavedDataLoaded(props.savedData),
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
                 download: false,
             },
             settingsPopup: false,
-            savedData,
-            savedDataUpdated,
+            savedData: createEmptySavedData(),
         };
     }
 
     public componentDidMount() {
-        if (this.state.savedDataUpdated) {
-            this.saveData(this.state.savedData);
-            this.setState({savedDataUpdated: false});
+        if (isSavedDataLoaded(this.props.savedData)) {
+            this.loadData(this.props.savedData);
         }
     }
 
@@ -146,23 +128,34 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         this.setState({loadDataPopup: !this.state.loadDataPopup});
     }
 
-    public loadData = (data: string) => {
-        this.setState({fileBrowseOpen: false});
+    public parseData = (data: string) => {
         if (data !== '') {
             try {
                 const parsedData: ISavedData = JSON.parse(data);
-                const shouldSave = savedDataConverter(parsedData);
-                if (shouldSave) {
-                    this.saveData(parsedData);
-                }
-                this.setState({
-                    savedData: parsedData,
-                    loadDataPopup: false,
-                });
+                this.loadData(parsedData);
             } catch (ex) {
                 alert('Unable to parse saved data');
             }
         }
+    }
+
+    public loadData = (data: ISavedData) => {
+        this.setState({fileBrowseOpen: false});
+        const savedData = data;
+        if (isSavedDataLoaded(savedData)) {
+            if ('integrity' in savedData && integrityCheck(savedData) !== savedData.integrity) {
+                alert('Integrity Check Failed');
+            }
+            const shouldSave = savedDataConverter(savedData);
+            if (shouldSave) {
+                this.saveData(savedData);
+            }
+            this.setState({
+                savedData,
+                loadDataPopup: false,
+            });
+        }
+
     }
 
     public openFileBrowse = () => {
@@ -183,7 +176,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                             <h5>Great Description to be put here</h5>
                             <Button label='Load Existing Data' onClick={this.openFileBrowse}/>
                             <FileBrowse
-                                onLoaded={this.loadData}
+                                onLoaded={this.parseData}
                                 browse={this.state.fileBrowseOpen}
                             />
                         </div>
@@ -214,7 +207,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                         onClick={this.updateTab(TABS[key])}
                     >{key}</h3>)}
                 </div>
-                {!this.state.loadDataPopup &&
+                {!this.state.loadDataPopup && isSavedDataLoaded(this.state.savedData) &&
                     <div className='openTab'>
                         {this.showCurrentTab(this.state.currentTab)}
                     </div>

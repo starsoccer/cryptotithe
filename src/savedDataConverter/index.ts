@@ -7,7 +7,7 @@ import zeroSixZeroConverter from './0.6.0';
 
 export default function onSaveDataLoaded(savedData: ISavedData): boolean {
     const version = parseInt(savedData.version, 10);
-    const packageData = require('./package.json');
+    const packageData = require('../../package.json');
     const currentVersion = packageData.version;
     let changeMade = false;
 

@@ -1,3 +1,4 @@
+import { IPartialSavedData } from './../types/savedData';
 import * as faker from 'faker';
 import {
     EXCHANGES,
@@ -8,6 +9,7 @@ import {
     ITradeWithFiatRate,
     METHOD,
 } from '../types';
+import integrityCheck from '../../src/utils/integrityCheck';
 
 export function mockHoldings(
     currencies: number,
@@ -81,7 +83,7 @@ export function mockTradesWithFiatRate(
 
 export function createEmptySavedData(): ISavedData {
     const packageData = require('../../package.json');
-    return {
+    const partialSavedData: IPartialSavedData = {
         trades: [],
         holdings: {},
         savedDate: new Date(),
@@ -91,5 +93,9 @@ export function createEmptySavedData(): ISavedData {
             fiatCurrency: 'USD',
             gainCalculationMethod: METHOD.FIFO,
         },
+    }
+    return {
+        ...partialSavedData as ISavedData,
+        integrity: integrityCheck(partialSavedData as ISavedData),
     };
 }

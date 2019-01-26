@@ -1,7 +1,6 @@
-import * as crypto from 'crypto';
 import * as React from 'react';
 import * as validator from 'validator';
-import { createDateAsUTC } from '../../src/parsers/utils';
+import { createDateAsUTC, createTradeID } from '../../src/parsers/utils';
 import { EXCHANGES, ITrade } from '../../src/types';
 import Button from '../Button';
 import { Select } from '../Select';
@@ -138,9 +137,7 @@ export default class TradeDetails<TradeType extends ITrade> extends
             trade.exchange = this.state.exchange as EXCHANGES;
             trade.transactionFee = (this.state.transactionFee === '' ? 0 : parseFloat(this.state.transactionFee));
             if (this.state.id === '') {
-                trade.ID = crypto.createHash('sha256').update(
-                    JSON.stringify(trade) + new Date().getTime(),
-                ).digest('hex');
+                trade.ID = createTradeID(trade);
             } else {
                 trade.ID = this.state.id;
             }

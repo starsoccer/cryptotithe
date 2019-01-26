@@ -1,6 +1,7 @@
 import { calculateGains } from '../processing/CalculateGains';
 import SortTrades from '../processing/SortTrades';
 import { IPartialSavedData, ISavedData, ISettings, ITradeWithFiatRate } from '../types';
+import integrityCheck from '../utils/integrityCheck';
 
 export default function save(data: IPartialSavedData, fallback: ISavedData): ISavedData {
     const packageData = require('../../package.json');
@@ -15,12 +16,15 @@ export default function save(data: IPartialSavedData, fallback: ISavedData): ISa
         newSettings.gainCalculationMethod,
     ).newHoldings;
 
-    const savedData: ISavedData = {
+    const savedData: IPartialSavedData = {
         savedDate: new Date(),
         trades: sortedTrades,
         holdings: currentHoldings,
         settings: newSettings,
         version: packageData.version,
     };
-    return savedData;
+
+    savedData.integrity = integrityCheck(savedData as ISavedData);
+
+    return savedData as ISavedData;
 }

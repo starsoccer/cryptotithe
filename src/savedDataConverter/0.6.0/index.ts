@@ -1,4 +1,5 @@
 import { ISavedData, EXCHANGES, FiatRateMethod } from '../../types';
+import integrityCheck from '../../utils/integrityCheck';
 
 export default function converter(savedData: ISavedData): boolean {
     let changeMade = false;
@@ -25,6 +26,11 @@ export default function converter(savedData: ISavedData): boolean {
                 savedData.settings.fiatRateMethod = FiatRateMethod[savedData.settings.fiatRateMethod];
             }
         }
+    }
+
+    if ('integrity' in savedData === false) {
+        changeMade = true;
+        savedData.integrity = integrityCheck(savedData);
     }
 
     return changeMade;

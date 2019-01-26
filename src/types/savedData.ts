@@ -8,6 +8,7 @@ export interface ISavedData extends IPartialSavedData {
     trades: ITradeWithFiatRate[];
     holdings: IHoldings;
     settings: ISettings;
+    integrity: string;
 }
 
 export interface IPartialSavedData {
@@ -15,6 +16,8 @@ export interface IPartialSavedData {
     trades?: ITradeWithFiatRate[];
     holdings?: IHoldings;
     settings?: Partial<ISettings>;
+    integrity?: string;
+    version?: string;
 }
 
 export interface ISettings {
