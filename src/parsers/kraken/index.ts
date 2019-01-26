@@ -77,7 +77,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
     for (const trade of data) {
         const pairs: string[] = getRealTradedPairs(trade.pair);
         const partialTrade: IPartialTrade = {
-            exchange: EXCHANGES.KRAKEN,
+            exchange: EXCHANGES.Kraken,
             exchangeID: trade.txid,
             date: createDateAsUTC(new Date(trade.time)).getTime(),
             transactionFee: 0,

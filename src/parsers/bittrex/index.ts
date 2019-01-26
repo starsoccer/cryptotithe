@@ -27,7 +27,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
         const partialTrade: IPartialTrade = {
             date: createDateAsUTC(new Date(trade.Closed)).getTime(),
             exchangeID: trade.OrderUuid,
-            exchange: EXCHANGES.BITTREX,
+            exchange: EXCHANGES.Bittrex,
             transactionFee: 0,
         };
         switch (trade.Type) {

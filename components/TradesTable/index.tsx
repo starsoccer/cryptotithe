@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { addFiatRateToTrades } from '../../src/processing/getFiatRate';
 import sortTrades from '../../src/processing/SortTrades';
-import { FiatRateMethod, ISettings, ITrade, ITradeWithFiatRate } from '../../src/types';
+import { ISettings, ITrade, ITradeWithFiatRate } from '../../src/types';
 import Popup from '../Popup';
 import { Table } from '../Table';
 import TradeDetails from '../TradeDetails';
@@ -31,7 +31,7 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
         const newTrades = this.props.trades.filter((trade) => trade.ID !== originalID);
         if ('fiatRate' in editedTrade) {
             const editedTradeWithFiatRate = await addFiatRateToTrades(
-                [editedTrade], this.props.settings.fiatCurrency, FiatRateMethod[this.props.settings.fiatRateMethod],
+                [editedTrade], this.props.settings.fiatCurrency, this.props.settings.fiatRateMethod,
             );
             newTrades.push(editedTradeWithFiatRate[0]);
         } else {

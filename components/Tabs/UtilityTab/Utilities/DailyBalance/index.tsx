@@ -43,7 +43,7 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
                     <label htmlFor='type' className='pr2'>Exchange</label>
                     <select name='type' id='type' onChange={this.onExchangeChange}>
                         {Object.keys(EXCHANGES).map((key) =>
-                            <option key={key} value={key}>{EXCHANGES[key as keyof typeof EXCHANGES]}</option>,
+                            <option key={key} value={EXCHANGES[key]}>{key}</option>,
                         )}
                     </select>
                     <br />

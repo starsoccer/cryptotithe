@@ -49,7 +49,7 @@ export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
             case 'exchange':
                 this.props.onChange({
                     exchange: (e.currentTarget.value !== ALL_EXCHANGES ?
-                        EXCHANGES[e.currentTarget.value] : ALL_EXCHANGES
+                        e.currentTarget.value : ALL_EXCHANGES
                     ),
                     currency: ALL_CURRENCIES,
                 });
@@ -70,7 +70,7 @@ export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
                 <select name='type' id='type' onChange={this.onSelectChange('exchange')}>
                     <option key='ALL' value='ALL'>All</option>,
                     {Object.keys(EXCHANGES).sort().map((key) =>
-                        <option key={key} value={key}>{EXCHANGES[key as keyof typeof EXCHANGES]}</option>,
+                        <option key={key} value={EXCHANGES[key]}>{key}</option>,
                     )}
                 </select>
                 <br />

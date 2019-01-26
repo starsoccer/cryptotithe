@@ -3,7 +3,6 @@ import generateForm8949 from '../../../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../../../src/processing/CalculateGains';
 import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
 import {
-    FiatRateMethod,
     IHoldings,
     ISavedData,
     ITrade,
@@ -166,7 +165,7 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
         const tradeWithFiatRate = await addFiatRateToTrades(
             [trade],
             this.props.savedData.settings.fiatCurrency,
-            FiatRateMethod[this.props.savedData.settings.fiatRateMethod],
+            this.props.savedData.settings.fiatRateMethod,
         );
         const data = calculateGainPerTrade(
             this.state.holdings,

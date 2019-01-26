@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
 import sortTrades from '../../../src/processing/SortTrades';
-import { FiatRateMethod, IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
+import { IPartialSavedData, ISavedData, ITrade, ITradeWithFiatRate } from '../../../src/types';
 import Button from '../../Button';
 import { Loader } from '../../Loader';
 import { ALL_CURRENCIES, ALL_EXCHANGES, filterTrades, ITradeFilterOptions, TradeFilter } from '../../TradeFilter';
@@ -41,7 +41,7 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
         const newTrades: ITradeWithFiatRate[] = await addFiatRateToTrades(
             this.props.savedData.trades,
             this.props.savedData.settings.fiatCurrency,
-            FiatRateMethod[this.props.savedData.settings.fiatRateMethod],
+            this.props.savedData.settings.fiatRateMethod,
         );
         const sortedTrades: ITradeWithFiatRate[] = sortTrades(newTrades) as ITradeWithFiatRate[];
         this.props.save({trades: sortedTrades});

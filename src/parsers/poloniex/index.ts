@@ -42,7 +42,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
         const partialTrade: IPartialTrade = {
             date: createDateAsUTC(new Date(trade.Date)).getTime(),
             exchangeID: trade['Order Number'],
-            exchange: EXCHANGES.POLONIEX,
+            exchange: EXCHANGES.Poloniex,
             transactionFee: 0,
         };
         switch (trade.Type) {

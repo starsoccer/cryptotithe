@@ -23,13 +23,13 @@ export enum METHOD {
 }
 
 export enum FiatRateMethod {
-    DOUBLEAVERAGE = 'Double Average',
-    HOURAVG = 'Hour Avg', // open, close, high, low averaged
-    HOURHIGH = 'Hour High',
-    HOURLOW= 'Hour Low',
-    HOURCLOSE = 'Hour Close',
-    HOUROPEN = 'Hour Open',
-    DAYAVERAGE = 'Day Average',
-    DAYAVERAGEMID = 'Day Average Middle',
-    DAYAVERAGEVOLUME = 'Day Average Volume',
+    'Double Average' = 'DOUBLEAVERAGE',
+    'Hour Avg' = 'HOURAVG',
+    'Hour High' = 'HOURHIGH',
+    'Hour Low' = 'HOURLOW',
+    'Hour Close' = 'HOURCLOSE',
+    'Hour Open' = 'HOUROPEN',
+    'Day Average' = 'DAYAVERAGE',
+    'Day Average Middle' = 'DAYAVERAGEMID',
+    'Day Average Volume' = 'DAYAVERAGEVOLUME',
 }

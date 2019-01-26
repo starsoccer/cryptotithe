@@ -40,7 +40,7 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
     public onChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         switch (key) {
             case 'fiatRateMethod':
-                this.setState({fiatRateMethod: e.currentTarget.value as keyof typeof FiatRateMethod});
+                this.setState({fiatRateMethod: e.currentTarget.value as FiatRateMethod});
                 break;
             case 'fiatCurrency':
                 this.setState({fiatCurrency: e.currentTarget.value.toUpperCase()});
@@ -64,7 +64,7 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
                             defaultValue={this.state.fiatRateMethod}
                             onChange={this.onChange('fiatRateMethod')}>
                             {Object.keys(FiatRateMethod).map((method) =>
-                                <option key={method} value={method}>{FiatRateMethod[method]}</option>,
+                                <option key={method} value={FiatRateMethod[method]}>{method}</option>,
                             )}
                         </select>
                     </div>

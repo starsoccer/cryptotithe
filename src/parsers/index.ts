@@ -20,22 +20,22 @@ export async function getCSVData(fileData: string): Promise<any> {
     });
 }
 
-export async function processData(exchange: keyof typeof EXCHANGES | string, fileData: string): Promise<ITrade[]> {
+export async function processData(exchange: EXCHANGES | string, fileData: string): Promise<ITrade[]> {
     let processExchangeData: (fileData: string) => ITrade[];
     switch (exchange) {
-        case 'BITTREX':
+        case EXCHANGES.Bittrex:
             processExchangeData = require('./bittrex').processData;
             break;
-        case 'GEMINI':
+        case EXCHANGES.Gemini:
             processExchangeData = require('./gemini').processData;
             break;
-        case 'POLONIEX':
+        case EXCHANGES.Poloniex:
             processExchangeData = require('./poloniex').processData;
             break;
-        case 'KRAKEN':
+        case EXCHANGES.Kraken:
             processExchangeData = require('./kraken').processData;
             break;
-        case 'BINANCE':
+        case EXCHANGES.Binance:
             processExchangeData = require('./binance').processData;
             break;
         default:
@@ -43,7 +43,7 @@ export async function processData(exchange: keyof typeof EXCHANGES | string, fil
             const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
             for (const key in ExchangesHeaders) {
                 if (ExchangesHeaders[key] === headersHash) {
-                    return processData(key as keyof typeof EXCHANGES, fileData);
+                    return processData(key, fileData);
                 }
             }
             throw new Error(`Unknown Exchange - ${exchange} - ${headersHash}`);

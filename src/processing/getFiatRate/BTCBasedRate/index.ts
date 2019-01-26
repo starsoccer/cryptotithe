@@ -15,29 +15,29 @@ export function BTCBasedRate(trade: ITrade, BTCFiatRate: number) {
 
 export async function getBTCFiatRate(trade: ITrade, fiatCurrency: string, method: FiatRateMethod) {
     switch (method) {
-        case FiatRateMethod.DOUBLEAVERAGE:
+        case FiatRateMethod['Double Average']:
             const dayAvg = await getDayAvg(fiatCurrency, 'BTC', trade.date);
             const hourBTCData = await getClosestHourPrice('BTC', fiatCurrency, trade.date);
             return BTCBasedRate(trade, calculateAverageFromArray([dayAvg, calculateAvgerageHourPrice(hourBTCData)]));
-        case FiatRateMethod.DAYAVERAGE:
+        case FiatRateMethod['Day Average']:
             const vwapRate = await getDayAvg(fiatCurrency, 'BTC', trade.date);
             return BTCBasedRate(trade, vwapRate);
-        case FiatRateMethod.DAYAVERAGEMID:
+        case FiatRateMethod['Day Average Middle']:
             const midRate = await getDayAvg(fiatCurrency, 'BTC', trade.date, 'MidHighLow');
             return BTCBasedRate(trade, midRate);
-        case FiatRateMethod.DAYAVERAGEVOLUME:
+        case FiatRateMethod['Day Average Volume']:
             const volumeRate = await getDayAvg(fiatCurrency, 'BTC', trade.date, 'VolFVolT');
             return BTCBasedRate(trade, volumeRate);
         default:
             const hourData = await getClosestHourPrice('BTC', fiatCurrency, trade.date);
             switch (method) {
-                case FiatRateMethod.HOURLOW:
+                case FiatRateMethod['Hour Low']:
                     return BTCBasedRate(trade, hourData.low);
-                case FiatRateMethod.HOURHIGH:
+                case FiatRateMethod['Hour High']:
                     return BTCBasedRate(trade, hourData.high);
-                case FiatRateMethod.HOUROPEN:
+                case FiatRateMethod['Hour Open']:
                     return BTCBasedRate(trade, hourData.open);
-                case FiatRateMethod.HOURCLOSE:
+                case FiatRateMethod['Hour Close']:
                     return BTCBasedRate(trade, hourData.close);
                 default:
                     return BTCBasedRate(trade, calculateAvgerageHourPrice(hourData));

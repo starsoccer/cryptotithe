@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
-import { IHoldings, ITradeWithFiatRate, METHOD } from '../../src/types';
+import { IHoldings, ITradeWithFiatRate, METHOD, EXCHANGES } from '../../src/types';
 import { Loader } from '../Loader';
+import keyByValue from '../../src/utils/keyByValue';
 
 export interface ITradeTimelineProp {
     trades: ITradeWithFiatRate[];
@@ -70,7 +71,7 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                 <div className='pv2 ph3 bg-white relative br2'>
                     <h2>Sold {trade.amountSold.toFixed(8)} {trade.soldCurrency}</h2>
                     <h4>Got {(trade.amountSold / trade.rate).toFixed(8)} {trade.boughtCurrency}</h4>
-                    <p>{trade.rate.toFixed(8)} rate on {trade.exchange || 'Unknown'}</p>
+                    <p>{trade.rate.toFixed(8)} rate on {keyByValue(trade.exchange, EXCHANGES) || 'Unknown'}</p>
                     <p>
                         New Holdings:<br/>
                         <span className='pr2'>

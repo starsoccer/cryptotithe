@@ -25,11 +25,11 @@ export interface IAppProps {
 }
 
 enum TABS {
-    HOME = 'Home',
-    VIEW_TRADES = 'View Trades',
-    ADD_TRADES = 'Add Trades',
-    CALCULATE_GAINS = 'Calculate Gains',
-    UTILITY = 'Utility',
+    Home = 'HOME',
+    'View Trades' = 'VIEW_TRADES',
+    'Add Trades' = 'ADD_TRADES',
+    'Calculate Gains' = 'CALCULATE_GAINS',
+    Utility = 'UTILITY',
 }
 
 interface IAppState {
@@ -67,7 +67,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         this.state = {
             processing: false,
             duplicateTrades: [],
-            currentTab: TABS.HOME,
+            currentTab: TABS.Home,
             fileBrowseOpen: false,
             loadDataPopup: props.browser || props.savedData.trades.length +
                 Object.keys(props.savedData.holdings).length === 0,
@@ -121,18 +121,18 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
 
     public showCurrentTab = (currentTab: TABS) => {
         switch (currentTab) {
-            case TABS.ADD_TRADES:
+            case TABS['Add Trades']:
                 return <AddTradesTab
                     savedData={this.state.savedData}
                     save={this.saveData}
                 />;
-            case TABS.VIEW_TRADES:
+            case TABS['View Trades']:
                 return <ViewTradesTab savedData={this.state.savedData} save={this.saveData}/>;
-            case TABS.CALCULATE_GAINS:
+            case TABS['Calculate Gains']:
                 return <CalculateGainsTab savedData={this.state.savedData}/>;
-            case TABS.UTILITY:
+            case TABS.Utility:
                 return <UtilityTab savedData={this.state.savedData} save={this.saveData}/>;
-            case TABS.HOME:
+            case TABS.Home:
             default:
                 return <PortfolioTab savedData={this.state.savedData} save={this.saveData}/>;
         }
@@ -212,7 +212,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                             'bg-navy': TABS[key] === this.state.currentTab,
                         })}
                         onClick={this.updateTab(TABS[key])}
-                    >{TABS[key]}</h3>)}
+                    >{key}</h3>)}
                 </div>
                 {!this.state.loadDataPopup &&
                     <div className='openTab'>

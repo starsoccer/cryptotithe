@@ -97,7 +97,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                         rate: (amountSold + amountSoldFee) / (amountBought - amountBoughtFee),
                         date: createDateAsUTC(new Date(`${trade['Order Date']} ${trade['Order Time']}`)).getTime(),
                         exchangeID: trade['Trade ID'],
-                        exchange: EXCHANGES.GEMINI,
+                        exchange: EXCHANGES.Gemini,
                         transactionFeeCurrency: pair.bought.toUpperCase(),
                         transactionFee: 0,
                     };

@@ -1,9 +1,9 @@
 export enum EXCHANGES {
-    BITTREX = 'Bittrex',
-    GEMINI = 'Gemini',
-    POLONIEX = 'Poloniex',
-    KRAKEN = 'Kraken',
-    BINANCE = 'Binance',
+    Bittrex = 'BITTREX',
+    Gemini= 'GEMINI',
+    Poloniex = 'POLONIEX',
+    Kraken = 'KRAKEN',
+    Binance = 'BINANCE',
 }
 
 export enum ExchangesHeaders {

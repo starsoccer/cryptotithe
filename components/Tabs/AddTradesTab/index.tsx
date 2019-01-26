@@ -5,7 +5,6 @@ import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
 import sortTrades from '../../../src/processing/SortTrades';
 import {
     EXCHANGES,
-    FiatRateMethod,
     IHoldings,
     IPartialSavedData,
     ISavedData,
@@ -39,7 +38,7 @@ interface IAddTradesTabState {
     holdings: IHoldings;
     processedTrades: ITrade[];
     processing: boolean;
-    exchange: keyof typeof EXCHANGES | string;
+    exchange: EXCHANGES | string;
 }
 
 export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesTabState> {
@@ -105,7 +104,7 @@ export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesT
         const tradesWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades(
             tradesToSave,
             this.props.savedData.settings.fiatCurrency,
-            FiatRateMethod[this.props.savedData.settings.fiatRateMethod],
+            this.props.savedData.settings.fiatRateMethod,
         );
 
         const newTrades: ITradeWithFiatRate[] = sortTrades(
@@ -177,7 +176,7 @@ export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesT
                     <select name='exchange' id='exchange' onChange={this.onSelectChange}>
                         <option key='Auto-Detect' value='Auto-Detect'>Auto-Detect</option>,
                         {Object.keys(EXCHANGES).map((key) =>
-                            <option key={key} value={key}>{EXCHANGES[key as keyof typeof EXCHANGES]}</option>,
+                            <option key={key} value={EXCHANGES[key]}>{key}</option>,
                         )}
                     </select>
                 </div>

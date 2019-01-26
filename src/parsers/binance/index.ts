@@ -41,7 +41,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                 tradeToAdd.boughtCurrency = pair[0].toUpperCase();
                 tradeToAdd.soldCurrency = pair[1].toUpperCase();
                 tradeToAdd.date = createDateAsUTC(new Date(trade['Date(UTC)'])).getTime();
-                tradeToAdd.exchange = EXCHANGES.BINANCE;
+                tradeToAdd.exchange = EXCHANGES.Binance;
                 if (pair[1].toUpperCase() === trade['Fee Coin']) {
                     tradeToAdd.amountSold = parseFloat(trade.Total) + parseFloat(trade.Fee);
                     tradeToAdd.rate = tradeToAdd.amountSold / parseFloat(trade.Amount);
@@ -54,7 +54,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                 tradeToAdd.soldCurrency = pair[0].toUpperCase();
                 tradeToAdd.boughtCurrency = pair[1].toUpperCase();
                 tradeToAdd.date = createDateAsUTC(new Date(trade['Date(UTC)'])).getTime();
-                tradeToAdd.exchange = EXCHANGES.BINANCE;
+                tradeToAdd.exchange = EXCHANGES.Binance;
                 if (pair[1].toUpperCase() === trade['Fee Coin']) {
                     tradeToAdd.amountSold = parseFloat(trade.Amount);
                     tradeToAdd.rate = parseFloat(trade.Amount) / (parseFloat(trade.Total) - parseFloat(trade.Fee));

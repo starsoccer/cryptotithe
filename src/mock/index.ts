@@ -87,7 +87,7 @@ export function createEmptySavedData(): ISavedData {
         savedDate: new Date(),
         version: packageData.version,
         settings: {
-            fiatRateMethod: Object.keys(FiatRateMethod)[0] as keyof typeof FiatRateMethod,
+            fiatRateMethod: FiatRateMethod[Object.keys(FiatRateMethod)[0]],
             fiatCurrency: 'USD',
             gainCalculationMethod: METHOD.FIFO,
         },
