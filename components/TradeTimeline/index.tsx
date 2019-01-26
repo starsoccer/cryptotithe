@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
-import { IHoldings, ITradeWithFiatRate, METHOD, EXCHANGES } from '../../src/types';
-import { Loader } from '../Loader';
+import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD } from '../../src/types';
 import keyByValue from '../../src/utils/keyByValue';
+import { Loader } from '../Loader';
 
 export interface ITradeTimelineProp {
     trades: ITradeWithFiatRate[];

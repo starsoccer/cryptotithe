@@ -1,5 +1,5 @@
-import { IPartialSavedData } from './../types/savedData';
 import * as faker from 'faker';
+import integrityCheck from '../../src/utils/integrityCheck';
 import {
     EXCHANGES,
     FiatRateMethod,
@@ -9,7 +9,7 @@ import {
     ITradeWithFiatRate,
     METHOD,
 } from '../types';
-import integrityCheck from '../../src/utils/integrityCheck';
+import { IPartialSavedData } from './../types/savedData';
 
 export function mockHoldings(
     currencies: number,
@@ -93,7 +93,7 @@ export function createEmptySavedData(): ISavedData {
             fiatCurrency: 'USD',
             gainCalculationMethod: METHOD.FIFO,
         },
-    }
+    };
     return {
         ...partialSavedData as ISavedData,
         integrity: integrityCheck(partialSavedData as ISavedData),

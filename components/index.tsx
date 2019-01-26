@@ -1,14 +1,14 @@
 import * as classnames from 'classnames';
 import * as React from 'react';
-import integrityCheck from '../src/utils/integrityCheck';
-import save from '../src/save';
 import { createEmptySavedData } from '../src/mock';
+import save from '../src/save';
 import savedDataConverter from '../src/savedDataConverter';
 import {
     IPartialSavedData,
     ISavedData,
     ITradeWithDuplicateProbability,
 } from '../src/types';
+import integrityCheck from '../src/utils/integrityCheck';
 import Button from './Button';
 import { FileBrowse } from './FileBrowse';
 import { FileDownload, IFileDownloadProps } from './FileDownload';

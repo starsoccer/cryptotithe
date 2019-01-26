@@ -1,6 +1,6 @@
-import { ISavedData } from './../../types';
-import * as crypto from 'crypto';
 import * as clone from 'clone';
+import * as crypto from 'crypto';
+import { ISavedData } from './../../types';
 
 export default function integrityCheck(savedData: ISavedData) {
     const clonedData = clone(savedData);

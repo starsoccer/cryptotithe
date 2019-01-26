@@ -1,4 +1,4 @@
-import { ISavedData, EXCHANGES, FiatRateMethod } from '../../types';
+import { EXCHANGES, FiatRateMethod, ISavedData } from '../../types';
 import integrityCheck from '../../utils/integrityCheck';
 
 export default function converter(savedData: ISavedData): boolean {
