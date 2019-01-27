@@ -71,7 +71,11 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                 <div className='pv2 ph3 bg-white relative br2'>
                     <h2>Sold {trade.amountSold.toFixed(8)} {trade.soldCurrency}</h2>
                     <h4>Got {(trade.amountSold / trade.rate).toFixed(8)} {trade.boughtCurrency}</h4>
-                    <p>{trade.rate.toFixed(8)} rate on {keyByValue(trade.exchange, EXCHANGES) || 'Unknown'}</p>
+                    <p>{trade.rate.toFixed(8)} rate on {
+                        keyByValue(trade.exchange, EXCHANGES) || (
+                            trade.exchange && trade.exchange !== '' ? trade.exchange : 'Unknown'
+                        )}
+                    </p>
                     <p>
                         New Holdings:<br/>
                         <span className='pr2'>

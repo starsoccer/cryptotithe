@@ -23,7 +23,7 @@ export interface ITrade {
     rate: number;
     date: number;
     exchangeID: string;
-    exchange: EXCHANGES;
+    exchange: EXCHANGES | string;
     ID: string;
     transactionFee: number;
     transactionFeeCurrency: string;
