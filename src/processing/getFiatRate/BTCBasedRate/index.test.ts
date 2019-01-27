@@ -1,15 +1,16 @@
+import * as faker from 'faker';
 import { EXCHANGES, ITrade } from '../../../types';
-import { BTCBasedRate } from './'
+import { BTCBasedRate } from './';
 
 describe('Get Fiat Rate', () => {
-    const date = new Date(1508087399612); // random but fixed date for testing
+
     test('add Fiat rate to BTC Sold trade', () => {
         const trade: ITrade = {
             boughtCurrency: 'LTC',
             soldCurrency: 'BTC',
             amountSold: 5,
             rate: 1,
-            date: date.getTime(),
+            date: faker.date.recent().getTime(),
             ID: '1',
             exchangeID: '1',
             exchange: EXCHANGES.Gemini,
@@ -26,7 +27,7 @@ describe('Get Fiat Rate', () => {
             soldCurrency: 'LTC',
             amountSold: 5,
             rate: 0.01,
-            date: date.getTime(),
+            date: faker.date.recent().getTime(),
             ID: '1',
             exchangeID: '1',
             exchange: EXCHANGES.Gemini,

@@ -1,12 +1,9 @@
-import { mockHoldings } from '../../../mock';
+import { FULL_YEAR_IN_MILLISECONDS, mockHoldings, pastDate } from '../../../mock';
 import { IHoldings, METHOD, ITrade, EXCHANGES } from '../../../types';
 import * as faker from 'faker';
 import getCurrencyHolding from './';
-const FULL_YEAR_IN_MILLISECONDS = 31536000000;
 
-function pastDate (years: number) {
-    return new Date(faker.date.recent().getTime() - FULL_YEAR_IN_MILLISECONDS * years)
-}
+const currentDate = () => new Date().getTime();
 
 const trade: ITrade = {
     boughtCurrency: 'FAKE',
@@ -90,7 +87,7 @@ describe('getCurrencyHolding advanced', () => {
         const holdings: IHoldings = mockHoldings(1, 10, faker.date.past(0), faker.date.recent());
         const currency: string = Object.keys(holdings)[0];
         trade.soldCurrency = currency;
-        trade.date = new Date().getTime();
+        trade.date = currentDate();
         const HTFOResult = getCurrencyHolding(holdings, METHOD.HTFO, trade);
         const LCFOResult = getCurrencyHolding(holdings, METHOD.LCFO, trade);
 
@@ -104,7 +101,7 @@ describe('getCurrencyHolding advanced', () => {
         const holdings: IHoldings = mockHoldings(1, 10, pastDate(3), pastDate(2));
         const currency: string = Object.keys(holdings)[0];
         trade.soldCurrency = currency;
-        trade.date = new Date().getTime();
+        trade.date = currentDate();
         const HTFOResult = getCurrencyHolding(holdings, METHOD.HTFO, trade);
         const LCFOResult = getCurrencyHolding(holdings, METHOD.LCFO, trade);
 
@@ -118,7 +115,7 @@ describe('getCurrencyHolding advanced', () => {
         const holdings: IHoldings = mockHoldings(1, 10, pastDate(3), pastDate(2));
         const currency: string = Object.keys(holdings)[0];
         trade.soldCurrency = currency;
-        trade.date = new Date().getTime();
+        trade.date = currentDate();
         const HTFOResult = getCurrencyHolding(holdings, METHOD.HTFO, trade);
 
         const shortTermHoldings = [];
@@ -149,7 +146,7 @@ describe('getCurrencyHolding advanced', () => {
         const holdings: IHoldings = mockHoldings(1, 10, faker.date.past(0), faker.date.recent());
         const currency: string = Object.keys(holdings)[0];
         trade.soldCurrency = currency;
-        trade.date = new Date().getTime();
+        trade.date = currentDate();
         const LTFOResult = getCurrencyHolding(holdings, METHOD.LTFO, trade);
         const HCFOResult = getCurrencyHolding(holdings, METHOD.HCFO, trade);
 
@@ -159,11 +156,11 @@ describe('getCurrencyHolding advanced', () => {
         expect(LTFOResult.holding).toBe(HCFOResult.holding);
     });
 
-    test('LTFO Long Term', () => {        
+    test('LTFO Long Term', () => {
         const holdings: IHoldings = mockHoldings(1, 10, pastDate(4), pastDate(3));
         const currency: string = Object.keys(holdings)[0];
         trade.soldCurrency = currency;
-        trade.date = new Date().getTime();
+        trade.date = currentDate();
         const LTFOResult = getCurrencyHolding(holdings, METHOD.LTFO, trade);
         const HCFOResult = getCurrencyHolding(holdings, METHOD.HCFO, trade);
 
@@ -177,7 +174,7 @@ describe('getCurrencyHolding advanced', () => {
         const holdings: IHoldings = mockHoldings(1, 10, pastDate(4), pastDate(3));
         const currency: string = Object.keys(holdings)[0];
         trade.soldCurrency = currency;
-        trade.date = new Date().getTime();
+        trade.date = currentDate();
         const LTFOResult = getCurrencyHolding(holdings, METHOD.LTFO, trade);
 
         const shortTermHoldings = [];

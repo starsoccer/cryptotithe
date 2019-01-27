@@ -1,6 +1,6 @@
 {
     "name": "cryptotithe",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -63,7 +63,7 @@
         ],
         "globals": {
             "ts-jest": {
-                "tsConfigFile": "./configs/tsconfig.json"
+                "tsConfig": "./configs/tsconfig.json"
             }
         }
     },

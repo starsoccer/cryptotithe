@@ -99,3 +99,9 @@ export function createEmptySavedData(): ISavedData {
         integrity: integrityCheck(partialSavedData as ISavedData),
     };
 }
+
+export const FULL_YEAR_IN_MILLISECONDS = 31536000000;
+
+export function pastDate(years: number) {
+    return new Date(faker.date.recent().getTime() - FULL_YEAR_IN_MILLISECONDS * years);
+}

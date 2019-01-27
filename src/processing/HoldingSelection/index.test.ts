@@ -1,3 +1,4 @@
+import * as faker from 'faker';
 import { mockHoldings, mockTradesWithFiatRate } from '../../mock';
 import { ICurrencyHolding, IHoldings, ITradeWithFiatRate} from '../../types';
 import holdingSelection from './';
@@ -17,7 +18,7 @@ describe('Holding Selection', () => {
         const holdings: IHoldings = mockHoldings(1, 3);
         const currency: string = Object.keys(holdings)[0];
         const holdingsTotal = calculateTotalAmount(holdings[currency]);
-        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, faker.date.recent(), holdings, false);
         trades[0].amountSold = 1;
         trades[0].boughtCurrency = fiatCurrency;
         const result = holdingSelection(holdings, trades[0], fiatCurrency);
@@ -30,7 +31,7 @@ describe('Holding Selection', () => {
         const holdings: IHoldings = mockHoldings(1, 3);
         const currency: string = Object.keys(holdings)[0];
         const holdingsTotal = calculateTotalAmount(holdings[currency]);
-        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, faker.date.recent(), holdings, false);
         trades[0].amountSold = holdings[currency][0].amount + 1;
         trades[0].boughtCurrency = fiatCurrency;
         const result = holdingSelection(holdings, trades[0], fiatCurrency);
@@ -43,7 +44,7 @@ describe('Holding Selection', () => {
         const holdings: IHoldings = mockHoldings(1, 3);
         const currency: string = Object.keys(holdings)[0];
         const holdingsTotal = calculateTotalAmount(holdings[currency]);
-        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, new Date('2/2/2018'), holdings, false);
+        const trades: ITradeWithFiatRate[] = mockTradesWithFiatRate(1, faker.date.recent(), holdings, false);
         trades[0].amountSold = holdingsTotal + 1;
         trades[0].boughtCurrency = fiatCurrency;
         const result = holdingSelection(holdings, trades[0], fiatCurrency);
