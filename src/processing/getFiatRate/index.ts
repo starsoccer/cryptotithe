@@ -49,6 +49,7 @@ export async function getFiatRate(
                 case FiatRateMethod['Hour Close']:
                     const closePrice = await getClosestHourPriceForTrade(trade, fiatCurrency);
                     return addRatetoTrade(trade, closePrice.close);
+                case FiatRateMethod['Hour Avg']:
                 default:
                     const avg = await getClosestHourPriceForTrade(trade, fiatCurrency);
                     return addRatetoTrade(trade, calculateAvgerageHourPrice(avg));

@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import { EXCHANGES, ITrade, ITradeWithFiatRate, FiatRateMethod} from '../../types';
+import { EXCHANGES, FiatRateMethod, ITrade} from '../../types';
 import { addFiatRateToTrades } from './';
 
 describe('Add fiat Rate', () => {
@@ -12,12 +12,12 @@ describe('Add fiat Rate', () => {
             date: faker.date.past(1).getTime(),
             ID: '1',
             exchangeID: '1',
-            exchange: EXCHANGES.GEMINI,
+            exchange: EXCHANGES.Gemini,
             transactionFee: 0,
             transactionFeeCurrency: 'LTC',
         };
 
-        const tradeWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.DOUBLEAVERAGE);
+        const tradeWithFiatRate = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Double Average']);
 
         expect('fiatRate' in tradeWithFiatRate[0]).toBeTruthy();
         expect(typeof tradeWithFiatRate[0].fiatRate).toBe('number');
@@ -33,7 +33,7 @@ describe('Add fiat Rate', () => {
                 date: faker.date.past(1).getTime(),
                 ID: '1',
                 exchangeID: '1',
-                exchange: EXCHANGES.GEMINI,
+                exchange: EXCHANGES.Gemini,
                 transactionFee: 0,
                 transactionFeeCurrency: 'LTC',
             },
@@ -45,7 +45,7 @@ describe('Add fiat Rate', () => {
                 date: faker.date.past(1).getTime(),
                 ID: '1',
                 exchangeID: '1',
-                exchange: EXCHANGES.GEMINI,
+                exchange: EXCHANGES.Gemini,
                 transactionFee: 0,
                 transactionFeeCurrency: 'LTC',
             },
@@ -57,13 +57,13 @@ describe('Add fiat Rate', () => {
                 date: faker.date.past(1).getTime(),
                 ID: '1',
                 exchangeID: '1',
-                exchange: EXCHANGES.GEMINI,
+                exchange: EXCHANGES.Gemini,
                 transactionFee: 0,
                 transactionFeeCurrency: 'BTC',
             },
         ];
 
-        const tradesWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades(trades, 'USD', FiatRateMethod.DOUBLEAVERAGE);
+        const tradesWithFiatRate = await addFiatRateToTrades(trades, 'USD', FiatRateMethod['Double Average']);
 
         for (const trade of tradesWithFiatRate) {
             expect('fiatRate' in trade).toBeTruthy();
@@ -84,7 +84,7 @@ describe('Add fiat Rate', () => {
                 date: faker.date.past(1).getTime(),
                 ID: '1',
                 exchangeID: '1',
-                exchange: EXCHANGES.GEMINI,
+                exchange: EXCHANGES.Gemini,
                 transactionFee: 0,
                 transactionFeeCurrency: fiatCurrency,
             },
@@ -96,13 +96,13 @@ describe('Add fiat Rate', () => {
                 date: faker.date.past(1).getTime(),
                 ID: '1',
                 exchangeID: '1',
-                exchange: EXCHANGES.GEMINI,
+                exchange: EXCHANGES.Gemini,
                 transactionFee: 0,
                 transactionFeeCurrency: fiatCurrency,
             },
         ];
 
-        const tradeWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades(trades, fiatCurrency, FiatRateMethod.DOUBLEAVERAGE);
+        const tradeWithFiatRate = await addFiatRateToTrades(trades, fiatCurrency, FiatRateMethod['Double Average']);
 
         expect('fiatRate' in tradeWithFiatRate[0]).toBeTruthy();
         expect(typeof tradeWithFiatRate[0].fiatRate).toBe('number');
@@ -119,16 +119,16 @@ describe('Add fiat Rate', () => {
             date: faker.date.past(1).getTime(),
             ID: '1',
             exchangeID: '1',
-            exchange: EXCHANGES.GEMINI,
+            exchange: EXCHANGES.Gemini,
             transactionFee: 0,
             transactionFeeCurrency: 'LTC',
         };
 
-        const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURLOW);
-        const hourHighTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURHIGH);
-        const hourAvgTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURAVG);
-        const hourCloseTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURCLOSE);
-        const hourOpenTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOUROPEN);
+        const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Low']);
+        const hourHighTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour High']);
+        const hourAvgTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Avg']);
+        const hourCloseTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Close']);
+        const hourOpenTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Open']);
 
         expect(hourLowTrade[0].fiatRate).toBeLessThanOrEqual(hourHighTrade[0].fiatRate);
         expect(hourHighTrade[0].fiatRate).toBeGreaterThanOrEqual(hourLowTrade[0].fiatRate);
@@ -152,27 +152,29 @@ describe('Add fiat Rate', () => {
             date: faker.date.past(1).getTime(),
             ID: '1',
             exchangeID: '1',
-            exchange: EXCHANGES.GEMINI,
+            exchange: EXCHANGES.Gemini,
             transactionFee: 0,
             transactionFeeCurrency: 'LTC',
         };
 
-        const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURLOW);
-        const hourHighTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURHIGH);
-        const hourAvgTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURAVG);
-        const hourCloseTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOURCLOSE);
-        const hourOpenTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod.HOUROPEN);
+        const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Avg']);
+        const hourHighTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour High']);
+        const hourAvgTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Avg']);
+        const hourCloseTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Close']);
+        const hourOpenTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Open']);
 
-        expect(hourLowTrade[0].fiatRate).toBeLessThanOrEqual(hourHighTrade[0].fiatRate);
-        expect(hourHighTrade[0].fiatRate).toBeGreaterThanOrEqual(hourLowTrade[0].fiatRate);
-
-        expect(hourAvgTrade[0].fiatRate).toBeLessThanOrEqual(hourHighTrade[0].fiatRate);
+        expect(hourLowTrade[0].fiatRate).toBeDefined();
+        expect(hourHighTrade[0].fiatRate).toBeDefined();
+        expect(hourLowTrade[0].fiatRate).toBeGreaterThan(0);
+        expect(hourHighTrade[0].fiatRate).toBeGreaterThan(0);
+    
         expect(hourAvgTrade[0].fiatRate).toBeGreaterThanOrEqual(hourLowTrade[0].fiatRate);
+        expect(hourAvgTrade[0].fiatRate).toBeLessThanOrEqual(hourHighTrade[0].fiatRate);
 
-        expect(hourCloseTrade[0].fiatRate).toBeLessThanOrEqual(hourHighTrade[0].fiatRate);
-        expect(hourCloseTrade[0].fiatRate).toBeGreaterThanOrEqual(hourLowTrade[0].fiatRate);
+        expect(hourCloseTrade[0].fiatRate).toBeDefined();
+        expect(hourOpenTrade[0].fiatRate).toBeDefined();
+        expect(hourCloseTrade[0].fiatRate).toBeGreaterThan(0);
+        expect(hourOpenTrade[0].fiatRate).toBeGreaterThan(0);
 
-        expect(hourOpenTrade[0].fiatRate).toBeLessThanOrEqual(hourHighTrade[0].fiatRate);
-        expect(hourOpenTrade[0].fiatRate).toBeGreaterThanOrEqual(hourLowTrade[0].fiatRate);
     });
 });

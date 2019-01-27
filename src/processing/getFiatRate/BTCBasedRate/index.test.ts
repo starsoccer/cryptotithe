@@ -12,7 +12,7 @@ describe('Get Fiat Rate', () => {
             date: date.getTime(),
             ID: '1',
             exchangeID: '1',
-            exchange: EXCHANGES.GEMINI,
+            exchange: EXCHANGES.Gemini,
             transactionFee: 0,
             transactionFeeCurrency: 'LTC',
         };
@@ -29,7 +29,7 @@ describe('Get Fiat Rate', () => {
             date: date.getTime(),
             ID: '1',
             exchangeID: '1',
-            exchange: EXCHANGES.GEMINI,
+            exchange: EXCHANGES.Gemini,
             transactionFee: 0,
             transactionFeeCurrency: 'BTC',
         };

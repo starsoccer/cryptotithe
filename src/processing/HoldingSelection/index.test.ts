@@ -1,11 +1,11 @@
 import { mockHoldings, mockTradesWithFiatRate } from '../../mock';
-import { IHoldings, ITradeWithFiatRate, ICurrencyHolding} from '../../types';
+import { ICurrencyHolding, IHoldings, ITradeWithFiatRate} from '../../types';
 import holdingSelection from './';
 
 const fiatCurrency = 'FAKE';
 
-function calculateTotalAmount (currencyHoldings: ICurrencyHolding[]) {
-    let holdingsTotal: number = 0; 
+function calculateTotalAmount(currencyHoldings: ICurrencyHolding[]) {
+    let holdingsTotal: number = 0;
     for (const holding of currencyHoldings) {
         holdingsTotal += holding.amount;
     }
