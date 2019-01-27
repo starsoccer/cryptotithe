@@ -75,6 +75,7 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
                             onSubmit={this.editTrade(this.state.popup)}
                             trade={this.props.trades.filter((trade) => trade.ID === this.state.popup)[0]}
                             className='w-100'
+                            settings={this.props.settings}
                         />}
                         className='w-70'
                         onClose={this.changePopupStatus(undefined)}

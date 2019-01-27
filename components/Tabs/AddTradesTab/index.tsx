@@ -183,6 +183,7 @@ export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesT
                 { this.state.addTrade &&
                     <TradeDetails
                         onSubmit={this.addTrade}
+                        settings={this.props.savedData.settings}
                         className='cf'
                     />
                 }

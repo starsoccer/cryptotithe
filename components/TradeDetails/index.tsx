@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as validator from 'validator';
 import { createDateAsUTC, createTradeID } from '../../src/parsers/utils';
-import { EXCHANGES, ITrade } from '../../src/types';
+import { EXCHANGES, ISettings, ITrade } from '../../src/types';
 import Button from '../Button';
 import { Select } from '../Select';
 
 export interface ITradeDetailsProps<TradeType extends ITrade> {
     className?: string;
     trade?: TradeType;
+    settings: ISettings;
     onSubmit(trade: TradeType): void;
 }
 
@@ -116,7 +117,9 @@ export default class TradeDetails<TradeType extends ITrade> extends
                     const feeCurrency =  this.state.transactionFeeCurrency.toUpperCase();
                     if (
                         !validator.isEmpty(this.state[key]) && (
-                            feeCurrency !== boughtCurrency && feeCurrency !== soldCurrency
+                            feeCurrency !== boughtCurrency &&
+                            feeCurrency !== soldCurrency &&
+                            feeCurrency !== this.props.settings.fiatCurrency
                         )
                     ) {
                         errors.push(`${key} must be either ${boughtCurrency} or ${soldCurrency}`,

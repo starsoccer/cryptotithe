@@ -61,6 +61,10 @@ export function processTrade(
                     feeFiatCost += trade.transactionFee * trade.fiatRate;
                     amountToAdd -= trade.transactionFee / trade.rate;
                     break;
+                case fiatCurrency:
+                    feeFiatCost += trade.transactionFee;
+                    amountToAdd -= trade.transactionFee / trade.fiatRate;
+                    break;
                 default:
             }
         }

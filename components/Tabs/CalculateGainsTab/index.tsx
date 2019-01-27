@@ -188,7 +188,10 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
                 { this.state.whatIfTradeVisible &&
                     <Popup onClose={this.whatIfTrade}>
                         <div>
-                            <TradeDetails onSubmit={this.calculateWhatIfTrade}/>
+                            <TradeDetails
+                                onSubmit={this.calculateWhatIfTrade}
+                                settings={this.props.savedData.settings}
+                            />
                             { this.state.whatIfTrade &&
                                 <div className='tc'>
                                     <h3>Short Term: {this.state.whatIfTrade.shortTerm}</h3>
