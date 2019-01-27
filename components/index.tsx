@@ -54,7 +54,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
             duplicateTrades: [],
             currentTab: TABS.Home,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser || isSavedDataLoaded(props.savedData),
+            loadDataPopup: props.browser || !isSavedDataLoaded(props.savedData),
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
@@ -144,7 +144,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         const savedData = data;
         if (isSavedDataLoaded(savedData)) {
             if ('integrity' in savedData && integrityCheck(savedData) !== savedData.integrity) {
-                alert('Integrity Check Failed');
+                alert('Integrity Check Failed. Your save file might be corrupt or tampered with.');
             }
             const shouldSave = savedDataConverter(savedData);
             if (shouldSave) {
@@ -166,6 +166,13 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
         this.setState({settingsPopup: !this.state.settingsPopup});
     }
 
+    public createNewSave = () => {
+        this.setState({
+            savedData: createEmptySavedData(),
+            loadDataPopup: false,
+        });
+    }
+
     public render() {
         return (
             <div className='app'>
@@ -175,6 +182,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                             <h1>Welcome to CryptoTithe</h1>
                             <h5>Great Description to be put here</h5>
                             <Button label='Load Existing Data' onClick={this.openFileBrowse}/>
+                            <Button label='Create Save Data' onClick={this.createNewSave}/>
                             <FileBrowse
                                 onLoaded={this.parseData}
                                 browse={this.state.fileBrowseOpen}
@@ -207,7 +215,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                         onClick={this.updateTab(TABS[key])}
                     >{key}</h3>)}
                 </div>
-                {!this.state.loadDataPopup && isSavedDataLoaded(this.state.savedData) &&
+                {!this.state.loadDataPopup &&
                     <div className='openTab'>
                         {this.showCurrentTab(this.state.currentTab)}
                     </div>
