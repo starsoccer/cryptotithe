@@ -157,7 +157,7 @@ describe('Add fiat Rate', () => {
             transactionFeeCurrency: 'LTC',
         };
 
-        const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Avg']);
+        const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Low']);
         const hourHighTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour High']);
         const hourAvgTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Avg']);
         const hourCloseTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Close']);
@@ -167,7 +167,7 @@ describe('Add fiat Rate', () => {
         expect(hourHighTrade[0].fiatRate).toBeDefined();
         expect(hourLowTrade[0].fiatRate).toBeGreaterThan(0);
         expect(hourHighTrade[0].fiatRate).toBeGreaterThan(0);
-    
+
         expect(hourAvgTrade[0].fiatRate).toBeGreaterThanOrEqual(hourLowTrade[0].fiatRate);
         expect(hourAvgTrade[0].fiatRate).toBeLessThanOrEqual(hourHighTrade[0].fiatRate);
 
@@ -175,6 +175,33 @@ describe('Add fiat Rate', () => {
         expect(hourOpenTrade[0].fiatRate).toBeDefined();
         expect(hourCloseTrade[0].fiatRate).toBeGreaterThan(0);
         expect(hourOpenTrade[0].fiatRate).toBeGreaterThan(0);
+
+    });
+
+    test('BTC Day based rates', async () => {
+        const trade: ITrade = {
+            boughtCurrency: 'LTC',
+            soldCurrency: 'BTC',
+            amountSold: 5,
+            rate: 1,
+            date: faker.date.past(1).getTime(),
+            ID: '1',
+            exchangeID: '1',
+            exchange: EXCHANGES.Gemini,
+            transactionFee: 0,
+            transactionFeeCurrency: 'LTC',
+        };
+
+        const dayAvgTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average']);
+        const dayAvgMiddleTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average Middle']);
+        const dayAvgVolumeTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average Volume']);
+
+        expect(dayAvgTrade[0].fiatRate).toBeDefined();
+        expect(dayAvgMiddleTrade[0].fiatRate).toBeDefined();
+        expect(dayAvgVolumeTrade[0].fiatRate).toBeDefined();
+        expect(dayAvgTrade[0].fiatRate).toBeGreaterThan(0);
+        expect(dayAvgMiddleTrade[0].fiatRate).toBeGreaterThan(0);
+        expect(dayAvgVolumeTrade[0].fiatRate).toBeGreaterThan(0);
 
     });
 });
