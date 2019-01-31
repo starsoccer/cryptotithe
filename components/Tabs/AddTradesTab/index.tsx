@@ -70,7 +70,7 @@ export class AddTradesTab extends React.Component<IAddTradesTabProp, IAddTradesT
                     const processedData: ITrade[] = await processData(this.state.exchange, fileData);
                     if (processedData && processedData.length) {
                         const duplicateTrades = duplicateCheck(this.state.currentTrades, processedData);
-                        if (duplicateTrades.length) {
+                        if (duplicateTrades.some((trade) => trade.probability !== 0)) {
                             this.setState({
                                 duplicateTrades,
                                 alertData: {
