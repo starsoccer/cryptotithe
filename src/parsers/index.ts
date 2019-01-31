@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import * as csv from 'csvtojson';
+import * as papaparse from 'papaparse';
 import { EXCHANGES, ExchangesHeaders, ITrade } from '../types';
 
 interface IGetCSVData {
@@ -7,15 +7,27 @@ interface IGetCSVData {
 }
 
 export async function getCSVData(fileData: string): Promise<any> {
-    return new Promise((resolve: (data: IGetCSVData[][]) => void, reject: (Error: Error) => void): any => {
-        const promises: Array<Promise<IGetCSVData[]>> = [];
-        csv().fromString(fileData)
-          .on('json', (converted: IGetCSVData[]) => promises.push(Promise.resolve(converted)))
-          .on('done', (error: Error) => {
-            if (error) {
-              reject(error);
-            }
-            Promise.all(promises).then(resolve);
+    return new Promise((
+        resolve: (data: IGetCSVData[]) => void,
+        reject: (Error: papaparse.ParseError[]) => void,
+    ): any => {
+        papaparse.parse(fileData, {
+            worker: true,
+            header: true,
+            complete: (result) => {
+                if (result.meta.aborted) {
+                    reject(result.errors);
+                } else {
+                    // make sure last row isnt just one key being empty
+                    if (Object.keys(result.data[0]) !== Object.keys(result.data[result.data.length - 1])) {
+                        result.data.pop();
+                    }
+                    resolve(result.data);
+                }
+            },
+            error: (error) => {
+                reject([error]);
+            },
         });
     });
 }
