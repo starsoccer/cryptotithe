@@ -12,7 +12,9 @@
         "build": "tsc -p configs/tsconfig.json && yarn run browserify-prod",
         "browserify": "browserify ./react.js -o ./bundle.js -u ./data.json --im",
         "browserify-prod": "browserify ./react.js -o ./bundle.js -u ./data.json --im -g [ envify --NODE_ENV production ] -g uglifyify | uglifyjs --compress --mangle",
-        "lint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
+        "lint": "yarn run tslint && yarn run stylelint",
+        "tslint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
+        "stylelint": "stylelint \"**/*.css\"",
         "full-build-test-ci": "yarn run lint && yarn run test-coveralls && yarn run build",
         "prod-start": "set NODE_ENV=production&& yarn run start",
         "dist": "node ./configs/dist.js",
@@ -41,6 +43,8 @@
         "faker": "^4.1.0",
         "jest": "^23.6.0",
         "opn-cli": "^4.0.0",
+        "stylelint": "^9.10.1",
+        "stylelint-config-standard": "^18.2.0",
         "ts-jest": "^23.10.1",
         "tslint": "^5.12.1",
         "typescript": "^3.2.2",
@@ -64,6 +68,12 @@
             "ts-jest": {
                 "tsConfig": "./configs/tsconfig.json"
             }
+        }
+    },
+    "stylelint": {
+        "extends": "stylelint-config-standard",
+        "rules": {
+            "color-hex-case": "upper"
         }
     },
     "dependencies": {
