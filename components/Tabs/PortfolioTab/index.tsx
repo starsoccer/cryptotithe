@@ -21,21 +21,28 @@ export interface IPortfolioTabState {
 export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioTabState> {
 
     public async componentDidMount() {
-        const holdingsValue = await calculateInDepthHoldingsValueCurrently(
-            this.props.savedData.holdings,
-            this.props.savedData.settings.fiatCurrency,
-        );
-        const series = [];
-        const currencies = Object.keys(holdingsValue.currencies);
-        for (const currency of currencies) {
-            series.push(holdingsValue.currencies[currency].fiatValue);
-        }
+        if (this.props.savedData.trades.length > 0) {
+            const holdingsValue = await calculateInDepthHoldingsValueCurrently(
+                this.props.savedData.holdings,
+                this.props.savedData.settings.fiatCurrency,
+            );
+            const series = [];
+            const currencies = Object.keys(holdingsValue.currencies);
+            for (const currency of currencies) {
+                series.push(holdingsValue.currencies[currency].fiatValue);
+            }
 
-        this.setState({
-            holdingsValue,
-            series,
-            currencies,
-        });
+            this.setState({
+                holdingsValue,
+                series,
+                currencies,
+            });
+        } else {
+            this.setState({
+                series: [],
+                currencies: [],
+            });
+        }
     }
 
     public recalculateHoldings = () => {
@@ -86,7 +93,10 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
                             />
                         </div>
                     :
-                        <Loader />
+                        this.props.savedData.trades.length > 0 ?
+                            <Loader />
+                        :
+                            <h3>No Trades Yet <i className='fa fa-frown-o'/></h3>
                     }
                 </div>
             </div>
