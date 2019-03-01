@@ -49,19 +49,22 @@ const isSavedDataLoaded = (data: ISavedData) => data.trades.length + Object.keys
 export class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
+
+        const showLoadDataPopup = props.browser || !isSavedDataLoaded(props.savedData);
+
         this.state = {
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.Home,
             fileBrowseOpen: false,
-            loadDataPopup: props.browser || !isSavedDataLoaded(props.savedData),
+            loadDataPopup: showLoadDataPopup,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
                 download: false,
             },
             settingsPopup: false,
-            savedData: createEmptySavedData(),
+            savedData: showLoadDataPopup ? createEmptySavedData() : props.savedData,
         };
     }
 
@@ -200,7 +203,7 @@ export class rootElement extends React.Component<IAppProps, IAppState> {
                 { this.state.settingsPopup &&
                     <Settings
                         settings={this.state.savedData.settings}
-                        onSettingsSave={this.saveData}
+                        onSave={this.saveData}
                         onClose={this.settingsPopup}
                     />
                 }
