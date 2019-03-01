@@ -5,7 +5,7 @@ import CalculationMethodSelect from '../../CalculationMethodSelect';
 import Popup from '../../Popup';
 export interface ISettingsProps {
     settings: ISettings;
-    onSettingsSave: (savedData: IPartialSavedData) => Promise<boolean>;
+    onSave: (savedData: IPartialSavedData) => Promise<boolean>;
     onClose: () => void;
 }
 
@@ -28,12 +28,21 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
             gainCalculationMethod: valueIfNotUndefined(props.settings, 'gainCalculationMethod', METHOD.FIFO),
         };
     }
-    public onSave = async () => {
-        const result = await this.props.onSettingsSave({settings: this.state});
+
+    public onSettingsSave = async () => {
+        const result = await this.props.onSave({settings: this.state});
         if (result) {
             this.props.onClose();
         } else {
             alert('Unable to save settings');
+        }
+    }
+
+    public onRefresh = async () => {
+        if (await this.props.onSave({})) {
+            this.props.onClose();
+        } else {
+            alert('Unable to refresh data');
         }
     }
 
@@ -84,7 +93,10 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
                         />
                     </div>
                     <hr />
-                    <Button label='Save' onClick={this.onSave}/>
+                    <div className='flex justify-around'>
+                        <Button label='Save' onClick={this.onSettingsSave}/>
+                        <Button label='Rehash/Refresh Save Data' onClick={this.onRefresh}/>
+                    </div>
                 </div>
             </Popup>
         );
