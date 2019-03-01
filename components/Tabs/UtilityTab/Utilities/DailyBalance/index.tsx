@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { calculateDailyBalance } from '../../../../../src/processing/CalculateDailyBalance';
 import { EXCHANGES, IDailyBalance, ISavedData } from '../../../../../src/types';
+import getTradeYears from '../../../../../src/utils/getTradeYears';
 import Button from '../../../../Button';
 import { Loader } from '../../../../Loader';
 import { DailyBalanceTable } from './DailyBalanceTable';
-import getTradeYears from '../../../../../src/utils/getTradeYears';
 export interface IDailyBalanceProp {
     savedData: ISavedData;
 }

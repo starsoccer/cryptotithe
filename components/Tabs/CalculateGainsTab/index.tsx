@@ -10,12 +10,12 @@ import {
     ITradeWithGains,
     METHOD,
 } from '../../../src/types';
+import getTradeYears from '../../../src/utils/getTradeYears';
 import Button from '../../Button';
 import { FileDownload, IFileDownloadProps } from '../../FileDownload';
 import { GainsPerTradeTable } from '../../GainsPerTradeTable';
 import Popup from '../../Popup';
 import TradeDetails from '../../TradeDetails';
-import getTradeYears from '../../../src/utils/getTradeYears';
 import { Customize, IYearCalculationMethod } from './Customize.component';
 export interface ICalculateTradesTabProp {
     savedData: ISavedData;
