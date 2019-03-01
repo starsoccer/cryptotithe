@@ -15,6 +15,7 @@ import { FileDownload, IFileDownloadProps } from '../../FileDownload';
 import { GainsPerTradeTable } from '../../GainsPerTradeTable';
 import Popup from '../../Popup';
 import TradeDetails from '../../TradeDetails';
+import getTradeYears from '../../../src/utils/getTradeYears';
 import { Customize, IYearCalculationMethod } from './Customize.component';
 export interface ICalculateTradesTabProp {
     savedData: ISavedData;
@@ -32,17 +33,6 @@ export interface ICalculateTradesTabState {
     showCustomizeModal: boolean;
     whatIfTrade?: ITradeWithGains;
     whatIfTradeVisible: boolean;
-}
-
-function getTradeYears(trades: ITrade[]) {
-    const years: string[] = [];
-    trades.forEach((trade) => {
-        const year = new Date(trade.date).getFullYear();
-        if (years.indexOf(year.toString()) === -1) {
-            years.push(year.toString());
-        }
-    });
-    return years;
 }
 
 function recalculate(
