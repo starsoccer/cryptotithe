@@ -24,7 +24,7 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
     }
 
     public onExchangeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({exchange: EXCHANGES[e.currentTarget.value]});
+        this.setState({exchange: e.currentTarget.value as EXCHANGES});
     }
 
     public calculateDailyBalance = async () => {
