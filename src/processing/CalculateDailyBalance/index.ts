@@ -6,12 +6,14 @@ import SortTrades from '../SortTrades';
 export async function calculateDailyBalance(
     trades: ITradeWithFiatRate[],
     fiatCurrency: string,
+    updateProgress: (currentProgress: number) => void,
 ): Promise<IDailyBalance[]> {
     const dailyBalance: IDailyBalance[] = [];
     let holdings: IHoldings = {};
     const sortedTrades = SortTrades(trades) as ITradeWithFiatRate[];
     const endingDate = sortedTrades[sortedTrades.length - 1].date;
     for (let index = sortedTrades[0].date; index < endingDate; index += 86400000) {
+        updateProgress(Math.abs((index - endingDate) / 86400000));
         const tradesOfDay = sortedTrades.filter((trade) => trade.date <= index + 86400000 && trade.date >= index);
         holdings = calculateGains(holdings, tradesOfDay, fiatCurrency).newHoldings;
         const result = await calculateHoldingsValue(holdings, fiatCurrency, new Date(index));

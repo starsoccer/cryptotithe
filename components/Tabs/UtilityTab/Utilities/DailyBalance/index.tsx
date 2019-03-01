@@ -4,6 +4,7 @@ import { EXCHANGES, IDailyBalance, ISavedData } from '../../../../../src/types';
 import Button from '../../../../Button';
 import { Loader } from '../../../../Loader';
 import { DailyBalanceTable } from './DailyBalanceTable';
+import getTradeYears from '../../../../../src/utils/getTradeYears';
 export interface IDailyBalanceProp {
     savedData: ISavedData;
 }
@@ -11,15 +12,19 @@ export interface IDailyBalanceProp {
 interface IDailyBalanceState {
     dailyBalance?: IDailyBalance[];
     exchange: EXCHANGES;
-    loading: boolean;
+    year: number;
+    daysLeft: number;
+    totalDays: number;
 }
 
 export default class DailyBalance extends React.Component<IDailyBalanceProp, IDailyBalanceState> {
     public constructor(props: IDailyBalanceProp) {
         super(props);
         this.state = {
-            loading: false,
             exchange: EXCHANGES[Object.keys(EXCHANGES)[0]],
+            year: 0,
+            daysLeft: 0,
+            totalDays: 0,
         };
     }
 
@@ -27,12 +32,27 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
         this.setState({exchange: e.currentTarget.value as EXCHANGES});
     }
 
+    public onYearChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({year: parseInt(e.currentTarget.value, 10)});
+    }
+
     public calculateDailyBalance = async () => {
-        this.setState({loading: true});
-        const trades = this.props.savedData.trades.filter((trade) => trade.exchange === this.state.exchange);
+        const trades = this.props.savedData.trades.filter((trade) =>
+            trade.exchange === this.state.exchange &&
+            new Date(trade.date).getFullYear() === this.state.year,
+        );
         this.setState({
-            dailyBalance: await calculateDailyBalance(trades, this.props.savedData.settings.fiatCurrency),
-            loading: false,
+            totalDays: Math.abs((new Date(trades[0].date).getTime() - new Date().getTime()) / 86400000),
+        });
+        const dailyBalance = await calculateDailyBalance(
+            trades,
+            this.props.savedData.settings.fiatCurrency,
+            (daysLeft: number) => this.setState({daysLeft}),
+        );
+        this.setState({
+            dailyBalance,
+            totalDays: 0,
+            daysLeft: 0,
         });
     }
 
@@ -47,10 +67,23 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
                         )}
                     </select>
                     <br />
+                    <label htmlFor='year' className='pr2'>Starting Year</label>
+                    <select name='year' id='year' onChange={this.onYearChange}>
+                        {getTradeYears(
+                            this.props.savedData.trades.filter((trade) => trade.exchange === this.state.exchange,
+                        )).map((year) =>
+                            <option key={year} value={year}>{year}</option>,
+                        )}
+                    </select>
+                    <br />
                     <Button label='Calculate Daily Balance' onClick={this.calculateDailyBalance}/>
                 </div>
-                {this.state.loading &&
-                    <Loader />
+                {this.state.totalDays > 0 &&
+                    <div className='tc pt2'>
+                        Loading {(this.state.totalDays - this.state.daysLeft).toFixed(0)}
+                         of {this.state.totalDays.toFixed(0)}
+                        <Loader />
+                    </div>
                 }
                 { this.state.dailyBalance !== undefined &&
                     <DailyBalanceTable dailyBalance={this.state.dailyBalance}/>
