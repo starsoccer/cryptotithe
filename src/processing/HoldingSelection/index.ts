@@ -44,12 +44,14 @@ export default function holdingSelection(
                     amount: amountUsed,
                     date: trade.date,
                     rateInFiat: 1,
+                    location: trade.exchange,
                 });
             } else {
                 currencyHolding.push({
                     amount: amountUsed,
                     date: trade.date,
                     rateInFiat: 0,
+                    location: trade.exchange,
                 });
             }
             amountUsed = 0;
@@ -77,6 +79,7 @@ function checkCurrencyHoldingAmount(
                 amount: amountUsed,
                 rateInFiat: holdingToCheck.rateInFiat,
                 date: holdingToCheck.date,
+                location: holdingToCheck.location,
             },
         };
     } else {
@@ -86,6 +89,7 @@ function checkCurrencyHoldingAmount(
                 amount: holdingToCheck.amount,
                 rateInFiat: holdingToCheck.rateInFiat,
                 date: holdingToCheck.date,
+                location: holdingToCheck.location,
             },
         };
     }

@@ -25,6 +25,7 @@ export function mockHoldings(
                 amount: faker.random.number(),
                 date: faker.date.between(startingDate, endingDate).getTime(),
                 rateInFiat: faker.random.number(),
+                location: '',
             });
         }
         holdings[faker.random.word().toUpperCase()] = toBeHoldings;

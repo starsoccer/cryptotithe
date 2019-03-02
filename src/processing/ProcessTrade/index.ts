@@ -46,6 +46,7 @@ export function processTrade(
             amount: trade.amountSold / trade.rate,
             rateInFiat: trade.fiatRate,
             date: trade.date,
+            location: trade.exchange,
         });
     } else {
         let feeFiatCost = 0;
@@ -74,6 +75,7 @@ export function processTrade(
                 amount: amountToAdd,
                 rateInFiat: trade.fiatRate * trade.rate,
                 date: trade.date,
+                location: trade.exchange,
             });
         }
 

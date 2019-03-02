@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 import * as papaparse from 'papaparse';
-import { EXCHANGES, ExchangesHeaders, ITrade } from '../types';
+import { EXCHANGES, ExchangesTradeHeaders, ITrade } from '../types';
 
 interface IGetCSVData {
     [key: string]: string;
@@ -53,8 +53,8 @@ export async function processData(exchange: EXCHANGES | string, fileData: string
         default:
             const headers = fileData.substr(0, fileData.indexOf('\n'));
             const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
-            for (const key in ExchangesHeaders) {
-                if (ExchangesHeaders[key] === headersHash) {
+            for (const key in ExchangesTradeHeaders) {
+                if (ExchangesTradeHeaders[key] === headersHash) {
                     return processData(key, fileData);
                 }
             }
