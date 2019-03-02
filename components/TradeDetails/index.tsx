@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as validator from 'validator';
-import { createDateAsUTC, createTradeID } from '../../src/parsers/utils';
+import { createDateAsUTC, createID } from '../../src/parsers/utils';
 import { EXCHANGES, ISettings, ITrade } from '../../src/types';
 import Button from '../Button';
 import { Select } from '../Select';
@@ -140,7 +140,7 @@ export default class TradeDetails<TradeType extends ITrade> extends
             trade.exchange = this.state.exchange as EXCHANGES;
             trade.transactionFee = (this.state.transactionFee === '' ? 0 : parseFloat(this.state.transactionFee));
             if (this.state.id === '') {
-                trade.ID = createTradeID(trade);
+                trade.ID = createID(trade);
             } else {
                 trade.ID = this.state.id;
             }

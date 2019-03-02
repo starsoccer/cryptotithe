@@ -1,6 +1,6 @@
-import { getCSVData } from '../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../types';
-import { createDateAsUTC, createTradeID } from '../utils';
+import { getCSVData } from '../../';
+import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { createDateAsUTC, createID } from '../../utils';
 
 enum KrakenType {
     BUY = 'buy',
@@ -99,7 +99,7 @@ export async function processData(filePath: string): Promise<ITrade[]> {
                 throw new Error('Unknown Order Type - ' + trade['Order Number']);
         }
         partialTrade.transactionFeeCurrency = partialTrade.boughtCurrency;
-        partialTrade.ID = createTradeID(partialTrade);
+        partialTrade.ID = createID(partialTrade);
         internalFormat.push(partialTrade as ITrade);
     }
     return internalFormat;

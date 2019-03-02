@@ -1,6 +1,6 @@
-import { getCSVData } from '../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../types';
-import { createDateAsUTC, createTradeID } from '../utils';
+import { getCSVData } from '../../';
+import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { createDateAsUTC, createID } from '../../utils';
 
 enum BinanceOrderType {
     SELL = 'SELL',
@@ -66,7 +66,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
             default:
                 throw new Error('Unknown Order Type - ' + trade['Date(UTC)']);
         }
-        tradeToAdd.ID = createTradeID(tradeToAdd);
+        tradeToAdd.ID = createID(tradeToAdd);
         tradeToAdd.exchangeID = tradeToAdd.ID;
         tradeToAdd.transactionFeeCurrency = tradeToAdd.boughtCurrency;
         tradeToAdd.transactionFee = 0;

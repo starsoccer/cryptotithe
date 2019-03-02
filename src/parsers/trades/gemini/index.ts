@@ -1,6 +1,6 @@
-import { getCSVData } from '../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../types';
-import { createDateAsUTC, createTradeID } from '../utils';
+import { getCSVData } from '../../';
+import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { createDateAsUTC, createID } from '../../utils';
 
 enum GeminiOrderType {
     Sell = 'Sell',
@@ -101,7 +101,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
                         transactionFeeCurrency: pair.bought.toUpperCase(),
                         transactionFee: 0,
                     };
-                    partialTrade.ID = createTradeID(partialTrade);
+                    partialTrade.ID = createID(partialTrade);
                     internalFormat.push(partialTrade as ITrade);
                     break;
                 case GeminiOrderType.Credit:

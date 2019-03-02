@@ -1,6 +1,6 @@
-import { getCSVData } from '../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../types';
-import { createDateAsUTC, createTradeID } from '../utils';
+import { getCSVData } from '../../';
+import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { createDateAsUTC, createID } from '../../utils';
 
 enum PoloniexOrderType {
     BUY = 'Buy',
@@ -63,7 +63,7 @@ export async function processData(fileData: string): Promise<ITrade[]> {
             default:
                 throw new Error('Unknown Order Type - ' + trade['Order Number']);
         }
-        partialTrade.ID = createTradeID(partialTrade);
+        partialTrade.ID = createID(partialTrade);
         partialTrade.transactionFeeCurrency = partialTrade.boughtCurrency;
         internalFormat.push(partialTrade as ITrade);
     }
