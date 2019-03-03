@@ -1,5 +1,5 @@
 import { getCSVData } from '../../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { EXCHANGES, IImport, IPartialTrade, ITrade } from '../../../types';
 import { createDateAsUTC, createID } from '../../utils';
 
 enum BinanceOrderType {
@@ -30,8 +30,8 @@ function getPairs(market: string) {
     return pairs;
 }
 
-export async function processData(fileData: string): Promise<ITrade[]> {
-    const data: IBinance[] = await getCSVData(fileData) as IBinance[];
+export async function processData(importDetails: IImport): Promise<ITrade[]> {
+    const data: IBinance[] = await getCSVData(importDetails.data) as IBinance[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pair: string[] = getPairs(trade.Market);

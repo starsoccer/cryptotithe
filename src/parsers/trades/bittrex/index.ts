@@ -1,5 +1,5 @@
 import { getCSVData } from '../../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { EXCHANGES, IImport, IPartialTrade, ITrade } from '../../../types';
 import { createDateAsUTC, createID } from '../../utils';
 
 enum BittrexOrderType {
@@ -19,8 +19,8 @@ interface IBittrex {
     Closed: string;
 }
 
-export async function processData(fileData: string): Promise<ITrade[]> {
-    const data: IBittrex[] = await getCSVData(fileData) as IBittrex[];
+export async function processData(importDetails: IImport): Promise<ITrade[]> {
+    const data: IBittrex[] = await getCSVData(importDetails.data) as IBittrex[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pair: string[] = trade.Exchange.split('-');

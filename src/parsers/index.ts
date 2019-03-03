@@ -1,6 +1,8 @@
 import * as crypto from 'crypto';
 import * as papaparse from 'papaparse';
-import { EXCHANGES, ExchangesTradeHeaders, ITrade } from '../types';
+import { EXCHANGES, ExchangesTradeHeaders, ImportType, ITrade } from '../types';
+import { IImport } from './../types/import';
+import { ITransaction } from './../types/transactions';
 
 interface IGetCSVData {
     [key: string]: string;
@@ -32,37 +34,69 @@ export async function getCSVData(fileData: string): Promise<any> {
     });
 }
 
-export async function processData(exchange: EXCHANGES | string, fileData: string): Promise<ITrade[]> {
-    let processExchangeData: (fileData: string) => ITrade[];
-    switch (exchange) {
-        case EXCHANGES.Bittrex:
-            processExchangeData = require('./bittrex').processData;
-            break;
-        case EXCHANGES.Gemini:
-            processExchangeData = require('./gemini').processData;
-            break;
-        case EXCHANGES.Poloniex:
-            processExchangeData = require('./poloniex').processData;
-            break;
-        case EXCHANGES.Kraken:
-            processExchangeData = require('./kraken').processData;
-            break;
+export function processData(importDetails: IImport): ITrade[]  | ITransaction[] {
+    switch (importDetails.type) {
+        case ImportType.TRADES:
+            return processTradesImport(importDetails);
+        case ImportType.TRANSACTION:
+            return processTransactionsImport(importDetails);
+        default:
+            throw new Error(`Unknown Import Type - ${importDetails.type}`);
+    }
+}
+
+function processTransactionsImport(importDetails: IImport): ITransaction[] {
+    let processExchangeData: (importDetails: IImport) => ITransaction[];
+    switch (importDetails.location) {
         case EXCHANGES.Binance:
-            processExchangeData = require('./binance').processData;
+            processExchangeData = require('./transactions/binance').processData;
             break;
         default:
-            const headers = fileData.substr(0, fileData.indexOf('\n'));
+            const headers = importDetails.data.substr(0, importDetails.data.indexOf('\n'));
             const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
-            for (const key in ExchangesTradeHeaders) {
-                if (ExchangesTradeHeaders[key] === headersHash) {
-                    return processData(key, fileData);
-                }
-            }
-            throw new Error(`Unknown Exchange - ${exchange} - ${headersHash}`);
+            throw new Error(`Unknown Exchange - ${importDetails.location} - ${headersHash}`);
             return [];
     }
     if (typeof processExchangeData === 'function') {
-        return processExchangeData(fileData);
+        return processExchangeData(importDetails);
+    }
+    return [];
+}
+
+function processTradesImport(importDetails: IImport): ITrade[] {
+    let processExchangeData: (importDetails: IImport) => ITrade[];
+    switch (importDetails.location) {
+        case EXCHANGES.Bittrex:
+            processExchangeData = require('./trades/bittrex').processData;
+            break;
+        case EXCHANGES.Gemini:
+            processExchangeData = require('./trades/gemini').processData;
+            break;
+        case EXCHANGES.Poloniex:
+            processExchangeData = require('./trades/poloniex').processData;
+            break;
+        case EXCHANGES.Kraken:
+            processExchangeData = require('./trades/kraken').processData;
+            break;
+        case EXCHANGES.Binance:
+            processExchangeData = require('./trades/binance').processData;
+            break;
+        default:
+            const headers = importDetails.data.substr(0, importDetails.data.indexOf('\n'));
+            const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
+            for (const key in ExchangesTradeHeaders) {
+                if (ExchangesTradeHeaders[key] === headersHash) {
+                    return processTradesImport({
+                        ...importDetails,
+                        location: key,
+                    });
+                }
+            }
+            throw new Error(`Unknown Exchange - ${importDetails.location} - ${headersHash}`);
+            return [];
+    }
+    if (typeof processExchangeData === 'function') {
+        return processExchangeData(importDetails);
     }
     return [];
 }

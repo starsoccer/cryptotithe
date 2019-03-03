@@ -1,5 +1,5 @@
 import { getCSVData } from '../../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { EXCHANGES, IImport, IPartialTrade, ITrade } from '../../../types';
 import { createDateAsUTC, createID } from '../../utils';
 
 enum GeminiOrderType {
@@ -76,8 +76,8 @@ function parseNumber(amount: string): number {
     return parseFloat(realAmount.split(' ')[0]);
 }
 
-export async function processData(fileData: string): Promise<ITrade[]> {
-    const data: IGemini[] = await getCSVData(fileData) as IGemini[];
+export async function processData(importDetails: IImport): Promise<ITrade[]> {
+    const data: IGemini[] = await getCSVData(importDetails.data) as IGemini[];
     const internalFormat: ITrade[] = [];
     for (let i = 1; i < data.length - 1; i++) {
         const trade = data[i];

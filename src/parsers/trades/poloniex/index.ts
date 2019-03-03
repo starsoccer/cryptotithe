@@ -1,5 +1,5 @@
 import { getCSVData } from '../../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { EXCHANGES, IImport, IPartialTrade, ITrade } from '../../../types';
 import { createDateAsUTC, createID } from '../../utils';
 
 enum PoloniexOrderType {
@@ -29,8 +29,8 @@ function garbageTrade(trade: IPoloniex) {
     return parseNumber(trade['Quote Total Less Fee']) === 0 || parseNumber(trade['Base Total Less Fee']) === 0;
 }
 
-export async function processData(fileData: string): Promise<ITrade[]> {
-    const data: IPoloniex[] = await getCSVData(fileData) as IPoloniex[];
+export async function processData(importDetails: IImport): Promise<ITrade[]> {
+    const data: IPoloniex[] = await getCSVData(importDetails.data) as IPoloniex[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pair: string[] = trade.Market.split('/');

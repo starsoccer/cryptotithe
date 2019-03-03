@@ -14,5 +14,10 @@ export default function converter(savedData: ISavedData): boolean {
         ).newHoldings;
     }
 
+    if ('transactions' in savedData === false) {
+        changeMade = true;
+        savedData.transactions = [];
+    }
+
     return changeMade;
 }

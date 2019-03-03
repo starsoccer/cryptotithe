@@ -1,14 +1,16 @@
-import { ICurrencyHolding, Location } from './';
+import { IDuplicate, Location } from './';
 
 export interface ITransaction {
     from: Location;
     fromAddress?: string;
     to: Location;
     toAddress?: string;
-    holdings: ICurrencyHolding[];
+    amount: number;
     currency: string;
-    id: string;
+    ID: string;
     transactionID?: string;
     fee?: number;
     date: number;
 }
+
+export interface ITransactionWithDuplicateProbability extends ITransaction, IDuplicate {}

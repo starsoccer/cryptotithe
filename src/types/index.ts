@@ -3,6 +3,7 @@ export * from './holding';
 export * from './savedData';
 export * from './locations';
 export * from './transactions';
+export * from './import';
 
 export interface IDailyBalance {
     date: Date;

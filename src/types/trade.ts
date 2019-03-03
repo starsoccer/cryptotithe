@@ -1,4 +1,4 @@
-import { Location } from './';
+import { IDuplicate, Location } from './';
 
 export type IPartialTrade = Partial<ITrade>;
 
@@ -30,7 +30,4 @@ export interface ITradeWithCostBasis extends ITradeWithGains {
     longtermTrade: boolean;
 }
 
-export interface ITradeWithDuplicateProbability extends ITrade {
-    probability: number;
-    duplicate: boolean;
-}
+export interface ITradeWithDuplicateProbability extends ITrade, IDuplicate {}

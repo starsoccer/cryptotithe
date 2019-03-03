@@ -1,5 +1,5 @@
 import { getCSVData } from '../../';
-import { EXCHANGES, IPartialTrade, ITrade } from '../../../types';
+import { EXCHANGES, IImport, IPartialTrade, ITrade } from '../../../types';
 import { createDateAsUTC, createID } from '../../utils';
 
 enum KrakenType {
@@ -71,8 +71,8 @@ function getRealTradedPairs(market: string) {
     return pairs.map((pair) => (pair in KRAKEN_TO_NORMAL_CURRENCY ? KRAKEN_TO_NORMAL_CURRENCY[pair] : pair));
 }
 
-export async function processData(filePath: string): Promise<ITrade[]> {
-    const data: IKraken[] = await getCSVData(filePath) as IKraken[];
+export async function processData(importDetails: IImport): Promise<ITrade[]> {
+    const data: IKraken[] = await getCSVData(importDetails.data) as IKraken[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {
         const pairs: string[] = getRealTradedPairs(trade.pair);
