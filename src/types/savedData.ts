@@ -13,6 +13,7 @@ export interface ISavedData extends IPartialSavedData {
 export interface IPartialSavedData {
     savedDate?: Date;
     trades?: ITradeWithFiatRate[];
+    transactions?: ITransaction[];
     holdings?: IHoldings;
     settings?: Partial<ISettings>;
     integrity?: string;
