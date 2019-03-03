@@ -1,52 +1,14 @@
-import { ITrade, ITradeWithDuplicateProbability } from '../../types';
+import { IImport, ImportType, ISavedData, ITrade, ITransaction } from '../../types';
+import DuplicateTradeCheck from './DuplicateTradeCheck';
+import DuplicateTransactionCheck from './DuplicateTransactionCheck';
 
-export default function duplicateCheck(currentTrades: ITrade[], newTrades: ITrade[]): ITradeWithDuplicateProbability[] {
-    const duplicateTrades: ITradeWithDuplicateProbability[] = [];
-
-    nextTrade: for (const newTrade of newTrades) {
-        const IDMatchedTrades = currentTrades.filter((trade) =>
-            newTrade.ID === trade.ID || newTrade.exchangeID === trade.exchangeID,
-        );
-        if (IDMatchedTrades.length) {
-            duplicateTrades.push({
-                ...newTrade,
-                probability: 100,
-                duplicate: true,
-            });
-            continue;
-        }
-        for (const currentTrade of currentTrades) {
-            if (newTrade.exchange === currentTrade.exchange) {
-                let probability = 0;
-                if (newTrade.date === currentTrade.date) {
-                    if (
-                        newTrade.boughtCurrency === currentTrade.boughtCurrency ||
-                        newTrade.soldCurrency === currentTrade.soldCurrency
-                    ) {
-                        probability += 20;
-                    }
-                    if (newTrade.amountSold === currentTrade.amountSold) {
-                        probability += 30;
-                    }
-                    if (newTrade.rate === currentTrade.rate) {
-                        probability += 50;
-                    }
-                }
-                if (probability > 0) {
-                    duplicateTrades.push({
-                        ...newTrade,
-                        probability,
-                        duplicate: probability > 50,
-                    });
-                    continue nextTrade;
-                }
-            }
-        }
-        duplicateTrades.push({
-            ...newTrade,
-            probability: 0,
-            duplicate: false,
-        });
+export default function duplicateCheck(importDetails: IImport, savedData: ISavedData, data: ITrade[] | ITransaction[]) {
+    switch (importDetails.type) {
+        case ImportType.TRADES:
+            return DuplicateTradeCheck(savedData.trades, data as ITrade[]);
+        case ImportType.TRANSACTION:
+            return DuplicateTransactionCheck(savedData.transactions, data as ITransaction[]);
+        default:
+            throw new Error(`Unknown Import Type - ${importDetails.type}`);
     }
-    return duplicateTrades;
 }
