@@ -4,8 +4,7 @@ export default function duplicateTransactionCheck(
     currentTransactions: ITransaction[], newTransactions: ITransaction[],
 ): ITransactionWithDuplicateProbability[] {
     const duplicateTransactions: ITransactionWithDuplicateProbability[] = [];
-
-    nextTrade: for (const newTransaction of newTransactions) {
+    nextTransaction: for (const newTransaction of newTransactions) {
         const IDMatchedTrades = currentTransactions.filter((transaction) => newTransaction.ID === transaction.ID);
         if (IDMatchedTrades.length) {
             duplicateTransactions.push({
@@ -43,7 +42,7 @@ export default function duplicateTransactionCheck(
                         probability,
                         duplicate: probability > 50,
                     });
-                    continue nextTrade;
+                    continue nextTransaction;
                 }
             }
         }

@@ -5,7 +5,7 @@ import { createDateAsUTC, createID } from '../../utils';
 interface IBinance {
     Date: string;
     Coin: string;
-    Amount: number;
+    Amount: string;
     TransactionFee: number;
     Address: string;
     TXID: string;
@@ -19,7 +19,7 @@ export async function processData(importDetails: IImport): Promise<ITransaction[
     const internalFormat: ITransaction[] = [];
     for (const transaction of data) {
         const transactionToAdd: Partial<ITransaction> = {
-            amount: transaction.Amount,
+            amount: parseFloat(transaction.Amount),
             currency: transaction.Coin,
             transactionID: transaction.TXID,
             fee: transaction.TransactionFee,
