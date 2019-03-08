@@ -37,17 +37,11 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
     }
 
     public calculateDailyBalance = async () => {
-        const trades = this.props.savedData.trades.filter((trade) =>
-            trade.exchange === this.state.exchange &&
-            new Date(trade.date).getFullYear() === this.state.year,
-        );
-        this.setState({
-            totalDays: Math.abs((new Date(trades[0].date).getTime() - new Date().getTime()) / 86400000),
-        });
         const dailyBalance = await calculateDailyBalance(
-            trades,
-            this.props.savedData.settings.fiatCurrency,
-            (daysLeft: number) => this.setState({daysLeft}),
+            this.props.savedData,
+            this.state.year,
+            this.state.exchange,
+            (totalDays: number, daysLeft: number) => this.setState({totalDays, daysLeft}),
         );
         this.setState({
             dailyBalance,
@@ -80,13 +74,18 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
                 </div>
                 {this.state.totalDays > 0 &&
                     <div className='tc pt2'>
-                        Loading {(this.state.totalDays - this.state.daysLeft).toFixed(0)}
-                         of {this.state.totalDays.toFixed(0)}
+                        {`Loading ${(this.state.totalDays - this.state.daysLeft).toFixed(0)} of `}
+                        {this.state.totalDays.toFixed(0)}
                         <Loader />
                     </div>
                 }
                 { this.state.dailyBalance !== undefined &&
-                    <DailyBalanceTable dailyBalance={this.state.dailyBalance}/>
+                    <div>
+                        <h3 className='tc'>{
+                            Math.max(...this.state.dailyBalance.map((balance) => balance.fiatValue)).toFixed(2)
+                        }</h3>
+                        <DailyBalanceTable dailyBalance={this.state.dailyBalance}/>
+                    </div>
                 }
             </div>
         );

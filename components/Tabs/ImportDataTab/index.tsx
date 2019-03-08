@@ -240,10 +240,17 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
                     }
                     <label htmlFor='location' className='pr2'>Import Location</label>
                     <select name='location' id='location' onChange={this.onSelectChange('location')}>
-                        <option key='Auto-Detect' value='Auto-Detect'>Auto-Detect</option>,
-                        {Object.keys(EXCHANGES).map((key) =>
-                            <option key={key} value={EXCHANGES[key]}>{key}</option>,
-                        )}
+                        { this.state.importDetails.type === ImportType.TRANSACTION ?
+                            <option key='Binance' value='BINANCE'>Binance</option>
+                        :
+                            <>
+                                <option key='Auto-Detect' value='Auto-Detect'>Auto-Detect</option>
+                                {Object.keys(EXCHANGES).map((key) =>
+                                    <option key={key} value={EXCHANGES[key]}>{key}</option>,
+                                )}
+                            </>
+                        }
+
                     </select>
                 </div>
                 { this.state.addTrade &&
@@ -299,7 +306,6 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
                         {this.state.processedData.length > 0 &&
                         this.state.importDetails.type === ImportType.TRANSACTION &&
                             <div>
-                                {console.log(this.state.processedData)}
                                 <h3 className='tc'>Transactions to Add</h3>
                                 <hr className='center w-50' />
                                 <TransactionsTable
