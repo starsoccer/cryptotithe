@@ -1,9 +1,9 @@
 import * as React from 'react';
+import sortTransactions from '../../src/processing/sortTransactions';
 import { ISettings, ITransaction } from '../../src/types';
 import Popup from '../Popup';
 import { Table } from '../Table';
 import TransactionDetails from '../TransactionDetails';
-import sortTransactions from '../../src/processing/sortTransactions';
 
 export interface ITransactionTableProps {
     className?: string;

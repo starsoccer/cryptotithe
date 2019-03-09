@@ -26,7 +26,7 @@ import { DuplicateTransactionsTable } from '../../DuplicateTransactionsTable';
 import { FileBrowse } from '../../FileBrowse';
 import { Loader } from '../../Loader';
 import TradeDetails from '../../TradeDetails';
-//import TransactionDetails from '../../TransactionDetails';
+// import TransactionDetails from '../../TransactionDetails';
 import { TradesTable } from '../../TradesTable';
 import { TransactionsTable } from '../../TransactionsTable';
 

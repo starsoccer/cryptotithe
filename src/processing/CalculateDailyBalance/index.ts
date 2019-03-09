@@ -1,8 +1,8 @@
-import { IDailyBalance, IHoldings, ITradeWithFiatRate, ITransaction, Location, ISavedData } from '../../types';
+import { IDailyBalance, IHoldings, ISavedData, ITradeWithFiatRate, ITransaction, Location } from '../../types';
 import { calculateGains } from '../CalculateGains';
 import { calculateHoldingsValue } from '../CalculateHoldingsValue';
-import processTransactions from '../ProcessTransactions';
 import filterCurrencyHoldingsByLocation from '../filterCurrencyHoldingsByLocation';
+import processTransactions from '../ProcessTransactions';
 import SortTrades from '../SortTrades';
 
 export async function calculateDailyBalance(

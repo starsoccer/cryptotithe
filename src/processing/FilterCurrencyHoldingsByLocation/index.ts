@@ -1,5 +1,5 @@
-import { Location, IHoldings } from '../../types';
 import * as clone from 'clone';
+import { IHoldings, Location } from '../../types';
 
 export default function filterCurrencyHoldingsByLocation(location: Location, holdings: IHoldings) {
     const newHoldings = clone(holdings);

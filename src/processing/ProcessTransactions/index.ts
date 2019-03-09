@@ -1,5 +1,5 @@
-import { ITransaction, IHoldings, ICurrencyHolding } from '../../types';
 import * as clone from 'clone';
+import { ICurrencyHolding, IHoldings, ITransaction } from '../../types';
 
 export default function processTransactions(transactions: ITransaction[], holdings: IHoldings) {
     const newHoldings = clone(holdings);
