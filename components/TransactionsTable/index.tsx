@@ -1,5 +1,5 @@
 import * as React from 'react';
-import sortTransactions from '../../src/processing/sortTransactions';
+import sortTransactions from '../../src/processing/SortTransactions';
 import { ISettings, ITransaction } from '../../src/types';
 import Popup from '../Popup';
 import { Table } from '../Table';

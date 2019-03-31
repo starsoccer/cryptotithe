@@ -1,7 +1,7 @@
 import { IDailyBalance, IHoldings, ISavedData, ITradeWithFiatRate, ITransaction, Location } from '../../types';
 import { calculateGains } from '../CalculateGains';
 import { calculateHoldingsValue } from '../CalculateHoldingsValue';
-import filterCurrencyHoldingsByLocation from '../filterCurrencyHoldingsByLocation';
+import filterCurrencyHoldingsByLocation from '../FilterCurrencyHoldingsByLocation';
 import processTransactions from '../ProcessTransactions';
 import SortTrades from '../SortTrades';
 

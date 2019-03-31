@@ -3,7 +3,7 @@ import { processData } from '../../../src/parsers';
 import duplicateCheck from '../../../src/processing/DuplicateCheck';
 import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
 import sortTrades from '../../../src/processing/SortTrades';
-import sortTransactions from '../../../src/processing/sortTransactions';
+import sortTransactions from '../../../src/processing/SortTransactions';
 import {
     EXCHANGES,
     IDuplicate,
