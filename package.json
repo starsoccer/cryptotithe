@@ -42,7 +42,7 @@
         "envify": "^4.1.0",
         "faker": "^4.1.0",
         "jest": "^24.8.0",
-        "opn-cli": "^4.0.0",
+        "opn-cli": "^5.0.0",
         "stylelint": "^9.10.1",
         "stylelint-config-standard": "^18.2.0",
         "ts-jest": "^24.0.2",
