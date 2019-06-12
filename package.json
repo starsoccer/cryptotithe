@@ -26,7 +26,7 @@
         "@types/classnames": "^2.2.6",
         "@types/clone": "^0.1.30",
         "@types/faker": "^4.1.5",
-        "@types/got": "^9.4.0",
+        "@types/got": "^9.4.4",
         "@types/jest": "^23.3.13",
         "@types/node": "^10.12.18",
         "@types/papaparse": "^4.5.7",

@@ -164,10 +164,10 @@
   resolved "https://registry.yarnpkg.com/@types/faker/-/faker-4.1.5.tgz#8f620f9c9a67150aa0a32b4e8a407da43fca61d4"
   integrity sha512-YSDqoBEWYGdNk53xSkkb6REaUaVSlIjxIAGjj/nbLzlZOit7kUU+nA2zC2qQkIVO4MQ+3zl4Sz7aw+kbpHHHUQ==
 
-"@types/got@^9.4.0":
-  version "9.4.0"
-  resolved "https://registry.yarnpkg.com/@types/got/-/got-9.4.0.tgz#5c8b0f5a0dc1b67e676430561a0b85a0fde1d12d"
-  integrity sha512-18c/Bu9tpv6owaz17urNFfkzfxdmr3PoREqFpAkUasBbV9gc7OqChRj/e2f98abiJo7j++PhArfm66EFqAY4qA==
+"@types/got@^9.4.4":
+  version "9.4.4"
+  resolved "https://registry.yarnpkg.com/@types/got/-/got-9.4.4.tgz#78129553f6a41715df601db43532cd0b87a55d3f"
+  integrity sha512-IGAJokJRE9zNoBdY5csIwN4U5qQn+20HxC0kM+BbUdfTKIXa7bOX/pdhy23NnLBRP8Wvyhx7X5e6EHJs+4d8HA==
   dependencies:
     "@types/node" "*"
     "@types/tough-cookie" "*"
