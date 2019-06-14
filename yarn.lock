@@ -517,10 +517,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-infinite-scroller@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@types/react-infinite-scroller/-/react-infinite-scroller-1.2.0.tgz#895d2822bb6e32f024ea258f60e4f75c3fbf37dc"
-  integrity sha512-5TiqZoj3bn+lOctSra4+02T2ma12drNvQOjFicLL3iPWhNREbA9gb/XG9jCDR7f5Bl8k17pbm0nGFa5olnt9rA==
+"@types/react-infinite-scroller@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/react-infinite-scroller/-/react-infinite-scroller-1.2.1.tgz#1cd747ef8f50d3c883e375c0491a906e5436fcb2"
+  integrity sha512-64bpbqdSgtmy1zSZ2AQoFzguwZO7TyKjqJRTEnfNMCAQbnrX90kz+rYufZyY9CmzhwpXMwRO8xR9fMQnbYUkgQ==
   dependencies:
     "@types/react" "*"
 
