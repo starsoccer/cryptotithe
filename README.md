@@ -6,9 +6,10 @@ In the desktop(electron) version, The only external requests made are to `crypto
 
 In the web version linked below, besides for requests to `cryptocompare.com`, requests are also made to `unpkg.com` for some css and icons.
 
-[Demo](https://cryptotithe.now.sh/)
+[Demo - now.sh](https://cryptotithe.now.sh/)
+[Demo - ipfs(infura)](https://ipfs.infura.io/ipfs/QmegEWdax5CxHEEkmgG18sptTb4RyKzWgmHUbDYsTJmDSC)
 
 ## How to Get Started(desktop)
   1. Clone the repo or download as a zip
-  2. Run `npm install`
-  3. Run `npm run start`
+  2. Run `yarn`
+  3. Run `yarn run start`
