@@ -43,3 +43,4 @@ backup\.json
 
 bundle\.js
 \dist
+\ipfs
