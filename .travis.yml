@@ -5,6 +5,7 @@ script:
   - yarn global add coveralls
   - yarn global add browserify
   - yarn run full-build-test-ci
+  - yarn run release-ipfs
 cache:
   directories:
     - "node_modules"

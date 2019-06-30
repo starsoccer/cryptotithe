@@ -18,7 +18,8 @@
         "full-build-test-ci": "yarn run lint && yarn run test-coveralls && yarn run build",
         "prod-start": "set NODE_ENV=production&& yarn run start",
         "dist": "node ./configs/dist.js",
-        "release": "yarn run build && yarn run dist"
+        "release": "yarn run build && yarn run dist",
+        "release-ipfs": "node ./configs/ipfs-release.js && ipd ipfs/"
     },
     "author": "",
     "license": "MIT",
@@ -89,5 +90,8 @@
         "react-infinite-scroller": "^1.2.4",
         "tachyons": "^4.11.1",
         "validator": "^10.11.0"
+    },
+    "optionalDependencies": {
+        "@agentofuser/ipfs-deploy": "^7.8.0"
     }
 }
