@@ -24,7 +24,7 @@
     "author": "",
     "license": "MIT",
     "devDependencies": {
-        "@types/classnames": "^2.2.8",
+        "@types/classnames": "^2.2.9",
         "@types/clone": "^0.1.30",
         "@types/faker": "^4.1.5",
         "@types/got": "^9.6.0",
