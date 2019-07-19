@@ -39,7 +39,7 @@
         "coveralls": "^3.0.5",
         "electron": "^5.0.7",
         "electron-devtools-installer": "^2.2.4",
-        "electron-packager": "^14.0.1",
+        "electron-packager": "^14.0.2",
         "envify": "^4.1.0",
         "faker": "^4.1.0",
         "jest": "^24.8.0",
