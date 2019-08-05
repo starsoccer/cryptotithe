@@ -78,7 +78,7 @@
         }
     },
     "dependencies": {
-        "apexcharts": "^3.8.3",
+        "apexcharts": "^3.8.4",
         "classnames": "^2.2.6",
         "clone": "^2.1.2",
         "font-awesome": "^4.7.0",
