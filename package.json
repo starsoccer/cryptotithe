@@ -50,7 +50,7 @@
         "tslint": "^5.18.0",
         "typescript": "^3.5.3",
         "uglify-js": "^3.6.0",
-        "uglifyify": "^5.0.1"
+        "uglifyify": "^5.0.2"
     },
     "jest": {
         "transform": {
