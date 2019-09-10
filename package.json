@@ -37,7 +37,7 @@
         "@types/validator": "^10.11.3",
         "browserify": "^16.5.0",
         "coveralls": "^3.0.6",
-        "electron": "^6.0.7",
+        "electron": "^6.0.8",
         "electron-devtools-installer": "^2.2.4",
         "electron-packager": "^14.0.5",
         "envify": "^4.1.0",
