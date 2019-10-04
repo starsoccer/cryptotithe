@@ -31,7 +31,7 @@
         "@types/jest": "^24.0.18",
         "@types/node": "^12.7.11",
         "@types/papaparse": "^5.0.1",
-        "@types/react": "^16.9.4",
+        "@types/react": "^16.9.5",
         "@types/react-dom": "^16.9.1",
         "@types/react-infinite-scroller": "^1.2.1",
         "@types/validator": "^10.11.3",
