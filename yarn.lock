@@ -520,10 +520,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.12.tgz#529bc3e73dbb35dd9e90b0a1c83606a9d3264bdb"
   integrity sha512-MGuvYJrPU0HUwqF7LqvIj50RZUX23Z+m583KBygKYUZLlZ88n6w28XRNJRJgsHukLEnLz6w6SvxZoLgbr5wLqQ==
 
-"@types/papaparse@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@types/papaparse/-/papaparse-5.0.1.tgz#bf8ee3a144c77ffda7cf1e8f65be7e0de7472d35"
-  integrity sha512-neEiIoeNezVK5yAWuO0El6056BBt+SPy0BtDmggcy1fSdfxLltE4WXaSsnPI2V4SxoRGIEAtkZyeDRxHXhcAKQ==
+"@types/papaparse@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@types/papaparse/-/papaparse-5.0.2.tgz#acc24b6d8f9fbf9937b274aa358054f8aa9abae9"
+  integrity sha512-oLC9IrdQvgONuhSmEMDJ5b5n46pJgjVtsZkxnfZPl0JOBD1pVDdD3CWMo8Qb2NUbm7oA5ZCfyYCOeFjbvVGkNw==
   dependencies:
     "@types/node" "*"
 
