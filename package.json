@@ -83,7 +83,7 @@
         "classnames": "^2.2.6",
         "clone": "^2.1.2",
         "font-awesome": "^4.7.0",
-        "got": "9.6.0",
+        "got": "10.0.1",
         "is-electron": "^2.2.0",
         "papaparse": "^5.1.0",
         "react": "^16.12.0",
