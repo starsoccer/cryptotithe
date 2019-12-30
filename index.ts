@@ -1,3 +1,5 @@
+import { join } from "path";
+
 // modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron');
 
@@ -40,9 +42,11 @@ function createWindow(): void {
 
     mainWindow.webContents.session.on('will-download',
         (_event: any, item: any, _webContent: any) => {
+            //const fs = require('fs')
             switch (item.getFilename()) {
                 case 'data.json':
-                    item.setSavePath('./data.json');
+                    const path = join(__dirname, './data.json')
+                    item.setSavePath(path);
                     break;
             }
     });
