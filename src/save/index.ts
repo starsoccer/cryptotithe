@@ -6,8 +6,8 @@ import integrityCheck from '../utils/integrityCheck';
 
 export default function save(data: IPartialSavedData, fallback: ISavedData): ISavedData {
     const packageData = require('../../package.json');
-    const newTrades = data.trades || fallback.trades;
-    const newTransactions = data.transactions || fallback.transactions;
+    const newTrades = data.trades || fallback.trades || [];
+    const newTransactions = data.transactions || fallback.transactions || [];
     const newSettings = (data.settings || fallback.settings) as ISettings;
 
     const sortedTrades = SortTrades(newTrades) as ITradeWithFiatRate[];
