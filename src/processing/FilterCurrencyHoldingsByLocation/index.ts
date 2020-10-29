@@ -1,4 +1,4 @@
-import * as clone from 'clone';
+import clone from 'clone';
 import { IHoldings, Location } from '../../types';
 
 export default function filterCurrencyHoldingsByLocation(location: Location, holdings: IHoldings) {

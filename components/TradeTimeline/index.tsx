@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as InfiniteScroll from 'react-infinite-scroller';
+import InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
 import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD } from '../../src/types';
 import keyByValue from '../../src/utils/keyByValue';

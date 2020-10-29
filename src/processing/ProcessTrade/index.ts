@@ -1,4 +1,4 @@
-import * as clone from 'clone';
+import clone from 'clone';
 import holdingSelection from '../HoldingSelection';
 import { IHoldings, ITradeWithCostBasis, ITradeWithFiatRate, METHOD } from './../../types';
 

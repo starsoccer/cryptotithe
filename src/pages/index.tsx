@@ -1,24 +1,24 @@
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import * as React from 'react';
-import { createEmptySavedData } from '../src/mock';
-import save from '../src/save';
-import savedDataConverter from '../src/savedDataConverter';
+import { createEmptySavedData } from '../mock';
+import save from '../save';
+import savedDataConverter from '../savedDataConverter';
 import {
     IPartialSavedData,
     ISavedData,
     ITradeWithDuplicateProbability,
-} from '../src/types';
-import integrityCheck from '../src/utils/integrityCheck';
-import Button from './Button';
-import { FileBrowse } from './FileBrowse';
-import { FileDownload, IFileDownloadProps } from './FileDownload';
-import Popup from './Popup';
-import { CalculateGainsTab } from './Tabs/CalculateGainsTab';
-import { ImportDataTab } from './Tabs/ImportDataTab';
-import { PortfolioTab } from './Tabs/PortfolioTab';
-import { Settings } from './Tabs/Settings';
-import { UtilityTab } from './Tabs/UtilityTab';
-import { ViewTradesTab } from './Tabs/ViewTradesTab';
+} from '../types';
+import integrityCheck from '../utils/integrityCheck';
+import Button from '../../components/Button';
+import { FileBrowse } from '../../components/FileBrowse';
+import { FileDownload, IFileDownloadProps } from '../../components/FileDownload';
+import Popup from '../../components/Popup';
+import { CalculateGainsTab } from '../../components/Tabs/CalculateGainsTab';
+import { ImportDataTab } from '../../components/Tabs/ImportDataTab';
+import { PortfolioTab } from '../../components/Tabs/PortfolioTab';
+import { Settings } from '../../components/Tabs/Settings';
+import { UtilityTab } from '../../components/Tabs/UtilityTab';
+import { ViewTradesTab } from '../../components/Tabs/ViewTradesTab';
 
 export interface IAppProps {
     savedData: ISavedData;
@@ -44,13 +44,13 @@ interface IAppState {
     settingsPopup: boolean;
 }
 
-const isSavedDataLoaded = (data: ISavedData) => data.trades.length + Object.keys(data.holdings).length > 0;
+const isSavedDataLoaded = (data: ISavedData) => data && data.trades.length + Object.keys(data.holdings).length > 0;
 
-export class rootElement extends React.Component<IAppProps, IAppState> {
+export default class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
 
-        const showLoadDataPopup = props.browser || !isSavedDataLoaded(props.savedData);
+        const showLoadDataPopup = true || props.browser || !isSavedDataLoaded(props.savedData);
 
         this.state = {
             processing: false,

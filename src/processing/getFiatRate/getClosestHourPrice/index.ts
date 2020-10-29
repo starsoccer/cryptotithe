@@ -1,4 +1,4 @@
-import * as got from 'got';
+import got from 'got';
 import { ITrade } from '../../../types';
 import { IHourlyPriceData, roundHour } from '../utils';
 
