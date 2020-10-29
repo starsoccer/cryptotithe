@@ -6,7 +6,7 @@ In the desktop(electron) version, The only external requests made are to `crypto
 
 In the web version linked below, besides for requests to `cryptocompare.com`, requests are also made to `unpkg.com` for some css and icons.
 
-[Demo - now.sh](https://cryptotithe.now.sh/)
+[Demo - Vercel](https://cryptotithe-master.vercel.app/)
 
 [Demo - ipfs(infura)](https://ipfs.infura.io/ipfs/QmegEWdax5CxHEEkmgG18sptTb4RyKzWgmHUbDYsTJmDSC)
 
