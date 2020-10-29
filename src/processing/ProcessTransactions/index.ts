@@ -1,4 +1,4 @@
-import * as clone from 'clone';
+import clone from 'clone';
 import { ICurrencyHolding, IHoldings, ITransaction } from '../../types';
 
 export default function processTransactions(transactions: ITransaction[], holdings: IHoldings) {

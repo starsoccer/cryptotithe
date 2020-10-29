@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 import * as React from 'react';
-import * as InfiniteScroll from 'react-infinite-scroller';
+import InfiniteScroll from 'react-infinite-scroller';
 import { Loader } from '../Loader';
 
 export interface ITableProps {

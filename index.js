@@ -1,13 +1,12 @@
-import { join } from "path";
-
+const join = require('path').join;
 // modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron');
 
 // keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: any;
+let mainWindow;
 
-function createWindow(): void {
+function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1280,
         height: 720,
@@ -15,7 +14,7 @@ function createWindow(): void {
     }); // https://electronjs.org/docs/api/frameless-window
     // notifications https://electronjs.org/docs/tutorial/notifications
     // progressbar https://electronjs.org/docs/tutorial/progress-bar
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile('./out/index.html');
     if (!app.isPackaged || process.env.NODE_ENV === 'development') {
         const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
         installExtension(REACT_DEVELOPER_TOOLS)
@@ -23,7 +22,7 @@ function createWindow(): void {
                 mainWindow.show();
                 mainWindow.webContents.openDevTools();
             })
-            .catch((err: Error) => {
+            .catch((err) => {
                 throw err;
             });
     } else {
@@ -41,7 +40,7 @@ function createWindow(): void {
     });
 
     mainWindow.webContents.session.on('will-download',
-        (_event: any, item: any, _webContent: any) => {
+        (_event, item, _webContent) => {
             //const fs = require('fs')
             switch (item.getFilename()) {
                 case 'data.json':
@@ -49,6 +48,25 @@ function createWindow(): void {
                     item.setSavePath(path);
                     break;
             }
+    });
+
+    mainWindow.webContents.session.webRequest.onBeforeRequest({urls: ['https://next/*']}, (details, callback) => {
+        const path = require('path');
+        console.log('onBeforeRequest details', details);
+        const { url } = details;
+        const localURL = path.format({
+            dir: path.normalize(__dirname),
+            base: url.replace('https://next/', '/out/'),
+        });
+
+        let test = path.resolve(localURL).replace(/\\/g, "/");
+
+        //B:\Programming\NodeJS\CryptoTithe\_next\static\u8_QorNbm1uGfHpHf15MU\_ssgManifest.js
+        //file:///B:/Programming/NodeJS/CryptoTithe/out/index.html
+        callback({
+            cancel: false,
+            redirectURL: 'file:///' + test,
+        });
     });
 }
 
