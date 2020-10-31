@@ -14,7 +14,7 @@
         "browserify": "browserify ./react.js -o ./bundle.js -u ./data.json --im",
         "browserify-prod": "browserify ./react.js -o ./bundle.js -u ./data.json --im -g [ envify --NODE_ENV production ] -g uglifyify | uglifyjs --compress --mangle",
         "lint": "yarn run tslint && yarn run stylelint",
-        "tslint": "tslint -p ./configs/tsconfig.json -c ./configs/tslint.json --fix",
+        "tslint": "tslint -p tsconfig.json -c ./configs/tslint.json --fix",
         "stylelint": "stylelint \"**/*.css\"",
         "full-build-test-ci": "yarn run lint && yarn run test-coveralls && yarn run build",
         "prod-start": "set NODE_ENV=production&& yarn run start",
@@ -93,8 +93,5 @@
         "react-infinite-scroller": "^1.2.4",
         "tachyons": "^4.11.1",
         "validator": "^12.1.0"
-    },
-    "optionalDependencies": {
-        "@agentofuser/ipfs-deploy": "^7.8.0"
     }
 }
