@@ -9,6 +9,7 @@ module.exports = {
             config.node = {
                 net: "empty",
                 fs: "empty",
+                tls: 'empty',
             };
         }
 

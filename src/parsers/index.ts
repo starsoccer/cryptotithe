@@ -16,7 +16,7 @@ export async function getCSVData(fileData: string): Promise<any> {
         papaparse.parse(fileData, {
             // worker: true, // disabling as firefox throws error and wont load
             header: true,
-            complete: (result) => {
+            complete: (result: papaparse.ParseResult<any>) => {
                 if (result.meta.aborted) {
                     reject(result.errors);
                 } else {
