@@ -5,6 +5,8 @@ import { ISavedData } from './../../types';
 export default function integrityCheck(savedData: ISavedData) {
     const clonedData = clone(savedData);
     if ('integrity' in clonedData) {
+        // eslint-disable-next-line
+        // @ts-ignore 
         delete clonedData.integrity;
     }
 
