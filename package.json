@@ -93,8 +93,5 @@
         "react-infinite-scroller": "^1.2.4",
         "tachyons": "^4.11.1",
         "validator": "^12.1.0"
-    },
-    "optionalDependencies": {
-        "@agentofuser/ipfs-deploy": "^7.8.0"
     }
 }

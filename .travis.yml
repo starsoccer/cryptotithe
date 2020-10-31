@@ -3,18 +3,16 @@ node_js:
   - "lts/*"
 script:
   - yarn global add coveralls
-  - yarn global add browserify
   - yarn run full-build-test-ci
-  - yarn run release-ipfs
 cache:
   directories:
     - "node_modules"
 before_deploy:
-  - yarn global add now
-  - now remove cryptotithe --safe --yes --team cryptotithe --token $NOW_TOKEN || true
+  - yarn global add ipfs-deploy
+  - yarn run build && yarn run export
 deploy:
   - provider: script
-    script: now --name cryptotithe --public --team cryptotithe --token $NOW_TOKEN && now alias cryptotithe --team cryptotithe --token $NOW_TOKEN
+    script: ipfs-deploy out
     skip_cleanup: true
     on:
       master: true
