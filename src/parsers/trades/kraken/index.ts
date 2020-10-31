@@ -64,7 +64,7 @@ async function getMaretPairs() {
         if ('result' in response.data && 'error' in response.data && response.data.error.length === 0) {
             const marketPairs = response.data.result;
             const markets = Object.keys(marketPairs);
-            for (let market of markets) {
+            for (const market of markets) {
                 marketPairs[market] = {
                     ...marketPairs[market],
                     base: convertCurrencyToNormalCurrency(marketPairs[market].base),

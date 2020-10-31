@@ -15,7 +15,7 @@ function calculateGainsOneAtATime(holdings: IHoldings, trades: ITradeWithFiatRat
 
 const currentDate = () => new Date();
 
-const recentDate = (monthOffset: number = 0) => new Date(`${1 + monthOffset}/1/${new Date().getFullYear()}`);
+const recentDate = (monthOffset = 0) => new Date(`${1 + monthOffset}/1/${new Date().getFullYear()}`);
 
 describe('calculateGains 1 currency manual', () => {
 

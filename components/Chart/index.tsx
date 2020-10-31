@@ -26,6 +26,7 @@ export interface IChartProp {
 export class Chart extends React.PureComponent<IChartProp> {
 
     public async componentDidMount() {
+        // eslint-disable-next-line
         const ApexCharts = require('apexcharts');
         const chart = new ApexCharts(document.querySelector('#charts'), this.props.data);
         chart.render();

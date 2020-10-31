@@ -9,6 +9,7 @@ import zeroSevenxZeroConverter from './0.7.0';
 
 export default function onSaveDataLoaded(savedData: ISavedData): boolean {
     const savedVersion = isNaN(parseFloat(savedData.version)) ? 0 : parseFloat(savedData.version);
+    // eslint-disable-next-line
     const packageData = require('../../package.json');
     const currentVersion = packageData.version;
     let changeMade = false;

@@ -6,7 +6,7 @@ import holdingSelection from './';
 const fiatCurrency = 'FAKE';
 
 function calculateTotalAmount(currencyHoldings: ICurrencyHolding[]) {
-    let holdingsTotal: number = 0;
+    let holdingsTotal = 0;
     for (const holding of currencyHoldings) {
         holdingsTotal += holding.amount;
     }

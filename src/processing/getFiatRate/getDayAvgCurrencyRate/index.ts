@@ -6,7 +6,7 @@ export async function getDayAvg(
     fiatCurrency: string,
     currency: string,
     date: number,
-    type: string = 'HourVWAP',
+    type = 'HourVWAP',
 ): Promise<number> {
     const tradeTime = parseInt((new Date(date).getTime() / 1000).toFixed(0), 10);
     const data: string[] = [
@@ -27,7 +27,7 @@ export async function getDayAvg(
 export async function getDayAvgTradeRate(
     trade: ITrade,
     fiatCurrency: string,
-    type: string = 'HourVWAP',
+    type = 'HourVWAP',
 ): Promise<number> {
     const rate = getDayAvg(fiatCurrency, trade.soldCurrency, trade.date);
     if (rate) {

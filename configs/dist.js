@@ -1,22 +1,22 @@
 
 async function build() {
-    const packager = require('electron-packager');
+    const packager = require("electron-packager");
     const appPaths = await packager({
-        dir: '.',
+        dir: ".",
         all: true,
         asar: true,
-        out: './dist/',
+        out: "./dist/",
         ignore: [
             /(?:\.(ts|tsx|js\.map)$)/,
             /^(?!.*(package)).*(\.json).*/,
-            '.vscode',
-            'components',
-            'src',
-            'configs',
-            '.gitignore',
-            '.gitattributes',
-            '.travis.yml',
-            'react.js',
+            ".vscode",
+            "components",
+            "src",
+            "configs",
+            ".gitignore",
+            ".gitattributes",
+            ".travis.yml",
+            "react.js",
         ],
     });
 }

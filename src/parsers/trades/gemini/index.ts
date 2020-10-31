@@ -86,11 +86,11 @@ export async function processData(importDetails: IImport): Promise<ITrade[]> {
             switch (trade.Type) {
                 case GeminiOrderType.Buy:
                 case GeminiOrderType.Sell:
-                    const amountSold = parseNumber(trade[`${pair.sold} Amount ${pair.sold}`]);
-                    const amountSoldFee = parseNumber(trade[`Trading Fee (${pair.sold}) ${pair.sold}`]);
-                    const amountBought = parseNumber(trade[`${pair.bought} Amount ${pair.bought}`]);
-                    const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought}) ${pair.bought}`]);
-                    const partialTrade: IPartialTrade = {
+                    const amountSold = parseNumber(trade[`${pair.sold} Amount ${pair.sold}`]); // eslint-disable-line
+                    const amountSoldFee = parseNumber(trade[`Trading Fee (${pair.sold}) ${pair.sold}`]);// eslint-disable-line
+                    const amountBought = parseNumber(trade[`${pair.bought} Amount ${pair.bought}`]);// eslint-disable-line
+                    const amountBoughtFee = parseNumber(trade[`Trading Fee (${pair.bought}) ${pair.bought}`]);// eslint-disable-line
+                    const partialTrade: IPartialTrade = { // eslint-disable-line
                         boughtCurrency: pair.bought.toUpperCase(),
                         soldCurrency: pair.sold.toUpperCase(),
                         amountSold: amountSold + amountSoldFee,

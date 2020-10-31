@@ -5,6 +5,7 @@ import { IPartialSavedData, ISavedData, ISettings, ITradeWithFiatRate } from '..
 import integrityCheck from '../utils/integrityCheck';
 
 export default function save(data: IPartialSavedData, fallback: ISavedData): ISavedData {
+    // eslint-disable-next-line
     const packageData = require('../../package.json');
     const newTrades = data.trades || fallback.trades || [];
     const newTransactions = data.transactions || fallback.transactions || [];

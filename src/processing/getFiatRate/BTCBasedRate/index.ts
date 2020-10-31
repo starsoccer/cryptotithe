@@ -15,32 +15,42 @@ export function BTCBasedRate(trade: ITrade, BTCFiatRate: number) {
 
 export async function getBTCFiatRate(trade: ITrade, fiatCurrency: string, method: FiatRateMethod) {
     switch (method) {
-        case FiatRateMethod['Double Average']:
+        case FiatRateMethod['Double Average']: {
             const dayAvg = await getDayAvg(fiatCurrency, 'BTC', trade.date);
             const hourBTCData = await getClosestHourPrice('BTC', fiatCurrency, trade.date);
             return BTCBasedRate(trade, calculateAverageFromArray([dayAvg, calculateAvgerageHourPrice(hourBTCData)]));
-        case FiatRateMethod['Day Average']:
+        }
+        case FiatRateMethod['Day Average']: {
             const vwapRate = await getDayAvg(fiatCurrency, 'BTC', trade.date);
             return BTCBasedRate(trade, vwapRate);
-        case FiatRateMethod['Day Average Middle']:
+        }
+        case FiatRateMethod['Day Average Middle']: {
             const midRate = await getDayAvg(fiatCurrency, 'BTC', trade.date, 'MidHighLow');
             return BTCBasedRate(trade, midRate);
-        case FiatRateMethod['Day Average Volume']:
+        }
+        case FiatRateMethod['Day Average Volume']: {
             const volumeRate = await getDayAvg(fiatCurrency, 'BTC', trade.date, 'VolFVolT');
             return BTCBasedRate(trade, volumeRate);
-        default:
+        }
+        default: {
             const hourData = await getClosestHourPrice('BTC', fiatCurrency, trade.date);
             switch (method) {
-                case FiatRateMethod['Hour Low']:
+                case FiatRateMethod['Hour Low']: {
                     return BTCBasedRate(trade, hourData.low);
-                case FiatRateMethod['Hour High']:
+                }
+                case FiatRateMethod['Hour High']: {
                     return BTCBasedRate(trade, hourData.high);
-                case FiatRateMethod['Hour Open']:
+                }
+                case FiatRateMethod['Hour Open']: {
                     return BTCBasedRate(trade, hourData.open);
-                case FiatRateMethod['Hour Close']:
+                }
+                case FiatRateMethod['Hour Close']: {
                     return BTCBasedRate(trade, hourData.close);
-                default:
+                }
+                default: {
                     return BTCBasedRate(trade, calculateAvgerageHourPrice(hourData));
+                }
             }
+        }
     }
 }

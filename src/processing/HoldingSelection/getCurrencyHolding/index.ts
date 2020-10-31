@@ -10,7 +10,7 @@ const FULL_YEAR_IN_MILLISECONDS = 31536000000;
 
 export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, trade: ITrade): IGetHolding {
     switch (method) {
-        case METHOD.LTFO:
+        case METHOD.LTFO: {
             let lowestTaxHoldingIndex = 0;
             const lowestTaxHolding = holdings[trade.soldCurrency].reduce(
                 (lowestTax, currentCurrencyHolding, currentIndex) => {
@@ -43,7 +43,8 @@ export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, 
                 startingIndex: lowestTaxHoldingIndex,
                 endingIndex: 1,
             };
-        case METHOD.HTFO:
+        }
+        case METHOD.HTFO: {
             let highestTaxHoldingIndex = 0;
             const highestTaxHolding = holdings[trade.soldCurrency].reduce(
                 (highestTax, currentCurrencyHolding, currentIndex) => {
@@ -74,7 +75,8 @@ export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, 
                 startingIndex: highestTaxHoldingIndex,
                 endingIndex: 1,
             };
-        case METHOD.LCFO:
+        }
+        case METHOD.LCFO: {
             let lowestCostHoldingIndex = 0;
             const lowestCostHolding = holdings[trade.soldCurrency].reduce(
                 (lowestCost, currentCurrencyHolding, currentIndex) => {
@@ -90,7 +92,8 @@ export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, 
                 startingIndex: lowestCostHoldingIndex,
                 endingIndex: 1,
             };
-        case METHOD.HCFO:
+        }
+        case METHOD.HCFO: {
             let highestCostHoldingIndex = 0;
             const highestCostHolding = holdings[trade.soldCurrency].reduce(
                 (highestCost, currentCurrencyHolding, currentIndex) => {
@@ -106,19 +109,20 @@ export default function getCurrencyHolding(holdings: IHoldings, method: METHOD, 
                 startingIndex: highestCostHoldingIndex,
                 endingIndex: 1,
             };
-        case METHOD.LIFO:
+        }
+        case METHOD.LIFO: {
             return {
                 holding: holdings[trade.soldCurrency][holdings[trade.soldCurrency].length - 1],
                 startingIndex: -1,
                 endingIndex: 1,
             };
-            break;
-        case METHOD.FIFO:
-        default:
+        }
+        default: {
             return {
                 holding: holdings[trade.soldCurrency][0],
                 startingIndex: 0,
                 endingIndex: 1,
             };
+        }
     }
 }

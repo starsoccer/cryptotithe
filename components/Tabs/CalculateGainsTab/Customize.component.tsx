@@ -95,7 +95,7 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
 
     public onSelectChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
         switch (key) {
-            case 'year':
+            case 'year': {
                 const year = e.currentTarget.value;
                 this.setState({
                     yearCalculationMethod: createYearCalculationMethod(
@@ -107,7 +107,8 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                     year,
                 });
                 break;
-            case 'gainCalculationMethod':
+            }
+            case 'gainCalculationMethod': {
                 const gainCalculationMethod = e.currentTarget.value as METHOD;
                 this.setState({
                     yearCalculationMethod: createYearCalculationMethod(
@@ -119,6 +120,7 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                     gainCalculationMethod,
                 });
                 break;
+            }
         }
     }
 

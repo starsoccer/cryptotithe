@@ -83,6 +83,7 @@ export function mockTradesWithFiatRate(
 }
 
 export function createEmptySavedData(): ISavedData {
+    // eslint-disable-next-line
     const packageData = require('../../package.json');
     const partialSavedData: IPartialSavedData = {
         trades: [],

@@ -34,6 +34,7 @@ export default function converter(savedData: IPartialSavedData): boolean {
     }
 
     if ('fiatRateMethod' in savedData === false) {
+        // eslint-disable-next-line
         // @ts-ignore
         savedData.settings.fiatRateMethod = Object.keys(FiatRateMethod)[0] as keyof typeof FiatRateMethod;
     }

@@ -77,6 +77,7 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
     public readFile = async (fileData: string, input: React.RefObject<HTMLInputElement>) => {
         this.setState({fileBrowseOpen: false});
         if (input.current !== null && input.current.files !== null && 0 in input.current.files) {
+            // eslint-disable-next-line
             if (input.current.files[0].name.match('.+(\.csv)$')) {
                 if (fileData !== '') {
                     this.setState({processing: true});
@@ -122,7 +123,7 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
 
         const newSavedData: Partial<ISavedData> = {};
         switch (this.state.importDetails.type) {
-            case ImportType.TRADES:
+            case ImportType.TRADES: {
                 const tradesWithFiatRate: ITradeWithFiatRate[] = await addFiatRateToTrades(
                     dataToSave,
                     this.props.savedData.settings.fiatCurrency,
@@ -133,14 +134,17 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
                 ) as ITradeWithFiatRate[];
                 newSavedData.trades = newTrades;
                 break;
-            case ImportType.TRANSACTION:
+            }
+            case ImportType.TRANSACTION: {
                 const newTransactions: ITransaction[] = sortTransactions(
                     this.props.savedData.transactions.concat(dataToSave),
                 );
                 newSavedData.transactions = newTransactions;
                 break;
-            default:
+            }
+            default: {
                 throw new Error(`Unknown Import Type - ${this.state.importDetails.type}`);
+            }
         }
 
         if (await this.props.save(newSavedData)) {

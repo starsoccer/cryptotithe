@@ -94,7 +94,7 @@ export default class TradeDetails<TradeType extends ITrade> extends
                         break;
                     }
                     break;
-                case 'date':
+                case 'date': {
                     if (!validator.isAfter(this.state[key].toString(), '1/1/2010')) {
                         errors.push(`${key} must be a date after 2010`);
                         break;
@@ -104,14 +104,16 @@ export default class TradeDetails<TradeType extends ITrade> extends
                         break;
                     }
                     break;
-                case 'transactionFee':
+                }
+                case 'transactionFee': {
                     if (
                         !validator.isEmpty(this.state[key]) && !validator.isNumeric(this.state[key].toString())
                     ) {
                         errors.push(`${key} must be numerical and greater then 0.00000001`);
                     }
                     break;
-                case 'transactionFeeCurrency':
+                }
+                case 'transactionFeeCurrency': {
                     const boughtCurrency = this.state.boughtCurrency.toUpperCase();
                     const soldCurrency = this.state.soldCurrency.toUpperCase();
                     const feeCurrency =  this.state.transactionFeeCurrency.toUpperCase();
@@ -126,6 +128,7 @@ export default class TradeDetails<TradeType extends ITrade> extends
                         );
                     }
                     break;
+                }
             }
         }
         if (errors.length) {

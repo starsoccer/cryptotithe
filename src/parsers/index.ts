@@ -48,14 +48,17 @@ export function processData(importDetails: IImport): ITrade[]  | ITransaction[] 
 function processTransactionsImport(importDetails: IImport): ITransaction[] {
     let processExchangeData: (importDetails: IImport) => ITransaction[];
     switch (importDetails.location) {
-        case EXCHANGES.Binance:
+        case EXCHANGES.Binance: {
+            // eslint-disable-next-line
             processExchangeData = require('./transactions/binance').processData;
             break;
-        default:
+        }
+        default: {
             const headers = importDetails.data.substr(0, importDetails.data.indexOf('\n'));
             const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
             throw new Error(`Unknown Exchange - ${importDetails.location} - ${headersHash}`);
             return [];
+        }
     }
     if (typeof processExchangeData === 'function') {
         return processExchangeData(importDetails);
@@ -66,22 +69,32 @@ function processTransactionsImport(importDetails: IImport): ITransaction[] {
 function processTradesImport(importDetails: IImport): ITrade[] {
     let processExchangeData: (importDetails: IImport) => ITrade[];
     switch (importDetails.location) {
-        case EXCHANGES.Bittrex:
+        case EXCHANGES.Bittrex: {
+            // eslint-disable-next-line
             processExchangeData = require('./trades/bittrex').processData;
             break;
-        case EXCHANGES.Gemini:
+        }
+        case EXCHANGES.Gemini: {
+            // eslint-disable-next-line
             processExchangeData = require('./trades/gemini').processData;
             break;
-        case EXCHANGES.Poloniex:
+        }
+        case EXCHANGES.Poloniex: {
+            // eslint-disable-next-line
             processExchangeData = require('./trades/poloniex').processData;
             break;
-        case EXCHANGES.Kraken:
+        }
+        case EXCHANGES.Kraken: {
+            // eslint-disable-next-line
             processExchangeData = require('./trades/kraken').processData;
             break;
-        case EXCHANGES.Binance:
+        }
+        case EXCHANGES.Binance: {
+            // eslint-disable-next-line
             processExchangeData = require('./trades/binance').processData;
             break;
-        default:
+        }
+        default: {
             const headers = importDetails.data.substr(0, importDetails.data.indexOf('\n'));
             const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
             for (const key in ExchangesTradeHeaders) {
@@ -94,6 +107,7 @@ function processTradesImport(importDetails: IImport): ITrade[] {
             }
             throw new Error(`Unknown Exchange - ${importDetails.location} - ${headersHash}`);
             return [];
+        }
     }
     if (typeof processExchangeData === 'function') {
         return processExchangeData(importDetails);

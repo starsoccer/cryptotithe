@@ -45,6 +45,7 @@ export default async function getCurrentRates(
     currencies: string[],
     fiatCurrency: string,
 ): Promise<ICryptoComparePriceMultiFull> {
+    // eslint-disable-next-line
     const got = require('got');
     const params = [
         `tsyms=BTC,${fiatCurrency}`,
