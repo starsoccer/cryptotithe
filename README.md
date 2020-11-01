@@ -8,7 +8,7 @@ In the web version linked below, besides for requests to `cryptocompare.com`, re
 
 [Demo - Vercel](https://cryptotithe-master.vercel.app/)
 
-[Demo - ipfs(infura)](https://ipfs.infura.io/ipfs/QmegEWdax5CxHEEkmgG18sptTb4RyKzWgmHUbDYsTJmDSC)
+Demo - ipfs(infura) - check latest build
 
 ## How to Get Started(desktop)
   1. Clone the repo or download as a zip
