@@ -52,7 +52,6 @@ function createWindow() {
 
     mainWindow.webContents.session.webRequest.onBeforeRequest({urls: ["https://next/*"]}, (details, callback) => {
         const path = require("path");
-        console.log("onBeforeRequest details", details);
         const { url } = details;
         const localURL = path.format({
             dir: path.normalize(__dirname),
@@ -61,8 +60,6 @@ function createWindow() {
 
         let test = path.resolve(localURL).replace(/\\/g, "/");
 
-        //B:\Programming\NodeJS\CryptoTithe\_next\static\u8_QorNbm1uGfHpHf15MU\_ssgManifest.js
-        //file:///B:/Programming/NodeJS/CryptoTithe/out/index.html
         callback({
             cancel: false,
             redirectURL: "file:///" + test,
