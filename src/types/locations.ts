@@ -8,6 +8,10 @@ export enum EXCHANGES {
     Binance = 'BINANCE',
 }
 
+export enum IncomeImportTypes {
+    cryptoID = 'CRYPTOID',
+}
+
 export enum ExchangesTradeHeaders {
     BITTREX = '07230399aaa8d1f15e88e38bd43a01c5ef1af6c1f9131668d346e196ff090d80',
     GEMINI = '996edee25db7f3d1dd16c83c164c6cff8c6d0f5d6b3aafe6d1700f2a830f6c9e',

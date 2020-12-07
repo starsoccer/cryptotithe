@@ -3,6 +3,7 @@ import { Location } from '.';
 export enum ImportType {
     TRADES = 'TRADES',
     TRANSACTION = 'TRANSACTIONS',
+    INCOME = 'INCOME',
 }
 
 export enum TransactionImportType {
@@ -14,6 +15,7 @@ export enum TransactionImportType {
 export interface IImport {
     type: ImportType;
     subtype?: TransactionImportType;
+    currency?: string;
     location: Location;
     data: string;
 }

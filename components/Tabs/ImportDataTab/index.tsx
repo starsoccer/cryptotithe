@@ -2,14 +2,16 @@ import * as React from 'react';
 import { processData } from '../../../src/parsers';
 import duplicateCheck from '../../../src/processing/DuplicateCheck';
 import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
+import { addFiatRateToIncomes } from '../../../src/processing/getFiatRateIncome'
 import sortTrades from '../../../src/processing/SortTrades';
 import sortTransactions from '../../../src/processing/SortTransactions';
+import sortIncome from '../../../src/processing/SortIncome';
 import {
-    EXCHANGES,
     IDuplicate,
     IHoldings,
     IImport,
     ImportType,
+    IncomeImportTypes,
     IPartialSavedData,
     ISavedData,
     ITrade,
@@ -19,16 +21,14 @@ import {
     ITransactionWithDuplicateProbability,
     TransactionImportType,
 } from '../../../src/types';
+import { IIncome, IIncomeWithDuplicateProbability, IIncomeWithFiatRate } from '../../../src/types/income';
 import { AlertBar, AlertType } from '../../AlertBar';
 import Button from '../../Button';
-import { DuplicateTradesTable } from '../../DuplicateTradesTable';
-import { DuplicateTransactionsTable } from '../../DuplicateTransactionsTable';
 import { FileBrowse } from '../../FileBrowse';
 import { Loader } from '../../Loader';
 import TradeDetails from '../../TradeDetails';
-// import TransactionDetails from '../../TransactionDetails';
-import { TradesTable } from '../../TradesTable';
-import { TransactionsTable } from '../../TransactionsTable';
+import { ImportSelector } from './ImportSelector';
+import { ImportTable } from './ImportTable';
 
 export interface IImportDataTabProp {
     savedData: ISavedData;
@@ -43,10 +43,10 @@ interface IAlertData {
 interface IImportDataTabState {
     addTrade: boolean;
     alertData: IAlertData;
-    duplicateData: ITradeWithDuplicateProbability[] | ITransactionWithDuplicateProbability[];
+    duplicateData: ITradeWithDuplicateProbability[] | ITransactionWithDuplicateProbability[] | IIncomeWithDuplicateProbability[];
     fileBrowseOpen: boolean;
     holdings: IHoldings;
-    processedData: ITrade[] | ITransaction[];
+    processedData: ITrade[] | ITransaction[] | IIncome[];
     processing: boolean;
     importDetails: IImport;
 }
@@ -142,6 +142,18 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
                 newSavedData.transactions = newTransactions;
                 break;
             }
+            case ImportType.INCOME: {
+                const incomeWithFiatRate: IIncomeWithFiatRate[] = await addFiatRateToIncomes(
+                    dataToSave,
+                    this.props.savedData.settings.fiatCurrency,
+                    this.props.savedData.settings.fiatRateMethod,
+                );
+                const newIncome: IIncomeWithFiatRate[] = sortIncome(
+                    this.props.savedData.incomes.concat(incomeWithFiatRate),
+                ) as IIncomeWithFiatRate[];
+                newSavedData.incomes = newIncome;
+                break;
+            }
             default: {
                 throw new Error(`Unknown Import Type - ${this.state.importDetails.type}`);
             }
@@ -189,13 +201,8 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
         this.setState({addTrade: !this.state.addTrade});
     }
 
-    public editedTrade = (trades: ITrade[] | ITradeWithFiatRate[]) => {
-        this.setState({processedData: trades});
-        return true;
-    }
-
-    public editedTransaction = (transactions: ITransaction[]) => {
-        this.setState({processedData: transactions});
+    public editedData = (data: ITrade[] | ITradeWithFiatRate[] | ITransaction[] | IIncome[]) => {
+        this.setState({processedData: data});
         return true;
     }
 
@@ -207,12 +214,26 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
                 break;
             case 'type':
                 importDetails.type = e.currentTarget.value as ImportType;
+                switch (importDetails.type) {
+                    case ImportType.INCOME:
+                        importDetails.location = IncomeImportTypes.cryptoID;
+                    default:
+                }
                 break;
             case 'subtype':
                 importDetails.subtype = e.currentTarget.value as TransactionImportType;
                 break;
         }
         this.setState({importDetails});
+    }
+
+    public onInputChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            importDetails: {
+                ...this.state.importDetails,
+                [key]: e.currentTarget.value
+            }
+        });
     }
 
     public render() {
@@ -224,39 +245,11 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
                         {...this.state.alertData}
                     />
                 }
-                <div className='center tc mt2'>
-                    <label htmlFor='type' className='pr2'>Import Type</label>
-                    <select name='type' id='type' onChange={this.onSelectChange('type')}>
-                        {Object.keys(ImportType).map((key) =>
-                            <option key={key} value={ImportType[key]}>{key}</option>,
-                        )}
-                    </select>
-                    <br />
-                    { this.state.importDetails.type === ImportType.TRANSACTION &&
-                        <div>
-                            <label htmlFor='subtype' className='pr2'>Import SubType</label>
-                            <select name='subtype' id='subtype' onChange={this.onSelectChange('subtype')}>
-                                {Object.keys(TransactionImportType).map((key) =>
-                                    <option key={key} value={TransactionImportType[key]}>{key}</option>,
-                                )}
-                            </select>
-                        </div>
-                    }
-                    <label htmlFor='location' className='pr2'>Import Location</label>
-                    <select name='location' id='location' onChange={this.onSelectChange('location')}>
-                        { this.state.importDetails.type === ImportType.TRANSACTION ?
-                            <option key='Binance' value='BINANCE'>Binance</option>
-                        :
-                            <>
-                                <option key='Auto-Detect' value='Auto-Detect'>Auto-Detect</option>
-                                {Object.keys(EXCHANGES).map((key) =>
-                                    <option key={key} value={EXCHANGES[key]}>{key}</option>,
-                                )}
-                            </>
-                        }
-
-                    </select>
-                </div>
+                <ImportSelector
+                    onSelectChange={this.onSelectChange}
+                    onInputChange={this.onInputChange}
+                    importDetails={this.state.importDetails}
+                />
                 { this.state.addTrade &&
                     <TradeDetails
                         onSubmit={this.addTrade}
@@ -276,50 +269,14 @@ export class ImportDataTab extends React.Component<IImportDataTabProp, IImportDa
                 {this.state.processing ?
                     <Loader />
                 :
-                    <div>
-                        {this.state.duplicateData.length > 0 && this.state.importDetails.type === ImportType.TRADES &&
-                            <div>
-                                <h3 className='tc'>Duplicate Trades</h3>
-                                <hr className='center w-50' />
-                                <DuplicateTradesTable
-                                    trades={this.state.duplicateData as ITradeWithDuplicateProbability[]}
-                                    duplicateChange={this.duplicateStatusChange}
-                                />
-                            </div>}
-                        {this.state.processedData.length > 0 && this.state.importDetails.type === ImportType.TRADES &&
-                            <div>
-                                <h3 className='tc'>Trades to Add</h3>
-                                <hr className='center w-50' />
-                                <TradesTable
-                                    trades={this.state.processedData as ITrade[]}
-                                    save={this.editedTrade}
-                                    settings={this.props.savedData.settings}
-                                />
-                            </div>
-                        }
-                        {this.state.duplicateData.length > 0 &&
-                        this.state.importDetails.type === ImportType.TRANSACTION &&
-                            <div>
-                                <h3 className='tc'>Duplicate Transactions</h3>
-                                <hr className='center w-50' />
-                                <DuplicateTransactionsTable
-                                    transactions={this.state.duplicateData as ITransactionWithDuplicateProbability[]}
-                                    duplicateChange={this.duplicateStatusChange}
-                                />
-                            </div>}
-                        {this.state.processedData.length > 0 &&
-                        this.state.importDetails.type === ImportType.TRANSACTION &&
-                            <div>
-                                <h3 className='tc'>Transactions to Add</h3>
-                                <hr className='center w-50' />
-                                <TransactionsTable
-                                    transactions={this.state.processedData as ITransaction[]}
-                                    save={this.editedTransaction}
-                                    settings={this.props.savedData.settings}
-                                />
-                            </div>
-                        }
-                    </div>
+                    <ImportTable
+                        importDetails={this.state.importDetails}
+                        duplicateData={this.state.duplicateData}
+                        processedData={this.state.processedData}
+                        duplicateStatusChange={this.duplicateStatusChange}
+                        savedData={this.props.savedData}
+                        saveEditedData={this.editedData}
+                    />
                 }
             </div>
         );

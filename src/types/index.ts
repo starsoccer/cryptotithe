@@ -4,6 +4,7 @@ export * from './savedData';
 export * from './locations';
 export * from './transactions';
 export * from './import';
+export * from './income';
 
 export interface IDailyBalance {
     date: Date;

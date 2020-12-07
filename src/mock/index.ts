@@ -88,6 +88,8 @@ export function createEmptySavedData(): ISavedData {
     const partialSavedData: IPartialSavedData = {
         trades: [],
         holdings: {},
+        incomes: [],
+        transactions: [],
         savedDate: new Date(),
         version: packageData.version,
         settings: {

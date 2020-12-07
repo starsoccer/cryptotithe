@@ -49,6 +49,7 @@ export class PortfolioTab extends React.Component<IPortfolioTabProp, IPortfolioT
         const holdings = calculateGains(
             {},
             this.props.savedData.trades,
+            this.props.savedData.incomes,
             this.props.savedData.settings.fiatCurrency,
             this.props.savedData.settings.gainCalculationMethod,
         ).newHoldings;
