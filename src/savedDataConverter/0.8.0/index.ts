@@ -9,15 +9,15 @@ export default function converter(savedData: ISavedData): boolean {
         savedData.holdings = calculateGains(
             {},
             savedData.trades,
-            [],
+            savedData.incomes ?? [],
             savedData.settings.fiatCurrency,
             savedData.settings.gainCalculationMethod,
         ).newHoldings;
     }
 
-    if ('transactions' in savedData === false) {
+    if ('incomes' in savedData === false) {
         changeMade = true;
-        savedData.transactions = [];
+        savedData.incomes = [];
     }
 
     return changeMade;

@@ -5,7 +5,8 @@ import zeroThreeZeroConverter from './0.3.0';
 import zeroFourZeroConverter from './0.4.0';
 import zeroFiveZeroConverter from './0.5.0';
 import zeroSixZeroConverter from './0.6.0';
-import zeroSevenxZeroConverter from './0.7.0';
+import zeroSevenZeroConverter from './0.7.0';
+import zeroEightZeroConverter from './0.8.0';
 
 export default function onSaveDataLoaded(savedData: ISavedData): boolean {
     const savedVersion = isNaN(parseFloat(savedData.version)) ? 0 : parseFloat(savedData.version);
@@ -20,7 +21,8 @@ export default function onSaveDataLoaded(savedData: ISavedData): boolean {
         [0.4]: zeroFourZeroConverter,
         [0.5]: zeroFiveZeroConverter,
         [0.6]: zeroSixZeroConverter,
-        [0.7]: zeroSevenxZeroConverter,
+        [0.7]: zeroSevenZeroConverter,
+        [0.8]: zeroEightZeroConverter
     };
     const versions = Object.keys(versionUpgraders);
     for (const version of versions) {
