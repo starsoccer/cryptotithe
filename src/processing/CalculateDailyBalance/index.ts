@@ -28,7 +28,7 @@ export async function calculateDailyBalance(
             trade.exchange === location &&
             new Date(trade.date).getFullYear() < year,
         );
-        holdings = calculateGains(holdings, priorTrades, savedData.settings.fiatCurrency).newHoldings;
+        holdings = calculateGains(holdings, priorTrades, [], savedData.settings.fiatCurrency).newHoldings;
 
         const priorTransactions = savedData.transactions.filter((transaction) =>
             transaction.date < startingDate && transaction.from === location,
@@ -41,7 +41,7 @@ export async function calculateDailyBalance(
     for (let index = startingDate; index < endingDate; index += 86400000) {
         updateProgress(totalDays, Math.abs((index - endingDate) / 86400000));
         const tradesOfDay = sortedTrades.filter((trade) => trade.date <= index + 86400000 && trade.date >= index);
-        holdings = calculateGains(holdings, tradesOfDay, savedData.settings.fiatCurrency).newHoldings;
+        holdings = calculateGains(holdings, tradesOfDay, [], savedData.settings.fiatCurrency).newHoldings;
 
         const dayTransactions = getDayTransactions(new Date(index), savedData.transactions);
         holdings = processTransactions(dayTransactions, holdings);

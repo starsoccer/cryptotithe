@@ -1,7 +1,8 @@
+import clone from 'clone';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
-import { EXCHANGES, IHoldings, ITradeWithFiatRate, METHOD } from '../../src/types';
+import { EXCHANGES, IHoldings, ISavedData, ITradeWithFiatRate, METHOD } from '../../src/types';
 import keyByValue from '../../src/utils/keyByValue';
 import { Loader } from '../Loader';
 
@@ -9,6 +10,7 @@ export interface ITradeTimelineProp {
     trades: ITradeWithFiatRate[];
     fiatCurrency: string;
     gainCalculationMethod: METHOD;
+    savedData: ISavedData;
 }
 
 export interface ITradeTimelineState {
@@ -46,11 +48,13 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
         let trades =  Array.from(this.props.trades);
         const maxPages = Math.ceil(this.props.trades.length / tradesPerPage);
         if (maxPages > this.state.page + 1) {
+            const trade = this.props.trades.slice(0,
+                this.props.trades.length - (this.state.page + 1) * tradesPerPage,
+            );
             holdings = calculateGains(
                 {},
-                this.props.trades.slice(0,
-                    this.props.trades.length - (this.state.page + 1) * tradesPerPage,
-                ),
+                trade,
+                this.props.savedData.incomes,
                 this.props.fiatCurrency,
                 this.props.gainCalculationMethod,
             ).newHoldings;
@@ -60,10 +64,17 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
             trades = trades.slice(this.props.trades.length - this.state.page * tradesPerPage);
         }
 
+        let incomes = clone(this.props.savedData.incomes);
         return (trades.map((trade, index) => {
+            const incomesToApply = [];
+            while (incomes.length && trade.date > incomes[0].date) {
+                incomesToApply.push(incomes.shift());
+            }
+
             holdings = calculateGains(
                 holdings,
                 [trade],
+                incomesToApply, // probably should use real incomes here
                 this.props.fiatCurrency,
                 this.props.gainCalculationMethod,
             ).newHoldings;

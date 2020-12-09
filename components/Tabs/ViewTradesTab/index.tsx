@@ -112,6 +112,7 @@ export class ViewTradesTab extends React.Component<IViewTradesTabProp, IViewTrad
                                 trades={filteredTrades}
                                 fiatCurrency={this.props.savedData.settings.fiatCurrency}
                                 gainCalculationMethod={this.props.savedData.settings.gainCalculationMethod}
+                                savedData={this.props.savedData}
                             /> // make this a clone or something
                     }
                 </div>

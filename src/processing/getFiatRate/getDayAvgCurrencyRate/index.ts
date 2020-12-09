@@ -29,7 +29,7 @@ export async function getDayAvgTradeRate(
     fiatCurrency: string,
     type = 'HourVWAP',
 ): Promise<number> {
-    const rate = getDayAvg(fiatCurrency, trade.soldCurrency, trade.date);
+    const rate = getDayAvg(fiatCurrency, trade.soldCurrency, trade.date, type);
     if (rate) {
         return rate;
     } else {

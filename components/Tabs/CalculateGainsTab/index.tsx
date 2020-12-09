@@ -4,6 +4,7 @@ import { calculateGainPerTrade, calculateGains } from '../../../src/processing/C
 import { addFiatRateToTrades } from '../../../src/processing/getFiatRate';
 import {
     IHoldings,
+    IIncomeWithFiatRate,
     ISavedData,
     ITrade,
     ITradeWithFiatRate,
@@ -37,6 +38,7 @@ export interface ICalculateTradesTabState {
 
 function recalculate(
     trades: ITradeWithFiatRate[],
+    incomes: IIncomeWithFiatRate[],
     fiatCurrnecy: string,
     yearCalculationMethod: IYearCalculationMethod,
 ) {
@@ -47,18 +49,27 @@ function recalculate(
             const pastTrades = trades.filter(
                 (trade) => new Date(trade.date).getFullYear() === parseInt(years[index], 10),
             );
-            const result = calculateGains(newHoldings, pastTrades, fiatCurrnecy, yearCalculationMethod[years[index]]);
+            const pastIncomes = incomes.filter(
+                (income) => new Date(income.date).getFullYear() === parseInt(years[index], 10),
+            );
+            const result = calculateGains(newHoldings, pastTrades, pastIncomes, fiatCurrnecy, yearCalculationMethod[years[index]]);
             newHoldings = result.newHoldings;
         }
     }
+
     const lastYear = years[years.length - 1];
     let newTrades = trades;
+    let newIncomes = incomes;
     if (lastYear !== '----' && lastYear !== '0') {
         newTrades = trades.filter(
             (trade) => new Date(trade.date).getFullYear().toString() === lastYear,
         );
+        newIncomes = incomes.filter(
+            (income) => new Date(income.date).getFullYear().toString() === lastYear,
+        );
     }
     return {
+        incomes: newIncomes,
         holdings: newHoldings,
         trades: newTrades,
         gainCalculationMethod: yearCalculationMethod[lastYear],
@@ -86,12 +97,14 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
     public calculateGains = (yearCalculationMethod: IYearCalculationMethod) => () => {
         const result = recalculate(
             this.props.savedData.trades,
+            this.props.savedData.incomes,
             this.props.savedData.settings.fiatCurrency,
             yearCalculationMethod,
         );
         const data = calculateGainPerTrade(
             result.holdings,
             result.trades,
+            result.incomes,
             this.props.savedData.settings.fiatCurrency,
             result.gainCalculationMethod,
         );
@@ -127,6 +140,7 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
     public generateForm8949 = () => {
         const result = recalculate(
             this.props.savedData.trades,
+            this.props.savedData.incomes,
             this.props.savedData.settings.fiatCurrency,
             this.state.yearCalculationMethod,
         );
@@ -160,6 +174,7 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
         const data = calculateGainPerTrade(
             this.state.holdings,
             tradeWithFiatRate,
+            [],
             this.props.savedData.settings.fiatCurrency,
             this.state.yearCalculationMethod[this.state.years[this.state.years.length - 1]],
         );

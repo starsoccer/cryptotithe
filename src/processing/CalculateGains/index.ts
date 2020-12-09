@@ -1,12 +1,14 @@
 import clone from 'clone';
 import {
     IHoldings,
+    IIncomeWithFiatRate,
     ITradeWithCostBasis,
     ITradeWithFiatRate,
     ITradeWithGains,
     METHOD,
 } from '../../types';
 import { processTrade } from '../ProcessTrade';
+import { addToHoldings } from '../AddToHoldings';
 
 export interface ICalculateGains {
     newHoldings: IHoldings;
@@ -17,18 +19,32 @@ export interface ICalculateGains {
 export function calculateGains(
     holdings: IHoldings,
     trades: ITradeWithFiatRate[],
+    incomes: IIncomeWithFiatRate[],
     fiatCurrency: string,
     method: METHOD = METHOD.FIFO,
 ): ICalculateGains {
     let shortTermGain = 0;
     let longTermGain = 0;
     let newHoldings: IHoldings = holdings;
+    let incomesToApply = clone(incomes);
     for (const trade of trades) {
+        while (incomesToApply.length && trade.date > incomesToApply[0].date) {
+            const income = incomesToApply[0];
+            newHoldings = addToHoldings(newHoldings, income.currency, income.amount, income.fiatRate, income.date);
+            incomesToApply.shift();
+        }
+
         const result = processTrade(newHoldings, trade, fiatCurrency, method);
         shortTermGain += result.shortTermGain;
         longTermGain += result.longTermGain;
         newHoldings = result.holdings;
     }
+
+    // apply any remaining incomes
+    for (const income of incomesToApply) {
+        newHoldings = addToHoldings(newHoldings, income.currency, income.amount, income.fiatRate, income.date);
+    }
+
     return {
         newHoldings,
         longTermGain,
@@ -46,6 +62,7 @@ export interface ICalculateGainsPerTrade {
 export function calculateGainPerTrade(
     holdings: IHoldings,
     internalFormat: ITradeWithFiatRate[],
+    incomes: IIncomeWithFiatRate[],
     fiatCurrency: string,
     method: METHOD,
 ): ICalculateGainsPerTrade {
@@ -53,8 +70,22 @@ export function calculateGainPerTrade(
     let shortTerm = 0;
     let longTerm = 0;
     const finalFormat: ITradeWithGains[] = [];
+    const newIncomes = clone(incomes);
     for (const trade of internalFormat) {
-        const result: ICalculateGains = calculateGains(tempHoldings, [trade], fiatCurrency, method);
+        const incomesToUse: IIncomeWithFiatRate[] = []
+        while (newIncomes.length && trade.date > newIncomes[0].date) {
+            const income = newIncomes.shift() as IIncomeWithFiatRate;
+            incomesToUse.push(income); 
+        }
+
+        const result: ICalculateGains = calculateGains(
+            tempHoldings,
+            [trade],
+            incomesToUse,
+            fiatCurrency,
+            method
+        );
+
         tempHoldings = result.newHoldings;
         shortTerm += result.shortTermGain;
         longTerm += result.longTermGain;
@@ -64,9 +95,19 @@ export function calculateGainPerTrade(
             longTerm: result.longTermGain,
         });
     }
+
+
+    const applyRemainingIncomes: ICalculateGains = calculateGains(
+        tempHoldings,
+        [],
+        newIncomes,
+        fiatCurrency,
+        method
+    );
+
     return {
         trades: finalFormat,
-        holdings: tempHoldings,
+        holdings: applyRemainingIncomes.newHoldings,
         shortTerm,
         longTerm,
     };
