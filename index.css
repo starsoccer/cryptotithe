@@ -80,7 +80,7 @@ input:checked + .slider::before {
   content: '';
   position: absolute;
   width: 6px;
-  background-color: white;
+  background-color: darkgray;
   top: 0;
   bottom: 0;
   left: 50%;

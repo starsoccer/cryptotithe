@@ -1,12 +1,13 @@
 const join = require("path").join;
 // modules to control application life and create native browser window
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, nativeTheme } = require("electron");
 
 // keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 function createWindow() {
+    nativeTheme.themeSource = 'light';
     mainWindow = new BrowserWindow({
         width: 1280,
         height: 720,
