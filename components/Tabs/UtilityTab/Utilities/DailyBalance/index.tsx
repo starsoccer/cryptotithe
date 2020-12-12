@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { calculateDailyBalance } from '../../../../../src/processing/CalculateDailyBalance';
 import { EXCHANGES, IDailyBalance, ISavedData } from '../../../../../src/types';
-import getTradeYears from '../../../../../src/utils/getTradeYears';
+import getYears from '../../../../../src/utils/getYears';
 import Button from '../../../../Button';
 import { Loader } from '../../../../Loader';
 import { DailyBalanceTable } from './DailyBalanceTable';
@@ -63,7 +63,7 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
                     <br />
                     <label htmlFor='year' className='pr2'>Starting Year</label>
                     <select name='year' id='year' onChange={this.onYearChange}>
-                        {getTradeYears(
+                        {getYears(
                             this.props.savedData.trades.filter((trade) => trade.exchange === this.state.exchange,
                         )).map((year) =>
                             <option key={year} value={year}>{year}</option>,

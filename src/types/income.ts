@@ -13,9 +13,8 @@ export interface IIncomeWithFiatRate extends IIncome {
     fiatRate: number;
 }
 
-export interface IIncomeWithGains extends IIncome {
-    shortTerm: number;
-    longTerm: number;
+export interface IIncomeWithValue extends IIncomeWithFiatRate {
+    value: number;
 }
 
 export interface IIncomeWithDuplicateProbability extends IIncome, IDuplicate {}

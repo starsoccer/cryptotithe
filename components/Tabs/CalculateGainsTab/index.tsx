@@ -11,7 +11,7 @@ import {
     ITradeWithGains,
     METHOD,
 } from '../../../src/types';
-import getTradeYears from '../../../src/utils/getTradeYears';
+import getYears from '../../../src/utils/getYears';
 import Button from '../../Button';
 import { FileDownload, IFileDownloadProps } from '../../FileDownload';
 import { GainsPerTradeTable } from '../../GainsPerTradeTable';
@@ -80,7 +80,7 @@ export class CalculateGainsTab extends React.Component<ICalculateTradesTabProp, 
     public constructor(props: ICalculateTradesTabProp) {
         super(props);
         this.state = {
-            years: getTradeYears(props.savedData.trades),
+            years: getYears(props.savedData.trades),
             downloadProps: {
                 fileName: '',
                 data: '',

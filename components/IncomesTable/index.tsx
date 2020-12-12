@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { addFiatRateToIncomes } from '../../src/processing/getFiatRateIncome';
 import sortIncomes from '../../src/processing/SortIncome';
-import { IIncome, IIncomeWithFiatRate, ISettings } from '../../src/types';
+import { IIncome, IIncomeWithValue, ISettings } from '../../src/types';
 //import Popup from '../Popup';
 import { Table } from '../Table';
 
 export interface IIncomesTableProps {
     className?: string;
-    incomes: IIncome[];
+    incomes: IIncome[] | IIncomeWithValue[];
     settings: ISettings;
-    save(trades: IIncome[] | IIncomeWithFiatRate[]): void;
+    save?: (trades: IIncome[]) => void;
 }
 
 export class IncomesTable extends React.Component<IIncomesTableProps, {popup: string | undefined}> {
-
     public constructor(props: IIncomesTableProps) {
         super(props);
         this.state = {
@@ -40,26 +39,55 @@ export class IncomesTable extends React.Component<IIncomesTableProps, {popup: st
         this.setState({popup: undefined});
     }
 
+    private isEditable = !!this.props.save;
+    private showValue = 'fiatRate' in this.props.incomes[0];
+
+    private createHeaders = () => {
+        const headers = [
+            'Date',
+            'ID',
+            'Amount',
+            'Currency',
+            'Fee',
+        ];
+
+        if (this.showValue) {
+            headers.push('Value');
+        }
+
+        if (this.isEditable) {
+            headers.push('');
+        }
+
+        return headers;
+    }
+
+    private createRow = (income: IIncome | IIncomeWithValue) => {
+        const row = [
+            <span>{new Date(income.date).toUTCString()}</span>,
+            <span>{income.ID}</span>,
+            <span>{income.amount.toFixed(8)}</span>,
+            <span>{income.currency}</span>,
+            <span>{(income.fee ? income.fee.toFixed(8) : 0)}</span>,
+        ];
+
+        if (this.showValue) {
+            row.push(<span>{(income as IIncomeWithValue).value}</span>);
+        }
+
+        if (this.isEditable) {
+            row.push(<i className='fa fa-pencil-square' onClick={this.changePopupStatus(income.ID)}/>);
+        }
+
+        return row;
+    }
+
     public render() {
         return (
             <div>
                 <Table
-                    headers={[
-                        'Date',
-                        'ID',
-                        'Amount',
-                        'Currency',
-                        'Fee',
-                        '',
-                    ]}
-                    rows={this.props.incomes.map((income) => [
-                        <span>{new Date(income.date).toUTCString()}</span>,
-                        <span>{income.ID}</span>,
-                        <span>{income.amount.toFixed(8)}</span>,
-                        <span>{income.currency}</span>,
-                        <span>{(income.fee ? income.fee.toFixed(8) : 0)}</span>,
-                        <i className='fa fa-pencil-square' onClick={this.changePopupStatus(income.ID)}/>,
-                    ])}
+                    headers={this.createHeaders()}
+                    rows={this.props.incomes.map(this.createRow)}
                 />
             </div>
         );

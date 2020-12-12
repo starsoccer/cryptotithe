@@ -19,6 +19,7 @@ import { PortfolioTab } from '../../components/Tabs/PortfolioTab';
 import { Settings } from '../../components/Tabs/Settings';
 import { UtilityTab } from '../../components/Tabs/UtilityTab';
 import { ViewTradesTab } from '../../components/Tabs/ViewTradesTab';
+import CalculateIncomes from '../../components/Tabs/CalculateIncomesTab';
 
 export interface IAppProps {
     savedData: ISavedData;
@@ -30,6 +31,7 @@ enum TABS {
     'View Trades' = 'VIEW_TRADES',
     'Import Data' = 'IMPORT_DATA',
     'Calculate Gains' = 'CALCULATE_GAINS',
+    'Calculate Incomes' = 'CALCULATE_INCOMES',
     Utility = 'UTILITY',
 }
 
@@ -115,6 +117,8 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                 return <ViewTradesTab savedData={this.state.savedData} save={this.saveData}/>;
             case TABS['Calculate Gains']:
                 return <CalculateGainsTab savedData={this.state.savedData}/>;
+            case TABS['Calculate Incomes']:
+                return <CalculateIncomes savedData={this.state.savedData} />;
             case TABS.Utility:
                 return <UtilityTab savedData={this.state.savedData} save={this.saveData}/>;
             case TABS.Home:
