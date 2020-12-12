@@ -5,7 +5,8 @@ const calculateIncomesValue = (incomes: IIncomeWithFiatRate[]) => {
     let totalValue = 0;
 
     for (const income of incomes) {
-        const value = (income.amount - income.fee) * income.fiatRate;
+        const fee = income.fee ?? 0;
+        const value = (income.amount - fee) * income.fiatRate;
         totalValue += value;
         newIncomes.push({
             ...income,

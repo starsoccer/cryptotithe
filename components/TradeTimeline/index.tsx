@@ -2,7 +2,7 @@ import clone from 'clone';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
-import { EXCHANGES, IHoldings, ISavedData, ITradeWithFiatRate, METHOD } from '../../src/types';
+import { EXCHANGES, IHoldings, ISavedData, ITradeWithFiatRate, METHOD, IIncomeWithFiatRate } from '../../src/types';
 import keyByValue from '../../src/utils/keyByValue';
 import { Loader } from '../Loader';
 
@@ -66,9 +66,9 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
 
         let incomes = clone(this.props.savedData.incomes);
         return (trades.map((trade, index) => {
-            const incomesToApply = [];
+            const incomesToApply: IIncomeWithFiatRate[] = [];
             while (incomes.length && trade.date > incomes[0].date) {
-                incomesToApply.push(incomes.shift());
+                incomesToApply.push(incomes.shift() as IIncomeWithFiatRate);
             }
 
             holdings = calculateGains(

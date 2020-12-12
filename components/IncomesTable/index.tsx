@@ -35,8 +35,10 @@ export class IncomesTable extends React.Component<IIncomesTableProps, {popup: st
             newIncomes.push(editedIncome);
         }
         const sortedIncomes = sortIncomes(newIncomes);
-        await this.props.save(sortedIncomes);
-        this.setState({popup: undefined});
+        if (this.props.save) {
+            await this.props.save(sortedIncomes);
+            this.setState({popup: undefined});
+        }
     }
 
     private isEditable = !!this.props.save;
@@ -82,12 +84,21 @@ export class IncomesTable extends React.Component<IIncomesTableProps, {popup: st
         return row;
     }
 
+    private createRows = () => {
+        const rows = [];
+        for (const income of this.props.incomes) {
+            rows.push(this.createRow(income));   
+        }
+
+        return rows;
+    }
+
     public render() {
         return (
             <div>
                 <Table
                     headers={this.createHeaders()}
-                    rows={this.props.incomes.map(this.createRow)}
+                    rows={this.createRows()}
                 />
             </div>
         );

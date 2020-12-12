@@ -22,7 +22,16 @@
     "noEmit": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@tachyons/*": ["node_modules/tachyons/*"],
+      "@font-awesome/*": ["node_modules/font-awesome/*"],
+      "@utils/*": ["src/utils/*"],
+      "@types": ["src/types/index.ts"],
+      "@types/*": ["src/types/*"]
+    }
   },
   "include": [
     "**/*"

@@ -3,7 +3,7 @@ import { ISavedData } from '../../../src/types';
 import { IncomesTable } from '../../IncomesTable';
 import getYears from '../../../src/utils/getYears';
 import getByYear from '../../../src/processing/getByYear';
-import calculateIncomesValue from '../../../src/processing/calculateIncomesValue';
+import calculateIncomesValue from '../../../src/processing/CalculateIncomesValue';
 import incomesOutput from '../../../src/output/Incomes';
 import { FileDownload } from '../../FileDownload';
 import Button from '../../Button';
@@ -13,7 +13,7 @@ export interface ICalculateIncomeProps {
 }
 
 const CalculateIncomes = ({savedData}: ICalculateIncomeProps) => {
-    const [year, setYear] = React.useState(null);
+    const [year, setYear] = React.useState(0);
     const [shouldDownload, setShouldDownload] = React.useState(false);
 
     const years = getYears(savedData.incomes);
@@ -35,7 +35,7 @@ const CalculateIncomes = ({savedData}: ICalculateIncomeProps) => {
                     <select
                         onChange={(e) => setYear(parseInt(e.target.value, 10))}
                     >
-                        <option value={null}>----</option>
+                        <option value="0">----</option>
                         {years.map((year) => (
                             <option key={year} value={year}>
                                 {year}

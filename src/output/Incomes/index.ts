@@ -20,7 +20,7 @@ export default function output(
         new Date(income.date),
         income.currency.toUpperCase(),
         income.amount.toString(),
-        income.fee.toString(),
+        income.fee?.toString(),
         income.fiatRate.toString(),
         income.value.toFixed(2),
     ]).join('\n')]);

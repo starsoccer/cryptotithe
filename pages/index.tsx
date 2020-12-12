@@ -1,25 +1,25 @@
 import classnames from 'classnames';
 import * as React from 'react';
-import { createEmptySavedData } from '../mock';
-import save from '../save';
-import savedDataConverter from '../savedDataConverter';
+import { createEmptySavedData } from '../src/mock';
+import save from '../src/save';
+import savedDataConverter from '../src/savedDataConverter';
 import {
     IPartialSavedData,
     ISavedData,
     ITradeWithDuplicateProbability,
-} from '../types';
-import integrityCheck from '../utils/integrityCheck';
-import Button from '../../components/Button';
-import { FileBrowse } from '../../components/FileBrowse';
-import { FileDownload, IFileDownloadProps } from '../../components/FileDownload';
-import Popup from '../../components/Popup';
-import { CalculateGainsTab } from '../../components/Tabs/CalculateGainsTab';
-import { ImportDataTab } from '../../components/Tabs/ImportDataTab';
-import { PortfolioTab } from '../../components/Tabs/PortfolioTab';
-import { Settings } from '../../components/Tabs/Settings';
-import { UtilityTab } from '../../components/Tabs/UtilityTab';
-import { ViewTradesTab } from '../../components/Tabs/ViewTradesTab';
-import CalculateIncomes from '../../components/Tabs/CalculateIncomesTab';
+} from '@types';
+import integrityCheck from '@utils/integrityCheck';
+import Button from '@components/Button';
+import { FileBrowse } from '@components/FileBrowse';
+import { FileDownload, IFileDownloadProps } from '@components/FileDownload';
+import Popup from '@components/Popup';
+import { CalculateGainsTab } from '@components/Tabs/CalculateGainsTab';
+import { ImportDataTab } from '@components/Tabs/ImportDataTab';
+import { PortfolioTab } from '@components/Tabs/PortfolioTab';
+import { Settings } from '@components/Tabs/Settings';
+import { UtilityTab } from '@components/Tabs/UtilityTab';
+import { ViewTradesTab } from '@components/Tabs/ViewTradesTab';
+import CalculateIncomes from '@components/Tabs/CalculateIncomesTab';
 
 export interface IAppProps {
     savedData: ISavedData;
