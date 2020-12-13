@@ -231,7 +231,7 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                         <div className='flex justify-around'>
                             <Button
                                 label='Recalculate'
-                                onClick={this.props.onGenerate(this.state.yearCalculationMethod)}
+                                onClick={() => this.props.onGenerate(this.state.yearCalculationMethod)}
                             />
                             <Button label='Form 8949' onClick={this.props.onForm8949Export}/>
                         </div>

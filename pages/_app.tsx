@@ -57,8 +57,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   const fallbackToPortfolio = (
       !currentTab &&
       router.pathname !== '/trades' &&
-      router.pathname !== '/utility' &&
+      router.pathname !== '/gains' &&
       router.pathname !== '/incomes' &&
+      router.pathname !== '/utility' &&
       router.pathname === '/'
     );
 

@@ -10,10 +10,7 @@ import integrityCheck from '@utils/integrityCheck';
 import Button from '@components/Button';
 import { FileBrowse } from '@components/FileBrowse';
 import Popup from '@components/Popup';
-import { CalculateGainsTab } from '@components/Tabs/CalculateGainsTab';
 import { ImportDataTab } from '@components/Tabs/ImportDataTab';
-import { UtilityTab } from '@components/Tabs/UtilityTab';
-import CalculateIncomes from '@components/Tabs/CalculateIncomesTab';
 
 export interface IAppProps {
     savedData: ISavedData;
@@ -24,7 +21,6 @@ export interface IAppProps {
 
 export enum TABS {
     'Import Data' = 'IMPORT_DATA',
-    'Calculate Gains' = 'CALCULATE_GAINS',
 }
 
 interface IAppState {
@@ -61,8 +57,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                     savedData={this.props.savedData}
                     save={this.props.updateSaveData}
                 />;
-            case TABS['Calculate Gains']:
-                return <CalculateGainsTab savedData={this.props.savedData}/>;
         }
     }
 

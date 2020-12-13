@@ -61,6 +61,13 @@ const Header = ({onUpdateTab, currentTab}: IHeaderProps) => {
                 ))}
 
                 <h3
+                    className={getPageClassNames(Pages.gains, router, currentTab)}
+                    onClick={onPageClick(Pages.gains)}
+                >
+                    Gains
+                </h3>
+
+                <h3
                     className={getPageClassNames(Pages.incomes, router, currentTab)}
                     onClick={onPageClick(Pages.incomes)}
                 >
