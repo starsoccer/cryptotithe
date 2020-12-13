@@ -54,7 +54,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [downloadInfo]);
 
-  const fallbackToPortfolio = (!currentTab && router.pathname !== '/trades' && router.pathname === '/');
+  const fallbackToPortfolio = (
+      !currentTab &&
+      router.pathname !== '/trades' &&
+      router.pathname !== '/incomes' &&
+      router.pathname === '/'
+    );
 
   return (
     <SavedDataConext.Provider value={{

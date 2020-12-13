@@ -25,7 +25,6 @@ export interface IAppProps {
 export enum TABS {
     'Import Data' = 'IMPORT_DATA',
     'Calculate Gains' = 'CALCULATE_GAINS',
-    'Calculate Incomes' = 'CALCULATE_INCOMES',
     Utility = 'UTILITY',
 }
 
@@ -47,11 +46,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
             duplicateTrades: [],
             fileBrowseOpen: false,
             loadDataPopup: true,
-            downloadProps: {
-                data: '',
-                fileName: 'data.json',
-                download: false,
-            },
         };
     }
 
@@ -70,8 +64,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                 />;
             case TABS['Calculate Gains']:
                 return <CalculateGainsTab savedData={this.props.savedData}/>;
-            case TABS['Calculate Incomes']:
-                return <CalculateIncomes savedData={this.props.savedData} />;
             case TABS.Utility:
                 return <UtilityTab savedData={this.props.savedData} save={this.props.updateSaveData}/>;
         }
@@ -87,7 +79,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                 const parsedData: ISavedData = JSON.parse(data);
                 this.loadData(parsedData);
             } catch (ex) {
-                console.log(ex);
                 alert('Unable to parse saved data');
             }
         }

@@ -1,26 +1,24 @@
-import * as React from 'react';
-import { ISavedData } from '../../../src/types';
-import { IncomesTable } from '../../IncomesTable';
-import getYears from '../../../src/utils/getYears';
-import getByYear from '../../../src/processing/getByYear';
-import calculateIncomesValue from '../../../src/processing/CalculateIncomesValue';
-import incomesOutput from '../../../src/output/Incomes';
-import { FileDownload } from '../../FileDownload';
-import Button from '../../Button';
+import {useContext, useState, useEffect} from 'react';
+import { ISavedData } from '@types';
+import { IncomesTable } from '@components/IncomesTable';
+import getYears from '@utils/getYears';
+import getByYear from '../src/processing/getByYear';
+import calculateIncomesValue from '../src/processing/CalculateIncomesValue';
+import incomesOutput from '../src/output/Incomes';
+import { FileDownload } from '@components/FileDownload';
+import Button from '@components/Button';
+import SavedDataConext from '@contexts/savedData';
 
-export interface ICalculateIncomeProps {
-    savedData: ISavedData;
-}
-
-const CalculateIncomes = ({savedData}: ICalculateIncomeProps) => {
-    const [year, setYear] = React.useState(0);
-    const [shouldDownload, setShouldDownload] = React.useState(false);
+const CalculateIncomes = () => {
+    const {savedData} = useContext(SavedDataConext);
+    const [year, setYear] = useState(0);
+    const [shouldDownload, setShouldDownload] = useState(false);
 
     const years = getYears(savedData.incomes);
     const filteredIncomes = getByYear(savedData.incomes, year);
     const {incomes, totalValue} = calculateIncomesValue(filteredIncomes);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (shouldDownload) {
             setShouldDownload(false);
         }
