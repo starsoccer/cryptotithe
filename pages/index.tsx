@@ -25,7 +25,6 @@ export interface IAppProps {
 export enum TABS {
     'Import Data' = 'IMPORT_DATA',
     'Calculate Gains' = 'CALCULATE_GAINS',
-    Utility = 'UTILITY',
 }
 
 interface IAppState {
@@ -64,8 +63,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                 />;
             case TABS['Calculate Gains']:
                 return <CalculateGainsTab savedData={this.props.savedData}/>;
-            case TABS.Utility:
-                return <UtilityTab savedData={this.props.savedData} save={this.props.updateSaveData}/>;
         }
     }
 

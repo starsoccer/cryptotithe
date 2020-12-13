@@ -66,6 +66,13 @@ const Header = ({onUpdateTab, currentTab}: IHeaderProps) => {
                 >
                     Incomes
                 </h3>
+
+                <h3
+                    className={getPageClassNames(Pages.utility, router, currentTab)}
+                    onClick={onPageClick(Pages.utility)}
+                >
+                    Utility
+                </h3>
             </div>
 
             { showSettingsPopup &&

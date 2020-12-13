@@ -1,5 +1,6 @@
 export enum Pages {
     index = '/',
     trades = '/trades',
-    incomes = '/incomes'
+    incomes = '/incomes',
+    utility = '/utility'
 }
