@@ -26,6 +26,7 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["components/*"],
+      "@pages/*": ["pages/*"],
       "@tachyons/*": ["node_modules/tachyons/*"],
       "@font-awesome/*": ["node_modules/font-awesome/*"],
       "@utils/*": ["src/utils/*"],

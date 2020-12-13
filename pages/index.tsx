@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import * as React from 'react';
 import { createEmptySavedData } from '../src/mock';
 import save from '../src/save';
@@ -20,13 +19,14 @@ import { Settings } from '@components/Tabs/Settings';
 import { UtilityTab } from '@components/Tabs/UtilityTab';
 import { ViewTradesTab } from '@components/Tabs/ViewTradesTab';
 import CalculateIncomes from '@components/Tabs/CalculateIncomesTab';
+import Header from '@components/Header';
 
 export interface IAppProps {
     savedData: ISavedData;
     browser: boolean;
 }
 
-enum TABS {
+export enum TABS {
     Home = 'HOME',
     'View Trades' = 'VIEW_TRADES',
     'Import Data' = 'IMPORT_DATA',
@@ -127,7 +127,7 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
         }
     }
 
-    public updateTab = (newTab: TABS) => () => {
+    public updateTab = (newTab: TABS) => {
         this.setState({currentTab: newTab});
     }
 
@@ -211,17 +211,11 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                         onClose={this.settingsPopup}
                     />
                 }
-                <i className='fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray' onClick={this.settingsPopup}/>
-                <div className='flex bg-dark-gray h2'>
-                    {Object.keys(TABS).map((key: string) => <h3
-                        key={key}
-                        className={classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {
-                            'bg-dark-gray': TABS[key] !== this.state.currentTab,
-                            'bg-navy': TABS[key] === this.state.currentTab,
-                        })}
-                        onClick={this.updateTab(TABS[key])}
-                    >{key}</h3>)}
-                </div>
+                <Header
+                    onSettingsClick={this.settingsPopup}
+                    onUpdateTab={this.updateTab}
+                    currentTab={this.state.currentTab}
+                />
                 {!this.state.loadDataPopup &&
                     <div className='openTab'>
                         {this.showCurrentTab(this.state.currentTab)}
