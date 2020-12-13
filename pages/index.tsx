@@ -1,113 +1,112 @@
-import * as React from 'react';
-import { createEmptySavedData } from '../src/mock';
-import savedDataConverter from '../src/savedDataConverter';
-import {
-    IPartialSavedData,
-    ISavedData,
-    ITradeWithDuplicateProbability,
-} from '@types';
-import integrityCheck from '@utils/integrityCheck';
+import { useContext, useEffect, useState } from 'react';
+import { calculateGains } from '../src/processing/CalculateGains';
+import { calculateInDepthHoldingsValueCurrently } from '../src/processing/CalculateHoldingsValue';
+import { IHoldingsValueComplex, IPartialSavedData, ISavedData } from '@types';
 import Button from '@components/Button';
-import { FileBrowse } from '@components/FileBrowse';
-import Popup from '@components/Popup';
+import { Chart } from '@components/Chart';
+import { Loader } from '@components/Loader';
+import { PortfolioTable } from '@components/PortfolioTable';
+import SavedDataConext from '@contexts/savedData';
 
-export interface IAppProps {
-    savedData: ISavedData;
-    updateSaveData: (data: IPartialSavedData, shouldDownload?: boolean) => Promise<boolean>;
-    browser: boolean;
+export interface IPortfolioState {
+    holdingsValue?: IHoldingsValueComplex;
+    series: number[];
+    currencies: string[];
 }
 
-export enum TABS {
-    'Import Data' = 'IMPORT_DATA',
-}
 
-interface IAppState {
-    processing: boolean;
-    duplicateTrades: ITradeWithDuplicateProbability[];
-    loadDataPopup: boolean;
-    fileBrowseOpen: boolean;
-}
+const Portfolio = ({}) => {
+    const {savedData, save} = useContext(SavedDataConext);
+    const [holdingsValue, setHoldingsValue] = useState<IHoldingsValueComplex>();
+    const [series, setSeries] = useState<number[]>([]);
+    const [currencies, setCurrencies] = useState<string[]>([]);
 
-const isSavedDataLoaded = (data: ISavedData) => data && data.trades.length + Object.keys(data.holdings).length > 0;
+    useEffect(() => {
+        calculatePortfolioData(savedData, setHoldingsValue, setSeries, setCurrencies)
+    }, [savedData]);
 
-export default class rootElement extends React.Component<IAppProps, IAppState> {
-    public constructor(props: IAppProps) {
-        super(props);
-
-        this.state = {
-            processing: false,
-            duplicateTrades: [],
-            fileBrowseOpen: false,
-            loadDataPopup: true,
-        };
-    }
-
-    public componentDidMount() {
-        if (isSavedDataLoaded(this.props.savedData)) {
-            this.loadData(this.props.savedData);
-        }
-    }
-
-    public changePopupState = () => {
-        this.setState({loadDataPopup: !this.state.loadDataPopup});
-    }
-
-    public parseData = (data: string) => {
-        if (data !== '') {
-            try {
-                const parsedData: ISavedData = JSON.parse(data);
-                this.loadData(parsedData);
-            } catch (ex) {
-                alert('Unable to parse saved data');
-            }
-        }
-    }
-
-    public loadData = (data: ISavedData) => {
-        this.setState({fileBrowseOpen: false});
-        const savedData = data;
-        if (isSavedDataLoaded(savedData)) {
-            if ('integrity' in savedData && integrityCheck(savedData) !== savedData.integrity) {
-                alert('Integrity Check Failed. Your save file might be corrupt or tampered with.');
-            }
-            const shouldSave = savedDataConverter(savedData);
-            this.props.updateSaveData(savedData, shouldSave);
-            this.setState({
-                loadDataPopup: false,
-            });
-        }
-
-    }
-
-    public openFileBrowse = () => {
-        this.setState({fileBrowseOpen: true});
-    }
-
-    public createNewSave = () => {
-        this.props.updateSaveData(createEmptySavedData());
-        this.setState({
-            loadDataPopup: false,
-        });
-    }
-
-    public render() {
-        return (
-            <div className='app'>
-                {this.state.loadDataPopup &&
-                    <Popup onClose={this.changePopupState}>
-                        <div>
-                            <h1>Welcome to CryptoTithe</h1>
-                            <h5>Great Description to be put here</h5>
-                            <Button label='Load Existing Data' onClick={this.openFileBrowse}/>
-                            <Button label='Create Save Data' onClick={this.createNewSave}/>
-                            <FileBrowse
-                                onLoaded={this.parseData}
-                                browse={this.state.fileBrowseOpen}
+    return (
+        <div className='portfolio'>
+            <h3 className='tc'>Portfolio</h3>
+            <hr className='center w-50' />
+            <div className='tc center'>
+                <Button label='Recalculate Holdings' onClick={() => recalculateHoldings(savedData, save)}/>
+                {holdingsValue !== undefined ?
+                    <div>
+                        <h4>Total BTC Value: {holdingsValue.BTCTotal}</h4>
+                        <h4>
+                            Total {savedData.settings.fiatCurrency}
+                            Value: {holdingsValue.fiatTotal}
+                        </h4>
+                        {!!series.length && !!currencies.length &&
+                            <Chart
+                                data={{
+                                    chart: {
+                                        type: 'pie',
+                                    },
+                                    series: series,
+                                    labels: currencies,
+                                    legend: {
+                                        show: false,
+                                    },
+                                    annotations: {
+                                        position: 'front',
+                                    },
+                                }}
+                                className='w-50 center mw9'
                             />
-                        </div>
-                    </Popup>
+                        }
+                        <PortfolioTable
+                            holdingsValue={holdingsValue}
+                            fiatCurrency={savedData.settings.fiatCurrency}
+                        />
+                    </div>
+                :
+                    savedData?.trades.length > 0 ?
+                        <Loader />
+                    :
+                        <h3>No Trades Yet <i className='fa fa-frown-o'/></h3>
                 }
             </div>
+        </div>
+    );
+};
+
+const calculatePortfolioData = async (
+    savedData: ISavedData,
+    setHoldingsValue: (holdingsValue: IHoldingsValueComplex) => void,
+    setSeries: (holdingsValue: number[]) => void,
+    setCurrencies: (holdingsValue: string[]) => void,
+) => {
+    if (savedData.trades.length > 0) {
+        const holdingsValue = await calculateInDepthHoldingsValueCurrently(
+            savedData.holdings,
+            savedData.settings.fiatCurrency,
         );
+        const series = [];
+        const currencies = Object.keys(holdingsValue.currencies);
+        for (const currency of currencies) {
+            series.push(holdingsValue.currencies[currency].fiatValue);
+        }
+
+        setHoldingsValue(holdingsValue);
+        setSeries(series);
+        setCurrencies(currencies);
     }
 }
+
+const recalculateHoldings = (savedData: ISavedData, save: (data: IPartialSavedData) => Promise<boolean>) => {
+    const holdings = calculateGains(
+        {},
+        savedData.trades,
+        savedData.incomes,
+        savedData.settings.fiatCurrency,
+        savedData.settings.gainCalculationMethod,
+    ).newHoldings;
+    
+    save({
+        holdings,
+    });
+}
+
+export default Portfolio;

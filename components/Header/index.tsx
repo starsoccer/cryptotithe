@@ -1,79 +1,82 @@
 import classnames from 'classnames';
-import { TABS } from '@pages/index';
 import { Settings } from '@components/Tabs/Settings';
 import { useContext, useState } from 'react';
 import SavedDataConext from '@contexts/savedData';
 import { Pages } from '@types';
 import { NextRouter, useRouter } from 'next/router';
+import Link from 'next/link';
 
-export interface IHeaderProps {
-    onUpdateTab: (tab?: TABS) => void;
-    currentTab?: TABS;
-}
-
-const getPageClassNames = (page: Pages, router: NextRouter, currentTab?: TABS) => classnames(
+const getPageClassNames = (page: Pages, router: NextRouter) => classnames(
     'pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0',
     {
         'bg-dark-gray': page !== router.pathname,
-        'bg-navy': page === router.pathname && !currentTab,
+        'bg-navy': page === router.pathname,
     }
 );
 
-const Header = ({onUpdateTab, currentTab}: IHeaderProps) => {
+const Header = () => {
     const {savedData, save} = useContext(SavedDataConext);
     const [showSettingsPopup, setShowSettingsPopup] = useState(false);
     const router = useRouter();
-
-    const onPageClick = (page: Pages, tab?: TABS) => () => {
-        onUpdateTab(tab);
-        router.push(page);
-    }
 
     return (
         <div className="heaader">
             <i className='fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray' onClick={() => setShowSettingsPopup(true)}/>
             <div className='flex bg-dark-gray h2'>
-                <h3
-                    className={getPageClassNames(Pages.index, router, currentTab)}
-                    onClick={onPageClick(Pages.index)}
+                <Link
+                    href={Pages.index}
                 >
-                    Home
-                </h3>
-
-                <h3
-                    className={getPageClassNames(Pages.trades, router, currentTab)}
-                    onClick={onPageClick(Pages.trades)}
+                    <h3
+                        className={getPageClassNames(Pages.index, router)}
+                    >
+                        Home
+                    </h3>
+                </Link>
+                <Link
+                    href={Pages.trades}
                 >
-                    Trades
-                </h3>
-
-                <h3
-                    className={getPageClassNames(Pages.import, router, currentTab)}
-                    onClick={onPageClick(Pages.import)}
+                    <h3
+                        className={getPageClassNames(Pages.trades, router)}
+                    >
+                        Trades
+                    </h3>
+                </Link>
+                <Link
+                    href={Pages.import}
                 >
-                    Import
-                </h3>
-
-                <h3
-                    className={getPageClassNames(Pages.gains, router, currentTab)}
-                    onClick={onPageClick(Pages.gains)}
+                    <h3
+                        className={getPageClassNames(Pages.import, router)}
+                    >
+                        Import
+                    </h3>
+                </Link>
+                <Link
+                    href={Pages.gains}
                 >
-                    Gains
-                </h3>
-
-                <h3
-                    className={getPageClassNames(Pages.incomes, router, currentTab)}
-                    onClick={onPageClick(Pages.incomes)}
+                    <h3
+                        className={getPageClassNames(Pages.gains, router)}
+                    >
+                        Gains
+                    </h3>
+                </Link>
+                <Link
+                    href={Pages.incomes}
                 >
-                    Incomes
-                </h3>
-
-                <h3
-                    className={getPageClassNames(Pages.utility, router, currentTab)}
-                    onClick={onPageClick(Pages.utility)}
+                    <h3
+                        className={getPageClassNames(Pages.incomes, router)}
+                    >
+                        Incomes
+                    </h3>
+                </Link>
+                <Link
+                    href={Pages.utility}
                 >
-                    Utility
-                </h3>
+                    <h3
+                        className={getPageClassNames(Pages.utility, router)}
+                    >
+                        Utility
+                    </h3>
+                </Link>
             </div>
 
             { showSettingsPopup &&
