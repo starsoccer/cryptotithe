@@ -40,6 +40,8 @@
   ],
   "exclude": [
     "**/*.test.*",
-    "dist/*"
+    "dist/*",
+    "out/*",
+    ".next/*"
   ]
 }
