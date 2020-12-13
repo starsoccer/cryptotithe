@@ -1,14 +1,19 @@
 import classnames from 'classnames';
 import { TABS } from '@pages/index';
+import { Settings } from '@components/Tabs/Settings';
+import { useContext } from 'react';
+import SavedDataConext from '@contexts/savedData';
 
 export interface IHeaderProps {
     onSettingsClick: () => void;
+    showSettingsPopup: boolean;
     onUpdateTab: (tab: TABS) => void;
     currentTab: TABS;
 }
 
-const Header = ({onUpdateTab, currentTab, onSettingsClick}: IHeaderProps) => {
-    
+const Header = ({onUpdateTab, currentTab, onSettingsClick, showSettingsPopup}: IHeaderProps) => {
+    const {savedData, save} = useContext(SavedDataConext);
+
     return (
         <div className="heaader">
             <i className='fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray' onClick={onSettingsClick}/>
@@ -22,6 +27,14 @@ const Header = ({onUpdateTab, currentTab, onSettingsClick}: IHeaderProps) => {
                     onClick={() => onUpdateTab(TABS[key])}
                 >{key}</h3>)}
             </div>
+
+            { showSettingsPopup &&
+                <Settings
+                    settings={savedData.settings}
+                    onSave={save}
+                    onClose={onSettingsClick}
+                />
+            }
         </div>
     );
 };

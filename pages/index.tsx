@@ -15,10 +15,10 @@ import Popup from '@components/Popup';
 import { CalculateGainsTab } from '@components/Tabs/CalculateGainsTab';
 import { ImportDataTab } from '@components/Tabs/ImportDataTab';
 import { PortfolioTab } from '@components/Tabs/PortfolioTab';
-import { Settings } from '@components/Tabs/Settings';
 import { UtilityTab } from '@components/Tabs/UtilityTab';
 import { ViewTradesTab } from '@components/Tabs/ViewTradesTab';
 import CalculateIncomes from '@components/Tabs/CalculateIncomesTab';
+import SavedDataConext from '@contexts/savedData';
 import Header from '@components/Header';
 
 export interface IAppProps {
@@ -182,46 +182,46 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
 
     public render() {
         return (
-            <div className='app'>
-                {this.state.loadDataPopup &&
-                    <Popup onClose={this.changePopupState}>
-                        <div>
-                            <h1>Welcome to CryptoTithe</h1>
-                            <h5>Great Description to be put here</h5>
-                            <Button label='Load Existing Data' onClick={this.openFileBrowse}/>
-                            <Button label='Create Save Data' onClick={this.createNewSave}/>
-                            <FileBrowse
-                                onLoaded={this.parseData}
-                                browse={this.state.fileBrowseOpen}
-                            />
+            <SavedDataConext.Provider value={{
+                save: this.saveData,
+                savedData: this.state.savedData,
+            }}>
+                <div className='app'>
+                    {this.state.loadDataPopup &&
+                        <Popup onClose={this.changePopupState}>
+                            <div>
+                                <h1>Welcome to CryptoTithe</h1>
+                                <h5>Great Description to be put here</h5>
+                                <Button label='Load Existing Data' onClick={this.openFileBrowse}/>
+                                <Button label='Create Save Data' onClick={this.createNewSave}/>
+                                <FileBrowse
+                                    onLoaded={this.parseData}
+                                    browse={this.state.fileBrowseOpen}
+                                />
+                            </div>
+                        </Popup>
+                    }
+                    { this.state.downloadProps &&
+                        <FileDownload
+                            data={this.state.downloadProps.data}
+                            fileName={this.state.downloadProps.fileName}
+                            download={this.state.downloadProps.download}
+                        />
+                    }
+                    <Header
+                        onSettingsClick={this.settingsPopup}
+                        onUpdateTab={this.updateTab}
+                        currentTab={this.state.currentTab}
+                        showSettingsPopup={this.state.settingsPopup}
+                        save={this.saveData}
+                    />
+                    {!this.state.loadDataPopup &&
+                        <div className='openTab'>
+                            {this.showCurrentTab(this.state.currentTab)}
                         </div>
-                    </Popup>
-                }
-                { this.state.downloadProps &&
-                    <FileDownload
-                        data={this.state.downloadProps.data}
-                        fileName={this.state.downloadProps.fileName}
-                        download={this.state.downloadProps.download}
-                    />
-                }
-                { this.state.settingsPopup &&
-                    <Settings
-                        settings={this.state.savedData.settings}
-                        onSave={this.saveData}
-                        onClose={this.settingsPopup}
-                    />
-                }
-                <Header
-                    onSettingsClick={this.settingsPopup}
-                    onUpdateTab={this.updateTab}
-                    currentTab={this.state.currentTab}
-                />
-                {!this.state.loadDataPopup &&
-                    <div className='openTab'>
-                        {this.showCurrentTab(this.state.currentTab)}
-                    </div>
-                }
-            </div>
+                    }
+                </div>
+            </SavedDataConext.Provider>
         );
     }
 }

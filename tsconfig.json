@@ -27,6 +27,7 @@
     "paths": {
       "@components/*": ["components/*"],
       "@pages/*": ["pages/*"],
+      "@contexts/*": ["contexts/*"],
       "@tachyons/*": ["node_modules/tachyons/*"],
       "@font-awesome/*": ["node_modules/font-awesome/*"],
       "@utils/*": ["src/utils/*"],
