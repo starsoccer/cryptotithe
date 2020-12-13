@@ -47,18 +47,12 @@ const Header = ({onUpdateTab, currentTab}: IHeaderProps) => {
                     Trades
                 </h3>
 
-                {Object.keys(TABS).map((key: string) => (
-                    <h3
-                        key={key}
-                        className={classnames('pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0', {
-                            'bg-dark-gray': TABS[key] !== currentTab,
-                            'bg-navy': TABS[key] === currentTab,
-                        })}
-                        onClick={onPageClick(Pages.index, TABS[key])}
-                    >
-                        {key}
-                    </h3>
-                ))}
+                <h3
+                    className={getPageClassNames(Pages.import, router, currentTab)}
+                    onClick={onPageClick(Pages.import)}
+                >
+                    Import
+                </h3>
 
                 <h3
                     className={getPageClassNames(Pages.gains, router, currentTab)}

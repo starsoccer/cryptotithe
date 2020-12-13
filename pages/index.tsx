@@ -10,13 +10,11 @@ import integrityCheck from '@utils/integrityCheck';
 import Button from '@components/Button';
 import { FileBrowse } from '@components/FileBrowse';
 import Popup from '@components/Popup';
-import { ImportDataTab } from '@components/Tabs/ImportDataTab';
 
 export interface IAppProps {
     savedData: ISavedData;
     updateSaveData: (data: IPartialSavedData, shouldDownload?: boolean) => Promise<boolean>;
     browser: boolean;
-    currentTab: TABS;
 }
 
 export enum TABS {
@@ -47,16 +45,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
     public componentDidMount() {
         if (isSavedDataLoaded(this.props.savedData)) {
             this.loadData(this.props.savedData);
-        }
-    }
-
-    public showCurrentTab = (currentTab: TABS) => {
-        switch (currentTab) {
-            case TABS['Import Data']:
-                return <ImportDataTab
-                    savedData={this.props.savedData}
-                    save={this.props.updateSaveData}
-                />;
         }
     }
 
@@ -118,11 +106,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                             />
                         </div>
                     </Popup>
-                }
-                {!this.state.loadDataPopup &&
-                    <div className='openTab'>
-                        {this.showCurrentTab(this.props.currentTab)}
-                    </div>
                 }
             </div>
         );
