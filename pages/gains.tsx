@@ -1,16 +1,17 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import SavedDataContext from '@contexts/savedData';
+import DownloadContext from '@contexts/download';
 import generateForm8949 from '../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../src/processing/CalculateGains';
 import { addFiatRateToTrades } from '../src/processing/getFiatRate';
 import getYears from '../src/utils/getYears';
 import Button from '@components/Button';
-import { FileDownload, IFileDownloadProps } from '@components/FileDownload';
+import { IFileDownloadProps } from '@components/FileDownload';
 import { GainsPerTradeTable } from '@components/GainsPerTradeTable';
 import Popup from '@components/Popup';
 import TradeDetails from '@components/TradeDetails';
 import { Customize, IYearCalculationMethod } from '@components/Tabs/CalculateGainsTab/Customize.component';
-import { IHoldings, ISavedData, ITrade, ITradeWithGains, ITradeWithFiatRate, IIncomeWithFiatRate } from '@types';
+import { IHoldings, ISavedData, ITrade, ITradeWithGains, ITradeWithFiatRate, IIncomeWithFiatRate, METHOD } from '@types';
 
 function recalculate(
     trades: ITradeWithFiatRate[],
@@ -53,32 +54,18 @@ function recalculate(
 }
 
 const Gains = () => {
-    const {savedData, save} = useContext(SavedDataContext);
+    const {savedData} = useContext(SavedDataContext);
+    const {setDownloadInfo} = useContext(DownloadContext);
     const [filteredTradesWithGains, setFilteredTradesWithGains] = useState<ITradeWithGains[]>([]);
     const [holdings, setHoldings] = useState<IHoldings>(savedData.holdings);
     const [longTermGains, setLongTermGain] = useState<number>(0);
     const [shortTermGains, setShortTermGain] = useState<number>(0);
-    const [years, setYears] = useState<string[]>(getYears(savedData.trades));
+    const [years] = useState<string[]>(getYears(savedData.trades));
     const [yearCalculationMethod, setYearCalculationMethod] = useState<IYearCalculationMethod>({});
-    const [whatIfTrade, setWhatIfTrade] = useState<ITradeWithGains>({});
+    const [whatIfTrade, setWhatIfTrade] = useState<ITradeWithGains | undefined>(undefined);
     const [showWhatIfTrade, setShowWhatIfTrade] = useState(false);
     const [showCustomizeModal, setShowCustomizeModal] = useState(false);
-    const [currentYear, setCurrentYear] = useState(0);
-    const [downloadInfo, setDownloadInfo] = useState<IFileDownloadProps>({
-        fileName: '',
-        data: '',
-        download: false,
-    });
-
-    useEffect(() => {
-        if (downloadInfo.download) {
-          setDownloadInfo({
-            ...downloadInfo,
-            download: false,
-          })
-        }
-      }, [downloadInfo]);
-
+    const [, setCurrentYear] = useState(0);
 
     const onChange = (key: string, extra?: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
         switch (key) {
@@ -130,11 +117,6 @@ const Gains = () => {
                     />
                 </div>
             }
-            <FileDownload
-                data={downloadInfo.data}
-                fileName={downloadInfo.fileName}
-                download={downloadInfo.download}
-            />
             {showCustomizeModal &&
                 <Customize
                     onClose={() => setShowCustomizeModal(false)}

@@ -3,6 +3,7 @@ import '@tachyons/css/tachyons.min.css';
 import '@font-awesome/css/font-awesome.min.css';
 import { AppProps } from 'next/app'
 import SavedDataConext from '@contexts/savedData';
+import DownloadContext from '@contexts/download';
 import { createEmptySavedData } from 'src/mock';
 import { useEffect, useState } from 'react';
 import save from 'src/save';
@@ -19,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [currentTab, setCurrentTab] = useState<TABS>();
   const [downloadInfo, setDownloadInfo] = useState<IFileDownloadProps>({
     data: '',
-    fileName: 'data.json',
+    fileName: '',
     download: false,
   });
   const router = useRouter();
@@ -48,7 +49,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (downloadInfo.download) {
       setDownloadInfo({
         data: '',
-        fileName: 'data.json',
+        fileName: '',
         download: false,
       })
     }
@@ -68,44 +69,45 @@ function MyApp({ Component, pageProps }: AppProps) {
       save: updateSaveData,
       savedData,
     }}>
-      <Header
-        onUpdateTab={setCurrentTab}
-        currentTab={currentTab}
-        save={updateSaveData}
-      />
-      { downloadInfo &&
+      <DownloadContext.Provider value={{
+        downloadInfo,
+        setDownloadInfo,
+      }}>
+        <Header
+          onUpdateTab={setCurrentTab}
+          currentTab={currentTab}
+          save={updateSaveData}
+        />
         <FileDownload
             data={downloadInfo.data}
             fileName={downloadInfo.fileName}
             download={downloadInfo.download}
         />
-      }
+        {fallbackToPortfolio && 
+          <Portfolio
+            {...pageProps}
+            updateSaveData={updateSaveData}
+            savedData={savedData}
+            currentTab={currentTab}
+          />
+        }
 
-      {fallbackToPortfolio && 
-        <Portfolio
-          {...pageProps}
-          updateSaveData={updateSaveData}
-          savedData={savedData}
-          currentTab={currentTab}
-        />
-      }
-
-      {currentTab ?
-        <Index
-          {...pageProps}
-          updateSaveData={updateSaveData}
-          savedData={savedData}
-          currentTab={currentTab}
-        />
-      :
-        <Component
-          {...pageProps}
-          updateSaveData={updateSaveData}
-          savedData={savedData}
-          currentTab={currentTab}
-        />
-      }
-
+        {currentTab ?
+          <Index
+            {...pageProps}
+            updateSaveData={updateSaveData}
+            savedData={savedData}
+            currentTab={currentTab}
+          />
+        :
+          <Component
+            {...pageProps}
+            updateSaveData={updateSaveData}
+            savedData={savedData}
+            currentTab={currentTab}
+          />
+        }
+      </DownloadContext.Provider>
     </SavedDataConext.Provider>
   )
 }

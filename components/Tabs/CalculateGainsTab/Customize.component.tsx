@@ -7,7 +7,7 @@ import { Table } from '../../Table';
 export interface ICustomizeProps {
     onClose: () => void;
     onChange: (key: string, extra?: string) => (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    onGenerate: (yearCalculationMethod: IYearCalculationMethod) => () => void;
+    onGenerate: (yearCalculationMethod: IYearCalculationMethod) => void;
     onForm8949Export: () => void;
     years: string[];
     yearCalculationMethod: IYearCalculationMethod;

@@ -1,5 +1,4 @@
 import {useContext, useState, useEffect} from 'react';
-import { ISavedData } from '@types';
 import { IncomesTable } from '@components/IncomesTable';
 import getYears from '@utils/getYears';
 import getByYear from '../src/processing/getByYear';
