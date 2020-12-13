@@ -1,3 +1,4 @@
+import { addToHoldings } from '../AddToHoldings';
 import clone from 'clone';
 import holdingSelection from '../HoldingSelection';
 import { IHoldings, ITradeWithCostBasis, ITradeWithFiatRate, METHOD } from './../../types';
@@ -35,19 +36,16 @@ export function processTrade(
     );
     newHoldings = result.newHoldings;
 
-    // make sure bought currency key exists in holdings
-    if (!(trade.boughtCurrency in newHoldings)) {
-        newHoldings[trade.boughtCurrency] = [];
-    }
-
     if (trade.soldCurrency === fiatCurrency) {
         // fiat current so add new holdings
-        newHoldings[trade.boughtCurrency].push({
-            amount: trade.amountSold / trade.rate,
-            rateInFiat: trade.fiatRate,
-            date: trade.date,
-            location: trade.exchange,
-        });
+        newHoldings = addToHoldings(
+            newHoldings,
+            trade.boughtCurrency,
+            trade.amountSold / trade.rate,
+            trade.fiatRate,
+            trade.date,
+            trade.exchange,
+        );
     } else {
         let feeFiatCost = 0;
         let amountToAdd = trade.amountSold / trade.rate;
@@ -71,12 +69,14 @@ export function processTrade(
         }
 
         if (amountToAdd > 0.000000001) {
-            newHoldings[trade.boughtCurrency].push({
-                amount: amountToAdd,
-                rateInFiat: trade.fiatRate * trade.rate,
-                date: trade.date,
-                location: trade.exchange,
-            });
+            newHoldings = addToHoldings(
+                newHoldings,
+                trade.boughtCurrency,
+                amountToAdd,
+                trade.fiatRate * trade.rate,
+                trade.date,
+                trade.exchange,
+            );
         }
 
         for (const holding of result.deductedHoldings) {
