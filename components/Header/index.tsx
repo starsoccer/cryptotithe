@@ -1,22 +1,21 @@
 import classnames from 'classnames';
 import { TABS } from '@pages/index';
 import { Settings } from '@components/Tabs/Settings';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import SavedDataConext from '@contexts/savedData';
 
 export interface IHeaderProps {
-    onSettingsClick: () => void;
-    showSettingsPopup: boolean;
     onUpdateTab: (tab: TABS) => void;
     currentTab: TABS;
 }
 
-const Header = ({onUpdateTab, currentTab, onSettingsClick, showSettingsPopup}: IHeaderProps) => {
+const Header = ({onUpdateTab, currentTab}: IHeaderProps) => {
     const {savedData, save} = useContext(SavedDataConext);
+    const [showSettingsPopup, setShowSettingsPopup] = useState(false);
 
     return (
         <div className="heaader">
-            <i className='fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray' onClick={onSettingsClick}/>
+            <i className='fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray' onClick={() => setShowSettingsPopup(true)}/>
             <div className='flex bg-dark-gray h2'>
                 {Object.keys(TABS).map((key: string) => <h3
                     key={key}
@@ -32,7 +31,7 @@ const Header = ({onUpdateTab, currentTab, onSettingsClick, showSettingsPopup}: I
                 <Settings
                     settings={savedData.settings}
                     onSave={save}
-                    onClose={onSettingsClick}
+                    onClose={() => setShowSettingsPopup(false)}
                 />
             }
         </div>

@@ -43,7 +43,6 @@ interface IAppState {
     loadDataPopup: boolean;
     fileBrowseOpen: boolean;
     downloadProps: IFileDownloadProps;
-    settingsPopup: boolean;
 }
 
 const isSavedDataLoaded = (data: ISavedData) => data && data.trades.length + Object.keys(data.holdings).length > 0;
@@ -65,7 +64,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                 fileName: 'data.json',
                 download: false,
             },
-            settingsPopup: false,
             savedData: showLoadDataPopup ? createEmptySavedData() : props.savedData,
         };
     }
@@ -169,10 +167,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
         this.setState({fileBrowseOpen: true});
     }
 
-    public settingsPopup = () => {
-        this.setState({settingsPopup: !this.state.settingsPopup});
-    }
-
     public createNewSave = () => {
         this.setState({
             savedData: createEmptySavedData(),
@@ -209,10 +203,8 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                         />
                     }
                     <Header
-                        onSettingsClick={this.settingsPopup}
                         onUpdateTab={this.updateTab}
                         currentTab={this.state.currentTab}
-                        showSettingsPopup={this.state.settingsPopup}
                         save={this.saveData}
                     />
                     {!this.state.loadDataPopup &&
