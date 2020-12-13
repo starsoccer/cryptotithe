@@ -6,7 +6,7 @@ import SavedDataConext from '@contexts/savedData';
 
 export interface IHeaderProps {
     onUpdateTab: (tab: TABS) => void;
-    currentTab: TABS;
+    currentTab?: TABS;
 }
 
 const Header = ({onUpdateTab, currentTab}: IHeaderProps) => {

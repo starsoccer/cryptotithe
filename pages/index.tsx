@@ -14,16 +14,16 @@ import { FileDownload, IFileDownloadProps } from '@components/FileDownload';
 import Popup from '@components/Popup';
 import { CalculateGainsTab } from '@components/Tabs/CalculateGainsTab';
 import { ImportDataTab } from '@components/Tabs/ImportDataTab';
-import { PortfolioTab } from '@components/Tabs/PortfolioTab';
 import { UtilityTab } from '@components/Tabs/UtilityTab';
 import { ViewTradesTab } from '@components/Tabs/ViewTradesTab';
 import CalculateIncomes from '@components/Tabs/CalculateIncomesTab';
-import SavedDataConext from '@contexts/savedData';
-import Header from '@components/Header';
+import Router from 'next/router';
 
 export interface IAppProps {
     savedData: ISavedData;
+    updateSaveData: (data: IPartialSavedData, shouldDownload?: boolean) => Promise<boolean>;
     browser: boolean;
+    currentTab: TABS;
 }
 
 export enum TABS {
@@ -36,13 +36,10 @@ export enum TABS {
 }
 
 interface IAppState {
-    savedData: ISavedData;
     processing: boolean;
     duplicateTrades: ITradeWithDuplicateProbability[];
-    currentTab: TABS;
     loadDataPopup: boolean;
     fileBrowseOpen: boolean;
-    downloadProps: IFileDownloadProps;
 }
 
 const isSavedDataLoaded = (data: ISavedData) => data && data.trades.length + Object.keys(data.holdings).length > 0;
@@ -51,20 +48,17 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
     public constructor(props: IAppProps) {
         super(props);
 
-        const showLoadDataPopup = true || props.browser || !isSavedDataLoaded(props.savedData);
-
         this.state = {
             processing: false,
             duplicateTrades: [],
             currentTab: TABS.Home,
             fileBrowseOpen: false,
-            loadDataPopup: showLoadDataPopup,
+            loadDataPopup: true,
             downloadProps: {
                 data: '',
                 fileName: 'data.json',
                 download: false,
             },
-            savedData: showLoadDataPopup ? createEmptySavedData() : props.savedData,
         };
     }
 
@@ -74,59 +68,26 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
         }
     }
 
-    public saveData = async (data: IPartialSavedData): Promise<boolean> => {
-        const savedData = save(data, this.state.savedData);
-        try {
-            this.setState({
-                downloadProps: {
-                    data: JSON.stringify(savedData),
-                    fileName: 'data.json',
-                    download: true,
-                },
-                savedData,
-            });
-            return true;
-        } catch (err) {
-            alert(err);
-            return false;
-        }
-    }
-
-    public componentDidUpdate() {
-        if (this.state.downloadProps.download) {
-            this.setState({
-                downloadProps: {
-                    data: '',
-                    fileName: 'data.json',
-                    download: false,
-                },
-            });
-        }
-    }
-
     public showCurrentTab = (currentTab: TABS) => {
         switch (currentTab) {
             case TABS['Import Data']:
                 return <ImportDataTab
-                    savedData={this.state.savedData}
-                    save={this.saveData}
+                    savedData={this.props.savedData}
+                    save={this.props.updateSaveData}
                 />;
             case TABS['View Trades']:
-                return <ViewTradesTab savedData={this.state.savedData} save={this.saveData}/>;
+                return <ViewTradesTab savedData={this.props.savedData} save={this.props.updateSaveData}/>;
             case TABS['Calculate Gains']:
-                return <CalculateGainsTab savedData={this.state.savedData}/>;
+                return <CalculateGainsTab savedData={this.props.savedData}/>;
             case TABS['Calculate Incomes']:
-                return <CalculateIncomes savedData={this.state.savedData} />;
+                return <CalculateIncomes savedData={this.props.savedData} />;
             case TABS.Utility:
-                return <UtilityTab savedData={this.state.savedData} save={this.saveData}/>;
+                return <UtilityTab savedData={this.props.savedData} save={this.props.updateSaveData}/>;
             case TABS.Home:
             default:
-                return <PortfolioTab savedData={this.state.savedData} save={this.saveData}/>;
+                Router.push('/portfolio');
+                return null;
         }
-    }
-
-    public updateTab = (newTab: TABS) => {
-        this.setState({currentTab: newTab});
     }
 
     public changePopupState = () => {
@@ -139,6 +100,7 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                 const parsedData: ISavedData = JSON.parse(data);
                 this.loadData(parsedData);
             } catch (ex) {
+                console.log(ex);
                 alert('Unable to parse saved data');
             }
         }
@@ -152,11 +114,8 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                 alert('Integrity Check Failed. Your save file might be corrupt or tampered with.');
             }
             const shouldSave = savedDataConverter(savedData);
-            if (shouldSave) {
-                this.saveData(savedData);
-            }
+            this.props.updateSaveData(savedData, shouldSave);
             this.setState({
-                savedData,
                 loadDataPopup: false,
             });
         }
@@ -168,52 +127,35 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
     }
 
     public createNewSave = () => {
+        this.props.updateSaveData(createEmptySavedData());
         this.setState({
-            savedData: createEmptySavedData(),
             loadDataPopup: false,
         });
     }
 
     public render() {
         return (
-            <SavedDataConext.Provider value={{
-                save: this.saveData,
-                savedData: this.state.savedData,
-            }}>
-                <div className='app'>
-                    {this.state.loadDataPopup &&
-                        <Popup onClose={this.changePopupState}>
-                            <div>
-                                <h1>Welcome to CryptoTithe</h1>
-                                <h5>Great Description to be put here</h5>
-                                <Button label='Load Existing Data' onClick={this.openFileBrowse}/>
-                                <Button label='Create Save Data' onClick={this.createNewSave}/>
-                                <FileBrowse
-                                    onLoaded={this.parseData}
-                                    browse={this.state.fileBrowseOpen}
-                                />
-                            </div>
-                        </Popup>
-                    }
-                    { this.state.downloadProps &&
-                        <FileDownload
-                            data={this.state.downloadProps.data}
-                            fileName={this.state.downloadProps.fileName}
-                            download={this.state.downloadProps.download}
-                        />
-                    }
-                    <Header
-                        onUpdateTab={this.updateTab}
-                        currentTab={this.state.currentTab}
-                        save={this.saveData}
-                    />
-                    {!this.state.loadDataPopup &&
-                        <div className='openTab'>
-                            {this.showCurrentTab(this.state.currentTab)}
+            <div className='app'>
+                {this.state.loadDataPopup &&
+                    <Popup onClose={this.changePopupState}>
+                        <div>
+                            <h1>Welcome to CryptoTithe</h1>
+                            <h5>Great Description to be put here</h5>
+                            <Button label='Load Existing Data' onClick={this.openFileBrowse}/>
+                            <Button label='Create Save Data' onClick={this.createNewSave}/>
+                            <FileBrowse
+                                onLoaded={this.parseData}
+                                browse={this.state.fileBrowseOpen}
+                            />
                         </div>
-                    }
-                </div>
-            </SavedDataConext.Provider>
+                    </Popup>
+                }
+                {!this.state.loadDataPopup &&
+                    <div className='openTab'>
+                        {this.showCurrentTab(this.props.currentTab)}
+                    </div>
+                }
+            </div>
         );
     }
 }
