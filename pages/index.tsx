@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { createEmptySavedData } from '../src/mock';
-import save from '../src/save';
 import savedDataConverter from '../src/savedDataConverter';
 import {
     IPartialSavedData,
@@ -10,14 +9,11 @@ import {
 import integrityCheck from '@utils/integrityCheck';
 import Button from '@components/Button';
 import { FileBrowse } from '@components/FileBrowse';
-import { FileDownload, IFileDownloadProps } from '@components/FileDownload';
 import Popup from '@components/Popup';
 import { CalculateGainsTab } from '@components/Tabs/CalculateGainsTab';
 import { ImportDataTab } from '@components/Tabs/ImportDataTab';
 import { UtilityTab } from '@components/Tabs/UtilityTab';
-import { ViewTradesTab } from '@components/Tabs/ViewTradesTab';
 import CalculateIncomes from '@components/Tabs/CalculateIncomesTab';
-import Router from 'next/router';
 
 export interface IAppProps {
     savedData: ISavedData;
@@ -27,8 +23,6 @@ export interface IAppProps {
 }
 
 export enum TABS {
-    Home = 'HOME',
-    'View Trades' = 'VIEW_TRADES',
     'Import Data' = 'IMPORT_DATA',
     'Calculate Gains' = 'CALCULATE_GAINS',
     'Calculate Incomes' = 'CALCULATE_INCOMES',
@@ -51,7 +45,6 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
         this.state = {
             processing: false,
             duplicateTrades: [],
-            currentTab: TABS.Home,
             fileBrowseOpen: false,
             loadDataPopup: true,
             downloadProps: {
@@ -75,18 +68,12 @@ export default class rootElement extends React.Component<IAppProps, IAppState> {
                     savedData={this.props.savedData}
                     save={this.props.updateSaveData}
                 />;
-            case TABS['View Trades']:
-                return <ViewTradesTab savedData={this.props.savedData} save={this.props.updateSaveData}/>;
             case TABS['Calculate Gains']:
                 return <CalculateGainsTab savedData={this.props.savedData}/>;
             case TABS['Calculate Incomes']:
                 return <CalculateIncomes savedData={this.props.savedData} />;
             case TABS.Utility:
                 return <UtilityTab savedData={this.props.savedData} save={this.props.updateSaveData}/>;
-            case TABS.Home:
-            default:
-                Router.push('/portfolio');
-                return null;
         }
     }
 

@@ -11,6 +11,8 @@ import Header from '@components/Header';
 import {TABS} from './index';
 import { useRouter } from 'next/router';
 import { FileDownload, IFileDownloadProps } from '@components/FileDownload';
+import Portfolio from '@pages/portfolio';
+import Index from './index';
 
 function MyApp({ Component, pageProps }: AppProps) { 
   const [savedData, setSavedData] = useState(createEmptySavedData());
@@ -50,16 +52,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         download: false,
       })
     }
-  }, [downloadInfo])
+  }, [downloadInfo]);
 
-  const updateCurrentTab = (tab: TABS) => {
-    setCurrentTab(tab);
-    if (router.pathname = '/portfolio') {
-      router.push('/');
-    }
-  }
-
-
+  const fallbackToPortfolio = (!currentTab && router.pathname !== '/trades' && router.pathname === '/');
 
   return (
     <SavedDataConext.Provider value={{
@@ -67,7 +62,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       savedData,
     }}>
       <Header
-        onUpdateTab={updateCurrentTab}
+        onUpdateTab={setCurrentTab}
         currentTab={currentTab}
         save={updateSaveData}
       />
@@ -78,12 +73,32 @@ function MyApp({ Component, pageProps }: AppProps) {
             download={downloadInfo.download}
         />
       }
-      <Component
-        {...pageProps}
-        updateSaveData={updateSaveData}
-        savedData={savedData}
-        currentTab={currentTab}
-      />
+
+      {fallbackToPortfolio && 
+        <Portfolio
+          {...pageProps}
+          updateSaveData={updateSaveData}
+          savedData={savedData}
+          currentTab={currentTab}
+        />
+      }
+
+      {currentTab ?
+        <Index
+          {...pageProps}
+          updateSaveData={updateSaveData}
+          savedData={savedData}
+          currentTab={currentTab}
+        />
+      :
+        <Component
+          {...pageProps}
+          updateSaveData={updateSaveData}
+          savedData={savedData}
+          currentTab={currentTab}
+        />
+      }
+
     </SavedDataConext.Provider>
   )
 }

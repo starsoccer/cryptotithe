@@ -5,6 +5,7 @@ export * from './locations';
 export * from './transactions';
 export * from './import';
 export * from './income';
+export * from './pages';
 
 export interface IDailyBalance {
     date: Date;

@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { calculateGains } from '../src/processing/CalculateGains';
 import { calculateInDepthHoldingsValueCurrently } from '../src/processing/CalculateHoldingsValue';
-import { IHoldingsValue, IHoldingsValueComplex, IPartialSavedData, ISavedData } from '../src/types';
-import Button from '../components/Button';
-import { Chart } from '../components/Chart';
-import { Loader } from '../components/Loader';
-import { PortfolioTable } from '../components/PortfolioTable';
+import { IHoldingsValueComplex, IPartialSavedData, ISavedData } from '@types';
+import Button from '@components/Button';
+import { Chart } from '@components/Chart';
+import { Loader } from '@components/Loader';
+import { PortfolioTable } from '@components/PortfolioTable';
 import SavedDataConext from '@contexts/savedData';
 
 export interface IPortfolioState {
@@ -17,14 +17,13 @@ export interface IPortfolioState {
 
 const Portfolio = ({}) => {
     const {savedData, save} = useContext(SavedDataConext);
-    const [holdingsValue, setHoldingsValue] = useState<IHoldingsValueComplex>(undefined);
+    const [holdingsValue, setHoldingsValue] = useState<IHoldingsValueComplex>();
     const [series, setSeries] = useState<number[]>([]);
     const [currencies, setCurrencies] = useState<string[]>([]);
 
-
     useEffect(() => {
         calculatePortfolioData(savedData, setHoldingsValue, setSeries, setCurrencies)
-    }, []);
+    }, [savedData]);
 
     return (
         <div className='portfolio'>
