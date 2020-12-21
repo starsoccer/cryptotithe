@@ -74,7 +74,7 @@ export default class TradeDetails<TradeType extends ITrade> extends
             switch (key) {
                 case 'boughtCurrency':
                 case 'soldCurrency':
-                    if (!validator.isAlpha(this.state[key])) {
+                    if (!validator.isAlphanumeric(this.state[key])) {
                         errors.push(`${key} must consist of only english letters`);
                         break;
                     }
