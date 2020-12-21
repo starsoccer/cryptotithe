@@ -37,5 +37,28 @@ export async function getClosestHourPrice(
 }
 
 export async function getClosestHourPriceForTrade(trade: ITrade, fiatCurrency: string): Promise<IHourlyPriceData> {
-    return getClosestHourPrice(trade.soldCurrency, fiatCurrency, trade.date);
+    try {
+        const result = await getClosestHourPrice(trade.soldCurrency, fiatCurrency, trade.date);
+        return result;
+    } catch {
+        // failed to get rate try to convert from bought currency
+        const rateData = await getClosestHourPrice(trade.boughtCurrency, fiatCurrency, trade.date);
+        return convertToInverseRate(trade, rateData);
+    }
 }
+
+const convertToInverseRate = async (trade: ITrade, rateData: IHourlyPriceData): Promise<IHourlyPriceData>  => {
+    const newRateData = {...rateData};
+    const rateKeys = ['low', 'high', 'open', 'close'];
+    for (const key of rateKeys) {
+        newRateData[key] = getInverseRate(trade, newRateData[key]);
+    }
+
+    return newRateData;
+}
+
+const getInverseRate = (trade: ITrade, rate: number) => (
+    (
+        trade.amountSold / trade.rate
+    ) * rate / trade.amountSold
+);
