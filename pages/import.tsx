@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import SavedDataContext from '@contexts/savedData';
 import { processData } from '../src/parsers';
 import duplicateCheck from '../src/processing/DuplicateCheck';
@@ -124,12 +124,6 @@ const Import = () => {
         data: '',
     });
 
-    console.log(importDetails);
-
-    useEffect(() => {
-
-    });
-
     return (
         <div className='import-data'>
             {alertData && Object.keys(alertData).length > 0 &&
@@ -204,7 +198,6 @@ const onImportDetailsChange = (
     key: string,
     value: string,
 ) => {
-    console.log(importDetails, key, value);
     const newImportDetails: IImport = { ...importDetails };
     switch (key) {
         case 'location':
