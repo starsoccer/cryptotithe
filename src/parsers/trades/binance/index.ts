@@ -18,14 +18,45 @@ interface IBinance {
     'Fee Coin': string;
 }
 
-function getPairs(market: string) {
+function getPairs(market: string, currentFeeCoin: string, feeCoins: string[]) {
     const pairs = [];
+    // if length is 6 assume is an even 3 split
     if (market.length === 6) {
         pairs.push(market.substr(0, 3));
         pairs.push(market.substr(3, 3));
     } else {
-        pairs.push(market.substr(0, 4));
-        pairs.push(market.substr(4, 3));
+        let feeCurrency = currentFeeCoin;
+        let feeCoinLocation = market.indexOf(feeCurrency);
+
+        // if fee coin isnt found
+        if (feeCoinLocation === -1) {
+            let found = false;
+
+            for (const feeCoin of feeCoins) {
+                if (market.includes(feeCoin)) {
+                    found = true;
+                    feeCurrency = feeCoin;
+                    feeCoinLocation = market.indexOf(feeCurrency);
+                    break;
+                }
+            }
+
+            // uf none found fallback to old method
+            if (!found) {
+                pairs.push(market.substr(0, 4));
+                pairs.push(market.substr(4, 3));
+                return pairs;
+            }
+        }
+
+        // if fee coin is first to appear split at end
+        if (feeCoinLocation === 0) {
+            pairs.push(market.substr(0, feeCurrency.length));
+            pairs.push(market.substr(feeCurrency.length));
+        } else {
+            pairs.push(market.substr(0, feeCoinLocation));
+            pairs.push(market.substr(feeCoinLocation));
+        }
     }
     return pairs;
 }
@@ -33,8 +64,9 @@ function getPairs(market: string) {
 export async function processData(importDetails: IImport): Promise<ITrade[]> {
     const data: IBinance[] = await getCSVData(importDetails.data) as IBinance[];
     const internalFormat: ITrade[] = [];
+    const feeCoins = data.map((trade) => trade['Fee Coin']);
     for (const trade of data) {
-        const pair: string[] = getPairs(trade.Market);
+        const pair: string[] = getPairs(trade.Market, trade['Fee Coin'], feeCoins);
         const tradeToAdd: IPartialTrade = {};
         switch (trade.Type) {
             case BinanceOrderType.BUY:
