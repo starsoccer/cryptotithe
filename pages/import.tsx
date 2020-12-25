@@ -31,6 +31,7 @@ import { Loader } from '@components/Loader';
 import TradeDetails from '@components/TradeDetails';
 import { ImportSelector } from '@components/Tabs/ImportDataTab/ImportSelector';
 import { ImportTable } from '@components/Tabs/ImportDataTab/ImportTable';
+import IncomeDetails from '@components/IncomeDetails';
 
 interface IAlertData {
     message: string;
@@ -113,6 +114,7 @@ const processTrades = async (
 const Import = () => {
     const {savedData, save} = useContext(SavedDataContext);
     const [addTrade, setAddTrade] = useState(false);
+    const [showNewIncome, setShowNewIncome] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [fileBrowseOpen, setFileBrowseOpen] = useState(false);
     const [processedData, setProcessedData] = useState<ProcessedDataTypes>([]);
@@ -137,6 +139,7 @@ const Import = () => {
                 onInputChange={(key: string) => (e: React.ChangeEvent<HTMLInputElement>) => onImportDetailsChange(importDetails, setImportDetails, key, e.currentTarget.value)}
                 importDetails={importDetails}
             />
+
             { addTrade &&
                 <TradeDetails
                     onSubmit={onAddTrade(processedData as ITrade[], setProcessedData, setAddTrade)}
@@ -144,6 +147,13 @@ const Import = () => {
                     className='cf'
                 />
             }
+
+            { showNewIncome &&
+                <IncomeDetails
+                    onSave={onAddIncome(processedData as IIncome[], setProcessedData, setShowNewIncome)}
+                />
+            }
+
             <div className='flex justify-around pt2'>
                 <Button onClick={() => setFileBrowseOpen(true)} label='Import Data'/>
                 <FileBrowse
@@ -158,9 +168,15 @@ const Import = () => {
                     )}
                     browse={fileBrowseOpen}
                 />
+
                 {importDetails.type == ImportType.TRADES &&
                     <Button onClick={() => setAddTrade(!addTrade)} label='Add Trade'/>
                 }
+
+                {importDetails.type == ImportType.INCOME &&
+                    <Button onClick={() => setShowNewIncome(!showNewIncome)} label='Add Income'/>
+                }
+
                 <Button
                     onClick={() => processTrades(
                         duplicateData,
@@ -231,6 +247,17 @@ const onAddTrade = (
     newTrades.push(trade);
     setProcessedData(newTrades);
     setShowAddTrade(false);
+};
+
+const onAddIncome = (
+    processedData: IIncome[],
+    setProcessedData: (processedDataa: IIncome[]) => void,
+    setShowNewIncome: (showNewIncome: boolean) => void
+) => (income: IIncome) => {
+    const newIncomes = processedData as IIncome[];
+    newIncomes.push(income);
+    setProcessedData(newIncomes);
+    setShowNewIncome(false);
 };
 
 const updateDuplicateStatus = (duplicateData: DuplicateDataTypes, setDuplicateData: (duplicateData: DuplicateDataTypes) => void) => (tradeID: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
