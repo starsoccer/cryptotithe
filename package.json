@@ -54,6 +54,7 @@
         "typescript": "^4.0.5"
     },
     "jest": {
+        "testTimeout": 30000,
         "transform": {
             "^.+\\.tsx?$": "ts-jest"
         },

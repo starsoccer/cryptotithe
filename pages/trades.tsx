@@ -15,7 +15,7 @@ const defaultOptions = {
     currency: ALL_CURRENCIES,
 };
 
-const Trades = ({}) => {
+const Trades = () => {
     const {savedData, save} = useContext(SavedDataContext);
     const [isProcessing, setIsProcessing] = useState(false);
     const [showTradeTable, setShowTradeTable] = useState(false);

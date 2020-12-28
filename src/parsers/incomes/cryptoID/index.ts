@@ -17,11 +17,11 @@ interface ICryptoID {
 }
 
 export async function processData(importDetails: IImport): Promise<IIncome[]> {
-    let cleanedData = importDetails.data.substr(importDetails.data.indexOf('Transaction'));
+    const cleanedData = importDetails.data.substr(importDetails.data.indexOf('Transaction'));
     const data: ICryptoID[] = await getCSVData(cleanedData) as ICryptoID[];
     const internalFormat: IIncome[] = [];
     for (const income of data) {
-        let incomeToAdd: Partial<IIncome> = {
+        const incomeToAdd: Partial<IIncome> = {
             amount: parseFloat(income.Amount),
             currency: importDetails.currency,
             transactionID: income.Transaction,

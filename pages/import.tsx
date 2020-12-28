@@ -47,7 +47,7 @@ const processTrades = async (
     importDetails: IImport,
     savedData: ISavedData,
     setProcessing: (processing: boolean) => void,
-    save: (saveData: IPartialSavedData) => Promise<Boolean>,
+    save: (saveData: IPartialSavedData) => Promise<boolean>,
     setDuplicateData: (duplicateData: DuplicateDataTypes) => void,
     setAlertData: (alertData: IAlertData) => void,
     setProcessedData: (processedData: ProcessedDataTypes) => void,
@@ -224,6 +224,7 @@ const onImportDetailsChange = (
             switch (newImportDetails.type) {
                 case ImportType.INCOME:
                     newImportDetails.location = IncomeImportTypes.cryptoID;
+                break;
                 default:
             }
             break;

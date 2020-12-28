@@ -157,11 +157,19 @@ describe('Add fiat Rate', () => {
             transactionFeeCurrency: 'LTC',
         };
 
-        const hourLowTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Low']);
-        const hourHighTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour High']);
-        const hourAvgTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Avg']);
-        const hourCloseTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Close']);
-        const hourOpenTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Open']);
+        const [
+            hourLowTrade,
+            hourHighTrade,
+            hourAvgTrade,
+            hourCloseTrade,
+            hourOpenTrade,
+        ] = await Promise.all([
+            addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Low']),
+            addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour High']),
+            addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Avg']),
+            addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Close']),
+            addFiatRateToTrades([trade], 'USD', FiatRateMethod['Hour Open']),
+        ]);
 
         expect(hourLowTrade[0].fiatRate).toBeDefined();
         expect(hourHighTrade[0].fiatRate).toBeDefined();
@@ -192,11 +200,13 @@ describe('Add fiat Rate', () => {
             transactionFeeCurrency: 'LTC',
         };
 
-        const dayAvgTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average']);
-        const dayAvgMiddleTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average Middle']);
-        const dayAvgVolumeTrade = await addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average Volume']);
+        const [dayAvgTrade, dayAvgMiddleTrade, dayAvgVolumeTrade] = await Promise.all([
+            addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average']),
+            addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average Middle']),
+            addFiatRateToTrades([trade], 'USD', FiatRateMethod['Day Average Volume']),
+        ]);
 
-        expect(dayAvgTrade[0].fiatRate).toBeDefined();
+        expect(await dayAvgTrade[0].fiatRate).toBeDefined();
         expect(dayAvgMiddleTrade[0].fiatRate).toBeDefined();
         expect(dayAvgVolumeTrade[0].fiatRate).toBeDefined();
         expect(dayAvgTrade[0].fiatRate).toBeGreaterThan(0);

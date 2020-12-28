@@ -26,7 +26,7 @@ export function calculateGains(
     let shortTermGain = 0;
     let longTermGain = 0;
     let newHoldings: IHoldings = holdings;
-    let incomesToApply = clone(incomes);
+    const incomesToApply = clone(incomes);
     for (const trade of trades) {
         while (incomesToApply.length && trade.date > incomesToApply[0].date) {
             const income = incomesToApply[0];

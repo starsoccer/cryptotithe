@@ -64,7 +64,7 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
             trades = trades.slice(this.props.trades.length - this.state.page * tradesPerPage);
         }
 
-        let incomes = clone(this.props.savedData.incomes);
+        const incomes = clone(this.props.savedData.incomes);
         return (trades.map((trade, index) => {
             const incomesToApply: IIncomeWithFiatRate[] = [];
             while (incomes.length && trade.date > incomes[0].date) {

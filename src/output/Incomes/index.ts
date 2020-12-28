@@ -25,4 +25,4 @@ export default function output(
         income.value.toFixed(2),
     ]).join('\n')]);
     return csvData.join('\n');
-};
+}

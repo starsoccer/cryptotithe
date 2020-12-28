@@ -15,7 +15,7 @@ export interface IPortfolioState {
 }
 
 
-const Portfolio = ({}) => {
+const Portfolio = () => {
     const {savedData, save} = useContext(SavedDataConext);
     const [holdingsValue, setHoldingsValue] = useState<IHoldingsValueComplex>();
     const [series, setSeries] = useState<number[]>([]);

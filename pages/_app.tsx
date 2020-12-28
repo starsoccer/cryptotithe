@@ -28,7 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     download: false,
   });
 
-  const updateSaveData = async (data: IPartialSavedData, shouldDownload: boolean = true): Promise<boolean> => {
+  const updateSaveData = async (data: IPartialSavedData, shouldDownload = true): Promise<boolean> => {
     const newSavedData = save(data, savedData);
 
     if (shouldDownload) {

@@ -1,6 +1,6 @@
 import Button from "@components/Button";
 import { IIncome } from "@types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createID } from "src/parsers/utils";
 
 export interface IIncomeDetailsProps {
