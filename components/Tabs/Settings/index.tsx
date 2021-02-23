@@ -1,8 +1,7 @@
+import { Button, Dialog, FormGroup, InputGroup, Intent, HTMLSelect, Divider } from '@blueprintjs/core';
 import * as React from 'react';
 import { FiatRateMethod, IPartialSavedData, ISettings, METHOD } from '../../../src/types';
-import Button from '../../Button';
 import CalculationMethodSelect from '../../CalculationMethodSelect';
-import Popup from '../../Popup';
 export interface ISettingsProps {
     settings: ISettings;
     onSave: (savedData: IPartialSavedData) => Promise<boolean>;
@@ -63,42 +62,73 @@ export class Settings extends React.Component<ISettingsProps, ISettings> {
 
     public render() {
         return (
-            <Popup onClose={this.props.onClose}>
-                <div>
-                    <h1 className='mt1 mb1'>Settings</h1>
-                    <hr />
-                    <div>
-                        <label className='pr1'>Fiat Rate Calculation Method:</label>
-                        <select
+            <Dialog
+                title="Settings"
+                icon="cog"
+                isOpen={true}
+                onClose={this.props.onClose}
+            >
+                <div className="pt2 ph2">
+                    <FormGroup
+                        helperText="Chose which calculation method to use"
+                        label="Fiat Rate Calculate Method"
+                        labelFor="fiatRateMethod"
+                        intent={Intent.PRIMARY}
+                        inline={true}
+                    >
+                        <HTMLSelect 
                             defaultValue={this.state.fiatRateMethod}
-                            onChange={this.onChange('fiatRateMethod')}>
+                            onChange={this.onChange('fiatRateMethod')}
+                        >
                             {Object.keys(FiatRateMethod).map((method) =>
                                 <option key={method} value={FiatRateMethod[method]}>{method}</option>,
                             )}
-                        </select>
-                    </div>
-                    <div>
-                        <label className='pr1'>Fiat Rate Calculation Method:</label>
-                        <input
-                            type='text'
-                            defaultValue={this.state.fiatCurrency}
+                        </HTMLSelect>
+                    </FormGroup>
+                    <FormGroup
+                        helperText="Chose which currency to consider base"
+                        label="Fiat Currency"
+                        labelFor="fiatCurrency"
+                        intent={Intent.PRIMARY}
+                        inline={true}
+                    >
+                        <InputGroup
+                            type="text"
                             onChange={this.onChange('fiatCurrency')}
+                            defaultValue={this.state.fiatCurrency}
                         />
-                    </div>
-                    <div>
-                        <label className='pr1'>Fiat Gain Calculation Method:</label>
+                    </FormGroup>
+                    <FormGroup
+                        helperText="Chose which method to calculate fiat gains"
+                        label="Fiat Gain Calculate Method"
+                        labelFor="fiatCurrency"
+                        intent={Intent.PRIMARY}
+                        inline={true}
+                    >
                         <CalculationMethodSelect
                             onChange={this.onChange('gainCalculationMethod')}
                             selectedMethod={this.state.gainCalculationMethod}
                         />
-                    </div>
-                    <hr />
+                    </FormGroup>
+                    <Divider />
                     <div className='flex justify-around'>
-                        <Button label='Save' onClick={this.onSettingsSave}/>
-                        <Button label='Rehash/Refresh Save Data' onClick={this.onRefresh}/>
+                        <Button
+                            onClick={this.onSettingsSave}
+                            intent={Intent.PRIMARY}
+                            icon="saved"
+                        >
+                            Save
+                        </Button>
+                        <Button
+                            onClick={this.onRefresh}
+                            intent={Intent.WARNING}
+                            icon="refresh"
+                        >
+                            Refresh Save Data
+                        </Button>
                     </div>
                 </div>
-            </Popup>
+            </Dialog>
         );
     }
 }

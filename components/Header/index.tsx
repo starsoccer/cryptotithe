@@ -5,6 +5,7 @@ import SavedDataConext from '@contexts/savedData';
 import { Pages } from '@types';
 import { NextRouter, useRouter } from 'next/router';
 import Link from 'next/link';
+import { Icon } from '@blueprintjs/core';
 
 const getPageClassNames = (page: Pages, router: NextRouter) => classnames(
     'pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0',
@@ -20,8 +21,7 @@ const Header = () => {
     const router = useRouter();
 
     return (
-        <div className="heaader">
-            <i className='fa fa-cog fa-2x moon-gray fr pr1 bg-dark-gray' onClick={() => setShowSettingsPopup(true)}/>
+        <div className="header bg-dark-gray flex justify-between">
             <div className='flex bg-dark-gray h2'>
                 <Link
                     href={Pages.index}
@@ -77,6 +77,12 @@ const Header = () => {
                         Utility
                     </h3>
                 </Link>
+            </div>
+            <div className="flex grow pr2" onClick={() => setShowSettingsPopup(true)}>
+                <h3 className="pr2 moon-gray mt1 mb0">
+                    Settings
+                </h3>
+                <Icon className="pt1 moon-gray" icon="cog" iconSize={20}/>
             </div>
 
             { showSettingsPopup &&
