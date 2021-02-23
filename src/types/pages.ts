@@ -4,5 +4,6 @@ export enum Pages {
     import = '/import',
     gains = '/gains',
     incomes = '/incomes',
-    utility = '/utility'
+    utility = '/utility',
+    portfolio = '/portfolio'
 }

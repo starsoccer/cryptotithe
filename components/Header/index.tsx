@@ -27,7 +27,7 @@ const Header = () => {
                     href={Pages.index}
                 >
                     <h3
-                        className={getPageClassNames(Pages.index, router)}
+                        className={getPageClassNames(Pages.portfolio, router)}
                     >
                         Home
                     </h3>
