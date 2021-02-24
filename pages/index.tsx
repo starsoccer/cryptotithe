@@ -2,7 +2,7 @@ import { FileBrowse } from '@components/FileBrowse';
 import savedDataConverter from '../src/savedDataConverter';
 import integrityCheck from '@utils/integrityCheck';
 import { Dialog, Button, Intent } from "@blueprintjs/core";
-import { IHoldingsValueComplex, ISavedData, Pages } from '@types';
+import { ISavedData, Pages } from '@types';
 import { useState } from 'react';
 import { createEmptySavedData } from 'src/mock';
 import { useRouter } from 'next/router';

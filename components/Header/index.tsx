@@ -1,19 +1,9 @@
-import classnames from 'classnames';
 import { Settings } from '@components/Tabs/Settings';
 import { useContext, useState } from 'react';
 import SavedDataConext from '@contexts/savedData';
 import { Pages } from '@types';
-import { NextRouter, useRouter } from 'next/router';
-import Link from 'next/link';
-import { Icon } from '@blueprintjs/core';
-
-const getPageClassNames = (page: Pages, router: NextRouter) => classnames(
-    'pr2 pl2 ml2 mr2 moon-gray grow mt1 mb0',
-    {
-        'bg-dark-gray': page !== router.pathname,
-        'bg-navy': page === router.pathname,
-    }
-);
+import { useRouter } from 'next/router';
+import { Icon, Tab, Tabs } from '@blueprintjs/core';
 
 const Header = () => {
     const {savedData, save} = useContext(SavedDataConext);
@@ -21,70 +11,33 @@ const Header = () => {
     const router = useRouter();
 
     return (
-        <div className="header bg-dark-gray flex justify-between">
-            <div className='flex bg-dark-gray h2'>
-                <Link
-                    href={Pages.index}
-                >
-                    <h3
-                        className={getPageClassNames(Pages.portfolio, router)}
-                    >
-                        Home
-                    </h3>
-                </Link>
-                <Link
-                    href={Pages.trades}
-                >
-                    <h3
-                        className={getPageClassNames(Pages.trades, router)}
-                    >
-                        Trades
-                    </h3>
-                </Link>
-                <Link
-                    href={Pages.import}
-                >
-                    <h3
-                        className={getPageClassNames(Pages.import, router)}
-                    >
-                        Import
-                    </h3>
-                </Link>
-                <Link
-                    href={Pages.gains}
-                >
-                    <h3
-                        className={getPageClassNames(Pages.gains, router)}
-                    >
-                        Gains
-                    </h3>
-                </Link>
-                <Link
-                    href={Pages.incomes}
-                >
-                    <h3
-                        className={getPageClassNames(Pages.incomes, router)}
-                    >
-                        Incomes
-                    </h3>
-                </Link>
-                <Link
-                    href={Pages.utility}
-                >
-                    <h3
-                        className={getPageClassNames(Pages.utility, router)}
-                    >
-                        Utility
-                    </h3>
-                </Link>
-            </div>
-            <div className="flex grow pr2" onClick={() => setShowSettingsPopup(true)}>
-                <h3 className="pr2 moon-gray mt1 mb0">
-                    Settings
-                </h3>
-                <Icon className="pt1 moon-gray" icon="cog" iconSize={20}/>
-            </div>
+        <div>
+            <Tabs
+                id="header"
+                className="ph2 bg-silver pb1"
+                onChange={(newTabID) => router.push(`${newTabID}`)}
+                renderActiveTabPanelOnly={true}
+            >
+                <Tab id={Pages.portfolio} title="Home" className="white"/>
+                <Tab id={Pages.trades} title="Trades" />
+                <Tab id={Pages.import} title="Import" />
+                <Tab id={Pages.gains} title="Gains" />
+                <Tab id={Pages.incomes} title="Income" />
+                <Tab id={Pages.utility} title="Utility" />
+                <Tabs.Expander />
+                <div className="flex grow pr2 pb1" onClick={() => setShowSettingsPopup(true)}>
+                    <div className="flex flex-column justify-center">
+                        <h3 className="pr2 pt0 mb0 mt0">
+                            Settings
+                        </h3>
+                    </div>
+                    <div className="flex flex-column justify-center">
+                    <Icon className="" icon="cog" iconSize={20}/>
+                    </div>
 
+
+                </div>
+            </Tabs>
             { showSettingsPopup &&
                 <Settings
                     settings={savedData.settings}
@@ -92,6 +45,14 @@ const Header = () => {
                     onClose={() => setShowSettingsPopup(false)}
                 />
             }
+        </div>
+    );
+
+    return (
+        <div className="header bg-dark-gray flex justify-between">
+
+
+
         </div>
     );
 };
