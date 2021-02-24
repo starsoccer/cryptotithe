@@ -1,9 +1,9 @@
+import { Spinner } from '@blueprintjs/core';
 import * as React from 'react';
 import { calculateDailyBalance } from '../../../../../src/processing/CalculateDailyBalance';
 import { EXCHANGES, IDailyBalance, ISavedData } from '../../../../../src/types';
 import getYears from '../../../../../src/utils/getYears';
 import Button from '../../../../Button';
-import { Loader } from '../../../../Loader';
 import { DailyBalanceTable } from './DailyBalanceTable';
 export interface IDailyBalanceProp {
     savedData: ISavedData;
@@ -76,7 +76,7 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
                     <div className='tc pt2'>
                         {`Loading ${(this.state.totalDays - this.state.daysLeft).toFixed(0)} of `}
                         {this.state.totalDays.toFixed(0)}
-                        <Loader />
+                        <Spinner />
                     </div>
                 }
                 { this.state.dailyBalance !== undefined &&

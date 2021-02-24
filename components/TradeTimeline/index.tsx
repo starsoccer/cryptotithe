@@ -1,10 +1,10 @@
+import { Spinner } from '@blueprintjs/core';
 import clone from 'clone';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
 import { EXCHANGES, IHoldings, ISavedData, ITradeWithFiatRate, METHOD, IIncomeWithFiatRate } from '../../src/types';
 import keyByValue from '../../src/utils/keyByValue';
-import { Loader } from '../Loader';
 
 export interface ITradeTimelineProp {
     trades: ITradeWithFiatRate[];
@@ -109,7 +109,7 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                     pageStart={this.state.page}
                     loadMore={this.moreTrades}
                     hasMore={this.state.page * tradesPerPage <= this.props.trades.length}
-                    loader={<Loader key={this.state.page}/>}
+                    loader={<Spinner key={this.state.page}/>}
                 >
                     {this.createTimeLine()}
                 </InfiniteScroll>

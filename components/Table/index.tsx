@@ -1,7 +1,7 @@
+import { Spinner } from '@blueprintjs/core';
 import * as crypto from 'crypto';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { Loader } from '../Loader';
 
 export interface ITableProps {
     className?: string;
@@ -46,7 +46,7 @@ export class Table extends React.Component<ITableProps, {page: number}> {
                     pageStart={this.state.page}
                     loadMore={this.moreTrades}
                     hasMore={this.state.page * itemsPerPage <= this.props.rows.length}
-                    loader={<Loader key={this.state.page}/>}
+                    loader={<Spinner key={this.state.page} />}
                 >
                     <table className='f6 w-100 mw8 center'>
                         <thead>

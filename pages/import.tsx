@@ -27,11 +27,11 @@ import {
 import { AlertBar, AlertType } from '@components/AlertBar';
 import Button from '@components/Button';
 import { FileBrowse } from '@components/FileBrowse';
-import { Loader } from '@components/Loader';
 import TradeDetails from '@components/TradeDetails';
 import { ImportSelector } from '@components/Tabs/ImportDataTab/ImportSelector';
 import { ImportTable } from '@components/Tabs/ImportDataTab/ImportTable';
 import IncomeDetails from '@components/IncomeDetails';
+import { Spinner } from '@blueprintjs/core';
 
 interface IAlertData {
     message: string;
@@ -193,7 +193,7 @@ const Import = () => {
                 />
             </div>
             {processing ?
-                <Loader />
+                <Spinner />
             :
                 <ImportTable
                     importDetails={importDetails}

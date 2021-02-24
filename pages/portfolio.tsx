@@ -3,10 +3,10 @@ import { calculateGains } from '../src/processing/CalculateGains';
 import { calculateInDepthHoldingsValueCurrently } from '../src/processing/CalculateHoldingsValue';
 import { IHoldingsValueComplex, IPartialSavedData, ISavedData } from '@types';
 import Button from '@components/Button';
-import { Loader } from '@components/Loader';
 import { PortfolioTable } from '@components/PortfolioTable';
 import SavedDataConext from '@contexts/savedData';
 import dynamic from "next/dynamic";
+import { Spinner } from '@blueprintjs/core';
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export interface IPortfolioState {
@@ -64,7 +64,7 @@ const Portfolio = () => {
                     </div>
                 :
                     savedData?.trades.length > 0 ?
-                        <Loader />
+                        <Spinner />
                     :
                         <h3>No Trades Yet <i className='fa fa-frown-o'/></h3>
                 }

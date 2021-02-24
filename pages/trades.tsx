@@ -4,11 +4,11 @@ import { addFiatRateToTrades } from '../src/processing/getFiatRate';
 import sortTrades from '../src/processing/SortTrades';
 import { ITradeWithFiatRate } from '@types';
 import Button from '@components/Button';
-import { Loader } from '@components/Loader';
 import { ALL_CURRENCIES, ALL_EXCHANGES, filterTrades, TradeFilter } from '@components/TradeFilter';
 import { TradesTable } from '@components/TradesTable';
 import TradeTimeline from '@components/TradeTimeline';
 import { ITrade } from '../src/types';
+import { Spinner } from '@blueprintjs/core';
 
 const defaultOptions = {
     exchange: ALL_EXCHANGES,
@@ -63,7 +63,7 @@ const Trades = () => {
             <hr className='w-50'/>
             <div className='tc center'>
                 {isProcessing ?
-                    <Loader />
+                    <Spinner />
                 :
                     showTradeTable ?
                         filteredTrades.length > 0 ?
