@@ -61,7 +61,7 @@ function getPairs(market: string, currentFeeCoin: string, feeCoins: string[]) {
     return pairs;
 }
 
-export async function processData(importDetails: IImport): Promise<ITrade[]> {
+export default async function processData(importDetails: IImport): Promise<ITrade[]> {
     const data: IBinance[] = await getCSVData(importDetails.data) as IBinance[];
     const internalFormat: ITrade[] = [];
     const feeCoins = data.map((trade) => trade['Fee Coin']);

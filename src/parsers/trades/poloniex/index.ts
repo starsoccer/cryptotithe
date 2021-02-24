@@ -29,7 +29,7 @@ function garbageTrade(trade: IPoloniex) {
     return parseNumber(trade['Quote Total Less Fee']) === 0 || parseNumber(trade['Base Total Less Fee']) === 0;
 }
 
-export async function processData(importDetails: IImport): Promise<ITrade[]> {
+export default async function processData(importDetails: IImport): Promise<ITrade[]> {
     const data: IPoloniex[] = await getCSVData(importDetails.data) as IPoloniex[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {

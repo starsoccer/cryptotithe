@@ -19,7 +19,7 @@ interface IBittrex {
     Closed: string;
 }
 
-export async function processData(importDetails: IImport): Promise<ITrade[]> {
+export default async function processData(importDetails: IImport): Promise<ITrade[]> {
     const data: IBittrex[] = await getCSVData(importDetails.data) as IBittrex[];
     const internalFormat: ITrade[] = [];
     for (const trade of data) {

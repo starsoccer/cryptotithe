@@ -94,7 +94,7 @@ function getRealTradedPairs(market: string) {
     return pairs.map((pair) => (pair in KRAKEN_TO_NORMAL_CURRENCY ? KRAKEN_TO_NORMAL_CURRENCY[pair] : pair));
 }
 
-export async function processData(importDetails: IImport): Promise<ITrade[]> {
+export default async function processData(importDetails: IImport): Promise<ITrade[]> {
     const data: IKraken[] = await getCSVData(importDetails.data) as IKraken[];
     const marketPairs = await getMaretPairs();
     const internalFormat: ITrade[] = [];

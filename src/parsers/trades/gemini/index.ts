@@ -76,7 +76,7 @@ function parseNumber(amount: string): number {
     return parseFloat(realAmount.split(' ')[0]);
 }
 
-export async function processData(importDetails: IImport): Promise<ITrade[]> {
+export default async function processData(importDetails: IImport): Promise<ITrade[]> {
     const data: IGemini[] = await getCSVData(importDetails.data) as IGemini[];
     const internalFormat: ITrade[] = [];
     for (let i = 1; i < data.length - 1; i++) {
