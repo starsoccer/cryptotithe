@@ -1,9 +1,8 @@
-import { Spinner } from '@blueprintjs/core';
+import { Button, Intent, Spinner } from '@blueprintjs/core';
 import * as React from 'react';
 import { calculateDailyBalance } from '../../../../../src/processing/CalculateDailyBalance';
 import { EXCHANGES, IDailyBalance, ISavedData } from '../../../../../src/types';
 import getYears from '../../../../../src/utils/getYears';
-import Button from '../../../../Button';
 import { DailyBalanceTable } from './DailyBalanceTable';
 export interface IDailyBalanceProp {
     savedData: ISavedData;
@@ -70,7 +69,14 @@ export default class DailyBalance extends React.Component<IDailyBalanceProp, IDa
                         )}
                     </select>
                     <br />
-                    <Button label='Calculate Daily Balance' onClick={this.calculateDailyBalance}/>
+                    <Button
+                        className="mt2"
+                        icon="exchange"
+                        intent={Intent.PRIMARY}
+                        onClick={this.calculateDailyBalance}
+                    >
+                        Calculate Daily Balance
+                    </Button>
                 </div>
                 {this.state.totalDays > 0 &&
                     <div className='tc pt2'>

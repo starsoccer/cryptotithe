@@ -25,13 +25,12 @@ import {
     IIncomeWithFiatRate
 } from '@types';
 import { AlertBar, AlertType } from '@components/AlertBar';
-import Button from '@components/Button';
 import { FileBrowse } from '@components/FileBrowse';
 import TradeDetails from '@components/TradeDetails';
 import { ImportSelector } from '@components/Tabs/ImportDataTab/ImportSelector';
 import { ImportTable } from '@components/Tabs/ImportDataTab/ImportTable';
 import IncomeDetails from '@components/IncomeDetails';
-import { Spinner } from '@blueprintjs/core';
+import { Button, Intent, Spinner } from '@blueprintjs/core';
 
 interface IAlertData {
     message: string;
@@ -155,7 +154,13 @@ const Import = () => {
             }
 
             <div className='flex justify-around pt2'>
-                <Button onClick={() => setFileBrowseOpen(true)} label='Import Data'/>
+                <Button
+                    intent={Intent.PRIMARY}
+                    icon="import"
+                    onClick={() => setFileBrowseOpen(true)}
+                >
+                    Import Data
+                </Button>
                 <FileBrowse
                     onLoaded={readFile(
                         importDetails,
@@ -170,14 +175,28 @@ const Import = () => {
                 />
 
                 {importDetails.type == ImportType.TRADES &&
-                    <Button onClick={() => setAddTrade(!addTrade)} label='Add Trade'/>
+                    <Button
+                        onClick={() => setAddTrade(!addTrade)}
+                        intent={Intent.PRIMARY}
+                        icon="plus"
+                    >
+                        Add Trade
+                    </Button>
                 }
 
                 {importDetails.type == ImportType.INCOME &&
-                    <Button onClick={() => setShowNewIncome(!showNewIncome)} label='Add Income'/>
+                    <Button
+                        onClick={() => setShowNewIncome(!showNewIncome)}
+                        intent={Intent.PRIMARY}
+                        icon="plus"
+                    >
+                        Add Income
+                    </Button>
                 }
 
                 <Button
+                    icon="exchange"
+                    intent={Intent.PRIMARY}
                     onClick={() => processTrades(
                         duplicateData,
                         processedData,
@@ -189,8 +208,9 @@ const Import = () => {
                         setAlertData,
                         setProcessedData,
                     )}
-                    label='Save/Process Data'
-                />
+                >
+                    Save/Process Data
+                </Button>
             </div>
             {processing ?
                 <Spinner />

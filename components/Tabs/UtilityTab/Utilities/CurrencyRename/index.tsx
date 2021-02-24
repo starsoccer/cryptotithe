@@ -1,7 +1,6 @@
-import { Spinner } from '@blueprintjs/core';
+import { Button, Intent, Spinner } from '@blueprintjs/core';
 import * as React from 'react';
 import { IPartialSavedData, ISavedData } from '../../../../../src/types';
-import Button from '../../../../Button';
 import { ALL_EXCHANGES, getCurrenciesByExchange, ITradeFilterOptions, TradeFilter } from '../../../../TradeFilter';
 
 export interface ICurrencyRenameProp {
@@ -78,7 +77,13 @@ export default class CurrencyRename extends React.Component<ICurrencyRenameProp,
                     <label htmlFor='type' className='pr2 pt2 pb2'>New Currency Name</label>
                     <input onChange={this.onChange}/>
                     <hr className='w-50' />
-                    <Button label='Rename' onClick={this.rename}/>
+                    <Button
+                        intent={Intent.WARNING}
+                        icon="edit"
+                        onClick={this.rename}
+                    >
+                        Rename
+                    </Button>
                     {this.state.newCurrency !== '' && this.state.changesMade > 0 &&
                         <h5>{this.state.changesMade} changes made</h5>
                     }

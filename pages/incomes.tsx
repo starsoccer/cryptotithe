@@ -4,9 +4,9 @@ import getYears from '@utils/getYears';
 import getByYear from '../src/processing/getByYear';
 import calculateIncomesValue from '../src/processing/CalculateIncomesValue';
 import incomesOutput from '../src/output/Incomes';
-import Button from '@components/Button';
 import SavedDataConext from '@contexts/savedData';
 import DownloadContext from '@contexts/download';
+import { Button, Intent } from '@blueprintjs/core';
 
 const CalculateIncomes = () => {
     const {savedData} = useContext(SavedDataConext);
@@ -45,7 +45,13 @@ const CalculateIncomes = () => {
                 {!!totalValue &&
                     <div className="tc">
                         <h4 className="tc">Value: {totalValue}</h4>
-                        <Button label="Download" onClick={onDownloadClick} />
+                        <Button
+                            icon="download"
+                            intent={Intent.PRIMARY}
+                            onClick={onDownloadClick}
+                        >
+                            Download
+                        </Button>
                     </div>
                 }
             </div>

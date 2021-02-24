@@ -5,13 +5,12 @@ import generateForm8949 from '../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../src/processing/CalculateGains';
 import { addFiatRateToTrades } from '../src/processing/getFiatRate';
 import getYears from '../src/utils/getYears';
-import Button from '@components/Button';
 import { IFileDownloadProps } from '@components/FileDownload';
 import { GainsPerTradeTable } from '@components/GainsPerTradeTable';
 import TradeDetails from '@components/TradeDetails';
 import { Customize, IYearCalculationMethod } from '@components/Tabs/CalculateGainsTab/Customize.component';
 import { IHoldings, ISavedData, ITrade, ITradeWithGains, ITradeWithFiatRate, IIncomeWithFiatRate, METHOD } from '@types';
-import { Dialog, Divider } from '@blueprintjs/core';
+import { Button, Dialog, Divider, Intent } from '@blueprintjs/core';
 
 function recalculate(
     trades: ITradeWithFiatRate[],
@@ -84,9 +83,21 @@ const Gains = () => {
 
     return (
         <div className='calculategains'>
-            <div className='tc pt2'>
-                <Button label='Customize' onClick={() => setShowCustomizeModal(!showCustomizeModal)}/>
-                <Button label='What If Trade' onClick={() => setShowWhatIfTrade(!showWhatIfTrade)}/>
+            <div className='pt2 w5 center flex justify-around'>
+                <Button
+                    onClick={() => setShowCustomizeModal(!showCustomizeModal)}
+                    intent={Intent.PRIMARY}
+                    icon="cog"
+                >
+                    Customize
+                </Button>
+                <Button
+                    intent={Intent.PRIMARY}
+                    icon="predictive-analysis"
+                    onClick={() => setShowWhatIfTrade(!showWhatIfTrade)}
+                >
+                    What If Trade
+                </Button>
             </div>
 
             <Dialog

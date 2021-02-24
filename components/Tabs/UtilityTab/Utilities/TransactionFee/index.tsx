@@ -1,6 +1,6 @@
+import { Button, Intent } from '@blueprintjs/core';
 import * as React from 'react';
 import { IPartialSavedData, ISavedData } from '../../../../../src/types';
-import Button from '../../../../Button';
 import { Table } from '../../../../Table';
 
 export interface ITransactionFeeProp {
@@ -74,7 +74,13 @@ export default class TransactionFee extends React.Component<ITransactionFeeProp,
                     rows={Object.keys(this.state.smallHoldings).map((currency) => [
                         <span>{currency}</span>,
                         <span>{this.state.smallHoldings[currency]}</span>,
-                        <Button label='Mark as Transaction Fee' onClick={this.markTransactionFee(currency)}/>,
+                        <Button
+                            icon="percentage"
+                            intent={Intent.WARNING}
+                            onClick={this.markTransactionFee(currency)}
+                        >
+                            Mark as Transaction Fee
+                        </Button>,
                     ])}
                 />
             </div>

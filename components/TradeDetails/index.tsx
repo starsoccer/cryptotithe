@@ -1,8 +1,8 @@
+import { Button, Intent } from '@blueprintjs/core';
 import * as React from 'react';
 import * as validator from 'validator';
 import { createDateAsUTC, createID } from '../../src/parsers/utils';
 import { EXCHANGES, ISettings, ITrade } from '../../src/types';
-import Button from '../Button';
 import { Select } from '../Select';
 
 export interface ITradeDetailsProps<TradeType extends ITrade> {
@@ -271,7 +271,14 @@ export default class TradeDetails<TradeType extends ITrade> extends
                     </div>
                 </div>
                 <div className='w-100'>
-                    <Button className='center' label='Add Trade' onClick={this.onSubmit}/>
+                    <Button
+                        intent={Intent.PRIMARY}
+                        icon="plus"
+                        className='center'
+                        onClick={this.onSubmit}
+                    >
+                        Add Trade
+                    </Button>
                 </div>
             </div>
         );

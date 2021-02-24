@@ -2,11 +2,10 @@ import { useContext, useEffect, useState } from 'react';
 import { calculateGains } from '../src/processing/CalculateGains';
 import { calculateInDepthHoldingsValueCurrently } from '../src/processing/CalculateHoldingsValue';
 import { IHoldingsValueComplex, IPartialSavedData, ISavedData } from '@types';
-import Button from '@components/Button';
 import { PortfolioTable } from '@components/PortfolioTable';
 import SavedDataConext from '@contexts/savedData';
 import dynamic from "next/dynamic";
-import { Spinner } from '@blueprintjs/core';
+import { Button, Intent, Spinner } from '@blueprintjs/core';
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export interface IPortfolioState {
@@ -31,7 +30,13 @@ const Portfolio = () => {
             <h3 className='tc'>Portfolio</h3>
             <hr className='center w-50' />
             <div className='tc center'>
-                <Button label='Recalculate Holdings' onClick={() => recalculateHoldings(savedData, save)}/>
+                <Button
+                    intent={Intent.WARNING}
+                    icon="refresh"
+                    onClick={() => recalculateHoldings(savedData, save)}
+                >
+                    Recalculate Holdings
+                </Button>
                 {holdingsValue !== undefined ?
                     <div>
                         <h4>Total BTC Value: {holdingsValue.BTCTotal}</h4>
@@ -64,7 +69,7 @@ const Portfolio = () => {
                     </div>
                 :
                     savedData?.trades.length > 0 ?
-                        <Spinner />
+                        <Spinner className="pt2" />
                     :
                         <h3>No Trades Yet <i className='fa fa-frown-o'/></h3>
                 }

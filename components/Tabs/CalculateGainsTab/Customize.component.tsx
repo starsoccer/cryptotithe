@@ -1,6 +1,6 @@
+import { Button, Intent } from '@blueprintjs/core';
 import * as React from 'react';
 import { METHOD } from '../../../src/types';
-import Button from '../../Button';
 import CalculationMethodSelect from '../../CalculationMethodSelect';
 import Popup from '../../Popup';
 import { Table } from '../../Table';
@@ -230,10 +230,15 @@ export class Customize extends React.Component<ICustomizeProps, ICustomizeState>
                         <hr />
                         <div className='flex justify-around'>
                             <Button
-                                label='Recalculate'
+                                intent={Intent.PRIMARY}
+                                icon="exchange"
                                 onClick={() => this.props.onGenerate(this.state.yearCalculationMethod)}
-                            />
-                            <Button label='Form 8949' onClick={this.props.onForm8949Export}/>
+                            >
+                                Recalculate
+                            </Button>
+                            <Button intent={Intent.PRIMARY} icon="export" onClick={this.props.onForm8949Export}>
+                                Form 8949
+                            </Button>
                         </div>
                     </div>
                 </div>

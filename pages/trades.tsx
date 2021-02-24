@@ -3,12 +3,11 @@ import SavedDataContext from '@contexts/savedData';
 import { addFiatRateToTrades } from '../src/processing/getFiatRate';
 import sortTrades from '../src/processing/SortTrades';
 import { ITradeWithFiatRate } from '@types';
-import Button from '@components/Button';
 import { ALL_CURRENCIES, ALL_EXCHANGES, filterTrades, TradeFilter } from '@components/TradeFilter';
 import { TradesTable } from '@components/TradesTable';
 import TradeTimeline from '@components/TradeTimeline';
 import { ITrade } from '../src/types';
-import { Spinner } from '@blueprintjs/core';
+import { Spinner, Button, Intent, ControlGroup } from '@blueprintjs/core';
 
 const defaultOptions = {
     exchange: ALL_EXCHANGES,
@@ -44,11 +43,22 @@ const Trades = () => {
             <h3 className='tc'>Trades</h3>
             <hr className='center w-50' />
             <div className='tc center pb2'>
-                <Button label='Refresh Trade Data' onClick={refetchFiatRate}/>
                 <Button
-                    label={!showTradeTable ? 'Trade Timeline' : 'Trade Table'}
-                    onClick={() => setShowTradeTable(!showTradeTable)}
-                />
+                    icon="refresh"
+                    intent={Intent.WARNING}
+                    onClick={refetchFiatRate}
+                >
+                    Refresh Trade Data
+                </Button>
+         
+                <ControlGroup className="pt2 flex justify-center">
+                    <Button icon="flow-linear" disabled={!showTradeTable} onClick={() => setShowTradeTable(!showTradeTable)}>
+                        Timeline
+                    </Button>
+                    <Button icon="th" disabled={showTradeTable} onClick={() => setShowTradeTable(!showTradeTable)}>
+                        Table
+                    </Button>
+                </ControlGroup>
             </div>
             <hr className='w-50'/>
             <div className='tc center'>
@@ -58,7 +68,13 @@ const Trades = () => {
                     onChange={setOptions}
                 />
                 <br />
-                <Button label='Reset Filter' onClick={() => setOptions({...defaultOptions})}/>
+                <Button
+                    onClick={() => setOptions({...defaultOptions})}
+                    icon="reset"
+                    intent={Intent.DANGER}
+                >
+                    Reset Filter
+                </Button>
             </div>
             <hr className='w-50'/>
             <div className='tc center'>

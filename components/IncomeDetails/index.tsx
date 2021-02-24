@@ -1,4 +1,4 @@
-import Button from "@components/Button";
+import { Button, Intent } from "@blueprintjs/core";
 import { IIncome } from "@types";
 import { useState } from "react";
 import { createID } from "src/parsers/utils";
@@ -121,7 +121,13 @@ const IncomeDetails = ({income, onSave}: IIncomeDetailsProps) => {
                 </div>
             </div>
 
-            <Button label="Save Income" onClick={() => onSave(fromIncomeEdited(editedIncome))} />
+            <Button
+                intent={Intent.PRIMARY}
+                icon="floppy-disk"
+                onClick={() => onSave(fromIncomeEdited(editedIncome))}
+            >
+                Save Income
+            </Button>
         </div>
     );
 };
