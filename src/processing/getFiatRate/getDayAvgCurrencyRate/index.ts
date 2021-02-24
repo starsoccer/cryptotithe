@@ -1,4 +1,4 @@
-import got from 'got';
+import axios from 'axios';
 import { ITrade } from '../../../types';
 import { cryptocompareRateResponse } from '../utils';
 
@@ -9,17 +9,16 @@ export async function getDayAvg(
     type = 'HourVWAP',
 ): Promise<number> {
     const tradeTime = parseInt((new Date(date).getTime() / 1000).toFixed(0), 10);
-    const data: string[] = [
-        `fsym=${currency}`,
-        `tsym=${fiatCurrency}`,
-        'sign=false', // change to true for security?
-        `toTs=${tradeTime}`,
-        'extraParams=cryptotithe',
-        `avgType=${type}`,
-    ];
-    const response: got.Response<any> = await got(
-        'https://min-api.cryptocompare.com/data/dayAvg?' + data.join('&'),
-    );
+    const response = await axios('https://min-api.cryptocompare.com/data/dayAvg', {
+        params: {
+            fsym: currency,
+            tsym: fiatCurrency,
+            sign: false,
+            toTs: tradeTime,
+            extraParams: 'cryptotithe',
+            avgType: type,
+        }
+    });
     const rate = cryptocompareRateResponse(response, fiatCurrency);
     return rate || 0;
 }

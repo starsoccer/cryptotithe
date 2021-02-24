@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export interface ICryptoComparePriceMultiFull {
     RAW: ICryptoCompareCurrencyPriceMultiFull;
     DISPLAY: ICryptoCompareCurrencyPriceMultiFull;
@@ -45,16 +47,16 @@ export default async function getCurrentRates(
     currencies: string[],
     fiatCurrency: string,
 ): Promise<ICryptoComparePriceMultiFull> {
-    // eslint-disable-next-line
-    const got = require('got');
-    const params = [
-        `tsyms=BTC,${fiatCurrency}`,
-        `fsyms=${currencies.join(',')}`,
-    ];
-    const result = await got(`https://min-api.cryptocompare.com/data/pricemultifull?${params.join('&')}`);
+    const response = await axios(`https://min-api.cryptocompare.com/data/pricemultifull`, {
+        params: {
+            tsyms: `BTC,${fiatCurrency}`,
+            fsyms: currencies.join(','),
+        }
+    });
+
     try {
-        if (result.statusCode === 200) {
-            return JSON.parse(result.body);
+        if (response.status === 200) {
+            return response.data;
         } else {
             throw Error('Unknown Error');
         }

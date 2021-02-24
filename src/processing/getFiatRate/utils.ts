@@ -1,14 +1,14 @@
-import * as got from 'got';
+import { AxiosResponse } from 'axios';
 import { ITrade } from '../../types';
 
 interface ICryptoCompareResponse {
     [key: string]: number;
 }
 
-export function cryptocompareRateResponse(response: got.Response<any>, fiatCurrency: string) {
-    if ('body' in response) {
+export function cryptocompareRateResponse(response: AxiosResponse<ICryptoCompareResponse>, fiatCurrency: string) {
+    if ('data' in response) {
         try {
-            const result: ICryptoCompareResponse = JSON.parse(response.body);
+            const result = response.data;
             if (result[fiatCurrency] !== 0) {
                 return result[fiatCurrency];
             } else {

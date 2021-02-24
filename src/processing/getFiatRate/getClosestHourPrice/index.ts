@@ -1,4 +1,4 @@
-import got from 'got';
+import axios from 'axios';
 import { ITrade } from '../../../types';
 import { IHourlyPriceData, roundHour } from '../utils';
 
@@ -8,18 +8,17 @@ export async function getClosestHourPrice(
     date: number,
 ): Promise<IHourlyPriceData> {
     const tradeTime = parseInt((roundHour(new Date(date)) / 1000).toFixed(0), 10);
-    const data = [
-        `fsym=${currency}`,
-        `tsym=${fiatCurrency}`,
-        `limit=1`,
-        `toTs=${tradeTime}`,
-    ];
-    const response: got.Response<any> = await got(
-        'https://min-api.cryptocompare.com/data/histohour?' + data.join('&'),
-    );
-    if ('body' in response) {
+    const response = await axios('https://min-api.cryptocompare.com/data/histohour', {
+        params: {
+            fsym: currency,
+            tsym: fiatCurrency,
+            limit: 1,
+            toTs: tradeTime,
+        }
+    });
+    if ('data' in response) {
         try {
-            const result: any = JSON.parse(response.body);
+            const result: any = response.data;
             if ('Data' in result) {
                 for (const hourData of result.Data as IHourlyPriceData[]) {
                     if (hourData.time <= tradeTime && tradeTime >= hourData.time + 3600) {
