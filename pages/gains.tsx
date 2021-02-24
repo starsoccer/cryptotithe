@@ -8,10 +8,10 @@ import getYears from '../src/utils/getYears';
 import Button from '@components/Button';
 import { IFileDownloadProps } from '@components/FileDownload';
 import { GainsPerTradeTable } from '@components/GainsPerTradeTable';
-import Popup from '@components/Popup';
 import TradeDetails from '@components/TradeDetails';
 import { Customize, IYearCalculationMethod } from '@components/Tabs/CalculateGainsTab/Customize.component';
 import { IHoldings, ISavedData, ITrade, ITradeWithGains, ITradeWithFiatRate, IIncomeWithFiatRate, METHOD } from '@types';
+import { Dialog, Divider } from '@blueprintjs/core';
 
 function recalculate(
     trades: ITradeWithFiatRate[],
@@ -88,22 +88,28 @@ const Gains = () => {
                 <Button label='Customize' onClick={() => setShowCustomizeModal(!showCustomizeModal)}/>
                 <Button label='What If Trade' onClick={() => setShowWhatIfTrade(!showWhatIfTrade)}/>
             </div>
-            { showWhatIfTrade &&
-                <Popup onClose={() => setShowWhatIfTrade(false)}>
-                    <div>
-                        <TradeDetails
-                            onSubmit={(trade) => calculateWhatIfTrade(trade, savedData, holdings, yearCalculationMethod, years, setWhatIfTrade)}
-                            settings={savedData.settings}
-                        />
-                        { whatIfTrade &&
-                            <div className='tc'>
-                                <h3>Short Term: {whatIfTrade.shortTerm}</h3>
-                                <h3>Long Term: {whatIfTrade.longTerm}</h3>
-                            </div>
-                        }
-                    </div>
-                </Popup>
-            }
+
+            <Dialog
+                isOpen={showWhatIfTrade}
+                onClose={() => setShowWhatIfTrade(false)}
+                title="Trade Simulator"
+                icon="manually-entered-data"
+            >
+                <div>
+                    <TradeDetails
+                        onSubmit={(trade) => calculateWhatIfTrade(trade, savedData, holdings, yearCalculationMethod, years, setWhatIfTrade)}
+                        settings={savedData.settings}
+                    />
+                    <Divider />
+                    { whatIfTrade &&
+                        <div className='tc'>
+                            <h3>Short Term: {whatIfTrade.shortTerm}</h3>
+                            <h3>Long Term: {whatIfTrade.longTerm}</h3>
+                        </div>
+                    }
+                </div>
+            </Dialog>
+            
             { filteredTradesWithGains !== undefined && filteredTradesWithGains.length > 0 &&
                 <div>
                     <div className='flex justify-center'>
