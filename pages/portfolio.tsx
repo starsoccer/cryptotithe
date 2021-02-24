@@ -3,10 +3,11 @@ import { calculateGains } from '../src/processing/CalculateGains';
 import { calculateInDepthHoldingsValueCurrently } from '../src/processing/CalculateHoldingsValue';
 import { IHoldingsValueComplex, IPartialSavedData, ISavedData } from '@types';
 import Button from '@components/Button';
-import { Chart } from '@components/Chart';
 import { Loader } from '@components/Loader';
 import { PortfolioTable } from '@components/PortfolioTable';
 import SavedDataConext from '@contexts/savedData';
+import dynamic from "next/dynamic";
+const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export interface IPortfolioState {
     holdingsValue?: IHoldingsValueComplex;
@@ -38,24 +39,24 @@ const Portfolio = () => {
                             Total {savedData.settings.fiatCurrency}
                             Value: {holdingsValue.fiatTotal}
                         </h4>
-                        {!!series.length && !!currencies.length &&
-                            <Chart
-                                data={{
-                                    chart: {
-                                        type: 'pie',
-                                    },
-                                    series: series,
-                                    labels: currencies,
-                                    legend: {
-                                        show: false,
-                                    },
-                                    annotations: {
-                                        position: 'front',
-                                    },
-                                }}
-                                className='w-50 center mw9'
-                            />
-                        }
+                        <div className="flex justify-center">
+                            {!!series.length && !!currencies.length &&
+                                <ReactApexChart
+                                    series={series}
+                                    options={{
+                                        labels: currencies,
+                                        legend: {
+                                            show: false,
+                                        },
+                                        annotations: {
+                                            position: 'front',
+                                        },
+                                    }}
+                                    width="600"
+                                    type="donut"
+                                />
+                            }
+                        </div>
                         <PortfolioTable
                             holdingsValue={holdingsValue}
                             fiatCurrency={savedData.settings.fiatCurrency}
