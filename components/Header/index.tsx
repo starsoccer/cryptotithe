@@ -32,10 +32,8 @@ const Header = () => {
                         </h3>
                     </div>
                     <div className="flex flex-column justify-center">
-                    <Icon className="" icon="cog" iconSize={20}/>
+                        <Icon className="" icon="cog" iconSize={20}/>
                     </div>
-
-
                 </div>
             </Tabs>
             { showSettingsPopup &&
