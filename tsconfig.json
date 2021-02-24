@@ -33,7 +33,8 @@
       "@utils/*": ["src/utils/*"],
       "@processing/*": ["src/processing/*"],
       "@types": ["src/types/index.ts"],
-      "@types/*": ["src/types/*"]
+      "@types/*": ["src/types/*"],
+      "@package": ["package.json"]
     }
   },
   "include": [

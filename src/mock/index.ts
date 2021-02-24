@@ -10,6 +10,7 @@ import {
     METHOD,
 } from '../types';
 import { IPartialSavedData } from './../types/savedData';
+import { version } from '@package';
 
 export function mockHoldings(
     currencies: number,
@@ -84,14 +85,14 @@ export function mockTradesWithFiatRate(
 
 export function createEmptySavedData(): ISavedData {
     // eslint-disable-next-line
-    const packageData = require('../../package.json');
+    version
     const partialSavedData: IPartialSavedData = {
         trades: [],
         holdings: {},
         incomes: [],
         transactions: [],
         savedDate: new Date(),
-        version: packageData.version,
+        version,
         settings: {
             fiatRateMethod: FiatRateMethod[Object.keys(FiatRateMethod)[0]],
             fiatCurrency: 'USD',

@@ -7,12 +7,10 @@ import zeroFiveZeroConverter from './0.5.0';
 import zeroSixZeroConverter from './0.6.0';
 import zeroSevenZeroConverter from './0.7.0';
 import zeroEightZeroConverter from './0.8.0';
+import { version } from '@package';
 
 export default function onSaveDataLoaded(savedData: ISavedData): boolean {
     const savedVersion = isNaN(parseFloat(savedData.version)) ? 0 : parseFloat(savedData.version);
-    // eslint-disable-next-line
-    const packageData = require('../../package.json');
-    const currentVersion = packageData.version;
     let changeMade = false;
 
     const versionUpgraders: {[key: number]: (data: ISavedData) => boolean} = {
@@ -31,8 +29,9 @@ export default function onSaveDataLoaded(savedData: ISavedData): boolean {
         }
     }
 
+    const currentVersion = parseFloat(version);
     if (changeMade && !savedVersion || savedVersion < currentVersion) {
-        savedData.version = currentVersion;
+        savedData.version = currentVersion.toString();
         savedData.integrity = integrityCheck(savedData);
     }
 
