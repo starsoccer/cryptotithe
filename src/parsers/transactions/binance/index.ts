@@ -14,7 +14,7 @@ interface IBinance {
     Status: string;
 }
 
-export async function processData(importDetails: IImport): Promise<ITransaction[]> {
+export default async function processData(importDetails: IImport): Promise<ITransaction[]> {
     const data: IBinance[] = await getCSVData(importDetails.data) as IBinance[];
     const internalFormat: ITransaction[] = [];
     for (const transaction of data) {
