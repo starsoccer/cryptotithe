@@ -16,7 +16,7 @@ interface ICryptoID {
     Total: number;
 }
 
-export async function processData(importDetails: IImport): Promise<IIncome[]> {
+export default async function processData(importDetails: IImport): Promise<IIncome[]> {
     const cleanedData = importDetails.data.substr(importDetails.data.indexOf('Transaction'));
     const data: ICryptoID[] = await getCSVData(cleanedData) as ICryptoID[];
     const internalFormat: IIncome[] = [];

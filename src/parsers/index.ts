@@ -1,9 +1,10 @@
 import * as crypto from 'crypto';
 import * as papaparse from 'papaparse';
-import { EXCHANGES, IIncome, ImportType, IncomeImportTypes, ITrade } from '../types';
+import { EXCHANGES, IIncome, ImportType, ITrade } from '../types';
 import { IImport } from './../types/import';
 import { ITransaction } from './../types/transactions';
 import processTradesImport from './trades';
+import processIncomesImport from './incomes';
 
 interface IGetCSVData {
     [key: string]: string;
@@ -42,31 +43,10 @@ export async function processData(importDetails: IImport): Promise<ITrade[]  | I
         case ImportType.TRANSACTION:
             return processTransactionsImport(importDetails);
         case ImportType.INCOME:
-            return processIncomesImport(importDetails);
+            return await processIncomesImport(importDetails);
         default:
             throw new Error(`Unknown Import Type - ${importDetails.type}`);
     }
-}
-
-function processIncomesImport(importDetails: IImport): IIncome[] {
-    let processExchangeData: (importDetails: IImport) => IIncome[];
-    switch (importDetails.location) {
-        case IncomeImportTypes.cryptoID: {
-            // eslint-disable-next-line
-            processExchangeData = require('./incomes/cryptoID').processData;
-            break;
-        }
-        default: {
-            const headers = importDetails.data.substr(0, importDetails.data.indexOf('\n'));
-            const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
-            throw new Error(`Unknown Income Type - ${importDetails.location} - ${headersHash}`);
-            return [];
-        }
-    }
-    if (typeof processExchangeData === 'function') {
-        return processExchangeData(importDetails);
-    }
-    return [];
 }
 
 function processTransactionsImport(importDetails: IImport): ITransaction[] {
