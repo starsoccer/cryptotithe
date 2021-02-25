@@ -61,20 +61,6 @@ input:checked + .slider::before {
   transform: translateX(26px);
 }
 
-.loader {
-  border: 16px solid #434343; /* Light grey */
-  border-top: 16px solid #3498DB; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 /* The actual timeline (the vertical ruler) */
 .trade-timeline::after {
   content: '';
@@ -101,7 +87,7 @@ input:checked + .slider::before {
   position: absolute;
   width: 25px;
   height: 25px;
-  right: -17px;
+  right: -12.5px;
   background-color: white;
   border: 4px solid #FF9F55;
   top: 15px;
@@ -149,7 +135,7 @@ input:checked + .slider::before {
 
 /* Fix the circle for containers on the right side */
 .right::after {
-  left: -16px;
+  left: -12.5px;
 }
 
 /* Media queries - Responsive timeline on screens less than 600px wide */
