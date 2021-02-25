@@ -1,12 +1,12 @@
-import { Card, Elevation, Spinner } from '@blueprintjs/core';
+import { Spinner } from '@blueprintjs/core';
 import clone from 'clone';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
-import { EXCHANGES, IHoldings, ISavedData, ITradeWithFiatRate, METHOD, IIncomeWithFiatRate } from '../../src/types';
-import keyByValue from '../../src/utils/keyByValue';
+import { IHoldings, ISavedData, ITradeWithFiatRate, METHOD, IIncomeWithFiatRate } from '../../src/types';
 import classnames from 'classnames';
 import classes from './TradeTimeline.module.scss';
+import { TimelineItem } from './TimelineItem';
 
 export interface ITradeTimelineProp {
     trades: ITradeWithFiatRate[];
@@ -20,16 +20,6 @@ export interface ITradeTimelineState {
 }
 
 const tradesPerPage =  100;
-
-const getCurrencyHolding = (holdings: IHoldings, currency: string) => {
-    let totalHoldings = 0;
-    if (currency in holdings) {
-        for (const holding of holdings[currency]) {
-            totalHoldings += holding.amount;
-        }
-    }
-    return totalHoldings;
-};
 
 export default class TradeTimeline extends React.Component<ITradeTimelineProp, ITradeTimelineState> {
     public constructor(props: ITradeTimelineProp) {
@@ -80,33 +70,13 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                 this.props.fiatCurrency,
                 this.props.gainCalculationMethod,
             ).newHoldings;
-            return <div
-                className={classnames({
-                    [classes.leftTimelineItem]: index % 2 === 0,
-                    [classes.rightTimelineItem]: index % 2 !== 0
-                })}
-                key={trade.ID}
-            >
-                <Card elevation={Elevation.FOUR}>
-                <h2>Sold {trade.amountSold.toFixed(8)} {trade.soldCurrency}</h2>
-                    <h4>Got {(trade.amountSold / trade.rate).toFixed(8)} {trade.boughtCurrency}</h4>
-                    <p>{trade.rate.toFixed(8)} rate on {
-                        keyByValue(trade.exchange, EXCHANGES) || (
-                            trade.exchange && trade.exchange !== '' ? trade.exchange : 'Unknown'
-                        )}
-                    </p>
-                    <p>
-                        New Holdings:<br/>
-                        <span className='pr2'>
-                            {trade.boughtCurrency}: {getCurrencyHolding(holdings, trade.boughtCurrency)
-                        }</span><br />
-                        <span className='pr2'>
-                            {trade.soldCurrency}: {getCurrencyHolding(holdings, trade.soldCurrency)}
-                        </span>
-                    </p>
-                    <h6>{new Date(trade.date).toUTCString()}</h6>
-                </Card>
-            </div>;
+            return (
+                <TimelineItem
+                    left={index % 2 === 0}
+                    trade={trade}
+                    holdings={holdings}
+                />
+            );
         })).reverse();
     }
 
