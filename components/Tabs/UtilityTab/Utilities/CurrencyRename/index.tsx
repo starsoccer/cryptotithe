@@ -72,6 +72,7 @@ export default class CurrencyRename extends React.Component<ICurrencyRenameProp,
                         trades={this.props.savedData.trades}
                         onChange={this.onOptionsChange}
                         options={this.state.options}
+                        inline={true}
                     />
                     <br />
                     <label htmlFor='type' className='pr2 pt2 pb2'>New Currency Name</label>

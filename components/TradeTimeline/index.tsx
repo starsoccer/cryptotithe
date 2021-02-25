@@ -3,7 +3,7 @@ import clone from 'clone';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
-import { IHoldings, ISavedData, ITradeWithFiatRate, METHOD, IIncomeWithFiatRate } from '../../src/types';
+import { ISavedData, ITradeWithFiatRate, METHOD, IIncomeWithFiatRate } from '../../src/types';
 import classnames from 'classnames';
 import classes from './TradeTimeline.module.scss';
 import { TimelineItem } from './TimelineItem';
@@ -13,13 +13,14 @@ export interface ITradeTimelineProp {
     fiatCurrency: string;
     gainCalculationMethod: METHOD;
     savedData: ISavedData;
+    defaultExpanded: boolean;
 }
 
 export interface ITradeTimelineState {
     page: number;
 }
 
-const tradesPerPage =  100;
+const tradesPerPage =  50;
 
 export default class TradeTimeline extends React.Component<ITradeTimelineProp, ITradeTimelineState> {
     public constructor(props: ITradeTimelineProp) {
@@ -75,6 +76,7 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                     left={index % 2 === 0}
                     trade={trade}
                     holdings={holdings}
+                    defaultExpanded={this.props.defaultExpanded}
                 />
             );
         })).reverse();
