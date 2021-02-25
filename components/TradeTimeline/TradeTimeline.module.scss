@@ -1,0 +1,70 @@
+
+.tradeTimeline {
+    &::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        background-color: darkgray;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        margin-left: -3px;
+
+        @media screen and (max-width: 600px) {
+            left: 31px;
+        }
+    }
+}
+
+@mixin tradeTimelineItem {
+    padding: 10px 40px;
+    position: relative;
+    background-color: inherit;
+    width: 50%;
+
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        right: -12.5px;
+        background-color: white;
+        border: 4px solid #FF9F55;
+        top: 15px;
+        border-radius: 50%;
+        z-index: 1;
+    }
+}
+
+.leftTimelineItem {
+    @include tradeTimelineItem;
+    left: 0;
+
+    &::after {
+        @media screen and (max-width: 600px) {
+            left: 15px;
+        }
+    }
+}
+
+.rightTimelineItem {
+    @include tradeTimelineItem;
+    left: 50%;
+
+    &::after {
+        @media screen and (max-width: 600px) {
+            left: 15px;
+        }
+        left: -12.5px;
+    }
+
+    @media screen and (max-width: 600px) {
+        left: 0%;
+    }
+}

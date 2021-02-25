@@ -1,10 +1,12 @@
-import { Spinner } from '@blueprintjs/core';
+import { Card, Elevation, Spinner } from '@blueprintjs/core';
 import clone from 'clone';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
 import { EXCHANGES, IHoldings, ISavedData, ITradeWithFiatRate, METHOD, IIncomeWithFiatRate } from '../../src/types';
 import keyByValue from '../../src/utils/keyByValue';
+import classnames from 'classnames';
+import classes from './TradeTimeline.module.scss';
 
 export interface ITradeTimelineProp {
     trades: ITradeWithFiatRate[];
@@ -78,9 +80,15 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                 this.props.fiatCurrency,
                 this.props.gainCalculationMethod,
             ).newHoldings;
-            return <div className={`container ${index % 2 === 0 ? 'left' : 'right'}`} key={trade.ID}>
-                <div className='pv2 ph3 bg-white relative br2'>
-                    <h2>Sold {trade.amountSold.toFixed(8)} {trade.soldCurrency}</h2>
+            return <div
+                className={classnames({
+                    [classes.leftTimelineItem]: index % 2 === 0,
+                    [classes.rightTimelineItem]: index % 2 !== 0
+                })}
+                key={trade.ID}
+            >
+                <Card elevation={Elevation.FOUR}>
+                <h2>Sold {trade.amountSold.toFixed(8)} {trade.soldCurrency}</h2>
                     <h4>Got {(trade.amountSold / trade.rate).toFixed(8)} {trade.boughtCurrency}</h4>
                     <p>{trade.rate.toFixed(8)} rate on {
                         keyByValue(trade.exchange, EXCHANGES) || (
@@ -97,14 +105,14 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                         </span>
                     </p>
                     <h6>{new Date(trade.date).toUTCString()}</h6>
-                </div>
+                </Card>
             </div>;
         })).reverse();
     }
 
     public render() {
         return (
-            <div className='trade-timeline relative center'>
+            <div className={classnames('tradeTimeline relative center', classes.tradeTimeline)}>
                 <InfiniteScroll
                     pageStart={this.state.page}
                     loadMore={this.moreTrades}
