@@ -1,3 +1,4 @@
+import { FormGroup, HTMLSelect, Intent } from '@blueprintjs/core';
 import * as React from 'react';
 import { EXCHANGES, ITrade } from '../../src/types';
 
@@ -65,30 +66,49 @@ export class TradeFilter extends React.PureComponent<ITradeFilterProps> {
 
     public render() {
         return (
-            <div className='TradeFilter'>
-                <label htmlFor='type' className='pr2'>Exchange</label>
-                <select name='type' id='type' onChange={this.onSelectChange('exchange')}>
-                    <option key='ALL' value='ALL'>All</option>,
-                    {Object.keys(EXCHANGES).sort().map((key) =>
-                        <option key={key} value={EXCHANGES[key]}>{key}</option>,
-                    )}
-                </select>
-                <br />
-                <label htmlFor='type' className='pr2 pt2 pb2'>Currency</label>
-                <select
-                    name='type'
-                    id='type'
-                    onChange={this.onSelectChange('currency')}
-                    value={this.props.options.currency}
+            <div className='trade-filter'>
+                <FormGroup
+                    className="flex justify-center"
+                    labelFor="type"
+                    label="Exchange"
+                    helperText="Exchange to filter for"
+                    intent={Intent.PRIMARY}
+                    inline={true}
                 >
-                    <option key='ALL' value='ALL'>All</option>,
-                    {getCurrenciesByExchange(this.props.trades, this.props.options.exchange).map(
-                        (currency: string) =>
-                            <option key={currency} value={currency}>
-                                {currency}
-                            </option>,
-                    )}
-                </select>
+                    <HTMLSelect
+                        id="type"
+                        name="type"
+                        onChange={this.onSelectChange('exchange')}
+                    >
+                        <option key='ALL' value='ALL'>All</option>,
+                        {Object.keys(EXCHANGES).sort().map((key) =>
+                            <option key={key} value={EXCHANGES[key]}>{key}</option>,
+                        )}
+                    </HTMLSelect>
+                </FormGroup>
+                <FormGroup
+                    className="mt3 flex justify-center"
+                    labelFor="currency"
+                    label="Currency"
+                    helperText="Currency to filter for"
+                    intent={Intent.PRIMARY}
+                    inline={true}
+                >
+                    <HTMLSelect
+                        id="currency"
+                        name="currency"
+                        onChange={this.onSelectChange('currency')}
+                        value={this.props.options.currency}
+                    >
+                        <option key='ALL' value='ALL'>All</option>,
+                        {getCurrenciesByExchange(this.props.trades, this.props.options.exchange).map(
+                            (currency: string) =>
+                                <option key={currency} value={currency}>
+                                    {currency}
+                                </option>,
+                        )}
+                    </HTMLSelect>
+                </FormGroup>
             </div>
         );
     }

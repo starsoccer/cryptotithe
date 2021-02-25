@@ -7,7 +7,7 @@ import { ALL_CURRENCIES, ALL_EXCHANGES, filterTrades, TradeFilter } from '@compo
 import { TradesTable } from '@components/TradesTable';
 import TradeTimeline from '@components/TradeTimeline';
 import { ITrade } from '../src/types';
-import { Spinner, Button, Intent, ControlGroup } from '@blueprintjs/core';
+import { Spinner, Button, Intent, ControlGroup, Divider } from '@blueprintjs/core';
 
 const defaultOptions = {
     exchange: ALL_EXCHANGES,
@@ -40,17 +40,7 @@ const Trades = () => {
 
     return (
         <div className='viewTrades'>
-            <h3 className='tc'>Trades</h3>
-            <hr className='center w-50' />
-            <div className='tc center pb2'>
-                <Button
-                    icon="refresh"
-                    intent={Intent.WARNING}
-                    onClick={refetchFiatRate}
-                >
-                    Refresh Trade Data
-                </Button>
-         
+            <div className='pt2'>
                 <ControlGroup className="pt2 flex justify-center">
                     <Button icon="flow-linear" disabled={!showTradeTable} onClick={() => setShowTradeTable(!showTradeTable)}>
                         Timeline
@@ -59,24 +49,25 @@ const Trades = () => {
                         Table
                     </Button>
                 </ControlGroup>
+                <Divider />
+                <div className="tc">
+                    <TradeFilter
+                        trades={savedData.trades}
+                        options={options}
+                        onChange={setOptions}
+                    />
+                    <Button
+                        className="mt2"
+                        onClick={() => setOptions({...defaultOptions})}
+                        icon="reset"
+                        intent={Intent.DANGER}
+                    >
+                        Reset Filter
+                    </Button>
+                </div>
+
             </div>
-            <hr className='w-50'/>
-            <div className='tc center'>
-                <TradeFilter
-                    trades={savedData.trades}
-                    options={options}
-                    onChange={setOptions}
-                />
-                <br />
-                <Button
-                    onClick={() => setOptions({...defaultOptions})}
-                    icon="reset"
-                    intent={Intent.DANGER}
-                >
-                    Reset Filter
-                </Button>
-            </div>
-            <hr className='w-50'/>
+            <Divider />
             <div className='tc center'>
                 {isProcessing ?
                     <Spinner />
