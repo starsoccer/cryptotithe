@@ -1,16 +1,18 @@
 import { Button, FormGroup, HTMLSelect, Intent, Switch } from "@blueprintjs/core";
-import { EXCHANGES, ITrade } from "@types";
+import { EXCHANGES, ITrade, ITradeWithFiatRate } from "@types";
 import { ChangeEvent, useMemo, useState } from "react";
+import { useWorker } from "@koale/useworker"
 
 export interface ITradeFilter {
-    trades: ITrade[];
-    applyFilter: (trades: ITrade[]) => void;
+    trades: ITradeWithFiatRate[];
+    applyFilter: (trades: ITradeWithFiatRate[]) => void;
     autoExpand: boolean;
     showAutoExpand: boolean;
     onAutoExpandChange: (autoExpand: boolean) => void;
+    setIsProcessing: (isProcessing: boolean) => void;
 }
 
-export function getCurrenciesByExchange(trades: ITrade[], exchange?: EXCHANGES | string) {
+function getCurrenciesByExchange(trades: ITrade[], exchange?: EXCHANGES | string) {
     const exchangeTrades = (exchange ?
         trades.filter((trade: ITrade) => trade.exchange === exchange) : trades
     );
@@ -23,10 +25,17 @@ export function getCurrenciesByExchange(trades: ITrade[], exchange?: EXCHANGES |
     return Array.from(currencies).sort();
 }
 
-export const TradeFilter= ({ trades, applyFilter, autoExpand, showAutoExpand, onAutoExpandChange }: ITradeFilter) => {
+const filterTrades = (trades: ITradeWithFiatRate[], selectedExchange?: EXCHANGES | string, selectedCurrency?: string) => trades.filter((trade) => (
+    (!selectedExchange || trade.exchange === selectedExchange) &&
+    (!selectedCurrency || trade.boughtCurrency === selectedCurrency || trade.soldCurrency === selectedCurrency)
+));
+
+
+export const TradeFilter= ({ trades, applyFilter, autoExpand, showAutoExpand, onAutoExpandChange, setIsProcessing }: ITradeFilter) => {
     const [selectedExchange, setSelectedExchange] = useState<EXCHANGES | string>();
     const [selectedCurrency, setSelectedCurrency] = useState<string>();
-    const exchanges = useMemo(() => getCurrenciesByExchange(trades, selectedExchange), [trades])
+    const exchanges = useMemo(() => getCurrenciesByExchange(trades, selectedExchange), [trades]);
+    const [sortWorker] = useWorker(filterTrades);
 
     const onReset = () => {
         setSelectedExchange(undefined);
@@ -34,10 +43,11 @@ export const TradeFilter= ({ trades, applyFilter, autoExpand, showAutoExpand, on
         onFilter();
     };
 
-    const onFilter = () => applyFilter(trades.filter((trade) => (
-        (!selectedExchange || trade.exchange === selectedExchange) &&
-        (!selectedCurrency || trade.boughtCurrency === selectedCurrency || trade.soldCurrency === selectedCurrency)
-    )));
+    const onFilter = async () => {
+        setIsProcessing(true);
+        applyFilter(await sortWorker(trades, selectedExchange, selectedCurrency));
+        setIsProcessing(false);
+    };
 
     return (
         <div>

@@ -2,7 +2,9 @@ const isElectron = process.env.isElectron === "true";
 
 const assetPrefix = (isElectron ? "https://next/" : "");
 
-module.exports = {
+const withTM = require('next-transpile-modules')(['@koale/useworker']);
+
+module.exports = withTM({
     assetPrefix,
     webpack: (config, { isServer }) => {
         if (!isServer) {
@@ -15,4 +17,4 @@ module.exports = {
 
         return config;
     },
-};
+});

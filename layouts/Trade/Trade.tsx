@@ -1,9 +1,8 @@
 import {useContext, useState} from 'react';
 import SavedDataContext from '@contexts/savedData';
-import { ITradeWithFiatRate } from '@types';
+import { ITrade, ITradeWithFiatRate } from '@types';
 import { TradesTable } from '@components/TradesTable';
 import TradeTimeline from '@components/TradeTimeline';
-import { ITrade } from '../src/types';
 import { Spinner, Button, ControlGroup, Divider } from '@blueprintjs/core';
 import { TradeFilter } from './TradeFilter';
 
@@ -12,8 +11,8 @@ const Trades = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [showTradeTable, setShowTradeTable] = useState(false);
     const [autoExpand, setAutoExpand] = useState(false);
-    const [filteredTrades, setFilteredTrades] = useState<ITrade[]>(savedData.trades);
-
+    const [filteredTrades, setFilteredTrades] = useState<ITradeWithFiatRate[]>(savedData.trades);
+    
     const savePassThrough = (trades: ITrade[] | ITradeWithFiatRate[]) => save({trades: trades as ITradeWithFiatRate[]});
 
     return (
@@ -34,6 +33,7 @@ const Trades = () => {
                         autoExpand={autoExpand}
                         onAutoExpandChange={setAutoExpand}
                         showAutoExpand={!showTradeTable}
+                        setIsProcessing={setIsProcessing}
                     />
             </div>
             <Divider />

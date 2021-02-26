@@ -3,7 +3,7 @@ import clone from 'clone';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { calculateGains } from '../../src/processing/CalculateGains';
-import { ISavedData, ITradeWithFiatRate, METHOD, IIncomeWithFiatRate } from '../../src/types';
+import { ISavedData, METHOD, IIncomeWithFiatRate, ITradeWithFiatRate } from '../../src/types';
 import classnames from 'classnames';
 import classes from './TradeTimeline.module.scss';
 import { TimelineItem } from './TimelineItem';
