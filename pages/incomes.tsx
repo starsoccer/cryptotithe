@@ -5,25 +5,16 @@ import getByYear from '../src/processing/getByYear';
 import calculateIncomesValue from '../src/processing/CalculateIncomesValue';
 import incomesOutput from '../src/output/Incomes';
 import SavedDataConext from '@contexts/savedData';
-import DownloadContext from '@contexts/download';
 import { Button, Intent } from '@blueprintjs/core';
+import downloadFile from '@utils/downloadFile';
 
 const CalculateIncomes = () => {
     const {savedData} = useContext(SavedDataConext);
-    const {setDownloadInfo} = useContext(DownloadContext);
     const [year, setYear] = useState(0);
 
     const years = getYears(savedData.incomes);
     const filteredIncomes = getByYear(savedData.incomes, year);
     const {incomes, totalValue} = calculateIncomesValue(filteredIncomes);
-
-    const onDownloadClick = () => {
-        setDownloadInfo({
-            data: incomesOutput(incomes),
-            fileName: "incomes.csv",
-            download: true,
-        });
-    }
 
     return (
         <div className="calculate-income">
@@ -48,7 +39,7 @@ const CalculateIncomes = () => {
                         <Button
                             icon="download"
                             intent={Intent.PRIMARY}
-                            onClick={onDownloadClick}
+                            onClick={() => downloadFile(incomesOutput(incomes), 'incomes.csv')}
                         >
                             Download
                         </Button>

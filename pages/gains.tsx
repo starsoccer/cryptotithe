@@ -1,16 +1,15 @@
 import { useContext, useState } from 'react';
 import SavedDataContext from '@contexts/savedData';
-import DownloadContext from '@contexts/download';
 import generateForm8949 from '../src/output/Form8949';
 import { calculateGainPerTrade, calculateGains } from '../src/processing/CalculateGains';
 import { addFiatRateToTrades } from '../src/processing/getFiatRate';
 import getYears from '../src/utils/getYears';
-import { IFileDownloadProps } from '@components/FileDownload';
 import { GainsPerTradeTable } from '@components/GainsPerTradeTable';
 import TradeDetails from '@components/TradeDetails';
 import { Customize, IYearCalculationMethod } from '@components/Tabs/CalculateGainsTab/Customize.component';
 import { IHoldings, ISavedData, ITrade, ITradeWithGains, ITradeWithFiatRate, IIncomeWithFiatRate, METHOD } from '@types';
 import { Button, Dialog, Divider, Intent } from '@blueprintjs/core';
+import downloadFile from '@utils/downloadFile';
 
 function recalculate(
     trades: ITradeWithFiatRate[],
@@ -54,7 +53,6 @@ function recalculate(
 
 const Gains = () => {
     const {savedData} = useContext(SavedDataContext);
-    const {setDownloadInfo} = useContext(DownloadContext);
     const [filteredTradesWithGains, setFilteredTradesWithGains] = useState<ITradeWithGains[]>([]);
     const [holdings, setHoldings] = useState<IHoldings>(savedData.holdings);
     const [longTermGains, setLongTermGain] = useState<number>(0);
@@ -150,7 +148,7 @@ const Gains = () => {
                             setYearCalculationMethod,
                         )
                     }}
-                    onForm8949Export={() => downloadOutput(savedData, yearCalculationMethod, setDownloadInfo)}
+                    onForm8949Export={() => downloadOutput(savedData, yearCalculationMethod)}
                     years={years}
                     yearCalculationMethod={yearCalculationMethod}
                 />
@@ -159,7 +157,7 @@ const Gains = () => {
     );
 }
 
-const downloadOutput = (savedData: ISavedData, yearCalculationMethod: IYearCalculationMethod, setDownloadInfo: (downloadInfo: IFileDownloadProps) => void) => {
+const downloadOutput = (savedData: ISavedData, yearCalculationMethod: IYearCalculationMethod) => {
     const result = recalculate(
         savedData.trades,
         savedData.incomes,
@@ -173,11 +171,7 @@ const downloadOutput = (savedData: ISavedData, yearCalculationMethod: IYearCalcu
         result.gainCalculationMethod,
     );
 
-    setDownloadInfo({
-        data,
-        fileName: 'Form8949.csv',
-        download: true,
-    });
+    downloadFile(data, 'Form8949.csv');
 }
 
 const calculateWhatIfTrade = async (
