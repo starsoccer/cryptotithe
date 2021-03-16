@@ -39,7 +39,7 @@ const CalculateIncomes = () => {
                         <Button
                             icon="download"
                             intent={Intent.PRIMARY}
-                            onClick={() => downloadFile(incomesOutput(incomes), 'incomes.csv')}
+                            onClick={() => downloadFile(incomesOutput(incomes, savedData.settings.fiatCurrency), 'incomes.csv')}
                         >
                             Download
                         </Button>
