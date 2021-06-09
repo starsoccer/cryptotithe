@@ -1,7 +1,7 @@
 import { getCSVData } from '../../';
 import { EXCHANGES, IImport, IPartialTrade, ITrade } from '../../../types';
 import { createDateAsUTC, createID } from '../../utils';
-import axios from 'axios';
+import * as assetPairs from './assetPairs.json';
 
 enum KrakenType {
     BUY = 'buy',
@@ -59,21 +59,16 @@ function convertCurrencyToNormalCurrency(currency: string) {
 }
 
 async function getMaretPairs() {
-    const response = await axios('https://api.kraken.com/0/public/AssetPairs');
-    if (response.status === 200) {
-        if ('result' in response.data && 'error' in response.data && response.data.error.length === 0) {
-            const marketPairs = response.data.result;
-            const markets = Object.keys(marketPairs);
-            for (const market of markets) {
-                marketPairs[market] = {
-                    ...marketPairs[market],
-                    base: convertCurrencyToNormalCurrency(marketPairs[market].base),
-                    quote: convertCurrencyToNormalCurrency(marketPairs[market].quote),
-                }
-            }
-            return marketPairs;
+    const marketPairs = assetPairs.result;
+    const markets = Object.keys(marketPairs);
+    for (const market of markets) {
+        marketPairs[market] = {
+            ...marketPairs[market],
+            base: convertCurrencyToNormalCurrency(marketPairs[market].base),
+            quote: convertCurrencyToNormalCurrency(marketPairs[market].quote),
         }
     }
+    return marketPairs;
 }
 
 function getRealTradedPairs(market: string) {
