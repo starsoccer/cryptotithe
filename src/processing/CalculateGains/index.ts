@@ -128,6 +128,7 @@ export interface ICalculateGainsPerHoldings {
 export function calculateGainsPerHoldings(
     holdings: IHoldings,
     trades: ITradeWithFiatRate[],
+    incomes: IIncomeWithFiatRate[],
     fiatCurrency: string,
     method: METHOD,
 ): ICalculateGainsPerHoldings {
@@ -140,7 +141,15 @@ export function calculateGainsPerHoldings(
     let longTermCostBasis = 0;
     const shortTermTrades: ITradeWithCostBasis[] = [];
     const longTermTrades: ITradeWithCostBasis[] = [];
+    const incomesToApply = clone(incomes);
+
     for (const trade of trades) {
+        while (incomesToApply.length && trade.date > incomesToApply[0].date) {
+            const income = incomesToApply[0];
+            newHoldings = addToHoldings(newHoldings, income.currency, income.amount, income.fiatRate, income.date);
+            incomesToApply.shift();
+        }
+
         const result = processTrade(newHoldings, trade, fiatCurrency, method);
         shortTermGain += result.shortTermGain;
         longTermGain += result.longTermGain;

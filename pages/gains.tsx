@@ -167,6 +167,7 @@ const downloadOutput = (savedData: ISavedData, yearCalculationMethod: IYearCalcu
     const data = generateForm8949(
         result.holdings,
         result.trades,
+        result.incomes,
         savedData.settings.fiatCurrency,
         result.gainCalculationMethod,
     );
