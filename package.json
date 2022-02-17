@@ -90,7 +90,7 @@
         "file-saver": "^2.0.5",
         "font-awesome": "^4.7.0",
         "is-electron": "^2.2.0",
-        "next": "10.0.7",
+        "next": "12.1.0",
         "next-transpile-modules": "^6.3.0",
         "papaparse": "^5.1.0",
         "react": "17.0.1",
