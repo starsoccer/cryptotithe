@@ -1,6 +1,7 @@
 export type Location = EXCHANGES | string;
 
 export enum EXCHANGES {
+    AAX = 'AAX',
     Bittrex = 'BITTREX',
     Gemini= 'GEMINI',
     Poloniex = 'POLONIEX',
@@ -14,6 +15,7 @@ export enum IncomeImportTypes {
 }
 
 export enum ExchangesTradeHeaders {
+    AAX = '5aaccf9d0910e5c227f7590bfd39c8baa883bde920c5da39f06c29447b78d80f',
     BITTREX = '07230399aaa8d1f15e88e38bd43a01c5ef1af6c1f9131668d346e196ff090d80',
     GEMINI = '996edee25db7f3d1dd16c83c164c6cff8c6d0f5d6b3aafe6d1700f2a830f6c9e',
     POLONIEX = 'd7484d726e014edaa059c0137ac91183a7eaa9ee5d52713aa48bb4104b01afb0',

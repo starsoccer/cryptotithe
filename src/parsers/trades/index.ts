@@ -1,5 +1,6 @@
 import { EXCHANGES, ExchangesTradeHeaders, IImport, ITrade } from '@types';
 import * as crypto from 'crypto';
+import aaxParser from './aax'
 import binanceParser from './binance';
 import bittrexParser from './bittrex';
 import geminiParser from './gemini';
@@ -8,6 +9,7 @@ import poloniexParser from './poloniex';
 import revolutParser from './revolut';
 
 const parserMapping: {[key in EXCHANGES]: any} = {
+    [EXCHANGES.AAX]: aaxParser,
     [EXCHANGES.Binance]: binanceParser,
     [EXCHANGES.Bittrex]: bittrexParser,
     [EXCHANGES.Gemini]: geminiParser,
