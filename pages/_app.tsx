@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps }: AppProps): ReactNode {
 
 
   const updateSaveData = async (data: IPartialSavedData, shouldDownload = true): Promise<boolean> => {
-    const newSavedData = save(data, savedData);
+    const newSavedData = await save(data, savedData);
 
     if (shouldDownload) {
       downloadFile(JSON.stringify(newSavedData), 'data.json');

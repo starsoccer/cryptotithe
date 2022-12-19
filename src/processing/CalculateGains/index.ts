@@ -1,4 +1,3 @@
-import clone from 'clone';
 import {
     IHoldings,
     IIncomeWithFiatRate,
@@ -7,8 +6,6 @@ import {
     ITradeWithGains,
     METHOD,
 } from '../../types';
-import { processTrade } from '../ProcessTrade';
-import { addToHoldings } from '../AddToHoldings';
 
 export interface ICalculateGains {
     newHoldings: IHoldings;
@@ -16,40 +13,18 @@ export interface ICalculateGains {
     shortTermGain: number;
 }
 
-export function calculateGains(
+export async function calculateGains(
     holdings: IHoldings,
     trades: ITradeWithFiatRate[],
     incomes: IIncomeWithFiatRate[],
     fiatCurrency: string,
     method: METHOD = METHOD.FIFO,
-): ICalculateGains {
-    let shortTermGain = 0;
-    let longTermGain = 0;
-    let newHoldings: IHoldings = holdings;
-    const incomesToApply = clone(incomes);
-    for (const trade of trades) {
-        while (incomesToApply.length && trade.date > incomesToApply[0].date) {
-            const income = incomesToApply[0];
-            newHoldings = addToHoldings(newHoldings, income.currency, income.amount, income.fiatRate, income.date);
-            incomesToApply.shift();
-        }
+): Promise<ICalculateGains> {
+    const test = await import('cryptotithe-wasm');
+  
+    const q: any = test.calculate_gains_wasm(holdings, trades, incomes, fiatCurrency, method);
 
-        const result = processTrade(newHoldings, trade, fiatCurrency, method);
-        shortTermGain += result.shortTermGain;
-        longTermGain += result.longTermGain;
-        newHoldings = result.holdings;
-    }
-
-    // apply any remaining incomes
-    for (const income of incomesToApply) {
-        newHoldings = addToHoldings(newHoldings, income.currency, income.amount, income.fiatRate, income.date);
-    }
-
-    return {
-        newHoldings,
-        longTermGain,
-        shortTermGain,
-    };
+    return q;
 }
 
 export interface ICalculateGainsPerTrade {
@@ -59,58 +34,23 @@ export interface ICalculateGainsPerTrade {
     longTerm: number;
 }
 
-export function calculateGainPerTrade(
+export async function calculateGainPerTrade(
     holdings: IHoldings,
     internalFormat: ITradeWithFiatRate[],
     incomes: IIncomeWithFiatRate[],
     fiatCurrency: string,
     method: METHOD,
-): ICalculateGainsPerTrade {
-    let tempHoldings: IHoldings = clone(holdings);
-    let shortTerm = 0;
-    let longTerm = 0;
-    const finalFormat: ITradeWithGains[] = [];
-    const newIncomes = clone(incomes);
-    for (const trade of internalFormat) {
-        const incomesToUse: IIncomeWithFiatRate[] = []
-        while (newIncomes.length && trade.date > newIncomes[0].date) {
-            const income = newIncomes.shift() as IIncomeWithFiatRate;
-            incomesToUse.push(income); 
-        }
+): Promise<ICalculateGainsPerTrade> {
 
-        const result: ICalculateGains = calculateGains(
-            tempHoldings,
-            [trade],
-            incomesToUse,
-            fiatCurrency,
-            method
-        );
+    const t0 = performance.now();
 
-        tempHoldings = result.newHoldings;
-        shortTerm += result.shortTermGain;
-        longTerm += result.longTermGain;
-        finalFormat.push({
-            ...trade,
-            shortTerm: result.shortTermGain,
-            longTerm: result.longTermGain,
-        });
-    }
+    const test = await import('cryptotithe-wasm');
+    const q: any = test.calculate_gains_per_trade_wasm(holdings, internalFormat, incomes, fiatCurrency, method);
 
-
-    const applyRemainingIncomes: ICalculateGains = calculateGains(
-        tempHoldings,
-        [],
-        newIncomes,
-        fiatCurrency,
-        method
-    );
-
-    return {
-        trades: finalFormat,
-        holdings: applyRemainingIncomes.newHoldings,
-        shortTerm,
-        longTerm,
-    };
+    const t1 = performance.now();
+    console.log(`Call to doSomething took ${t1 - t0} milliseconds.`);
+    console.log(q);
+    return q;
 }
 
 export interface ICalculateGainsPerHoldings {
@@ -125,57 +65,14 @@ export interface ICalculateGainsPerHoldings {
     holdings: IHoldings;
 }
 
-export function calculateGainsPerHoldings(
+export async function calculateGainsPerHoldings(
     holdings: IHoldings,
     trades: ITradeWithFiatRate[],
     incomes: IIncomeWithFiatRate[],
     fiatCurrency: string,
     method: METHOD,
-): ICalculateGainsPerHoldings {
-    let newHoldings: IHoldings = holdings;
-    let shortTermGain = 0;
-    let shortTermProceeds = 0;
-    let shortTermCostBasis = 0;
-    let longTermGain = 0;
-    let longTermProceeds = 0;
-    let longTermCostBasis = 0;
-    const shortTermTrades: ITradeWithCostBasis[] = [];
-    const longTermTrades: ITradeWithCostBasis[] = [];
-    const incomesToApply = clone(incomes);
-
-    for (const trade of trades) {
-        while (incomesToApply.length && trade.date > incomesToApply[0].date) {
-            const income = incomesToApply[0];
-            newHoldings = addToHoldings(newHoldings, income.currency, income.amount, income.fiatRate, income.date);
-            incomesToApply.shift();
-        }
-
-        const result = processTrade(newHoldings, trade, fiatCurrency, method);
-        shortTermGain += result.shortTermGain;
-        longTermGain += result.longTermGain;
-        longTermProceeds += result.longTermProceeds;
-        longTermCostBasis += result.longTermCostBasis;
-        shortTermProceeds += result.shortTermProceeds;
-        shortTermCostBasis += result.shortTermCostBasis;
-        newHoldings = result.holdings;
-
-        result.costBasisTrades.forEach((costBasisTrade) => {
-            if (costBasisTrade.longtermTrade) {
-                longTermTrades.push(costBasisTrade);
-            } else {
-                shortTermTrades.push(costBasisTrade);
-            }
-        });
-    }
-    return {
-        shortTermTrades,
-        longTermTrades,
-        shortTermGain,
-        longTermGain,
-        shortTermProceeds,
-        longTermProceeds,
-        shortTermCostBasis,
-        longTermCostBasis,
-        holdings: newHoldings,
-    };
+): Promise<ICalculateGainsPerHoldings> {
+    const test = await import('cryptotithe-wasm');
+    const q: any = test.calculate_gain_per_holdings_wasm(holdings, trades, incomes, fiatCurrency, method);
+    return q;
 }

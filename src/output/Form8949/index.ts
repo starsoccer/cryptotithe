@@ -12,15 +12,15 @@ const headers = [
     'Gain or Loss',
 ].join(',');
 
-export default function outputForm8949(
+export default async function outputForm8949(
     holdings: IHoldings,
     trades: ITradeWithFiatRate[],
     incomes: IIncomeWithFiatRate[],
     fiatCurrency: string,
     method: METHOD,
-): string {
-    const result = calculateGainsPerHoldings(holdings, trades, incomes, fiatCurrency, method);
-    let csvData: unknown[] = [
+): Promise<string> {
+    const result = await calculateGainsPerHoldings(holdings, trades, incomes, fiatCurrency, method);
+    let csvData: any[] = [
         'Form 8949 Statement',
         '',
         'Part 1 (Short-Term)',

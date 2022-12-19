@@ -1,7 +1,7 @@
 import { Card, Collapse, Divider, Elevation, Intent, Tag } from "@blueprintjs/core";
 import classes from './TradeTimeline.module.scss';
 import classnames from 'classnames';
-import { useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { EXCHANGES, IHoldings, ITrade } from "@types";
 import keyByValue from '../../src/utils/keyByValue';
 
@@ -22,7 +22,7 @@ const getCurrencyHolding = (holdings: IHoldings, currency: string): number => {
     return totalHoldings;
 };
 
-export const TimelineItem = ({trade, holdings, left, defaultExpanded}: ITimelineItem): JSX.Element => {
+export const TimelineItem = ({trade, holdings, left, defaultExpanded}: ITimelineItem): ReactElement => {
     const [isOpen, setIsOpen] = useState(defaultExpanded);
 
     useEffect(() => setIsOpen(defaultExpanded), [defaultExpanded])

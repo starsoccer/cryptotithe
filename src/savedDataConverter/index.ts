@@ -9,11 +9,11 @@ import zeroSevenZeroConverter from './0.7.0';
 import zeroEightZeroConverter from './0.8.0';
 import packageInfo from '@package';
 
-export default function onSaveDataLoaded(savedData: ISavedData): boolean {
+export default async function onSaveDataLoaded(savedData: ISavedData): Promise<boolean> {
     const savedVersion = isNaN(parseFloat(savedData.version)) ? 0 : parseFloat(savedData.version);
     let changeMade = false;
 
-    const versionUpgraders: {[key: number]: (data: ISavedData) => boolean} = {
+    const versionUpgraders: {[key: number]: (data: ISavedData) => boolean | Promise<boolean>} = {
         [0.2]: zeroTwoZeroConverter,
         [0.3]: zeroThreeZeroConverter,
         [0.4]: zeroFourZeroConverter,
@@ -25,7 +25,7 @@ export default function onSaveDataLoaded(savedData: ISavedData): boolean {
     const versions = Object.keys(versionUpgraders);
     for (const version of versions) {
         if (savedVersion < parseFloat(version)) {
-            changeMade = versionUpgraders[version](savedData) || changeMade;
+            changeMade = await versionUpgraders[version](savedData) || changeMade;
         }
     }
 

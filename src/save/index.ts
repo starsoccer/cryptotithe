@@ -6,7 +6,7 @@ import { IIncomeWithFiatRate, IPartialSavedData, ISavedData, ISettings, ITradeWi
 import integrityCheck from '../utils/integrityCheck';
 import packageInfo from '@package';
 
-export default function save(data: IPartialSavedData, fallback: ISavedData): ISavedData {
+export default async function save(data: IPartialSavedData, fallback: ISavedData): Promise<ISavedData> {
     const newTrades = data.trades || fallback.trades || [];
     const newTransactions = data.transactions || fallback.transactions || [];
     const newIncomes = data.incomes || fallback.incomes || [];
@@ -16,13 +16,13 @@ export default function save(data: IPartialSavedData, fallback: ISavedData): ISa
     const sortedTransactions = SortTransactions(newTransactions);
     const sortedIncomes = SortIncomes(newIncomes) as IIncomeWithFiatRate[];
 
-    const currentHoldings = calculateGains(
+    const currentHoldings = (await calculateGains(
         {},
         sortedTrades,
         sortedIncomes,
         newSettings.fiatCurrency,
         newSettings.gainCalculationMethod,
-    ).newHoldings;
+    )).newHoldings;
 
     const savedData: IPartialSavedData = {
         savedDate: new Date(),
