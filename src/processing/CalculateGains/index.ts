@@ -20,11 +20,9 @@ export async function calculateGains(
     fiatCurrency: string,
     method: METHOD = METHOD.FIFO,
 ): Promise<ICalculateGains> {
-    const test = await import('cryptotithe-wasm');
+    const wasm = await import('cryptotithe-wasm');
   
-    const q: any = test.calculate_gains_wasm(holdings, trades, incomes, fiatCurrency, method);
-
-    return q;
+    return wasm.calculate_gains_wasm(holdings, trades, incomes, fiatCurrency, method);
 }
 
 export interface ICalculateGainsPerTrade {
@@ -41,16 +39,8 @@ export async function calculateGainPerTrade(
     fiatCurrency: string,
     method: METHOD,
 ): Promise<ICalculateGainsPerTrade> {
-
-    const t0 = performance.now();
-
-    const test = await import('cryptotithe-wasm');
-    const q: any = test.calculate_gains_per_trade_wasm(holdings, internalFormat, incomes, fiatCurrency, method);
-
-    const t1 = performance.now();
-    console.log(`Call to doSomething took ${t1 - t0} milliseconds.`);
-    console.log(q);
-    return q;
+    const wasm = await import('cryptotithe-wasm');
+    return wasm.calculate_gains_per_trade_wasm(holdings, internalFormat, incomes, fiatCurrency, method);
 }
 
 export interface ICalculateGainsPerHoldings {
@@ -72,7 +62,6 @@ export async function calculateGainsPerHoldings(
     fiatCurrency: string,
     method: METHOD,
 ): Promise<ICalculateGainsPerHoldings> {
-    const test = await import('cryptotithe-wasm');
-    const q: any = test.calculate_gain_per_holdings_wasm(holdings, trades, incomes, fiatCurrency, method);
-    return q;
+    const wasm = await import('cryptotithe-wasm');
+    return wasm.calculate_gain_per_holdings_wasm(holdings, trades, incomes, fiatCurrency, method);
 }

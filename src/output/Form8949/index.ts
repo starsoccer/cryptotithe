@@ -20,7 +20,7 @@ export default async function outputForm8949(
     method: METHOD,
 ): Promise<string> {
     const result = await calculateGainsPerHoldings(holdings, trades, incomes, fiatCurrency, method);
-    let csvData: any[] = [
+    let csvData: string[] = [
         'Form 8949 Statement',
         '',
         'Part 1 (Short-Term)',
