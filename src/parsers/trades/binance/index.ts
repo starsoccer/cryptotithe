@@ -9,77 +9,52 @@ enum BinanceOrderType {
 
 interface IBinance {
     'Date(UTC)': string;
-    Market: string;
-    Type: BinanceOrderType;
+    Pair: string;
+    Side: BinanceOrderType;
     Price: string;
     Amount: string;
-    Total: string;
+    Executed: string;
     Fee: string;
-    'Fee Coin': string;
 }
 
-function getPairs(market: string, currentFeeCoin: string, feeCoins: string[]) {
-    const pairs = [];
-    // if length is 6 assume is an even 3 split
-    if (market.length === 6) {
-        pairs.push(market.substr(0, 3));
-        pairs.push(market.substr(3, 3));
-    } else {
-        let feeCurrency = currentFeeCoin;
-        let feeCoinLocation = market.indexOf(feeCurrency);
+function getPairs(executedAmount: string, amount: string) {
+    const executedCurrency = executedAmount.replace(/[0-9,.]/g, '');
+    const amountCurrent = amount.replace(/[0-9,.]/g, '');
+    return [executedCurrency, amountCurrent];
+}
 
-        // if fee coin isnt found
-        if (feeCoinLocation === -1) {
-            let found = false;
-
-            for (const feeCoin of feeCoins) {
-                if (market.includes(feeCoin)) {
-                    found = true;
-                    feeCurrency = feeCoin;
-                    feeCoinLocation = market.indexOf(feeCurrency);
-                    break;
-                }
-            }
-
-            // uf none found fallback to old method
-            if (!found) {
-                pairs.push(market.substr(0, 4));
-                pairs.push(market.substr(4, 3));
-                return pairs;
-            }
-        }
-
-        // if fee coin is first to appear split at end
-        if (feeCoinLocation === 0) {
-            pairs.push(market.substr(0, feeCurrency.length));
-            pairs.push(market.substr(feeCurrency.length));
-        } else {
-            pairs.push(market.substr(0, feeCoinLocation));
-            pairs.push(market.substr(feeCoinLocation));
-        }
+function getFeeCoin (fee: string, pair: string[]) {
+    if (fee.includes(pair[0])) {
+        return pair[0]
     }
-    return pairs;
-}
+
+    if (fee.includes(pair[1])) {
+        return pair[1]
+    }
+
+    return 'Unknown'
+} 
 
 export default async function processData(importDetails: IImport): Promise<ITrade[]> {
     const data: IBinance[] = await getCSVData(importDetails.data) as IBinance[];
     const internalFormat: ITrade[] = [];
-    const feeCoins = data.map((trade) => trade['Fee Coin']);
+
     for (const trade of data) {
-        const pair: string[] = getPairs(trade.Market, trade['Fee Coin'], feeCoins);
+        const pair: string[] = getPairs(trade.Executed, trade.Amount);
+        const tradeFeeCoin = getFeeCoin(trade.Fee, pair);
         const tradeToAdd: IPartialTrade = {};
-        switch (trade.Type) {
+        switch (trade.Side) {
             case BinanceOrderType.BUY:
                 tradeToAdd.boughtCurrency = pair[0].toUpperCase();
                 tradeToAdd.soldCurrency = pair[1].toUpperCase();
                 tradeToAdd.date = createDateAsUTC(new Date(trade['Date(UTC)'])).getTime();
                 tradeToAdd.exchange = EXCHANGES.Binance;
-                if (pair[1].toUpperCase() === trade['Fee Coin']) {
-                    tradeToAdd.amountSold = parseFloat(trade.Total) + parseFloat(trade.Fee);
+                if (pair[1].toUpperCase() === tradeFeeCoin) {
+                    tradeToAdd.amountSold = parseFloat(trade.Executed) + parseFloat(trade.Fee);
                     tradeToAdd.rate = tradeToAdd.amountSold / parseFloat(trade.Amount);
                 } else {
-                    tradeToAdd.amountSold = parseFloat(trade.Total);
-                    tradeToAdd.rate = parseFloat(trade.Total) / (parseFloat(trade.Amount) + parseFloat(trade.Fee));
+                    tradeToAdd.amountSold = parseFloat(trade.Executed);
+                    tradeToAdd.rate = parseFloat(trade.Executed) / (parseFloat(trade.Amount) + parseFloat(trade.Fee));
                 }
                 break;
             case BinanceOrderType.SELL:
@@ -87,12 +62,12 @@ export default async function processData(importDetails: IImport): Promise<ITrad
                 tradeToAdd.boughtCurrency = pair[1].toUpperCase();
                 tradeToAdd.date = createDateAsUTC(new Date(trade['Date(UTC)'])).getTime();
                 tradeToAdd.exchange = EXCHANGES.Binance;
-                if (pair[1].toUpperCase() === trade['Fee Coin']) {
+                if (pair[1].toUpperCase() === tradeFeeCoin) {
                     tradeToAdd.amountSold = parseFloat(trade.Amount);
-                    tradeToAdd.rate = parseFloat(trade.Amount) / (parseFloat(trade.Total) - parseFloat(trade.Fee));
+                    tradeToAdd.rate = parseFloat(trade.Amount) / (parseFloat(trade.Executed) - parseFloat(trade.Fee));
                 } else {
                     tradeToAdd.amountSold = parseFloat(trade.Amount) + parseFloat(trade.Fee);
-                    tradeToAdd.rate = tradeToAdd.amountSold / parseFloat(trade.Total);
+                    tradeToAdd.rate = tradeToAdd.amountSold / parseFloat(trade.Executed);
                 }
                 break;
             default:
