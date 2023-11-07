@@ -2,7 +2,8 @@ export type Location = EXCHANGES | string;
 
 export enum EXCHANGES {
     Bittrex = 'BITTREX',
-    Gemini= 'GEMINI',
+    Gemini = 'GEMINI',
+    KuCoin = 'KUCOIN',
     Poloniex = 'POLONIEX',
     Kraken = 'KRAKEN',
     Binance = 'BINANCE',
@@ -16,6 +17,7 @@ export enum IncomeImportTypes {
 export enum ExchangesTradeHeaders {
     BITTREX = '07230399aaa8d1f15e88e38bd43a01c5ef1af6c1f9131668d346e196ff090d80',
     GEMINI = '996edee25db7f3d1dd16c83c164c6cff8c6d0f5d6b3aafe6d1700f2a830f6c9e',
+    KUCOIN = '8d808dd554b5b1a6cd5c7d64e900a1af7fdf47483288e4a8cc8ea121e6129cd2',
     POLONIEX = 'd7484d726e014edaa059c0137ac91183a7eaa9ee5d52713aa48bb4104b01afb0',
     KRAKEN = '85bf27e799cc0a30fe5b201cd6a4724e4a52feb433f41a1e8b046924e3bf8dc5',
     BINANCE = '73c3b2a6d9ae503f06184adec586b9ca97a3dabc09caa576ee65441ef7259031',
