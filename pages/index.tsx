@@ -18,23 +18,23 @@ const Index = ({ updateSaveData }: IIndexProps): ReactNode => {
     const [shouldOpenFileBrowse, setShouldOpenFileBrowse] = useState(false);
     const router = useRouter();
 
-    const loadData = (savedData: ISavedData) => {
+    const loadData = async (savedData: ISavedData) => {
         setShouldOpenFileBrowse(false);
         if (isSavedDataLoaded(savedData)) {
             if ('integrity' in savedData && integrityCheck(savedData) !== savedData.integrity) {
                 alert('Integrity Check Failed. Your save file might be corrupt or tampered with.');
             }
-            const shouldSave = savedDataConverter(savedData);
+            const shouldSave = await savedDataConverter(savedData);
             updateSaveData(savedData, shouldSave);
             setShowLoadDataPopup(false);
         }
       }
-
-      const onDataLoaded = (data: string) => {
+    
+      const onDataLoaded = async (data: string) => {
         if (data !== '') {
           try {
               const parsedData: ISavedData = JSON.parse(data);
-              loadData(parsedData);
+              await loadData(parsedData);
               router.push(Pages.portfolio);
           } catch (ex) {
               setShouldOpenFileBrowse(false);

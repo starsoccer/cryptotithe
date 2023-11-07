@@ -11,7 +11,7 @@ import { IHoldings, ISavedData, ITrade, ITradeWithGains, ITradeWithFiatRate, IIn
 import { Button, Dialog, Divider, Intent } from '@blueprintjs/core';
 import downloadFile from '@utils/downloadFile';
 
-function recalculate(
+async function recalculate(
     trades: ITradeWithFiatRate[],
     incomes: IIncomeWithFiatRate[],
     fiatCurrnecy: string,
@@ -27,7 +27,7 @@ function recalculate(
             const pastIncomes = incomes.filter(
                 (income) => new Date(income.date).getFullYear() === parseInt(years[index], 10),
             );
-            const result = calculateGains(newHoldings, pastTrades, pastIncomes, fiatCurrnecy, yearCalculationMethod[years[index]]);
+            const result = await calculateGains(newHoldings, pastTrades, pastIncomes, fiatCurrnecy, yearCalculationMethod[years[index]]);
             newHoldings = result.newHoldings;
         }
     }
@@ -157,14 +157,14 @@ const Gains = (): ReactNode => {
     );
 }
 
-const downloadOutput = (savedData: ISavedData, yearCalculationMethod: IYearCalculationMethod) => {
-    const result = recalculate(
+const downloadOutput = async (savedData: ISavedData, yearCalculationMethod: IYearCalculationMethod) => {
+    const result = await recalculate(
         savedData.trades,
         savedData.incomes,
         savedData.settings.fiatCurrency,
         yearCalculationMethod,
     );
-    const data = generateForm8949(
+    const data = await generateForm8949(
         result.holdings,
         result.trades,
         result.incomes,
@@ -189,7 +189,7 @@ const calculateWhatIfTrade = async (
         savedData.settings.fiatRateMethod,
     );
 
-    const data = calculateGainPerTrade(
+    const data = await calculateGainPerTrade(
         holdings,
         tradeWithFiatRate,
         [],
@@ -210,14 +210,14 @@ const calculateGainsForTable = async (
     setShowCustomizeModal: (showCustomizeModal: boolean) => void,
     setYearCalculationMethod: (yearCalculationMethod: IYearCalculationMethod) => void,
 ) => {
-    const result = recalculate(
+    const result = await recalculate(
         savedData.trades,
         savedData.incomes,
         savedData.settings.fiatCurrency,
         yearCalculationMethod,
     );
 
-    const data = calculateGainPerTrade(
+    const data = await calculateGainPerTrade(
         result.holdings,
         result.trades,
         result.incomes,

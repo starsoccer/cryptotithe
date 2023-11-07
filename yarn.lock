@@ -3110,6 +3110,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cryptotithe-wasm@npm:0.0.4":
+  version: 0.0.4
+  resolution: "cryptotithe-wasm@npm:0.0.4"
+  checksum: 3a26a75523bbc11edf98e0faf867d9815e441e951040ab2d4c3ec7043b66d8d67d805df9073993ab1e64e5cbd6f94487e81ec10f0d5fdaffe1618383c5769862
+  languageName: node
+  linkType: hard
+
 "cryptotithe@workspace:.":
   version: 0.0.0-use.local
   resolution: "cryptotithe@workspace:."
@@ -3135,6 +3142,7 @@ __metadata:
     classnames: ^2.2.6
     clone: ^2.1.2
     coveralls: ^3.0.9
+    cryptotithe-wasm: 0.0.4
     electron: 22.0.0
     electron-devtools-installer: 3.2.0
     electron-packager: 17.1.1

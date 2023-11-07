@@ -18,6 +18,7 @@ export interface ITradeTimelineProp {
 
 export interface ITradeTimelineState {
     page: number;
+    timelineItems: JSX.Element[]
 }
 
 const tradesPerPage =  50;
@@ -27,7 +28,10 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
         super(props);
         this.state = {
             page: 0,
+            timelineItems: [],
         };
+
+        this.createTimeLine();
     }
 
     public moreTrades = (page: number): void => {
@@ -36,7 +40,7 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
         });
     }
 
-    public createTimeLine = (): React.ReactNode[] => {
+    public createTimeLine = async (): Promise<void> => {
         let holdings = {};
         let trades =  Array.from(this.props.trades);
         const maxPages = Math.ceil(this.props.trades.length / tradesPerPage);
@@ -44,13 +48,13 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
             const trade = this.props.trades.slice(0,
                 this.props.trades.length - (this.state.page + 1) * tradesPerPage,
             );
-            holdings = calculateGains(
+            holdings = (await calculateGains(
                 {},
                 trade,
                 this.props.savedData.incomes,
                 this.props.fiatCurrency,
                 this.props.gainCalculationMethod,
-            ).newHoldings;
+            )).newHoldings;
         }
 
         if (maxPages > this.state.page) {
@@ -58,28 +62,34 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
         }
 
         const incomes = clone(this.props.savedData.incomes);
-        return (trades.map((trade, index): React.ReactNode => {
+
+        const timelineItems = [];
+        for (let index = 0; index < trades.length; index++) {
             const incomesToApply: IIncomeWithFiatRate[] = [];
-            while (incomes.length && trade.date > incomes[0].date) {
+            while (incomes.length && trades[index].date > incomes[0].date) {
                 incomesToApply.push(incomes.shift() as IIncomeWithFiatRate);
             }
 
-            holdings = calculateGains(
+            holdings = (await calculateGains(
                 holdings,
-                [trade],
+                [trades[index]],
                 incomesToApply, // probably should use real incomes here
                 this.props.fiatCurrency,
                 this.props.gainCalculationMethod,
-            ).newHoldings;
-            return (
+            )).newHoldings;
+
+            
+            timelineItems.push(
                 <TimelineItem
                     left={index % 2 === 0}
-                    trade={trade}
+                    trade={trades[index]}
                     holdings={holdings}
                     defaultExpanded={this.props.defaultExpanded}
                 />
             );
-        })).reverse();
+        }
+
+        this.setState({timelineItems: timelineItems.reverse()});
     }
 
     public render(): React.ReactNode {
@@ -91,7 +101,7 @@ export default class TradeTimeline extends React.Component<ITradeTimelineProp, I
                     hasMore={this.state.page * tradesPerPage <= this.props.trades.length}
                     loader={<Spinner key={this.state.page}/>}
                 >
-                    {this.createTimeLine()}
+                    {this.state.timelineItems}
                 </InfiniteScroll>
             </div>
         );

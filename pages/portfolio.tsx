@@ -101,14 +101,14 @@ const calculatePortfolioData = async (
     }
 }
 
-const recalculateHoldings = (savedData: ISavedData, save: (data: IPartialSavedData) => Promise<boolean>) => {
-    const holdings = calculateGains(
+const recalculateHoldings = async (savedData: ISavedData, save: (data: IPartialSavedData) => Promise<boolean>) => {
+    const holdings = (await calculateGains(
         {},
         savedData.trades,
         savedData.incomes,
         savedData.settings.fiatCurrency,
         savedData.settings.gainCalculationMethod,
-    ).newHoldings;
+    )).newHoldings;
     
     save({
         holdings,
