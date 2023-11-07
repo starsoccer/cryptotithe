@@ -26,9 +26,10 @@ export default async function processData(importDetails: IImport): Promise<ITrad
             console.log(`Not an exchange ${trade.Type}`);
             continue;
         }
-        const tradeToAdd: IPartialTrade = {};
-        tradeToAdd.date = createDateAsUTC(new Date(trade['Completed Date'])).getTime();
-        tradeToAdd.exchange = EXCHANGES.Revolut;
+        const tradeToAdd: IPartialTrade = {
+            date : createDateAsUTC(new Date(trade['Completed Date'])).getTime(),
+            exchange : EXCHANGES.Revolut,
+        };
         const bought = trade.Description.substr(trade.Description.lastIndexOf(' ') + 1);
         if (bought === trade.Currency) {
             tradeToAdd.boughtCurrency = trade.Currency;
@@ -46,10 +47,10 @@ export default async function processData(importDetails: IImport): Promise<ITrad
             console.log(`Error base currency "${trade['Base currency']}"`);
             continue;
         }
-        tradeToAdd.ID = createID(tradeToAdd);
-        tradeToAdd.exchangeID = tradeToAdd.ID;
         tradeToAdd.transactionFeeCurrency = trade['Base currency'];
         tradeToAdd.transactionFee = Math.round((parseFloat(trade['Fiat amount (inc. fees)'])-parseFloat(trade['Fiat amount']))*100)/100;
+        tradeToAdd.ID = createID(tradeToAdd);
+        tradeToAdd.exchangeID = tradeToAdd.ID;
         internalFormat.push(tradeToAdd as ITrade);
     }
     return internalFormat;
