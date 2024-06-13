@@ -32,7 +32,7 @@ export async function getCSVData<T>(fileData: string): Promise<T[]> {
     });
 }
 
-export async function processData(importDetails: IImport): Promise<ITrade[]  | ITransaction[] | IIncome[]> {
+export async function processData(importDetails: IImport): Promise<ITrade[]  | ITransaction[] | IIncome[] | string> {
     switch (importDetails.type) {
         case ImportType.TRADES:
             return await processTradesImport(importDetails);
@@ -44,7 +44,3 @@ export async function processData(importDetails: IImport): Promise<ITrade[]  | I
             throw new Error(`Unknown Import Type - ${importDetails.type}`);
     }
 }
-
-
-
-

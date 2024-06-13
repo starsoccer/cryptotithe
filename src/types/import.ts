@@ -18,6 +18,7 @@ export interface IImport {
     currency?: string;
     location: Location;
     data: string;
+    data2?: string;
 }
 
 export interface IDuplicate {
