@@ -6,6 +6,7 @@ import geminiParser from './gemini';
 import krakenParser from './kraken';
 import poloniexParser from './poloniex';
 import revolutParser from './revolut';
+import viteParser from './vite'
 
 type ImportType = (importDetails: IImport) => Promise<ITrade[]>;
 
@@ -16,6 +17,7 @@ const parserMapping: {[key in EXCHANGES]: ImportType} = {
     [EXCHANGES.Kraken]: krakenParser,
     [EXCHANGES.Poloniex]: poloniexParser,
     [EXCHANGES.Revolut]: revolutParser,
+    [EXCHANGES.Vite]: viteParser,
 }
 
 export default async function processTradesImport(importDetails: IImport): Promise<ITrade[]> {
