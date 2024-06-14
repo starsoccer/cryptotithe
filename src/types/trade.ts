@@ -13,6 +13,8 @@ export interface ITrade {
     ID: string;
     transactionFee: number;
     transactionFeeCurrency: string;
+    tradeFee?: number;
+    tradeFeeCurrency?: string;
 }
 
 export interface ITradeWithFiatRate extends ITrade {
