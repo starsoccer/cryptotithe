@@ -55,6 +55,7 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
                         'Bought Currency',
                         'Amount Bought',
                         'Transaction Fee',
+                        'Trade Fee',
                         '',
                     ]}
                     rows={this.props.trades.map((trade) => [
@@ -66,6 +67,7 @@ export class TradesTable extends React.Component<ITradeTableProps, {popup: strin
                         <span>{trade.boughtCurrency}</span>,
                         <span>{(trade.amountSold / trade.rate).toFixed(8)}</span>,
                         <span>{`${trade.transactionFee} ${trade.transactionFeeCurrency}`}</span>,
+                        <span>{`${trade.tradeFee} ${trade.tradeFeeCurrency}`}</span>,
                         <i className='fa fa-pencil-square' onClick={this.changePopupStatus(trade.ID)}/>,
                     ])}
                 />

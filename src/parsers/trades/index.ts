@@ -2,6 +2,7 @@ import { EXCHANGES, ExchangesTradeHeaders, IImport, ITrade } from '@types';
 import * as crypto from 'crypto';
 import binanceParser from './binance';
 import bittrexParser from './bittrex';
+import coinListParser from './coinlist';
 import geminiParser from './gemini';
 import krakenParser from './kraken';
 import poloniexParser from './poloniex';
@@ -12,6 +13,7 @@ type ImportType = (importDetails: IImport) => Promise<ITrade[]>;
 const parserMapping: {[key in EXCHANGES]: ImportType} = {
     [EXCHANGES.Binance]: binanceParser,
     [EXCHANGES.Bittrex]: bittrexParser,
+    [EXCHANGES.CoinList]: coinListParser,
     [EXCHANGES.Gemini]: geminiParser,
     [EXCHANGES.Kraken]: krakenParser,
     [EXCHANGES.Poloniex]: poloniexParser,
@@ -26,7 +28,7 @@ export default async function processTradesImport(importDetails: IImport): Promi
         const headers = importDetails.data.substr(0, importDetails.data.indexOf('\n'));
         const headersHash = crypto.createHash('sha256').update(headers).digest('hex');
         for (const key in ExchangesTradeHeaders) {
-            if (ExchangesTradeHeaders[key] === headersHash) {
+            if (ExchangesTradeHeaders[key].split(';').includes(headersHash)) {
                 return processTradesImport({
                     ...importDetails,
                     location: key,
